@@ -2,34 +2,26 @@ import { createClient, type Client } from '@libsql/client/web';
 import { cache, CacheTTL, withCache } from './cache';
 import { v4 as uuidv4 } from 'uuid';
 
-// Lazy-initialized Turso/LibSQL client
-// This prevents connection attempts during build time
-let _db: Client | null = null;
-
+// Create a fresh client for each request in serverless environment
+// This avoids issues with private class members across invocations
 function getDb(): Client {
-  if (!_db) {
-    const url = process.env.TURSO_DATABASE_URL;
-    const authToken = process.env.TURSO_AUTH_TOKEN;
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
 
-    if (!url || !authToken) {
-      throw new Error('Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN environment variables');
-    }
-
-    // Use web client for Vercel serverless compatibility
-    _db = createClient({
-      url,
-      authToken,
-    });
+  if (!url || !authToken) {
+    throw new Error('Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN environment variables');
   }
-  return _db;
+
+  return createClient({
+    url,
+    authToken,
+  });
 }
 
-// For backwards compatibility, export a proxy that lazily initializes
-const db = new Proxy({} as Client, {
-  get(_, prop) {
-    return (getDb() as any)[prop];
-  }
-});
+// Create a proxy that creates fresh connections
+const db = {
+  execute: (query: { sql: string; args?: any[] }) => getDb().execute(query),
+};
 
 // Helper to run a query and return all rows
 async function queryAll(sql: string, args: any[] = []): Promise<any[]> {
