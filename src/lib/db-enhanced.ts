@@ -1,4 +1,4 @@
-import { createClient, Client } from '@libsql/client';
+import { createClient, type Client } from '@libsql/client/web';
 import { cache, CacheTTL, withCache } from './cache';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,10 +8,17 @@ let _db: Client | null = null;
 
 function getDb(): Client {
   if (!_db) {
-    // Only create the client when actually needed (at runtime, not build time)
+    const url = process.env.TURSO_DATABASE_URL;
+    const authToken = process.env.TURSO_AUTH_TOKEN;
+
+    if (!url || !authToken) {
+      throw new Error('Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN environment variables');
+    }
+
+    // Use web client for Vercel serverless compatibility
     _db = createClient({
-      url: process.env.TURSO_DATABASE_URL || 'file:./data/kiala.db',
-      authToken: process.env.TURSO_AUTH_TOKEN,
+      url,
+      authToken,
     });
   }
   return _db;

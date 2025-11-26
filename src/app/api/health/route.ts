@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@libsql/client';
+import { createClient } from '@libsql/client/web';
 
 export async function GET() {
   const checks = {
