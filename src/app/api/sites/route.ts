@@ -25,9 +25,12 @@ export async function GET(request: NextRequest) {
     // Fetch all sites
     const sites = await queries.siteQueries.getAll();
     return NextResponse.json({ sites });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching sites:', error);
-    return NextResponse.json({ error: 'Failed to fetch sites' }, { status: 500 });
+    return NextResponse.json({
+      error: 'Failed to fetch sites',
+      details: error?.message || String(error)
+    }, { status: 500 });
   }
 }
 
