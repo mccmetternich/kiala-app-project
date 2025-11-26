@@ -1,0 +1,59 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createQueries } from '@/lib/db-enhanced';
+import { nanoid } from 'nanoid';
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const siteId = searchParams.get('siteId');
+    const published = searchParams.get('published');
+    const slug = searchParams.get('slug');
+    const tenantId = request.headers.get('X-Tenant-Id') || undefined;
+    const queries = createQueries(tenantId);
+
+    // If no siteId provided, fetch all articles (admin view)
+    if (!siteId) {
+      const allArticles = await queries.articleQueries.getAll();
+      return NextResponse.json({ articles: allArticles });
+    }
+
+    // If slug is provided, fetch single article by slug
+    if (slug) {
+      const article = await queries.articleQueries.getBySlug(siteId, slug);
+      return NextResponse.json({ article });
+    }
+
+    // Otherwise fetch all articles for the site
+    const articles = published === 'true' 
+      ? await queries.articleQueries.getPublishedBySite(siteId)
+      : await queries.articleQueries.getAllBySite(siteId);
+
+    return NextResponse.json({ articles });
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const tenantId = request.headers.get('X-Tenant-Id') || undefined;
+    const queries = createQueries(tenantId);
+    
+    const id = nanoid();
+    const articleData = { id, ...body };
+
+    if (!articleData.site_id || !articleData.title || !articleData.slug) {
+      return NextResponse.json({ error: 'site_id, title, and slug are required' }, { status: 400 });
+    }
+
+    await queries.articleQueries.create(articleData);
+
+    const article = await queries.articleQueries.getById(id);
+    return NextResponse.json({ article }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating article:', error);
+    return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
+  }
+}
