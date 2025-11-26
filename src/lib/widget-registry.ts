@@ -1,7 +1,9 @@
-import Database from 'better-sqlite3';
-import { join } from 'path';
+/**
+ * Widget Registry - Manages widget definitions and instances
+ * Updated to use LibSQL/Turso for serverless compatibility
+ */
 
-const dbPath = join(process.cwd(), 'data', 'kiala.db');
+import db from './db-enhanced';
 
 export interface WidgetDefinition {
   id: string;
@@ -9,19 +11,19 @@ export interface WidgetDefinition {
   description: string;
   category: 'conversion' | 'content' | 'social' | 'media' | 'analytics';
   version: string;
-  
+
   // Core configuration
   template: string;           // HTML template with {{variable}} placeholders
   styles?: string;           // CSS styles for the widget
   script?: string;           // JavaScript for interactivity
-  
+
   // Admin interface configuration
   adminFields: WidgetField[];
-  
+
   // Behavior configuration
   triggers?: WidgetTrigger[];
   integrations?: WidgetIntegration[];
-  
+
   // Metadata
   active: boolean;
   global: boolean;          // Available to all sites vs site-specific
@@ -69,75 +71,90 @@ export interface WidgetInstance {
   updated_at: string;
 }
 
-class WidgetRegistry {
-  private db: Database.Database;
-  private widgetCache: Map<string, WidgetDefinition> = new Map();
-  private lastCacheUpdate = 0;
-  private CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Helper functions
+async function execute(sql: string, args: any[] = []) {
+  return db.execute({ sql, args });
+}
 
-  constructor() {
-    this.db = new Database(dbPath);
-    this.initTables();
-  }
+async function queryOne(sql: string, args: any[] = []): Promise<any> {
+  const result = await db.execute({ sql, args });
+  return result.rows[0] || null;
+}
 
-  private initTables() {
-    // Widget definitions table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS widget_definitions (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT,
-        category TEXT NOT NULL,
-        version TEXT NOT NULL DEFAULT '1.0.0',
-        template TEXT NOT NULL,
-        styles TEXT,
-        script TEXT,
-        admin_fields TEXT NOT NULL, -- JSON
-        triggers TEXT,              -- JSON
-        integrations TEXT,          -- JSON
-        active BOOLEAN DEFAULT 1,
-        global BOOLEAN DEFAULT 1,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+async function queryAll(sql: string, args: any[] = []): Promise<any[]> {
+  const result = await db.execute({ sql, args });
+  return result.rows as any[];
+}
 
-    // Widget instances table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS widget_instances (
-        id TEXT PRIMARY KEY,
-        widget_id TEXT NOT NULL,
-        site_id TEXT NOT NULL,
-        page_id TEXT,
-        position INTEGER NOT NULL DEFAULT 0,
-        settings TEXT NOT NULL DEFAULT '{}', -- JSON
-        active BOOLEAN DEFAULT 1,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (widget_id) REFERENCES widget_definitions(id)
-      )
-    `);
+// Tables initialized flag
+let tablesInitialized = false;
 
-    // Create indexes
-    this.db.exec(`
-      CREATE INDEX IF NOT EXISTS idx_widget_instances_site ON widget_instances(site_id);
-      CREATE INDEX IF NOT EXISTS idx_widget_instances_page ON widget_instances(page_id);
-      CREATE INDEX IF NOT EXISTS idx_widget_definitions_category ON widget_definitions(category);
-    `);
-  }
+async function initTables() {
+  if (tablesInitialized) return;
 
+  // Widget definitions table
+  await execute(`
+    CREATE TABLE IF NOT EXISTS widget_definitions (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      category TEXT NOT NULL,
+      version TEXT NOT NULL DEFAULT '1.0.0',
+      template TEXT NOT NULL,
+      styles TEXT,
+      script TEXT,
+      admin_fields TEXT NOT NULL,
+      triggers TEXT,
+      integrations TEXT,
+      active BOOLEAN DEFAULT 1,
+      global BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Widget instances table
+  await execute(`
+    CREATE TABLE IF NOT EXISTS widget_instances (
+      id TEXT PRIMARY KEY,
+      widget_id TEXT NOT NULL,
+      site_id TEXT NOT NULL,
+      page_id TEXT,
+      position INTEGER NOT NULL DEFAULT 0,
+      settings TEXT NOT NULL DEFAULT '{}',
+      active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (widget_id) REFERENCES widget_definitions(id)
+    )
+  `);
+
+  // Create indexes
+  await execute(`CREATE INDEX IF NOT EXISTS idx_widget_instances_site ON widget_instances(site_id)`);
+  await execute(`CREATE INDEX IF NOT EXISTS idx_widget_instances_page ON widget_instances(page_id)`);
+  await execute(`CREATE INDEX IF NOT EXISTS idx_widget_definitions_category ON widget_definitions(category)`);
+
+  tablesInitialized = true;
+}
+
+// In-memory cache for widget definitions
+const widgetCache: Map<string, WidgetDefinition> = new Map();
+let lastCacheUpdate = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+export const widgetRegistry = {
   /**
    * Register a new widget definition
    */
   async registerWidget(definition: Omit<WidgetDefinition, 'created_at' | 'updated_at'>): Promise<void> {
-    const stmt = this.db.prepare(`
+    await initTables();
+
+    await execute(`
       INSERT OR REPLACE INTO widget_definitions (
         id, name, description, category, version, template, styles, script,
         admin_fields, triggers, integrations, active, global, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    `);
-
-    stmt.run(
+    `, [
       definition.id,
       definition.name,
       definition.description,
@@ -151,17 +168,19 @@ class WidgetRegistry {
       definition.integrations ? JSON.stringify(definition.integrations) : null,
       definition.active ? 1 : 0,
       definition.global ? 1 : 0
-    );
+    ]);
 
     // Invalidate cache
-    this.widgetCache.clear();
-    this.lastCacheUpdate = 0;
-  }
+    widgetCache.clear();
+    lastCacheUpdate = 0;
+  },
 
   /**
    * Get all available widget definitions
    */
   async getWidgetDefinitions(category?: string): Promise<WidgetDefinition[]> {
+    await initTables();
+
     let query = 'SELECT * FROM widget_definitions WHERE active = 1';
     const params: any[] = [];
 
@@ -172,38 +191,40 @@ class WidgetRegistry {
 
     query += ' ORDER BY name ASC';
 
-    const rows = this.db.prepare(query).all(...params) as any[];
-    
+    const rows = await queryAll(query, params);
+
     return rows.map(row => ({
       ...row,
-      adminFields: JSON.parse(row.admin_fields),
+      adminFields: JSON.parse(row.admin_fields || '[]'),
       triggers: row.triggers ? JSON.parse(row.triggers) : undefined,
       integrations: row.integrations ? JSON.parse(row.integrations) : undefined,
       active: Boolean(row.active),
       global: Boolean(row.global)
     }));
-  }
+  },
 
   /**
    * Get widget definition by ID with caching
    */
   async getWidgetDefinition(widgetId: string): Promise<WidgetDefinition | null> {
+    await initTables();
+
     const now = Date.now();
-    
+
     // Check cache first
-    if (this.widgetCache.has(widgetId) && (now - this.lastCacheUpdate) < this.CACHE_TTL) {
-      return this.widgetCache.get(widgetId) || null;
+    if (widgetCache.has(widgetId) && (now - lastCacheUpdate) < CACHE_TTL) {
+      return widgetCache.get(widgetId) || null;
     }
 
-    const row = this.db.prepare(`
+    const row = await queryOne(`
       SELECT * FROM widget_definitions WHERE id = ? AND active = 1
-    `).get(widgetId) as any;
+    `, [widgetId]);
 
     if (!row) return null;
 
     const definition: WidgetDefinition = {
       ...row,
-      adminFields: JSON.parse(row.admin_fields),
+      adminFields: JSON.parse(row.admin_fields || '[]'),
       triggers: row.triggers ? JSON.parse(row.triggers) : undefined,
       integrations: row.integrations ? JSON.parse(row.integrations) : undefined,
       active: Boolean(row.active),
@@ -211,63 +232,87 @@ class WidgetRegistry {
     };
 
     // Cache the result
-    this.widgetCache.set(widgetId, definition);
-    if (this.widgetCache.size === 1) {
-      this.lastCacheUpdate = now;
+    widgetCache.set(widgetId, definition);
+    if (widgetCache.size === 1) {
+      lastCacheUpdate = now;
     }
 
     return definition;
-  }
+  },
 
   /**
    * Create widget instance for a site
    */
   async createWidgetInstance(siteId: string, widgetId: string, pageId: string | null, settings: Record<string, any> = {}): Promise<string> {
-    const instanceId = `instance-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Get next position for this site/page
-    const maxPosition = this.db.prepare(`
-      SELECT MAX(position) as max_pos FROM widget_instances 
-      WHERE site_id = ? AND page_id ${pageId ? '= ?' : 'IS NULL'}
-    `).get(siteId, ...(pageId ? [pageId] : [])) as any;
+    await initTables();
 
+    const instanceId = `instance-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Get next position for this site/page
+    let maxPosQuery = 'SELECT MAX(position) as max_pos FROM widget_instances WHERE site_id = ?';
+    const params: any[] = [siteId];
+
+    if (pageId) {
+      maxPosQuery += ' AND page_id = ?';
+      params.push(pageId);
+    } else {
+      maxPosQuery += ' AND page_id IS NULL';
+    }
+
+    const maxPosition = await queryOne(maxPosQuery, params);
     const position = (maxPosition?.max_pos || 0) + 1;
 
-    const stmt = this.db.prepare(`
+    await execute(`
       INSERT INTO widget_instances (id, widget_id, site_id, page_id, position, settings)
       VALUES (?, ?, ?, ?, ?, ?)
-    `);
+    `, [instanceId, widgetId, siteId, pageId, position, JSON.stringify(settings)]);
 
-    stmt.run(instanceId, widgetId, siteId, pageId, position, JSON.stringify(settings));
-    
     return instanceId;
-  }
+  },
 
   /**
    * Get widget instances for a site/page
    */
   async getWidgetInstances(siteId: string, pageId?: string): Promise<WidgetInstance[]> {
-    return [];
-  }
+    await initTables();
+
+    let query = 'SELECT * FROM widget_instances WHERE site_id = ? AND active = 1';
+    const params: any[] = [siteId];
+
+    if (pageId) {
+      query += ' AND (page_id = ? OR page_id IS NULL)';
+      params.push(pageId);
+    }
+
+    query += ' ORDER BY position ASC';
+
+    const rows = await queryAll(query, params);
+
+    return rows.map(row => ({
+      ...row,
+      settings: JSON.parse(row.settings || '{}'),
+      active: Boolean(row.active)
+    }));
+  },
 
   /**
    * Render widget instance to HTML
    */
   async renderWidget(instanceId: string): Promise<string> {
-    const instanceQuery = `
+    await initTables();
+
+    const instance = await queryOne(`
       SELECT wi.*, wd.template, wd.styles, wd.script
       FROM widget_instances wi
       JOIN widget_definitions wd ON wi.widget_id = wd.id
       WHERE wi.id = ? AND wi.active = 1 AND wd.active = 1
-    `;
+    `, [instanceId]);
 
-    const instance = this.db.prepare(instanceQuery).get(instanceId) as any;
-    
     if (!instance) {
       return `<!-- Widget instance ${instanceId} not found -->`;
     }
 
-    const settings = JSON.parse(instance.settings);
+    const settings = JSON.parse(instance.settings || '{}');
     let html = instance.template;
 
     // Replace template variables
@@ -287,32 +332,30 @@ class WidgetRegistry {
     }
 
     return html;
-  }
+  },
 
   /**
    * Update widget instance settings
    */
   async updateWidgetInstance(instanceId: string, settings: Record<string, any>): Promise<void> {
-    const stmt = this.db.prepare(`
-      UPDATE widget_instances 
-      SET settings = ?, updated_at = CURRENT_TIMESTAMP 
-      WHERE id = ?
-    `);
+    await initTables();
 
-    stmt.run(JSON.stringify(settings), instanceId);
-  }
+    await execute(`
+      UPDATE widget_instances
+      SET settings = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, [JSON.stringify(settings), instanceId]);
+  },
 
   /**
    * Delete widget instance
    */
   async deleteWidgetInstance(instanceId: string): Promise<void> {
-    const stmt = this.db.prepare('DELETE FROM widget_instances WHERE id = ?');
-    stmt.run(instanceId);
-  }
-}
+    await initTables();
 
-// Singleton instance
-export const widgetRegistry = new WidgetRegistry();
+    await execute('DELETE FROM widget_instances WHERE id = ?', [instanceId]);
+  }
+};
 
 /**
  * Initialize built-in widget definitions
@@ -362,8 +405,7 @@ export async function initializeBuiltInWidgets() {
       function submitEmail(event) {
         event.preventDefault();
         const email = event.target.querySelector('input[type="email"]').value;
-        
-        // Submit to API
+
         fetch('/api/emails', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -396,7 +438,7 @@ export async function initializeBuiltInWidgets() {
   // Exit Intent Popup
   await widgetRegistry.registerWidget({
     id: 'exit-intent-popup',
-    name: 'Exit Intent Popup', 
+    name: 'Exit Intent Popup',
     description: 'Show popup when user is about to leave the page',
     category: 'conversion',
     version: '1.0.0',
@@ -446,22 +488,22 @@ export async function initializeBuiltInWidgets() {
     `,
     script: `
       let exitIntentShown = false;
-      
+
       document.addEventListener('mouseleave', function(e) {
         if (e.clientY <= 0 && !exitIntentShown) {
           document.getElementById('exit-popup').style.display = 'flex';
           exitIntentShown = true;
         }
       });
-      
+
       function closeExitPopup() {
         document.getElementById('exit-popup').style.display = 'none';
       }
-      
+
       function submitExitEmail(event) {
         event.preventDefault();
         const email = event.target.querySelector('input[type="email"]').value;
-        
+
         fetch('/api/emails', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -488,10 +530,5 @@ export async function initializeBuiltInWidgets() {
     global: true
   });
 
-  console.log('✅ Built-in widgets initialized');
-}
-
-// Auto-initialize on import
-if (typeof window === 'undefined') { // Server-side only
-  initializeBuiltInWidgets();
+  console.log('Built-in widgets initialized');
 }

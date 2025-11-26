@@ -1,13 +1,27 @@
-import { createClient } from '@libsql/client';
+import { createClient, Client } from '@libsql/client';
 import { cache, CacheTTL, withCache } from './cache';
 import { v4 as uuidv4 } from 'uuid';
 
-// Create Turso/LibSQL client
-// Uses TURSO_DATABASE_URL and TURSO_AUTH_TOKEN for cloud deployment
-// Falls back to local SQLite file for development
-const db = createClient({
-  url: process.env.TURSO_DATABASE_URL || 'file:./data/kiala.db',
-  authToken: process.env.TURSO_AUTH_TOKEN,
+// Lazy-initialized Turso/LibSQL client
+// This prevents connection attempts during build time
+let _db: Client | null = null;
+
+function getDb(): Client {
+  if (!_db) {
+    // Only create the client when actually needed (at runtime, not build time)
+    _db = createClient({
+      url: process.env.TURSO_DATABASE_URL || 'file:./data/kiala.db',
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    });
+  }
+  return _db;
+}
+
+// For backwards compatibility, export a proxy that lazily initializes
+const db = new Proxy({} as Client, {
+  get(_, prop) {
+    return (getDb() as any)[prop];
+  }
 });
 
 // Helper to run a query and return all rows
