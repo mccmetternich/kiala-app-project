@@ -56,6 +56,10 @@ export interface SiteSettings {
   emailCapture: EmailCaptureSettings;
   social: SocialLinks;
   analytics?: AnalyticsSettings;
+  // Audio & Lead Magnet
+  audioUrl?: string;
+  aboutAudioUrl?: string;
+  leadMagnetPdfUrl?: string;
 }
 
 // Page Structure
