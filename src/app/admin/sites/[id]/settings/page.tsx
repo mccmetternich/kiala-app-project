@@ -24,7 +24,7 @@ export default function SiteSettings() {
   const [activeTab, setActiveTab] = useState<'content' | 'appearance' | 'advanced'>('content');
   const [isSaving, setIsSaving] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
-  const [mediaTarget, setMediaTarget] = useState<'logo' | 'author' | 'sidebar' | 'about' | 'leadMagnet' | 'audio' | 'aboutAudio' | null>(null);
+  const [mediaTarget, setMediaTarget] = useState<'logo' | 'author' | 'sidebar' | 'about' | 'leadMagnet' | 'audio' | 'aboutAudio' | 'leadMagnetPdf' | null>(null);
 
   useEffect(() => {
     async function loadSite() {
@@ -174,6 +174,19 @@ export default function SiteSettings() {
           }
         };
       });
+    } else if (mediaTarget === 'leadMagnetPdf') {
+      setSite((prev: any) => {
+        const currentSettings = typeof prev.settings === 'string'
+          ? JSON.parse(prev.settings)
+          : prev.settings || {};
+        return {
+          ...prev,
+          settings: {
+            ...currentSettings,
+            leadMagnetPdfUrl: file.url
+          }
+        };
+      });
     }
     setShowMediaLibrary(false);
     setMediaTarget(null);
@@ -204,6 +217,21 @@ export default function SiteSettings() {
         settings: {
           ...currentSettings,
           aboutAudioUrl: undefined
+        }
+      };
+    });
+  };
+
+  const handleLeadMagnetPdfRemove = () => {
+    setSite((prev: any) => {
+      const currentSettings = typeof prev.settings === 'string'
+        ? JSON.parse(prev.settings)
+        : prev.settings || {};
+      return {
+        ...prev,
+        settings: {
+          ...currentSettings,
+          leadMagnetPdfUrl: undefined
         }
       };
     });
@@ -640,6 +668,74 @@ export default function SiteSettings() {
                     </div>
                   </div>
                 </div>
+
+                {/* Lead Magnet PDF Section */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-200 mb-4">Lead Magnet PDF</h3>
+                  <p className="text-sm text-gray-400 mb-6">Upload a PDF that will be delivered to users when they sign up via popups or email capture forms.</p>
+
+                  <div className="bg-gray-700/50 rounded-lg p-4 max-w-md">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Wellness Guide / Lead Magnet</label>
+                    <p className="text-xs text-gray-500 mb-3">This PDF will be automatically downloaded when users submit their email</p>
+                    {settings.leadMagnetPdfUrl ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg border border-gray-600">
+                          <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                            <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-200 truncate">Lead Magnet PDF</p>
+                            <p className="text-xs text-gray-500 truncate">{settings.leadMagnetPdfUrl.split('/').pop()}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={settings.leadMagnetPdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-secondary text-sm"
+                          >
+                            Preview
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMediaTarget('leadMagnetPdf');
+                              setShowMediaLibrary(true);
+                            }}
+                            className="btn-secondary text-sm"
+                          >
+                            Change
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleLeadMagnetPdfRemove}
+                            className="btn-secondary text-sm text-red-400 hover:text-red-300"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMediaTarget('leadMagnetPdf');
+                          setShowMediaLibrary(true);
+                        }}
+                        className="flex items-center gap-3 w-full p-3 bg-gray-700 rounded-lg border-2 border-dashed border-gray-600 hover:border-primary-500 transition-colors"
+                      >
+                        <Upload className="w-5 h-5 text-gray-400" />
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-gray-300">Upload PDF</p>
+                          <p className="text-xs text-gray-500">From Media Library</p>
+                        </div>
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -848,7 +944,7 @@ export default function SiteSettings() {
           }}
           onSelect={handleMediaSelect}
           siteId={id}
-          initialFilter={mediaTarget === 'audio' || mediaTarget === 'aboutAudio' ? 'audio' : mediaTarget === 'leadMagnet' ? 'image' : 'all'}
+          initialFilter={mediaTarget === 'audio' || mediaTarget === 'aboutAudio' ? 'audio' : mediaTarget === 'leadMagnetPdf' ? 'document' : mediaTarget === 'leadMagnet' ? 'image' : 'all'}
         />
       </div>
     </EnhancedAdminLayout>
