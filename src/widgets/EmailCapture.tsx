@@ -17,7 +17,7 @@ interface EmailCaptureProps {
 
 export default function EmailCapture({
   headline = 'Want More Health Tips?',
-  subheading = 'Join 10,000+ women getting weekly wellness insights',
+  subheading = 'Join 47k+ women getting weekly wellness insights',
   buttonText = 'Subscribe',
   siteId,
   source = 'article_email_capture',

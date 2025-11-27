@@ -104,7 +104,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
             )}
 
             <p className="text-xs text-primary-200 mt-3">
-              Join 10,000+ women • No spam, unsubscribe anytime
+              Join 47k+ women • No spam, unsubscribe anytime
             </p>
           </div>
         </div>
