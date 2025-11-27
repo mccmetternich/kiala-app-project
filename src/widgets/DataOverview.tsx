@@ -77,17 +77,20 @@ const colorMap: Record<string, { bg: string; light: string; text: string; border
 
 export default function DataOverview({
   headline = 'The Numbers Speak',
-  subheading = 'Why hormone health matters for women over 40',
+  subheading,
   stats = defaultStats,
   source = 'Journal of Clinical Endocrinology, 2023',
   style = 'cards'
 }: DataOverviewProps) {
+  // Use default subheading if not provided or undefined
+  const displaySubheading = subheading || 'Key research findings';
+
   if (style === 'banner') {
     return (
       <div className="my-8 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold mb-1">{headline}</h2>
-          <p className="text-gray-400">{subheading}</p>
+          <p className="text-gray-400">{displaySubheading}</p>
         </div>
         <div className="flex flex-wrap justify-center gap-8">
           {stats.map((stat, idx) => (
@@ -130,7 +133,7 @@ export default function DataOverview({
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{headline}</h2>
-        <p className="text-gray-600">{subheading}</p>
+        <p className="text-gray-600">{displaySubheading}</p>
       </div>
 
       {/* Stats Grid */}
