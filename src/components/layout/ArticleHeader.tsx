@@ -118,129 +118,128 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
 
       {/* Mobile: Elegant Compact Header */}
       <div className="md:hidden">
-        {/* Collapsed Sticky Header (appears on scroll) */}
-        <div
-          className={`fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300 ${
-            isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="px-4 py-2.5">
-            <div className="flex items-center justify-between">
-              {/* Left: Avatar + Name */}
-              <div className="flex items-center gap-3">
-                <img
-                  src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop'}
-                  alt={brand?.name || 'Doctor'}
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-100"
-                />
-                <span className="font-semibold text-gray-900 text-sm">{brand?.name || 'Dr. Amy'}</span>
-              </div>
-
-              {/* Right: Compact Audio Player */}
-              {effectiveAudioUrl && (
-                <div className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full pl-3 pr-1 py-1 shadow-md">
-                  <div className="flex flex-col">
-                    <span className="text-white text-[10px] font-medium leading-tight">Hi from {brand?.name?.split(' ')[0] || 'Dr. Amy'}</span>
-                    <div className="w-14 bg-white/30 rounded-full h-1 mt-0.5">
-                      <div className="bg-white h-full rounded-full transition-all" style={{ width: `${progress}%` }} />
-                    </div>
-                  </div>
-                  <button
-                    onClick={togglePlayPause}
-                    className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:scale-105 transition-transform"
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-4 h-4 text-purple-600" />
-                    ) : (
-                      <Play className="w-4 h-4 text-purple-600 ml-0.5" />
-                    )}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Main Mobile Header - Elegant Profile Card */}
-        <div className="bg-white px-4 py-4">
-          <div className="flex items-start gap-4">
-            {/* Profile Image */}
-            <div className="flex-shrink-0">
-              <img
-                src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=120&h=120&fit=crop'}
-                alt={brand?.name || 'Doctor'}
-                className="w-14 h-14 rounded-full object-cover ring-2 ring-purple-200 shadow-md"
-              />
-            </div>
-
-            {/* Bio + Audio Player */}
-            <div className="flex-1 min-w-0">
-              {/* Name & Title */}
-              <div className="mb-2">
-                <h1 className="font-bold text-gray-900 text-base leading-tight">
-                  {brand?.name || 'Dr. Amy'}
-                </h1>
-                <p className="text-xs text-gray-500">
-                  {brand?.title || brand?.tagline || "Women's Health Expert"}
-                </p>
-              </div>
-
-              {/* Audio Player - Prominent */}
-              {effectiveAudioUrl && (
-                <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500 via-purple-500 to-pink-500 rounded-xl px-3 py-2 shadow-lg">
-                  <button
-                    onClick={togglePlayPause}
-                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-transform flex-shrink-0"
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5 h-5 text-purple-600" />
-                    ) : (
-                      <Play className="w-5 h-5 text-purple-600 ml-0.5" />
-                    )}
-                  </button>
+        {/* Single sticky header that transforms on scroll */}
+        <div className="sticky top-0 z-[60] bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 shadow-lg">
+          {/* Smooth transition between expanded and collapsed */}
+          <div className={`transition-all duration-300 ease-out overflow-hidden ${isScrolled ? 'max-h-14' : 'max-h-40'}`}>
+            <div className="px-4 py-3">
+              {/* Expanded view layout */}
+              <div className={`transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-24 opacity-100'}`}>
+                {/* Top row: Avatar + Bio */}
+                <div className="flex items-center gap-3 mb-2">
+                  <img
+                    src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=120&h=120&fit=crop'}
+                    alt={brand?.name || 'Doctor'}
+                    className="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0"
+                  />
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-semibold text-sm leading-tight">
-                      Hi from {brand?.name?.split(' ')[0] || 'Dr. Amy'}
+                    <p className="text-white font-bold text-sm leading-tight">
+                      {brand?.name || 'Dr. Amy'}
                     </p>
-                    <p className="text-white/80 text-[11px] leading-tight">A quick welcome message</p>
-                    <div className="w-full bg-white/30 rounded-full h-1.5 mt-1.5">
+                    <p className="text-white/70 text-xs leading-tight">
+                      {brand?.title || brand?.tagline || "Women's Health Expert"}
+                    </p>
+                    <p className="text-white font-semibold text-xs leading-tight mt-1">
+                      👋 Hi from {brand?.name || 'Dr. Amy'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Play button + Progress bar row - integrated unit */}
+                {effectiveAudioUrl && (
+                  <div className="flex items-center bg-white/15 backdrop-blur-sm rounded-full pl-1 pr-3 py-1">
+                    <button
+                      onClick={togglePlayPause}
+                      className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-all flex-shrink-0"
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-4 h-4 text-purple-600" />
+                      ) : (
+                        <Play className="w-4 h-4 text-purple-600 ml-0.5" />
+                      )}
+                    </button>
+                    <div className="flex-1 mx-3 bg-white/30 rounded-full h-1.5">
                       <div
                         className="bg-white h-full rounded-full transition-all duration-100"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
                   </div>
+                )}
+              </div>
+
+              {/* Collapsed/Mini view layout */}
+              <div className={`transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-12 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div className="flex items-center gap-3">
+                  {/* Left half: Avatar + Bio */}
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <img
+                      src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop'}
+                      alt={brand?.name || 'Doctor'}
+                      className="w-8 h-8 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-white font-semibold text-xs leading-tight truncate">
+                        👋 Hi from {brand?.name || 'Dr. Amy'}
+                      </p>
+                      <p className="text-white/70 text-[10px] leading-tight truncate">
+                        {brand?.title || "MD, PhD • Women's Health Authority"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right half: Play button + Progress bar - integrated unit */}
+                  {effectiveAudioUrl && (
+                    <div className="flex items-center bg-white/15 backdrop-blur-sm rounded-full pl-0.5 pr-2 py-0.5 flex-1">
+                      <button
+                        onClick={togglePlayPause}
+                        className="w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-all flex-shrink-0"
+                      >
+                        {isPlaying ? (
+                          <Pause className="w-3.5 h-3.5 text-purple-600" />
+                        ) : (
+                          <Play className="w-3.5 h-3.5 text-purple-600 ml-0.5" />
+                        )}
+                      </button>
+                      <div className="flex-1 mx-2 bg-white/30 rounded-full h-1">
+                        <div
+                          className="bg-white h-full rounded-full transition-all duration-100"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
-          {/* Audio element */}
-          <audio
-            ref={audioRef}
-            src={effectiveAudioUrl}
-            onTimeUpdate={handleTimeUpdate}
-            onEnded={handleEnded}
-            preload="metadata"
-          />
-        </div>
-
-        {/* Social Validation Bumper */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2.5">
-          <div className="flex items-center justify-center gap-2.5">
-            <div className="flex -space-x-1.5">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=28&h=28&fit=crop&crop=face" className="w-6 h-6 rounded-full border-2 border-white/80" alt="" />
-              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=28&h=28&fit=crop&crop=face" className="w-6 h-6 rounded-full border-2 border-white/80" alt="" />
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=28&h=28&fit=crop&crop=face" className="w-6 h-6 rounded-full border-2 border-white/80" alt="" />
-            </div>
-            <span className="font-medium text-sm">47,284+ women trust {brand?.name?.split(' ')[0] || 'Dr. Amy'}</span>
-            <div className="flex items-center gap-0.5">
-              {[1,2,3,4,5].map(i => (
-                <Star key={i} className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
-              ))}
+          {/* Social Validation Bumper - only in expanded view */}
+          <div className={`bg-purple-700/90 text-white px-4 transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 py-0' : 'max-h-10 py-2'}`}>
+            <div className="flex items-center justify-center gap-2">
+              <div className="flex -space-x-1.5">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
+              </div>
+              <span className="font-medium text-xs">47,284+ women trust {brand?.name || 'Dr. Amy'}</span>
+              <div className="flex items-center gap-0.5">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className="w-3 h-3 fill-amber-300 text-amber-300" />
+                ))}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Audio element */}
+        <audio
+          ref={audioRef}
+          src={effectiveAudioUrl}
+          onTimeUpdate={handleTimeUpdate}
+          onEnded={handleEnded}
+          preload="metadata"
+        />
       </div>
     </header>
   );
