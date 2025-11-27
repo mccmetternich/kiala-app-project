@@ -141,7 +141,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
               <span>47k+ members</span>
             </div>
             <a
-              href="#newsletter"
+              href={`${homeUrl}#newsletter`}
               className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2 rounded-full font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-md hover:shadow-lg text-sm whitespace-nowrap"
             >
               Join Community
@@ -305,7 +305,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                 </Link>
                 <div className="pt-2">
                   <a
-                    href="#newsletter"
+                    href={`${homeUrl}#newsletter`}
                     className="block w-full bg-white text-purple-600 text-sm py-3 text-center rounded-lg font-bold"
                     onClick={() => setIsMenuOpen(false)}
                   >

@@ -62,7 +62,7 @@ export default function NewsletterSignup({
   };
 
   return (
-    <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-purple-800 rounded-3xl p-8 lg:p-12 my-12 text-white shadow-2xl">
+    <div id="newsletter" className="bg-gradient-to-br from-primary-600 via-primary-700 to-purple-800 rounded-3xl p-8 lg:p-12 my-12 text-white shadow-2xl scroll-mt-24">
       <div className="max-w-4xl mx-auto">
         {/* Social Proof Header */}
         <div className="flex flex-col lg:flex-row items-center justify-center gap-6 mb-8">
