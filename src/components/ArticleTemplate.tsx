@@ -551,6 +551,71 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
         </div>
       );
 
+    case 'hero-image':
+      return (
+        <div className="my-8">
+          <img
+            src={widget.config.image}
+            alt={widget.config.alt || 'Article hero image'}
+            className="w-full rounded-xl shadow-lg"
+          />
+        </div>
+      );
+
+    case 'opening-hook':
+      return (
+        <div className="my-8 prose prose-lg max-w-none">
+          <div
+            className="text-lg text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html: widget.config.content?.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n\n/g, '</p><p class="mt-4">')
+                .replace(/^/, '<p>').replace(/$/, '</p>') || ''
+            }}
+          />
+        </div>
+      );
+
+    case 'main-content':
+      // Parse markdown-style content
+      const parseContent = (content: string) => {
+        if (!content) return '';
+        return content
+          .replace(/## (.*?)(\n|$)/g, '<h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h2>')
+          .replace(/### (.*?)(\n|$)/g, '<h3 class="text-xl font-semibold text-gray-900 mt-6 mb-3">$1</h3>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/^- (.*?)$/gm, '<li class="ml-4">$1</li>')
+          .replace(/(<li.*?<\/li>\n?)+/g, '<ul class="list-disc pl-6 my-4 space-y-2">$&</ul>')
+          .replace(/\n\n/g, '</p><p class="mt-4 text-gray-700 leading-relaxed">')
+          .replace(/^(?!<)/, '<p class="text-gray-700 leading-relaxed">')
+          .replace(/(?!>)$/, '</p>');
+      };
+
+      return (
+        <div className="my-8 prose prose-lg max-w-none">
+          <div
+            className="text-gray-700"
+            dangerouslySetInnerHTML={{ __html: parseContent(widget.config.content || '') }}
+          />
+        </div>
+      );
+
+    case 'final-cta':
+      return (
+        <div className="my-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl p-8 text-center text-white">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">{widget.config.headline}</h2>
+          <p className="text-lg text-white/90 mb-6 max-w-2xl mx-auto">{widget.config.content}</p>
+          <a
+            href={widget.config.buttonUrl || '#newsletter'}
+            className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
+          >
+            {widget.config.buttonText || 'Get Started'}
+          </a>
+        </div>
+      );
+
     default:
       // Fallback for any unhandled widget types - render as a placeholder
       console.warn(`Unknown widget type: ${widget.type}`);
