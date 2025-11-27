@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { clientAPI } from '@/lib/api';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Gift, CheckCircle, Heart } from 'lucide-react';
 
 // Mini audio player component for compact display
 function AudioPlayerMini({ audioUrl }: { audioUrl: string }) {
@@ -88,7 +88,7 @@ export default function AboutPage() {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [emailMessage, setEmailMessage] = useState('');
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent, leadMagnetPdfUrl?: string) => {
     e.preventDefault();
     if (!email || !email.includes('@')) {
       setEmailStatus('error');
@@ -97,21 +97,36 @@ export default function AboutPage() {
     }
     setEmailStatus('loading');
     try {
-      const response = await fetch('/api/emails', {
+      const response = await fetch('/api/subscribers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
           siteId: siteId || 'default',
-          source: 'about_page_eguide'
+          source: 'about_page_lead_magnet',
+          tags: ['about_page', 'lead_magnet'],
+          pageUrl: typeof window !== 'undefined' ? window.location.href : undefined
         }),
       });
-      if (response.ok) {
+      const data = await response.json();
+      if (response.ok || data.success) {
         setEmailStatus('success');
-        setEmailMessage('Check your inbox for your free Welcome E-Guide!');
-        setEmail('');
+        setEmailMessage(data.message || 'Your guide is ready!');
+        localStorage.setItem(`community_subscribed_${siteId}`, 'true');
+
+        // Trigger PDF download if URL is available
+        if (leadMagnetPdfUrl) {
+          setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = leadMagnetPdfUrl;
+            link.download = '';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, 500);
+        }
       } else {
-        const data = await response.json();
         setEmailStatus('error');
         setEmailMessage(data.error || 'Something went wrong. Please try again.');
       }
@@ -352,45 +367,98 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Second Email Capture - Welcome E-Guide */}
+            {/* Lead Magnet - The Complete Hormone Balance Guide */}
             <div className="bg-gradient-to-br from-primary-50 to-purple-50 rounded-2xl p-8 border border-primary-100 shadow-lg">
-              <div className="max-w-2xl mx-auto text-center">
-                <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                  <span>🎁</span>
-                  Free Instant Download
-                </div>
-                <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
-                  Get Your Free Welcome E-Guide
-                </h3>
-                <p className="text-gray-700 mb-6 leading-relaxed">
-                  Start your wellness journey today with my exclusive guide to balancing hormones naturally.
-                  Inside you'll discover the 5 key strategies that have helped thousands of women reclaim their energy and vitality.
-                </p>
-                <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    disabled={emailStatus === 'loading'}
-                  />
-                  <button
-                    type="submit"
-                    disabled={emailStatus === 'loading'}
-                    className="bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
-                  >
-                    {emailStatus === 'loading' ? 'Sending...' : 'Send My Guide'}
-                  </button>
-                </form>
-                {emailMessage && (
-                  <p className={`mt-3 text-sm ${emailStatus === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                    {emailMessage}
-                  </p>
+              <div className="max-w-2xl mx-auto">
+                {emailStatus === 'success' ? (
+                  /* Success State */
+                  <div className="text-center py-6">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <CheckCircle className="w-10 h-10 text-green-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                      {transformedSite.settings?.leadMagnetPdfUrl ? 'Your Guide is Ready!' : 'Welcome to the Community!'}
+                    </h3>
+                    <p className="text-gray-600 mb-6">{emailMessage}</p>
+                    {transformedSite.settings?.leadMagnetPdfUrl && (
+                      <div className="space-y-3">
+                        <a
+                          href={transformedSite.settings.leadMagnetPdfUrl}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-colors"
+                        >
+                          <Gift className="w-5 h-5" />
+                          <span>Download Your Free Guide</span>
+                        </a>
+                        <p className="text-sm text-gray-500">Your download should start automatically</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Form State */
+                  <>
+                    <div className="text-center mb-6">
+                      <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                        <Gift className="w-4 h-4" />
+                        Free Instant Download
+                      </div>
+                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
+                        Get "The Complete Hormone Balance Guide"
+                      </h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        Get instant access to {brand?.name || "Dr. Amy"}'s most popular health guide - absolutely free.
+                      </p>
+                    </div>
+
+                    {/* Benefits List */}
+                    <div className="bg-white/60 rounded-xl p-5 mb-6">
+                      <p className="text-sm font-medium text-gray-700 mb-3">Inside this free guide, you'll discover:</p>
+                      <ul className="space-y-2">
+                        {[
+                          "5 Signs Your Hormones Are Imbalanced",
+                          "The #1 Morning Routine for Energy",
+                          "Foods That Heal vs. Foods That Harm",
+                          "My Personal Supplement Stack"
+                        ].map((benefit, index) => (
+                          <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                            <Heart className="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" />
+                            <span>{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Email Form */}
+                    <form onSubmit={(e) => handleEmailSubmit(e, transformedSite.settings?.leadMagnetPdfUrl)} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email address"
+                        className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        disabled={emailStatus === 'loading'}
+                      />
+                      <button
+                        type="submit"
+                        disabled={emailStatus === 'loading'}
+                        className="bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        <Gift className="w-5 h-5" />
+                        {emailStatus === 'loading' ? 'Sending...' : 'Send My Free Guide'}
+                      </button>
+                    </form>
+
+                    {emailStatus === 'error' && emailMessage && (
+                      <p className="mt-3 text-sm text-red-600 text-center">{emailMessage}</p>
+                    )}
+
+                    <p className="text-xs text-gray-500 mt-4 text-center">
+                      Join 47k+ women who have transformed their health. No spam, unsubscribe anytime.
+                    </p>
+                  </>
                 )}
-                <p className="text-xs text-gray-500 mt-4">
-                  Join 47,000+ women who have transformed their health. No spam, unsubscribe anytime.
-                </p>
               </div>
             </div>
 
