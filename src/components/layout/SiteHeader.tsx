@@ -70,108 +70,117 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      {/* Desktop: Announcement Banner */}
-      <div className="hidden md:block bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-sm">
-          <div className="flex items-center gap-3">
-            <div className="flex -space-x-1">
-              <img src={WOMEN_AVATARS[0]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
-              <img src={WOMEN_AVATARS[1]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
-              <img src={WOMEN_AVATARS[2]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
-            </div>
-            <span className="font-medium">Join 47,284 women transforming their health!</span>
-          </div>
-          <Link href={`${homeUrl}/articles/foods-naturally-balance-hormones`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <Bell className="w-4 h-4" />
-            </div>
-            <span className="font-medium">✨ New breakthrough research just published!</span>
-            <Badge variant="limited" size="sm" className="bg-accent-500 text-white border-accent-400 animate-pulse">
-              Read Now
-            </Badge>
-          </Link>
-        </div>
-      </div>
-
-      {/* Desktop: Main Navigation */}
-      <nav className="hidden md:block bg-white border-b-2 border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href={homeUrl} className="flex items-center gap-3">
-            {(brand?.logoImage || brand?.profileImage) ? (
-              <img
-                src={brand.logoImage || brand.profileImage}
-                alt={brand?.name || 'Logo'}
-                className="w-12 h-12 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">
-                  {brand?.name ? brand.name.replace(/^Dr\.?\s*/i, '').split(' ').map(n => n[0]).join('') : 'DR'}
-                </span>
-              </div>
-            )}
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                {brand?.name || site.name || 'Dr. Heart'}
-              </h1>
-              <p className="text-sm text-primary-600 font-medium">
-                Your 40+ Wellness Authority
-              </p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="flex items-center gap-8">
-            <Link href={homeUrl} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Home</Link>
-            <Link href={`${homeUrl}/articles`} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Articles</Link>
-            <Link href={`${homeUrl}/about`} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">About</Link>
-          </div>
-
-          {/* CTA Button */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+    <>
+      {/* Desktop Header */}
+      <header className="hidden md:block bg-white shadow-md sticky top-0 z-50">
+        {/* Desktop: Announcement Banner */}
+        <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-between text-sm">
+            <div className="flex items-center gap-3">
               <div className="flex -space-x-1">
-                <img src={WOMEN_AVATARS[3]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
-                <img src={WOMEN_AVATARS[4]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
-                <img src={WOMEN_AVATARS[5]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
+                <img src={WOMEN_AVATARS[0]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
+                <img src={WOMEN_AVATARS[1]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
+                <img src={WOMEN_AVATARS[2]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
               </div>
-              <span>47k+ members</span>
+              <span className="font-medium">Join 47,284 women transforming their health!</span>
             </div>
-            <a
-              href={`${homeUrl}#newsletter`}
-              className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2 rounded-full font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-md hover:shadow-lg text-sm whitespace-nowrap"
-            >
-              Join Community
-            </a>
+            <Link href={`${homeUrl}/articles/foods-naturally-balance-hormones`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <Bell className="w-4 h-4" />
+              </div>
+              <span className="font-medium">✨ New breakthrough research just published!</span>
+              <Badge variant="limited" size="sm" className="bg-accent-500 text-white border-accent-400 animate-pulse">
+                Read Now
+              </Badge>
+            </Link>
           </div>
         </div>
-        </div>
-      </nav>
 
-      {/* Mobile: Elegant Compact Header with Hamburger Menu */}
-      <div className="md:hidden">
-        {/* New Breakthrough Announcement Banner */}
-        <div className={`bg-gradient-to-r from-primary-500 to-primary-600 text-white py-2 px-4 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>
-          <Link href={`${homeUrl}/articles/foods-naturally-balance-hormones`} className="flex items-center justify-center gap-2">
-            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-              <Bell className="w-3 h-3" />
+        {/* Desktop: Main Navigation */}
+        <nav className="bg-white border-b-2 border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href={homeUrl} className="flex items-center gap-3">
+              {(brand?.logoImage || brand?.profileImage) ? (
+                <img
+                  src={brand.logoImage || brand.profileImage}
+                  alt={brand?.name || 'Logo'}
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">
+                    {brand?.name ? brand.name.replace(/^Dr\.?\s*/i, '').split(' ').map(n => n[0]).join('') : 'DR'}
+                  </span>
+                </div>
+              )}
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">
+                  {brand?.name || site.name || 'Dr. Heart'}
+                </h1>
+                <p className="text-sm text-primary-600 font-medium">
+                  Your 40+ Wellness Authority
+                </p>
+              </div>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <div className="flex items-center gap-8">
+              <Link href={homeUrl} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Home</Link>
+              <Link href={`${homeUrl}/articles`} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Articles</Link>
+              <Link href={`${homeUrl}/about`} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">About</Link>
             </div>
-            <span className="font-medium text-xs">✨ New breakthrough research!</span>
-            <Badge variant="limited" size="sm" className="bg-accent-500 text-white border-accent-400 animate-pulse text-[10px] px-1.5 py-0.5">
-              Read Now
-            </Badge>
-          </Link>
-        </div>
 
-        {/* Main Header - transforms on scroll */}
-        <div className="sticky top-0 z-[60] bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 shadow-lg">
-          <div className={`transition-all duration-300 ease-out overflow-hidden ${isScrolled ? 'max-h-14' : 'max-h-40'}`}>
+            {/* CTA Button */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex -space-x-1">
+                  <img src={WOMEN_AVATARS[3]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
+                  <img src={WOMEN_AVATARS[4]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
+                  <img src={WOMEN_AVATARS[5]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
+                </div>
+                <span>47k+ members</span>
+              </div>
+              <a
+                href={`${homeUrl}#newsletter`}
+                className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2 rounded-full font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-md hover:shadow-lg text-sm whitespace-nowrap"
+              >
+                Join Community
+              </a>
+            </div>
+          </div>
+          </div>
+        </nav>
+      </header>
+
+      {/* Mobile Header - Single sticky container */}
+      <div className="md:hidden sticky top-0 z-50">
+        <div className="bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 shadow-lg">
+          {/* Announcement Banner - smoothly collapses */}
+          <div className={`overflow-hidden transition-all duration-300 ease-out ${isScrolled ? 'max-h-0' : 'max-h-12'}`}>
+            <Link
+              href={`${homeUrl}/articles/foods-naturally-balance-hormones`}
+              className="flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-primary-500 to-primary-600"
+            >
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                <Bell className="w-3 h-3 text-white" />
+              </div>
+              <span className="font-medium text-xs text-white">✨ New breakthrough research!</span>
+              <Badge variant="limited" size="sm" className="bg-accent-500 text-white border-accent-400 animate-pulse text-[10px] px-1.5 py-0.5">
+                Read Now
+              </Badge>
+            </Link>
+          </div>
+
+          {/* Main Header Content */}
+          <div className={`transition-all duration-300 ease-out overflow-hidden ${isScrolled ? 'max-h-14' : 'max-h-32'}`}>
             <div className="px-4 py-3">
-              {/* Expanded view layout */}
-              <div className={`transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-24 opacity-100'}`}>
+              {/* Expanded view - fades out on scroll */}
+              <div
+                className={`transition-all duration-300 ease-out ${isScrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
+                style={{ transitionProperty: 'opacity, height' }}
+              >
                 {/* Top row: Avatar + Bio + Hamburger */}
                 <div className="flex items-center gap-3 mb-2">
                   <Link href={homeUrl}>
@@ -201,7 +210,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                   </button>
                 </div>
 
-                {/* Play button + Progress bar row - integrated unit */}
+                {/* Play button + Progress bar row */}
                 {effectiveAudioUrl && (
                   <div className="flex items-center bg-white/15 backdrop-blur-sm rounded-full pl-1 pr-3 py-1">
                     <button
@@ -224,10 +233,13 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                 )}
               </div>
 
-              {/* Collapsed/Mini view layout */}
-              <div className={`transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-12 opacity-100' : 'max-h-0 opacity-0'}`}>
+              {/* Collapsed view - fades in on scroll */}
+              <div
+                className={`transition-all duration-300 ease-out ${isScrolled ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}
+                style={{ transitionProperty: 'opacity, height' }}
+              >
                 <div className="flex items-center gap-3">
-                  {/* Left half: Avatar + Bio */}
+                  {/* Left: Avatar + Bio */}
                   <Link href={homeUrl} className="flex items-center gap-2 flex-1 min-w-0">
                     <img
                       src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop'}
@@ -244,7 +256,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                     </div>
                   </Link>
 
-                  {/* Right half: Play button + Progress bar - integrated unit */}
+                  {/* Right: Play button + Progress bar */}
                   {effectiveAudioUrl && (
                     <div className="flex items-center bg-white/15 backdrop-blur-sm rounded-full pl-0.5 pr-2 py-0.5 flex-1 max-w-[140px]">
                       <button
@@ -279,7 +291,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
           </div>
 
           {/* Mobile Menu Dropdown */}
-          {isMenuOpen && (
+          <div className={`overflow-hidden transition-all duration-300 ease-out ${isMenuOpen ? 'max-h-64' : 'max-h-0'}`}>
             <div className="bg-purple-700/95 backdrop-blur-sm border-t border-white/10">
               <div className="px-4 py-4 space-y-2">
                 <Link
@@ -314,7 +326,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Audio element */}
@@ -326,6 +338,6 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
           preload="metadata"
         />
       </div>
-    </header>
+    </>
   );
 }
