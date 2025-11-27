@@ -238,6 +238,19 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
       }
     },
 
+    // 9.5. Scrolling Photo Wall - Social Proof
+    {
+      id: 'scrolling-thumbnails',
+      type: 'scrolling-thumbnails',
+      enabled: true,
+      position: 9.5,
+      config: {
+        headline: 'Join 47,000+ Women Transforming Their Health',
+        speed: 30,
+        imageHeight: 100
+      }
+    },
+
     // 10. Top Ten List
     {
       id: 'top-ten-widget',

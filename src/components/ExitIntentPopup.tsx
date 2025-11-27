@@ -12,6 +12,7 @@ interface ExitIntentPopupProps {
   urgencyText?: string;
   benefits?: string[];
   onClose?: () => void;
+  leadMagnetPdfUrl?: string; // URL to the PDF download
 }
 
 export default function ExitIntentPopup({
@@ -27,7 +28,8 @@ export default function ExitIntentPopup({
     "Foods That Heal vs. Foods That Harm",
     "My Personal Supplement Stack"
   ],
-  onClose
+  onClose,
+  leadMagnetPdfUrl
 }: ExitIntentPopupProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
@@ -35,7 +37,7 @@ export default function ExitIntentPopup({
   const [message, setMessage] = useState('');
 
   const handleMouseLeave = useCallback((e: MouseEvent) => {
-    // Only trigger when mouse leaves from the top
+    // Only trigger when mouse leaves from the top (exit intent)
     if (e.clientY <= 0) {
       const hasShown = sessionStorage.getItem(`exit_popup_shown_${siteId}`);
       const hasSubscribed = localStorage.getItem(`community_subscribed_${siteId}`);
@@ -48,10 +50,14 @@ export default function ExitIntentPopup({
   }, [siteId]);
 
   useEffect(() => {
-    // Add exit intent listener
-    document.addEventListener('mouseleave', handleMouseLeave);
+    // Delay adding the listener to prevent triggering on initial page load
+    // This gives the page time to fully render and stabilize
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mouseleave', handleMouseLeave);
+    }, 2000); // 2 second delay before enabling exit intent detection
 
     return () => {
+      clearTimeout(timeoutId);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [handleMouseLeave]);
@@ -89,13 +95,27 @@ export default function ExitIntentPopup({
 
       if (response.ok || data.success) {
         setStatus('success');
-        setMessage(data.message || 'Check your inbox!');
+        setMessage(data.message || 'Your guide is ready!');
         localStorage.setItem(`community_subscribed_${siteId}`, 'true');
 
-        // Auto close after success
+        // Trigger PDF download if URL is available
+        if (leadMagnetPdfUrl) {
+          // Small delay to let user see success state before download starts
+          setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = leadMagnetPdfUrl;
+            link.download = ''; // Browser will use filename from URL
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, 500);
+        }
+
+        // Auto close after success (longer delay to allow download)
         setTimeout(() => {
           handleClose();
-        }, 3000);
+        }, 5000);
       } else {
         setStatus('error');
         setMessage(data.error || 'Something went wrong. Please try again.');
@@ -125,12 +145,30 @@ export default function ExitIntentPopup({
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">Your Guide is On Its Way!</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              {leadMagnetPdfUrl ? 'Your Guide is Ready!' : 'You\'re All Set!'}
+            </h3>
             <p className="text-gray-600 mb-4">{message}</p>
-            <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-              <Gift className="w-4 h-4" />
-              <span>Check your inbox now!</span>
-            </div>
+            {leadMagnetPdfUrl ? (
+              <div className="space-y-3">
+                <a
+                  href={leadMagnetPdfUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-colors"
+                >
+                  <Gift className="w-5 h-5" />
+                  <span>Download Your Free Guide</span>
+                </a>
+                <p className="text-sm text-gray-500">Your download should start automatically</p>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
+                <Gift className="w-4 h-4" />
+                <span>Welcome to the community!</span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid md:grid-cols-2">

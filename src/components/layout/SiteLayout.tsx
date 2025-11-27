@@ -49,6 +49,7 @@ export default function SiteLayout({
             "Foods That Heal vs. Foods That Harm",
             "My Personal Supplement Stack"
           ]}
+          leadMagnetPdfUrl={site.settings?.leadMagnetPdfUrl}
         />
       )}
       

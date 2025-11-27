@@ -17,6 +17,7 @@ interface PopupProviderProps {
   showCommunityPopup?: boolean;
   showExitPopup?: boolean;
   communityPopupDelay?: number;
+  leadMagnetPdfUrl?: string; // PDF to download on signup
 }
 
 export default function PopupProvider({
@@ -32,7 +33,8 @@ export default function PopupProvider({
   exitBenefits,
   showCommunityPopup = true,
   showExitPopup = true,
-  communityPopupDelay = 8000
+  communityPopupDelay = 8000,
+  leadMagnetPdfUrl
 }: PopupProviderProps) {
   return (
     <>
@@ -45,6 +47,7 @@ export default function PopupProvider({
           benefits={communityBenefits}
           incentive={communityIncentive}
           triggerDelay={communityPopupDelay}
+          leadMagnetPdfUrl={leadMagnetPdfUrl}
         />
       )}
       {showExitPopup && (
@@ -55,6 +58,7 @@ export default function PopupProvider({
           subheadline={exitSubheadline}
           incentive={exitIncentive}
           benefits={exitBenefits}
+          leadMagnetPdfUrl={leadMagnetPdfUrl}
         />
       )}
     </>
