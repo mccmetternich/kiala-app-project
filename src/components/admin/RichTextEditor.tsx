@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Bold, Italic, List, ListOrdered, Link, Code, Heading1, Heading2, Quote } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Link, Code, Heading1, Heading2, Quote, Pilcrow } from 'lucide-react';
 
 interface RichTextEditorProps {
   value: string;
@@ -9,10 +9,48 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
+// Convert div-based line breaks to proper paragraph tags
+function normalizeHtml(html: string): string {
+  if (!html) return html;
+
+  // Replace empty divs with paragraph breaks
+  let normalized = html
+    // Convert <div><br></div> to paragraph break
+    .replace(/<div><br\s*\/?><\/div>/gi, '</p><p>')
+    // Convert <div> tags to </p><p> (closing previous, opening new)
+    .replace(/<div>/gi, '</p><p>')
+    .replace(/<\/div>/gi, '')
+    // Convert standalone <br> tags to </p><p> for paragraph breaks
+    .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '</p><p>')
+    // Clean up any resulting empty paragraphs
+    .replace(/<p>\s*<\/p>/gi, '')
+    // Clean up leading </p>
+    .replace(/^<\/p>/i, '')
+    // Clean up trailing <p>
+    .replace(/<p>$/i, '');
+
+  // If content doesn't start with a block element, wrap in <p>
+  if (normalized && !normalized.match(/^<(p|h[1-6]|ul|ol|blockquote|div)/i)) {
+    normalized = '<p>' + normalized;
+  }
+
+  // If content doesn't end with a closing block element, close with </p>
+  if (normalized && !normalized.match(/<\/(p|h[1-6]|ul|ol|blockquote|div)>$/i)) {
+    normalized = normalized + '</p>';
+  }
+
+  return normalized;
+}
+
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
   const [isHtmlMode, setIsHtmlMode] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const isInternalChange = useRef(false);
+
+  // Set default paragraph separator on mount
+  useEffect(() => {
+    document.execCommand('defaultParagraphSeparator', false, 'p');
+  }, []);
 
   // Only update the editor content when value changes externally (not from typing)
   useEffect(() => {
@@ -75,7 +113,27 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
   const handleEditorChange = () => {
     if (editorRef.current) {
       isInternalChange.current = true;
-      onChange(editorRef.current.innerHTML);
+      // Normalize the HTML to use proper paragraph tags
+      const html = editorRef.current.innerHTML;
+      onChange(html);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // On Enter, ensure we create a new paragraph
+    if (e.key === 'Enter' && !e.shiftKey) {
+      // Check if we're in a list - if so, let default behavior handle it
+      const selection = window.getSelection();
+      if (selection && selection.anchorNode) {
+        const parentElement = selection.anchorNode.parentElement;
+        if (parentElement?.closest('ul, ol, li')) {
+          return; // Let default list behavior work
+        }
+      }
+
+      // For regular text, insert a paragraph break
+      e.preventDefault();
+      execCommand('insertParagraph');
     }
   };
 
@@ -116,6 +174,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
             <div className="w-px h-5 bg-gray-300 mx-1" />
             <ToolbarButton icon={Heading1} onClick={() => handleFormat('h2')} title="Heading 2" />
             <ToolbarButton icon={Heading2} onClick={() => handleFormat('h3')} title="Heading 3" />
+            <ToolbarButton icon={Pilcrow} onClick={() => handleFormat('paragraph')} title="Paragraph" />
             <div className="w-px h-5 bg-gray-300 mx-1" />
             <ToolbarButton icon={List} onClick={() => handleFormat('ul')} title="Bullet List" />
             <ToolbarButton icon={ListOrdered} onClick={() => handleFormat('ol')} title="Numbered List" />
@@ -154,7 +213,8 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
           contentEditable
           onInput={handleEditorChange}
           onBlur={handleEditorChange}
-          className="w-full p-3 min-h-[200px] text-gray-900 focus:outline-none prose prose-sm max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary-600 [&_a]:underline"
+          onKeyDown={handleKeyDown}
+          className="w-full p-3 min-h-[200px] text-gray-900 focus:outline-none prose prose-sm max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary-600 [&_a]:underline [&_div]:mb-3"
           data-placeholder={placeholder || 'Start typing...'}
           suppressContentEditableWarning
         />
@@ -163,7 +223,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
       {/* Mode indicator */}
       <div className="px-3 py-1.5 bg-gray-50 border-t border-gray-200 text-xs text-gray-500 flex justify-between">
         <span>{isHtmlMode ? 'HTML Source Mode' : 'Rich Text Mode'}</span>
-        <span>Toggle with button above</span>
+        <span>Press Enter for new paragraph</span>
       </div>
     </div>
   );
