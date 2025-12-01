@@ -2483,36 +2483,22 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       {/* Exclusive Product */}
       {widget.type === 'exclusive-product' && (
         <div className="space-y-4">
+          {/* Product Image first */}
+          {renderImageField('Product Image', 'image')}
           {renderTextField('Product Name', 'name', 'Dr. Amy\'s Recommended Solution')}
           {renderTextAreaField('Description', 'description', 'Product description...', 3)}
-          {renderImageField('Product Image', 'image')}
-          {renderImageField('Doctor/Expert Photo', 'doctorImage')}
-          <div className="grid grid-cols-2 gap-4">
-            {renderNumberField('Price', 'price', 0)}
-            {renderNumberField('Original Price', 'originalPrice', 0)}
-          </div>
-          {renderTextField('Savings Text (optional)', 'savingsText', 'Leave empty to auto-calculate')}
-          <p className="text-xs text-gray-500 -mt-2">If empty, will show "You save $X (Y% off)" based on prices above.</p>
 
-          {renderTextField('Doctor Name', 'doctorName', 'Dr. Amy')}
-          {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
-          {renderTextField('Button URL', 'buttonUrl', '/checkout')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
-
-          {/* Benefits List */}
-          <div className="border-t pt-4 mt-4">
+          {/* Benefits List - right after description */}
+          <div className="border-t pt-4 mt-2">
             <div className="flex justify-between items-center mb-3">
-              <label className="block text-sm font-medium text-gray-700">Benefits (green checkmarks)</label>
+              <label className="block text-sm font-medium text-gray-300">Benefits (green checkmarks)</label>
               <button
                 type="button"
                 onClick={() => {
                   const benefits = (widget.config.benefits || []) as string[];
                   onUpdate({ benefits: [...benefits, ''] });
                 }}
-                className="text-sm text-primary-600 hover:text-primary-700"
+                className="text-sm text-primary-400 hover:text-primary-300"
               >
                 + Add Benefit
               </button>
@@ -2520,7 +2506,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             <div className="space-y-2">
               {((widget.config.benefits || []) as string[]).map((benefit, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <span className="text-gray-500 text-sm w-6">{idx + 1}.</span>
+                  <span className="text-gray-400 text-sm w-6">{idx + 1}.</span>
                   <input
                     type="text"
                     value={benefit}
@@ -2530,7 +2516,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
                       onUpdate({ benefits });
                     }}
                     placeholder={`Benefit ${idx + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm bg-white text-gray-900"
+                    className="flex-1 px-3 py-2 border border-gray-600 rounded-md text-sm bg-gray-700 text-white placeholder-gray-400"
                   />
                   <button
                     type="button"
@@ -2539,21 +2525,21 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
                       benefits.splice(idx, 1);
                       onUpdate({ benefits });
                     }}
-                    className="text-red-500 hover:text-red-700 p-1"
+                    className="text-red-400 hover:text-red-300 p-1"
                   >
                     ×
                   </button>
                 </div>
               ))}
               {((widget.config.benefits || []) as string[]).length === 0 && (
-                <p className="text-xs text-gray-500 italic">No benefits added. Click "+ Add Benefit" to add up to 5 bullet points.</p>
+                <p className="text-xs text-gray-400 italic">No benefits added. Click "+ Add Benefit" to add up to 5 bullet points.</p>
               )}
             </div>
           </div>
 
-          {/* Trust Badge Text */}
-          <div className="border-t pt-4 mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Trust Badge Labels</label>
+          {/* Trust Badge Text - right after benefits */}
+          <div className="border-t border-gray-700 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-300 mb-3">Trust Badge Labels</label>
             <div className="space-y-3">
               {renderTextField('Shipping Badge', 'shippingBadgeText', 'Free, Fast Shipping')}
               {renderTextField('Guarantee Badge', 'guaranteeBadgeText', '90-Day Guarantee')}
@@ -2561,18 +2547,47 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             </div>
           </div>
 
+          {/* Pricing section */}
+          <div className="border-t border-gray-700 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-300 mb-3">Pricing</label>
+            <div className="grid grid-cols-2 gap-4">
+              {renderNumberField('Price', 'price', 0)}
+              {renderNumberField('Original Price', 'originalPrice', 0)}
+            </div>
+            {renderTextField('Savings Text (optional)', 'savingsText', 'Leave empty to auto-calculate')}
+            <p className="text-xs text-gray-400 -mt-2">If empty, will show "You save $X (Y% off)" based on prices above.</p>
+          </div>
+
+          {/* Doctor/Header section */}
+          <div className="border-t border-gray-700 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-300 mb-3">Header Bar</label>
+            {renderImageField('Doctor/Expert Photo', 'doctorImage')}
+            {renderTextField('Doctor Name', 'doctorName', 'Dr. Amy')}
+          </div>
+
+          {/* Button/CTA */}
+          <div className="border-t border-gray-700 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-300 mb-3">Call to Action</label>
+            {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
+            {renderTextField('Button URL', 'buttonUrl', '/checkout')}
+            {renderSelectField('Open in', 'target', [
+              { value: '_self', label: 'Same tab' },
+              { value: '_blank', label: 'New tab' }
+            ])}
+          </div>
+
           {/* Testimonial Section */}
-          <div className="border-t pt-4 mt-4">
+          <div className="border-t border-gray-700 pt-4 mt-2">
             <div className="flex justify-between items-center mb-3">
-              <label className="block text-sm font-medium text-gray-700">Testimonial (below product image)</label>
+              <label className="block text-sm font-medium text-gray-300">Testimonial (below product image)</label>
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
                   checked={widget.config.showTestimonial !== false}
                   onChange={(e) => onUpdate({ showTestimonial: e.target.checked })}
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  className="rounded border-gray-600 text-primary-600 focus:ring-primary-500 bg-gray-700"
                 />
-                <span className="text-gray-600">Show</span>
+                <span className="text-gray-400">Show</span>
               </label>
             </div>
             <div className="space-y-3">

@@ -258,6 +258,7 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             image={widget.config.image}
             price={widget.config.price}
             originalPrice={widget.config.originalPrice}
+            savingsText={widget.config.savingsText}
             rating={widget.config.rating ? (typeof widget.config.rating === 'number' ? widget.config.rating : parseFloat(widget.config.rating)) : undefined}
             reviewCount={widget.config.reviewCount || 1200000}
             benefits={widget.config.benefits}
@@ -266,6 +267,14 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             doctorImage={exclusiveDoctorImage}
             ctaText={widget.config.buttonText}
             ctaUrl={widget.config.buttonUrl}
+            target={widget.config.target}
+            shippingBadgeText={widget.config.shippingBadgeText}
+            guaranteeBadgeText={widget.config.guaranteeBadgeText}
+            evaluatedBadgeText={widget.config.evaluatedBadgeText}
+            testimonialQuote={widget.config.testimonialQuote}
+            testimonialName={widget.config.testimonialName}
+            testimonialAvatar={widget.config.testimonialAvatar}
+            showTestimonial={widget.config.showTestimonial}
           />
         </div>
       );
