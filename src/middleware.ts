@@ -25,38 +25,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // For custom domains, detect the site and rewrite to dynamic route
-  try {
-    // Skip if it's the main app domain
-    if (!isCustomDomain) {
-      return NextResponse.next();
-    }
-
-    // This is a custom domain - check if site exists
-    const siteResponse = await fetch(`${url.origin}/api/sites?domain=${domain}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (siteResponse.ok) {
-      const data = await siteResponse.json();
-      if (data.site) {
-        // Rewrite to the dynamic site route
-        const newUrl = url.clone();
-        newUrl.pathname = `/site/${data.site.id}${url.pathname}`;
-        
-        return NextResponse.rewrite(newUrl);
-      }
-    }
-    
-    // If no site found for this domain, show 404
-    return new NextResponse('Site not found', { status: 404 });
-    
-  } catch (error) {
-    console.error('Middleware error:', error);
+  // Skip if it's the main app domain
+  if (!isCustomDomain) {
     return NextResponse.next();
   }
+
+  // Custom domain to site mapping
+  const domainToSite: Record<string, string> = {
+    'dramyheart.com': 'dr-amy',
+    'www.dramyheart.com': 'dr-amy',
+  };
+
+  const siteId = domainToSite[domain];
+
+  if (siteId) {
+    // Rewrite to the dynamic site route
+    const newUrl = url.clone();
+    newUrl.pathname = `/site/${siteId}${url.pathname}`;
+    return NextResponse.rewrite(newUrl);
+  }
+
+  // If no site found for this domain, show 404
+  return new NextResponse('Site not found', { status: 404 });
 }
 
 export const config = {
