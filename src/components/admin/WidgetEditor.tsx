@@ -2680,6 +2680,31 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     'final-cta': {
       headline: 'Ready to Transform?',
       buttonText: 'Get Started →'
+    },
+    'us-vs-them-comparison': {
+      headline: 'See The Difference',
+      column1Title: 'Kiala Greens',
+      column1Features: [
+        'Clinically validated Spectra® blend',
+        'Organic, non-GMO ingredients',
+        'No added sugars or artificial sweeteners',
+        'Proper therapeutic dosing',
+        'Delicious taste you\'ll actually enjoy',
+        'Formulated specifically for women 40+'
+      ],
+      column2Title: 'Other Greens',
+      column2Features: [
+        'Unproven proprietary blends',
+        'Synthetic fillers and additives',
+        'Hidden sugars and sweeteners',
+        'Under-dosed "pixie dust" ingredients',
+        'Chalky, unpleasant taste',
+        'Generic one-size-fits-all formula'
+      ],
+      buttonText: 'Try Kiala Greens Risk-Free →',
+      buttonUrl: 'https://trygreens.com/dr-amy',
+      guaranteeBadge: '90-Day Money Back Guarantee',
+      satisfactionBadge: '100% Satisfaction Guarantee'
     }
   };
 

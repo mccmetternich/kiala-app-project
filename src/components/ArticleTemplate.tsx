@@ -28,6 +28,7 @@ import ScrollingThumbnails from '@/widgets/ScrollingThumbnails';
 import TestimonialHero from '@/widgets/TestimonialHero';
 import CTAButton from '@/widgets/CTAButton';
 import IngredientListGrid from '@/widgets/IngredientListGrid';
+import UsVsThemComparison from '@/widgets/UsVsThemComparison';
 
 interface ArticleTemplateProps {
   page: Page;
@@ -549,6 +550,25 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             bannerText={widget.config.bannerText}
             ingredients={widget.config.ingredients}
             columns={widget.config.columns}
+          />
+        </div>
+      );
+
+    case 'us-vs-them-comparison':
+      return (
+        <div className="my-8">
+          <UsVsThemComparison
+            headline={widget.config.headline}
+            column1Image={widget.config.column1Image}
+            column1Title={widget.config.column1Title}
+            column1Features={widget.config.column1Features}
+            column2Image={widget.config.column2Image}
+            column2Title={widget.config.column2Title}
+            column2Features={widget.config.column2Features}
+            ctaText={widget.config.buttonText || widget.config.ctaText}
+            ctaUrl={widget.config.buttonUrl || widget.config.ctaUrl}
+            guaranteeBadge={widget.config.guaranteeBadge}
+            satisfactionBadge={widget.config.satisfactionBadge}
           />
         </div>
       );

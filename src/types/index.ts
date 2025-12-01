@@ -136,7 +136,8 @@ export type WidgetType =
   | 'press-logos'
   | 'scrolling-thumbnails'
   | 'testimonial-hero'
-  | 'ingredient-list-grid';
+  | 'ingredient-list-grid'
+  | 'us-vs-them-comparison';
 
 // Widget Configurations
 export interface WidgetConfig {
