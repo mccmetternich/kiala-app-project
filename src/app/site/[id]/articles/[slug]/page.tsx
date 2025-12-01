@@ -54,19 +54,19 @@ export async function generateMetadata(
 
   const { article, brand } = data;
 
-  // Use article hero image, or fall back to brand image, or stock photo
-  const heroImage = article.image ||
-                    brand?.aboutImage ||
-                    brand?.profileImage ||
-                    'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&h=630&fit=crop';
+  // For OG/social sharing: Always use Dr. Amy's about image (not the article hero)
+  // This ensures a consistent brand presence when articles are shared
+  const ogImagePath = brand?.aboutImage ||
+                      brand?.profileImage ||
+                      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&h=630&fit=crop';
 
   // Ensure image URL is absolute - use Vercel URL for deployed environment
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://kiala-app-project.vercel.app');
 
-  const ogImage = heroImage.startsWith('http')
-    ? heroImage
-    : `${baseUrl}${heroImage}`;
+  const ogImage = ogImagePath.startsWith('http')
+    ? ogImagePath
+    : `${baseUrl}${ogImagePath}`;
 
   const authorName = brand?.name || 'Dr. Amy Heart';
   const title = article.title;

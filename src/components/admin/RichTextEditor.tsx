@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
-import { Bold, Italic, List, ListOrdered, Link, Code, Eye, Heading1, Heading2, Quote } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Bold, Italic, List, ListOrdered, Link, Code, Heading1, Heading2, Quote } from 'lucide-react';
 
 interface RichTextEditorProps {
   value: string;
@@ -12,16 +12,32 @@ interface RichTextEditorProps {
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
   const [isHtmlMode, setIsHtmlMode] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
+  const isInternalChange = useRef(false);
 
-  const execCommand = useCallback((command: string, value?: string) => {
-    document.execCommand(command, false, value);
+  // Only update the editor content when value changes externally (not from typing)
+  useEffect(() => {
+    if (editorRef.current && !isInternalChange.current) {
+      // Only update if the content is actually different
+      if (editorRef.current.innerHTML !== value) {
+        editorRef.current.innerHTML = value;
+      }
+    }
+    isInternalChange.current = false;
+  }, [value]);
+
+  const execCommand = useCallback((command: string, val?: string) => {
+    document.execCommand(command, false, val);
     // Update the value after command execution
     if (editorRef.current) {
+      isInternalChange.current = true;
       onChange(editorRef.current.innerHTML);
     }
   }, [onChange]);
 
   const handleFormat = (format: string) => {
+    // Refocus the editor before executing command
+    editorRef.current?.focus();
+
     switch (format) {
       case 'bold':
         execCommand('bold');
@@ -58,6 +74,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
 
   const handleEditorChange = () => {
     if (editorRef.current) {
+      isInternalChange.current = true;
       onChange(editorRef.current.innerHTML);
     }
   };
@@ -67,13 +84,20 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
   };
 
   const toggleMode = () => {
+    // When switching from HTML to rich text, sync the content
+    if (isHtmlMode && editorRef.current) {
+      editorRef.current.innerHTML = value;
+    }
     setIsHtmlMode(!isHtmlMode);
   };
 
   const ToolbarButton = ({ icon: Icon, onClick, title, active }: { icon: any; onClick: () => void; title: string; active?: boolean }) => (
     <button
       type="button"
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
       title={title}
       className={`p-1.5 rounded hover:bg-gray-200 transition-colors ${active ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
     >
@@ -130,9 +154,9 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
           contentEditable
           onInput={handleEditorChange}
           onBlur={handleEditorChange}
-          dangerouslySetInnerHTML={{ __html: value }}
           className="w-full p-3 min-h-[200px] text-gray-900 focus:outline-none prose prose-sm max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary-600 [&_a]:underline"
           data-placeholder={placeholder || 'Start typing...'}
+          suppressContentEditableWarning
         />
       )}
 

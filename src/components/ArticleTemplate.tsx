@@ -551,6 +551,7 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             bannerText={widget.config.bannerText}
             ingredients={widget.config.ingredients}
             columns={widget.config.columns}
+            style={widget.config.style as 'default' | 'simple'}
           />
         </div>
       );
@@ -566,8 +567,11 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             column2Image={widget.config.column2Image}
             column2Title={widget.config.column2Title}
             column2Features={widget.config.column2Features}
-            ctaText={widget.config.buttonText || widget.config.ctaText}
-            ctaUrl={widget.config.buttonUrl || widget.config.ctaUrl}
+            buttonText={widget.config.buttonText}
+            buttonUrl={widget.config.buttonUrl}
+            target={widget.config.target}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
             guaranteeBadge={widget.config.guaranteeBadge}
             satisfactionBadge={widget.config.satisfactionBadge}
           />

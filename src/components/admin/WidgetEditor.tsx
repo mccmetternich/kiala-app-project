@@ -68,10 +68,11 @@ const widgetTypes: { type: WidgetType; name: string; icon: any; category: string
 
   // Conversion Widgets
   { type: 'product-showcase', name: 'Product Showcase', icon: ShoppingCart, category: 'Conversion', description: 'Featured product with ratings and CTA' },
-  { type: 'exclusive-product', name: 'Exclusive Product', icon: Award, category: 'Conversion', description: 'Dr. recommended product card' },
-  { type: 'shop-now', name: 'Shop Now', icon: Store, category: 'Conversion', description: 'Product with pricing options' },
+  { type: 'exclusive-product', name: "Dr Amy's #1 Pick", icon: Award, category: 'Conversion', description: 'Dr. recommended product card' },
+  { type: 'shop-now', name: 'Shop Now - 3x Options', icon: Store, category: 'Conversion', description: 'Product with pricing options' },
   { type: 'special-offer', name: 'Special Offer', icon: Gift, category: 'Conversion', description: 'Offer with countdown and social proof' },
   { type: 'dual-offer-comparison', name: 'Dual Offers', icon: Columns, category: 'Conversion', description: 'Side-by-side offer comparison' },
+  { type: 'us-vs-them-comparison', name: 'Us Vs Them', icon: Columns, category: 'Conversion', description: 'Two-column product comparison' },
   { type: 'comparison-table', name: 'Comparison Table', icon: BarChart3, category: 'Conversion', description: 'Us vs them product comparison' },
   { type: 'cta-button', name: 'CTA Button', icon: ExternalLink, category: 'Conversion', description: 'Call-to-action button' },
 
@@ -478,14 +479,23 @@ function WidgetItem({
             <div>
               <div className="flex items-center gap-2">
                 <h4 className={`font-medium ${widget.enabled ? 'text-gray-900' : 'text-gray-500'}`}>
-                  {widgetType?.name || widget.type}
+                  {/* Show custom label for text-blocks if set, otherwise show widget type name */}
+                  {widget.type === 'text-block' && widget.config.label
+                    ? widget.config.label
+                    : (widgetType?.name || widget.type)}
                 </h4>
+                {widget.type === 'text-block' && widget.config.label && (
+                  <span className="text-xs text-gray-400">(Text Block)</span>
+                )}
                 {!widget.enabled && (
                   <Badge variant="default" size="sm">Disabled</Badge>
                 )}
               </div>
-              <p className="text-sm text-gray-600">
-                {widget.config.headline || widget.config.content?.substring(0, 50) || 'No content set'}
+              <p className="text-sm text-gray-600 truncate max-w-md">
+                {widget.config.headline ||
+                  (widget.config.content
+                    ? widget.config.content.replace(/<[^>]*>/g, '').substring(0, 60) + (widget.config.content.replace(/<[^>]*>/g, '').length > 60 ? '...' : '')
+                    : 'No content set')}
               </p>
             </div>
           </div>
@@ -1104,6 +1114,18 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       {/* Text Block */}
       {widget.type === 'text-block' && (
         <div className="space-y-4">
+          {/* Internal Label - for admin use only */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Label (Admin Only)</label>
+            <input
+              type="text"
+              value={widget.config.label || ''}
+              onChange={(e) => onUpdate({ label: e.target.value })}
+              placeholder="e.g., Hero Section, Intro Text, CTA Block..."
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <p className="text-xs text-gray-500 mt-1">This label helps you identify the widget in the list. It won't show on the public site.</p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
             <RichTextEditor
@@ -1441,14 +1463,31 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       {/* Ingredient List Grid */}
       {widget.type === 'ingredient-list-grid' && (
         <div className="space-y-4">
-          {renderTextField('Headline', 'headline', 'Powerful Ingredients, Proven Results')}
-          {renderTextField('Banner Text', 'bannerText', '✨ 6 Clinically-Backed Superfoods in Every Scoop')}
+          {/* Style Select */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Style</label>
+            <select
+              value={widget.config.style || 'simple'}
+              onChange={(e) => onUpdate({ style: e.target.value })}
+              className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+            >
+              <option value="simple">Simple (clean cards)</option>
+              <option value="default">Default (with banner)</option>
+            </select>
+          </div>
+
+          {widget.config.style === 'default' && (
+            <>
+              {renderTextField('Headline', 'headline', 'Powerful Ingredients, Proven Results')}
+              {renderTextField('Banner Text', 'bannerText', '✨ 6 Clinically-Backed Superfoods in Every Scoop')}
+            </>
+          )}
 
           {/* Columns Select */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Grid Columns</label>
             <select
-              value={widget.config.columns || 3}
+              value={widget.config.columns || 2}
               onChange={(e) => onUpdate({ columns: parseInt(e.target.value) })}
               className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
             >
@@ -1930,6 +1969,125 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             { value: '_self', label: 'Same tab' },
             { value: '_blank', label: 'New tab' }
           ])}
+        </div>
+      )}
+
+      {/* Us Vs Them Comparison */}
+      {widget.type === 'us-vs-them-comparison' && (
+        <div className="space-y-4">
+          {renderTextField('Headline', 'headline', 'See The Difference')}
+          {renderTextField('Button Text', 'buttonText', 'Try Kiala Greens →')}
+          {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
+          {renderSelectField('Open in', 'target', [
+            { value: '_self', label: 'Same tab' },
+            { value: '_blank', label: 'New tab' }
+          ])}
+
+          {/* Column 1 (Us / Kiala) */}
+          <div className="border-t pt-4 mt-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-gradient-to-r from-primary-500 to-purple-500"></span>
+              Column 1 (Our Product)
+            </h4>
+            {renderImageField('Column 1 Image', 'column1Image')}
+            {renderTextField('Column 1 Title', 'column1Title', 'Kiala Greens')}
+
+            {/* Column 1 Features */}
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">Column 1 Features</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const features = (widget.config.column1Features || []) as string[];
+                    onUpdate({ column1Features: [...features, ''] });
+                  }}
+                  className="text-sm text-primary-600 hover:text-primary-700"
+                >
+                  + Add Feature
+                </button>
+              </div>
+              {((widget.config.column1Features || []) as string[]).map((feature: string, idx: number) => (
+                <div key={idx} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={feature}
+                    onChange={(e) => {
+                      const features = [...(widget.config.column1Features || []) as string[]];
+                      features[idx] = e.target.value;
+                      onUpdate({ column1Features: features });
+                    }}
+                    placeholder="Enter feature..."
+                    className="flex-1 border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const features = [...(widget.config.column1Features || []) as string[]];
+                      features.splice(idx, 1);
+                      onUpdate({ column1Features: features });
+                    }}
+                    className="text-red-500 hover:text-red-600 px-2"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Column 2 (Them / Others) */}
+          <div className="border-t pt-4 mt-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-gray-400"></span>
+              Column 2 (Competitor)
+            </h4>
+            {renderImageField('Column 2 Image', 'column2Image')}
+            {renderTextField('Column 2 Title', 'column2Title', 'Other Greens')}
+
+            {/* Column 2 Features */}
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">Column 2 Features</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const features = (widget.config.column2Features || []) as string[];
+                    onUpdate({ column2Features: [...features, ''] });
+                  }}
+                  className="text-sm text-primary-600 hover:text-primary-700"
+                >
+                  + Add Feature
+                </button>
+              </div>
+              {((widget.config.column2Features || []) as string[]).map((feature: string, idx: number) => (
+                <div key={idx} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={feature}
+                    onChange={(e) => {
+                      const features = [...(widget.config.column2Features || []) as string[]];
+                      features[idx] = e.target.value;
+                      onUpdate({ column2Features: features });
+                    }}
+                    placeholder="Enter feature..."
+                    className="flex-1 border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const features = [...(widget.config.column2Features || []) as string[]];
+                      features.splice(idx, 1);
+                      onUpdate({ column2Features: features });
+                    }}
+                    className="text-red-500 hover:text-red-600 px-2"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
