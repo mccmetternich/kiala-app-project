@@ -123,26 +123,34 @@ export default function ScrollingThumbnails({
           className="flex gap-3"
           style={{ willChange: 'transform' }}
         >
-          {displayColumns.map((column, colIndex) => (
-            <div
-              key={colIndex}
-              className="flex flex-col gap-3 flex-shrink-0"
-            >
-              {column.images.map((image, imgIndex) => (
-                <div
-                  key={imgIndex}
-                  className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                  style={{ width: actualImageHeight, height: actualImageHeight }}
-                >
-                  <img
-                    src={image}
-                    alt={`Customer ${colIndex * 3 + imgIndex + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
+          {displayColumns.map((column, colIndex) => {
+            // Stagger columns by applying different top margins based on column index
+            // Creates a wave-like visual effect across the scrolling thumbnails
+            const staggerOffsets = [0, 40, 20, 60, 10, 50, 30]; // Pattern repeats
+            const topOffset = staggerOffsets[colIndex % staggerOffsets.length];
+
+            return (
+              <div
+                key={colIndex}
+                className="flex flex-col gap-3 flex-shrink-0"
+                style={{ marginTop: topOffset }}
+              >
+                {column.images.map((image, imgIndex) => (
+                  <div
+                    key={imgIndex}
+                    className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                    style={{ width: actualImageHeight, height: actualImageHeight }}
+                  >
+                    <img
+                      src={image}
+                      alt={`Customer ${colIndex * 3 + imgIndex + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
