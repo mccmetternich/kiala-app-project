@@ -141,9 +141,14 @@ export async function POST(request: NextRequest) {
       tags: tags ? JSON.parse(tags) : []
     }, { status: 201 });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error uploading media:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // Return more specific error message
+    const errorMessage = error?.message || 'Internal server error';
+    return NextResponse.json({
+      error: errorMessage,
+      details: error?.http_code ? `Cloudinary error: ${error.http_code}` : undefined
+    }, { status: 500 });
   }
 }
 
