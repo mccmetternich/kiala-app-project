@@ -846,8 +846,6 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
-    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
     const addImage = (url: string) => {
       onUpdate({ [field]: [...images, url] });
@@ -863,48 +861,13 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       onUpdate({ [field]: newImages });
     };
 
-    const reorderImages = (fromIndex: number, toIndex: number) => {
+    const moveImage = (fromIndex: number, direction: 'up' | 'down') => {
+      const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;
+      if (toIndex < 0 || toIndex >= images.length) return;
       const newImages = [...images];
       const [movedImage] = newImages.splice(fromIndex, 1);
       newImages.splice(toIndex, 0, movedImage);
       onUpdate({ [field]: newImages });
-    };
-
-    const handleImageDragStart = (e: React.DragEvent, index: number) => {
-      e.stopPropagation();
-      setDraggedImageIndex(index);
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('application/x-image-reorder', index.toString());
-    };
-
-    const handleImageDragOver = (e: React.DragEvent, index: number) => {
-      e.preventDefault();
-      e.stopPropagation();
-      // Only handle if this is an image reorder drag (not file upload or widget drag)
-      if (draggedImageIndex !== null && draggedImageIndex !== index) {
-        setDragOverIndex(index);
-      }
-    };
-
-    const handleImageDragLeave = (e: React.DragEvent) => {
-      e.stopPropagation();
-      setDragOverIndex(null);
-    };
-
-    const handleImageDrop = (e: React.DragEvent, toIndex: number) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (draggedImageIndex !== null && draggedImageIndex !== toIndex) {
-        reorderImages(draggedImageIndex, toIndex);
-      }
-      setDraggedImageIndex(null);
-      setDragOverIndex(null);
-    };
-
-    const handleImageDragEnd = (e: React.DragEvent) => {
-      e.stopPropagation();
-      setDraggedImageIndex(null);
-      setDragOverIndex(null);
     };
 
     const handleFiles = async (files: FileList) => {
@@ -975,35 +938,47 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
         <div className="space-y-2">
           {images.length > 0 && (
             <>
-              <p className="text-xs text-gray-500 mb-1">Drag images to reorder. First image = highest priority.</p>
-              <div className="grid grid-cols-4 gap-2">
+              <p className="text-xs text-gray-500 mb-1">Use arrows to reorder. First image = highest priority.</p>
+              <div className="grid grid-cols-3 gap-2">
                 {images.map((url, index) => (
                   <div
                     key={url + index}
-                    draggable
-                    onDragStart={(e) => handleImageDragStart(e, index)}
-                    onDragOver={(e) => handleImageDragOver(e, index)}
-                    onDragLeave={(e) => handleImageDragLeave(e)}
-                    onDrop={(e) => handleImageDrop(e, index)}
-                    onDragEnd={(e) => handleImageDragEnd(e)}
-                    className={`relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing transition-all ${
-                      draggedImageIndex === index ? 'opacity-50 scale-95' : ''
-                    } ${
-                      dragOverIndex === index ? 'ring-2 ring-primary-500 ring-offset-2' : ''
-                    }`}
+                    className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden"
                   >
-                    <img src={url} alt="" className="w-full h-full object-cover pointer-events-none" />
+                    <img src={url} alt="" className="w-full h-full object-cover" />
                     {index === 0 && (
                       <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-primary-500 text-white text-[10px] font-bold rounded">
                         1st
                       </span>
                     )}
-                    <button
-                      onClick={() => removeImage(index)}
-                      className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+                    {/* Control buttons */}
+                    <div className="absolute bottom-1 left-1 right-1 flex justify-between">
+                      <div className="flex gap-0.5">
+                        <button
+                          onClick={() => moveImage(index, 'up')}
+                          disabled={index === 0}
+                          className={`p-1 rounded text-white text-xs ${index === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-800'}`}
+                          title="Move left"
+                        >
+                          ←
+                        </button>
+                        <button
+                          onClick={() => moveImage(index, 'down')}
+                          disabled={index === images.length - 1}
+                          className={`p-1 rounded text-white text-xs ${index === images.length - 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-800'}`}
+                          title="Move right"
+                        >
+                          →
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => removeImage(index)}
+                        className="p-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        title="Remove"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
