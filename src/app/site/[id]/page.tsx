@@ -171,7 +171,7 @@ export default function DynamicSiteHomepage() {
           leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
           communityCount={47284}
           showLeadMagnet={true}
-          siteId={siteId}
+          siteId={siteId || undefined}
           audioTrackUrl={transformedSite.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}
         />
       }
@@ -208,7 +208,7 @@ export default function DynamicSiteHomepage() {
         {/* Article Grid - exclude hero article */}
         <ArticleGrid
           articles={articles.filter((a: any) => !a.hero)}
-          siteId={siteId}
+          siteId={siteId || undefined}
           title="Latest Health Breakthroughs"
           showFeatured={true}
         />
