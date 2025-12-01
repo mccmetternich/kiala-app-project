@@ -5,26 +5,16 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
-        // Custom domain rewrites
+        // Custom domain rewrites - only match paths that don't already have /site/
         {
-          source: '/',
+          source: '/:path((?!site|api|_next|admin|favicon).*)',
           has: [{ type: 'host', value: 'dramyheart.com' }],
-          destination: '/site/dr-amy',
+          destination: '/site/dr-amy/:path',
         },
         {
-          source: '/',
+          source: '/:path((?!site|api|_next|admin|favicon).*)',
           has: [{ type: 'host', value: 'www.dramyheart.com' }],
-          destination: '/site/dr-amy',
-        },
-        {
-          source: '/:path*',
-          has: [{ type: 'host', value: 'dramyheart.com' }],
-          destination: '/site/dr-amy/:path*',
-        },
-        {
-          source: '/:path*',
-          has: [{ type: 'host', value: 'www.dramyheart.com' }],
-          destination: '/site/dr-amy/:path*',
+          destination: '/site/dr-amy/:path',
         },
       ],
       afterFiles: [],
