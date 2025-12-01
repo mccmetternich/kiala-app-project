@@ -64,7 +64,8 @@ const widgetTypes: { type: WidgetType; name: string; icon: any; category: string
   { type: 'review-grid', name: 'Review Grid', icon: Star, category: 'Social Proof', description: '4-column review cards with ratings' },
   { type: 'press-logos', name: 'Press Logos', icon: Award, category: 'Social Proof', description: 'Featured press mentions with quotes' },
   { type: 'scrolling-thumbnails', name: 'Scrolling Thumbnails', icon: ImageIcon, category: 'Social Proof', description: 'Infinite scrolling customer photos' },
-  { type: 'testimonial-hero', name: 'Testimonial Hero', icon: Quote, category: 'Social Proof', description: 'Large testimonial with image and CTA' },
+  { type: 'testimonial-hero-no-cta', name: 'Testimonial Hero - No CTA', icon: Quote, category: 'Social Proof', description: 'Large testimonial with image, no button' },
+  { type: 'testimonial-hero', name: 'Testimonial Hero - With CTA', icon: Quote, category: 'Social Proof', description: 'Large testimonial with image and CTA button' },
 
   // Conversion Widgets
   { type: 'product-showcase', name: 'Product Showcase', icon: ShoppingCart, category: 'Conversion', description: 'Featured product with ratings and CTA' },
@@ -2643,7 +2644,16 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
         </div>
       )}
 
-      {/* Testimonial Hero */}
+      {/* Testimonial Hero - No CTA */}
+      {widget.type === 'testimonial-hero-no-cta' && (
+        <div className="space-y-4">
+          {renderImageField('Testimonial Photo', 'image')}
+          {renderTextField('Title', 'headline', 'I Lost 22 lbs and My Energy is Through the Roof!')}
+          {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text...', 6)}
+        </div>
+      )}
+
+      {/* Testimonial Hero - With CTA */}
       {widget.type === 'testimonial-hero' && (
         <div className="space-y-4">
           {renderImageField('Testimonial Photo', 'image')}
@@ -3087,6 +3097,16 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       speed: 30,
       imageHeight: 100,
       customImages: []
+    },
+    'testimonial-hero-no-cta': {
+      headline: 'I Lost 22 lbs and My Energy is Through the Roof!',
+      body: `"At 52, I thought feeling tired and bloated was just part of getting older. I tried everything—different diets, expensive supplements, even considered medications. Nothing worked until I found Kiala Greens.
+
+Within the first week, my bloating was GONE. By week 4, I had more energy than I'd felt in years. And now, 8 weeks later? I've lost 22 pounds—most of it from my midsection—and I feel like I'm in my 30s again.
+
+If you're on the fence, just try it. The 90-day guarantee means you have nothing to lose (except the weight!). This has honestly changed my life."
+
+— Jennifer M., 52, Austin TX`
     },
     'testimonial-hero': {
       headline: 'I Lost 22 lbs and My Energy is Through the Roof!',

@@ -136,6 +136,7 @@ export type WidgetType =
   | 'press-logos'
   | 'scrolling-thumbnails'
   | 'testimonial-hero'
+  | 'testimonial-hero-no-cta'
   | 'ingredient-list-grid'
   | 'us-vs-them-comparison';
 

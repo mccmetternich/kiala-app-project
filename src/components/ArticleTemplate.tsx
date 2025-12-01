@@ -26,6 +26,7 @@ import ReviewGrid from '@/widgets/ReviewGrid';
 import PressLogos from '@/widgets/PressLogos';
 import ScrollingThumbnails from '@/widgets/ScrollingThumbnails';
 import TestimonialHero from '@/widgets/TestimonialHero';
+import TestimonialHeroNoCta from '@/widgets/TestimonialHeroNoCta';
 import CTAButton from '@/widgets/CTAButton';
 import IngredientListGrid from '@/widgets/IngredientListGrid';
 import UsVsThemComparison from '@/widgets/UsVsThemComparison';
@@ -505,6 +506,17 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             customImages={widget.config.customImages}
             speed={widget.config.speed}
             imageHeight={widget.config.imageHeight}
+          />
+        </div>
+      );
+
+    case 'testimonial-hero-no-cta':
+      return (
+        <div className="my-8">
+          <TestimonialHeroNoCta
+            image={widget.config.image}
+            title={widget.config.headline}
+            body={widget.config.body}
           />
         </div>
       );
