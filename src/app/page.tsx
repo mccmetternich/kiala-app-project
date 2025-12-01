@@ -9,10 +9,10 @@ export default function Home() {
             Kiala DR God
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            The ultimate multi-tenant direct response CMS platform for creating 
+            The ultimate multi-tenant direct response CMS platform for creating
             high-converting editorial-driven marketing sites.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
             <div className="widget-container text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-lg mx-auto mb-4 flex items-center justify-center">

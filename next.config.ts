@@ -2,25 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  async rewrites() {
-    return {
-      beforeFiles: [
-        // Custom domain rewrites - only match paths that don't already have /site/
-        {
-          source: '/:path((?!site|api|_next|admin|favicon).*)',
-          has: [{ type: 'host', value: 'dramyheart.com' }],
-          destination: '/site/dr-amy/:path',
-        },
-        {
-          source: '/:path((?!site|api|_next|admin|favicon).*)',
-          has: [{ type: 'host', value: 'www.dramyheart.com' }],
-          destination: '/site/dr-amy/:path',
-        },
-      ],
-      afterFiles: [],
-      fallback: [],
-    };
-  },
   images: {
     remotePatterns: [
       {

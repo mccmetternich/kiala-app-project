@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useSiteId } from '@/hooks/useSiteId';
 import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import HeroStory from '@/widgets/HeroStory';
@@ -80,8 +80,7 @@ const fallbackSite: Site = {
 };
 
 export default function DynamicSiteHomepage() {
-  const params = useParams();
-  const siteId = params?.id as string;
+  const siteId = useSiteId();
   
   const [siteData, setSiteData] = useState<any>(null);
   const [articles, setArticles] = useState<any[]>([]);
