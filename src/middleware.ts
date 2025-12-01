@@ -4,26 +4,31 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || '';
   
-  // Skip middleware for these paths
+  // Extract the domain (remove port if present)
+  const domain = hostname.split(':')[0];
+  const isCustomDomain = domain !== 'localhost' && !domain.includes('vercel.app');
+
+  // Skip middleware for these paths (but not for custom domains on root path)
   if (
     url.pathname.startsWith('/api/') ||
     url.pathname.startsWith('/admin') ||
     url.pathname.startsWith('/_next') ||
     url.pathname.startsWith('/favicon.ico') ||
-    url.pathname === '/' ||
     hostname === 'localhost:3000' ||
     hostname === '127.0.0.1:3000'
   ) {
     return NextResponse.next();
   }
 
+  // For main app domain, skip root path (show admin dashboard)
+  if (!isCustomDomain && url.pathname === '/') {
+    return NextResponse.next();
+  }
+
   // For custom domains, detect the site and rewrite to dynamic route
   try {
-    // Extract the domain (remove port if present)
-    const domain = hostname.split(':')[0];
-    
-    // Skip if it's the main app domain (you'll replace this with your actual domain)
-    if (domain === 'localhost' || domain.includes('vercel.app') || domain.includes('your-main-domain.com')) {
+    // Skip if it's the main app domain
+    if (!isCustomDomain) {
       return NextResponse.next();
     }
 
