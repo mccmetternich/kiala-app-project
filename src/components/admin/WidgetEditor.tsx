@@ -846,6 +846,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
     const addImage = (url: string) => {
       onUpdate({ [field]: [...images, url] });
@@ -859,6 +861,44 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       const newImages = [...images];
       newImages.splice(index, 1);
       onUpdate({ [field]: newImages });
+    };
+
+    const reorderImages = (fromIndex: number, toIndex: number) => {
+      const newImages = [...images];
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+      onUpdate({ [field]: newImages });
+    };
+
+    const handleImageDragStart = (e: React.DragEvent, index: number) => {
+      setDraggedImageIndex(index);
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', index.toString());
+    };
+
+    const handleImageDragOver = (e: React.DragEvent, index: number) => {
+      e.preventDefault();
+      if (draggedImageIndex !== null && draggedImageIndex !== index) {
+        setDragOverIndex(index);
+      }
+    };
+
+    const handleImageDragLeave = () => {
+      setDragOverIndex(null);
+    };
+
+    const handleImageDrop = (e: React.DragEvent, toIndex: number) => {
+      e.preventDefault();
+      if (draggedImageIndex !== null && draggedImageIndex !== toIndex) {
+        reorderImages(draggedImageIndex, toIndex);
+      }
+      setDraggedImageIndex(null);
+      setDragOverIndex(null);
+    };
+
+    const handleImageDragEnd = () => {
+      setDraggedImageIndex(null);
+      setDragOverIndex(null);
     };
 
     const handleFiles = async (files: FileList) => {
@@ -928,19 +968,40 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
         <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
         <div className="space-y-2">
           {images.length > 0 && (
-            <div className="grid grid-cols-4 gap-2">
-              {images.map((url, index) => (
-                <div key={index} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                  <img src={url} alt="" className="w-full h-full object-cover" />
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+            <>
+              <p className="text-xs text-gray-500 mb-1">Drag images to reorder. First image = highest priority.</p>
+              <div className="grid grid-cols-4 gap-2">
+                {images.map((url, index) => (
+                  <div
+                    key={url + index}
+                    draggable
+                    onDragStart={(e) => handleImageDragStart(e, index)}
+                    onDragOver={(e) => handleImageDragOver(e, index)}
+                    onDragLeave={handleImageDragLeave}
+                    onDrop={(e) => handleImageDrop(e, index)}
+                    onDragEnd={handleImageDragEnd}
+                    className={`relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing transition-all ${
+                      draggedImageIndex === index ? 'opacity-50 scale-95' : ''
+                    } ${
+                      dragOverIndex === index ? 'ring-2 ring-primary-500 ring-offset-2' : ''
+                    }`}
                   >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <img src={url} alt="" className="w-full h-full object-cover pointer-events-none" />
+                    {index === 0 && (
+                      <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-primary-500 text-white text-[10px] font-bold rounded">
+                        1st
+                      </span>
+                    )}
+                    <button
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {/* Drag and drop zone */}
