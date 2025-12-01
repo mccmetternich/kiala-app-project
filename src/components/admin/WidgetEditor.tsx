@@ -35,6 +35,7 @@ import {
 import { Widget, WidgetConfig, WidgetType } from '@/types';
 import Badge from '@/components/ui/Badge';
 import MediaLibrary from '@/components/admin/MediaLibrary';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 interface WidgetEditorProps {
   widgets: Widget[];
@@ -1104,15 +1105,12 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       {widget.type === 'text-block' && (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Content (HTML)</label>
-            <textarea
-              rows={8}
+            <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+            <RichTextEditor
               value={widget.config.content || ''}
-              onChange={(e) => onUpdate({ content: e.target.value })}
-              placeholder="Enter your content here... You can use HTML tags."
-              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm text-gray-900 placeholder-gray-400"
+              onChange={(content) => onUpdate({ content })}
+              placeholder="Enter your content here..."
             />
-            <p className="text-xs text-gray-500 mt-1">HTML tags supported for formatting</p>
           </div>
         </div>
       )}
