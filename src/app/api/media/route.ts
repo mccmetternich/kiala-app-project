@@ -152,7 +152,12 @@ export async function POST(request: NextRequest) {
     const errorMessage = error?.message || 'Internal server error';
     return NextResponse.json({
       error: errorMessage,
-      details: error?.http_code ? `Cloudinary error: ${error.http_code}` : undefined
+      details: error?.http_code ? `Cloudinary error: ${error.http_code}` : undefined,
+      debug: {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'NOT SET',
+        apiKey: process.env.CLOUDINARY_API_KEY ? process.env.CLOUDINARY_API_KEY.substring(0, 4) + '...' : 'NOT SET',
+        apiSecret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET'
+      }
     }, { status: 500 });
   }
 }
