@@ -89,7 +89,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
               </div>
               <span className="font-medium">Join 47,284 women transforming their health!</span>
             </div>
-            <Link href={`${homeUrl}/articles/foods-naturally-balance-hormones`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <Link href={getSiteUrl('/articles/foods-naturally-balance-hormones')} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                 <Bell className="w-4 h-4" />
               </div>
@@ -133,8 +133,8 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
             {/* Desktop Navigation */}
             <div className="flex items-center gap-8">
               <Link href={homeUrl} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Home</Link>
-              <Link href={`${homeUrl}/articles`} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Articles</Link>
-              <Link href={`${homeUrl}/about`} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">About</Link>
+              <Link href={getSiteUrl('/articles')} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Articles</Link>
+              <Link href={getSiteUrl('/about')} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">About</Link>
             </div>
 
             {/* CTA Button */}
@@ -148,7 +148,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                 <span>47k+ members</span>
               </div>
               <a
-                href={`${homeUrl}#newsletter`}
+                href={getSiteUrl('/#newsletter')}
                 className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2 rounded-full font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-md hover:shadow-lg text-sm whitespace-nowrap"
               >
                 Join Community
@@ -165,7 +165,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
           {/* Announcement Banner - smoothly collapses */}
           <div className={`overflow-hidden transition-all duration-300 ease-out ${isScrolled ? 'max-h-0' : 'max-h-12'}`}>
             <Link
-              href={`${homeUrl}/articles/foods-naturally-balance-hormones`}
+              href={getSiteUrl('/articles/foods-naturally-balance-hormones')}
               className="flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-primary-500 to-primary-600"
             >
               <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
@@ -307,14 +307,14 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                   Home
                 </Link>
                 <Link
-                  href={`${homeUrl}/articles`}
+                  href={getSiteUrl('/articles')}
                   className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Articles
                 </Link>
                 <Link
-                  href={`${homeUrl}/about`}
+                  href={getSiteUrl('/about')}
                   className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -322,7 +322,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                 </Link>
                 <div className="pt-2">
                   <a
-                    href={`${homeUrl}#newsletter`}
+                    href={getSiteUrl('/#newsletter')}
                     className="block w-full bg-white text-purple-600 text-sm py-3 text-center rounded-lg font-bold"
                     onClick={() => setIsMenuOpen(false)}
                   >

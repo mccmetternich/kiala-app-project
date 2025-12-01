@@ -26,8 +26,12 @@ export function useSiteUrl(siteId: string | undefined) {
   // Generate a URL for the site - removes /site/{siteId} prefix on custom domains
   const getSiteUrl = (path: string): string => {
     if (isCustomDomain) {
-      // On custom domain, strip /site/{siteId} prefix
-      const cleanPath = path.replace(/^\/site\/[^/]+/, '');
+      // On custom domain, strip /site/{siteId} prefix and ensure leading slash
+      let cleanPath = path.replace(/^\/site\/[^/]+/, '');
+      // Ensure path starts with /
+      if (!cleanPath.startsWith('/')) {
+        cleanPath = '/' + cleanPath;
+      }
       return cleanPath || '/';
     }
     // On main domain, ensure path has /site/{siteId} prefix
