@@ -3,12 +3,14 @@ import { createQueries } from '@/lib/db-enhanced';
 import { nanoid } from 'nanoid';
 import { v2 as cloudinary } from 'cloudinary';
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Configure Cloudinary - initialized fresh on each request
+function getCloudinaryConfig() {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+}
 
 // GET /api/media - Get all media for a site
 export async function GET(request: NextRequest) {
@@ -46,6 +48,9 @@ export async function GET(request: NextRequest) {
 
 // POST /api/media - Upload a new media file to Cloudinary
 export async function POST(request: NextRequest) {
+  // Initialize Cloudinary config fresh
+  getCloudinaryConfig();
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
