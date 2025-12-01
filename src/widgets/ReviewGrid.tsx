@@ -97,15 +97,24 @@ export default function ReviewGrid({
               ))}
             </div>
 
-            {/* Name immediately under stars */}
-            <div className="flex items-center gap-2 mb-3">
-              <span className="font-bold text-gray-900 text-lg">{review.name}</span>
-              {review.verified && (
-                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                  <BadgeCheck className="w-3.5 h-3.5" />
-                  Verified
-                </span>
+            {/* Name with avatar */}
+            <div className="flex items-center gap-3 mb-3">
+              {review.image && (
+                <img
+                  src={review.image}
+                  alt={review.name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-primary-100"
+                />
               )}
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-gray-900 text-lg">{review.name}</span>
+                {review.verified && (
+                  <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    <BadgeCheck className="w-3.5 h-3.5" />
+                    Verified
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Review Title */}

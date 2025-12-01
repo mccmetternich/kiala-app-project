@@ -2508,7 +2508,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
                           setActiveImageField(`reviews.${idx}.bottomImage`);
                           setMediaLibraryOpen(true);
                         }}
-                        className="bg-gray-100 hover:bg-gray-200 px-2 rounded"
+                        className="bg-gray-100 hover:bg-gray-200 px-3 rounded text-gray-700"
                       >
                         <Upload className="w-4 h-4" />
                       </button>
