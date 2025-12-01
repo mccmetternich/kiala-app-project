@@ -88,9 +88,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, name, siteId, source, tags, pageUrl } = body;
+    const { email, name, siteId: providedSiteId, source, tags, pageUrl } = body;
 
-    if (!email || !siteId) {
+    if (!email || !providedSiteId) {
       return NextResponse.json(
         { error: 'Email and siteId are required' },
         { status: 400 }
@@ -104,6 +104,29 @@ export async function POST(request: NextRequest) {
         { error: 'Invalid email format' },
         { status: 400 }
       );
+    }
+
+    // Resolve siteId - it could be either the actual ID or a subdomain
+    let siteId = providedSiteId;
+
+    // Check if providedSiteId is a subdomain and resolve to actual ID
+    const siteBySubdomain = await queryOne(
+      'SELECT id FROM sites WHERE subdomain = ?',
+      [providedSiteId]
+    ) as { id: string } | null;
+
+    if (siteBySubdomain) {
+      siteId = siteBySubdomain.id;
+    } else {
+      // Verify the siteId exists
+      const siteById = await queryOne(
+        'SELECT id FROM sites WHERE id = ?',
+        [providedSiteId]
+      ) as { id: string } | null;
+
+      if (!siteById && providedSiteId !== 'default') {
+        return NextResponse.json({ error: 'Invalid site' }, { status: 400 });
+      }
     }
 
     // Get request metadata

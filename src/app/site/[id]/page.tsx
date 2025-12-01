@@ -171,7 +171,7 @@ export default function DynamicSiteHomepage() {
           leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
           communityCount={47284}
           showLeadMagnet={true}
-          siteId={siteId || undefined}
+          siteId={siteData?.id || siteId || undefined}
           audioTrackUrl={transformedSite.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}
         />
       }
