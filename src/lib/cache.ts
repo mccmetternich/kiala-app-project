@@ -5,13 +5,13 @@
 
 // Cache TTL configurations (in seconds)
 export const CacheTTL = {
-  SITE_DATA: 300,           // 5 minutes - site configuration
-  ARTICLE_CONTENT: 1800,    // 30 minutes - article content  
+  SITE_DATA: 60,            // 1 minute - site configuration
+  ARTICLE_CONTENT: 30,      // 30 seconds - article content (reduced for faster updates)
   DASHBOARD_STATS: 60,      // 1 minute - dashboard metrics
-  PAGE_BLOCKS: 900,         // 15 minutes - page block configuration
+  PAGE_BLOCKS: 60,          // 1 minute - page block configuration
   EMAIL_STATS: 300,         // 5 minutes - email subscriber counts
-  BRAND_PROFILE: 3600,     // 1 hour - brand profile data
-  WIDGET_CONFIG: 1800       // 30 minutes - widget configurations
+  BRAND_PROFILE: 300,       // 5 minutes - brand profile data
+  WIDGET_CONFIG: 30         // 30 seconds - widget configurations (reduced for faster updates)
 } as const;
 
 interface CacheEntry {
