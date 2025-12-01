@@ -1,5 +1,6 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import ArticlePageClient from './ArticlePageClient';
+import db from '@/lib/db-enhanced';
 
 type Props = {
   params: Promise<{ id: string; slug: string }>;
@@ -7,29 +8,23 @@ type Props = {
 
 async function getArticleData(subdomain: string, slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
-                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-
-    // First get the site to get actual site ID
-    const siteResponse = await fetch(`${baseUrl}/api/sites?subdomain=${subdomain}`, {
-      next: { revalidate: 60 }
+    // Query database directly instead of API call (more reliable for SSR)
+    const siteResult = await db.execute({
+      sql: 'SELECT * FROM sites WHERE subdomain = ?',
+      args: [subdomain]
     });
 
-    if (!siteResponse.ok) return null;
-
-    const siteData = await siteResponse.json();
-    const site = siteData.site;
+    const site = siteResult.rows[0] as any;
     if (!site) return null;
 
-    // Then get the article
-    const articleResponse = await fetch(`${baseUrl}/api/articles?siteId=${site.id}&slug=${slug}`, {
-      next: { revalidate: 60 }
+    // Get the article
+    const articleResult = await db.execute({
+      sql: 'SELECT * FROM articles WHERE site_id = ? AND slug = ? AND published = 1',
+      args: [site.id, slug]
     });
 
-    if (!articleResponse.ok) return null;
-
-    const articleData = await articleResponse.json();
-    const article = articleData.article || (articleData.articles && articleData.articles[0]);
+    const article = articleResult.rows[0] as any;
+    if (!article) return null;
 
     // Parse brand profile
     const brand = site.brand_profile
@@ -59,15 +54,19 @@ export async function generateMetadata(
 
   const { article, brand } = data;
 
-  // Use article hero image, or fall back to article image, or brand image
+  // Use article hero image, or fall back to brand image, or stock photo
   const heroImage = article.image ||
+                    brand?.aboutImage ||
                     brand?.profileImage ||
                     'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&h=630&fit=crop';
 
-  // Ensure image URL is absolute
+  // Ensure image URL is absolute - use Vercel URL for deployed environment
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
+                  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://kiala-app-project.vercel.app');
+
   const ogImage = heroImage.startsWith('http')
     ? heroImage
-    : `${process.env.NEXT_PUBLIC_BASE_URL || 'https://dramyheart.com'}${heroImage}`;
+    : `${baseUrl}${heroImage}`;
 
   const authorName = brand?.name || 'Dr. Amy Heart';
   const title = article.title;
