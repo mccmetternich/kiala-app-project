@@ -724,8 +724,27 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
 
   // Handler functions for field updates - use useCallback to stabilize references
   const handleFieldChange = useCallback((field: string, value: any) => {
-    onUpdate({ [field]: value });
-  }, [onUpdate]);
+    // Handle nested fields like "testimonial.quote"
+    if (field.includes('.')) {
+      const parts = field.split('.');
+      const rootField = parts[0];
+      const nestedField = parts.slice(1).join('.');
+
+      // Get current value of root field or initialize as empty object
+      const currentRoot = (widget.config as any)[rootField] || {};
+
+      // Set nested value
+      if (parts.length === 2) {
+        onUpdate({ [rootField]: { ...currentRoot, [parts[1]]: value } });
+      } else if (parts.length === 3) {
+        const midField = parts[1];
+        const currentMid = currentRoot[midField] || {};
+        onUpdate({ [rootField]: { ...currentRoot, [midField]: { ...currentMid, [parts[2]]: value } } });
+      }
+    } else {
+      onUpdate({ [field]: value });
+    }
+  }, [onUpdate, widget.config]);
 
   const handleOpenMediaLibrary = useCallback((field: string) => {
     setActiveImageField(field);
@@ -734,6 +753,16 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
 
   // Helper to get field value safely
   const getFieldValue = useCallback((field: string, defaultValue: any = '') => {
+    // Handle nested fields like "testimonial.quote"
+    if (field.includes('.')) {
+      const parts = field.split('.');
+      let value: any = widget.config;
+      for (const part of parts) {
+        value = value?.[part];
+        if (value === undefined) return defaultValue;
+      }
+      return value ?? defaultValue;
+    }
     return (widget.config as any)[field] ?? defaultValue;
   }, [widget.config]);
 
@@ -842,6 +871,185 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             Add Image
           </button>
         </div>
+      </div>
+    );
+  };
+
+  // Pricing Options Editor for Shop Now widget
+  const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange: (options: any[]) => void }) => {
+    const addOption = () => {
+      const newOption = {
+        id: `option-${Date.now()}`,
+        label: 'Buy 1 Get 1 FREE',
+        quantity: 1,
+        price: 97,
+        originalPrice: 167,
+        perUnit: 97,
+        savings: 'Save $70',
+        popular: false,
+        gifts: []
+      };
+      onChange([...options, newOption]);
+    };
+
+    const updateOption = (index: number, field: string, value: any) => {
+      const updated = [...options];
+      updated[index] = { ...updated[index], [field]: value };
+      onChange(updated);
+    };
+
+    const removeOption = (index: number) => {
+      onChange(options.filter((_, i) => i !== index));
+    };
+
+    const addGift = (optionIndex: number) => {
+      const updated = [...options];
+      updated[optionIndex].gifts = [...(updated[optionIndex].gifts || []), { name: 'Free Gift', value: '$10.00' }];
+      onChange(updated);
+    };
+
+    const updateGift = (optionIndex: number, giftIndex: number, field: string, value: string) => {
+      const updated = [...options];
+      updated[optionIndex].gifts[giftIndex] = { ...updated[optionIndex].gifts[giftIndex], [field]: value };
+      onChange(updated);
+    };
+
+    const removeGift = (optionIndex: number, giftIndex: number) => {
+      const updated = [...options];
+      updated[optionIndex].gifts = updated[optionIndex].gifts.filter((_: any, i: number) => i !== giftIndex);
+      onChange(updated);
+    };
+
+    return (
+      <div className="space-y-3">
+        {options.map((option, index) => (
+          <div key={option.id || index} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-sm font-medium text-gray-700">Package {index + 1}</span>
+              <button onClick={() => removeOption(index)} className="text-red-500 hover:text-red-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              <input
+                type="text"
+                value={option.label || ''}
+                onChange={(e) => updateOption(index, 'label', e.target.value)}
+                placeholder="Label (e.g., Buy 1 Get 1 FREE)"
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              />
+              <input
+                type="text"
+                value={option.savings || ''}
+                onChange={(e) => updateOption(index, 'savings', e.target.value)}
+                placeholder="Savings text"
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-2">
+              <input
+                type="number"
+                value={option.price || 0}
+                onChange={(e) => updateOption(index, 'price', parseFloat(e.target.value))}
+                placeholder="Price"
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              />
+              <input
+                type="number"
+                value={option.originalPrice || 0}
+                onChange={(e) => updateOption(index, 'originalPrice', parseFloat(e.target.value))}
+                placeholder="Original"
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              />
+              <label className="flex items-center gap-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={option.popular || false}
+                  onChange={(e) => updateOption(index, 'popular', e.target.checked)}
+                  className="rounded"
+                />
+                Popular
+              </label>
+            </div>
+            {/* Gifts */}
+            <div className="mt-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-gray-500">Free Gifts:</span>
+                <button onClick={() => addGift(index)} className="text-xs text-primary-600 hover:text-primary-700">+ Add Gift</button>
+              </div>
+              {(option.gifts || []).map((gift: any, giftIndex: number) => (
+                <div key={giftIndex} className="flex gap-1 mb-1">
+                  <input
+                    type="text"
+                    value={gift.name || ''}
+                    onChange={(e) => updateGift(index, giftIndex, 'name', e.target.value)}
+                    placeholder="Gift name"
+                    className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
+                  />
+                  <input
+                    type="text"
+                    value={gift.value || ''}
+                    onChange={(e) => updateGift(index, giftIndex, 'value', e.target.value)}
+                    placeholder="Value"
+                    className="w-16 px-2 py-1 text-xs border border-gray-300 rounded"
+                  />
+                  <button onClick={() => removeGift(index, giftIndex)} className="text-red-500 hover:text-red-700">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        <button
+          onClick={addOption}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Package Option
+        </button>
+      </div>
+    );
+  };
+
+  // Benefits List Editor
+  const BenefitsListEditor = ({ benefits, onChange }: { benefits: string[]; onChange: (benefits: string[]) => void }) => {
+    const addBenefit = () => {
+      onChange([...benefits, 'New benefit']);
+    };
+
+    const updateBenefit = (index: number, value: string) => {
+      const updated = [...benefits];
+      updated[index] = value;
+      onChange(updated);
+    };
+
+    const removeBenefit = (index: number) => {
+      onChange(benefits.filter((_, i) => i !== index));
+    };
+
+    return (
+      <div className="space-y-2">
+        {benefits.map((benefit, index) => (
+          <div key={index} className="flex gap-2">
+            <input
+              type="text"
+              value={benefit}
+              onChange={(e) => updateBenefit(index, e.target.value)}
+              className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg"
+            />
+            <button onClick={() => removeBenefit(index)} className="text-red-500 hover:text-red-700 px-2">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+        <button
+          onClick={addBenefit}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Benefit
+        </button>
       </div>
     );
   };
@@ -1541,23 +1749,54 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       {/* Shop Now */}
       {widget.type === 'shop-now' && (
         <div className="space-y-4">
-          {renderTextField('Product Name', 'name', 'Complete Hormone Reset')}
-          {renderTextAreaField('Description', 'description', 'Product description...', 3)}
-          {renderImageField('Product Image', 'image')}
+          {renderTextField('Product Name', 'name', 'Kiala Greens')}
+          {renderTextAreaField('Description', 'description', 'The all-in-one solution for naturally balancing your hormones and boosting your metabolism after 40.', 3)}
+
+          {/* Product Images Gallery */}
+          <ImageGalleryField label="Product Images (up to 6)" field="images" />
+          <p className="text-xs text-gray-500">Upload up to 6 product images for the gallery carousel.</p>
+
           <div className="grid grid-cols-2 gap-4">
-            {renderNumberField('Rating (1-5)', 'rating', 1, 5)}
-            {renderNumberField('Review Count', 'reviewCount')}
+            {renderNumberField('Rating (1-5)', 'rating', 1, 5, '4.7')}
+            {renderTextField('Review Count', 'reviewCount', '1.2M')}
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            {renderNumberField('Price', 'price', 0)}
-            {renderNumberField('Original Price', 'originalPrice', 0)}
+          {renderTextField('Loved By Count', 'lovedByCount', '1,000,000+')}
+
+          {/* Pricing Options */}
+          <div className="border-t pt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Pricing Options (Packages)</label>
+            <PricingOptionsEditor
+              options={(widget.config as any).pricingOptions || []}
+              onChange={(options) => onUpdate({ pricingOptions: options })}
+            />
           </div>
-          {renderTextField('Button Text', 'buttonText', 'Add to Cart')}
-          {renderTextField('Button URL', 'buttonUrl', '/checkout')}
+
+          {/* Benefits */}
+          <div className="border-t pt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits (checkmarks)</label>
+            <BenefitsListEditor
+              benefits={(widget.config as any).benefits || []}
+              onChange={(benefits) => onUpdate({ benefits })}
+            />
+          </div>
+
+          {renderTextField('Button Text', 'ctaText', 'START NOW')}
+          {renderTextField('Button URL', 'ctaUrl', 'https://trygreens.com/dr-amy')}
           {renderSelectField('Open in', 'target', [
             { value: '_self', label: 'Same tab' },
             { value: '_blank', label: 'New tab' }
           ])}
+          {renderTextField('Guarantee Text', 'guaranteeText', '90-Day Money-Back Guarantee')}
+
+          {/* Testimonial */}
+          <div className="border-t pt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Featured Testimonial</label>
+            <div className="space-y-3 bg-gray-50 p-3 rounded-lg">
+              {renderTextField('Quote', 'testimonial.quote', 'This totally changed my life!')}
+              {renderTextField('Customer Name', 'testimonial.name', 'Sarah M.')}
+              {renderImageField('Customer Avatar', 'testimonial.avatar')}
+            </div>
+          </div>
         </div>
       )}
 
@@ -2438,9 +2677,67 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       subheading: 'Everything you need to know'
     },
     'shop-now': {
-      headline: 'Complete Hormone Reset Kit',
-      buttonText: 'Add to Cart',
-      target: '_self'
+      name: 'Kiala Greens',
+      description: 'The all-in-one solution for naturally balancing your hormones and boosting your metabolism after 40.',
+      images: [],
+      rating: 4.7,
+      reviewCount: '1.2M',
+      lovedByCount: '1,000,000+',
+      pricingOptions: [
+        {
+          id: 'single',
+          label: 'Buy 1 Get 1 FREE',
+          quantity: 1,
+          price: 97,
+          originalPrice: 167,
+          perUnit: 97,
+          savings: 'Save $70',
+          gifts: [{ name: 'Free Shipping', value: '$10.00' }]
+        },
+        {
+          id: 'double',
+          label: 'Buy 2 Get 2 FREE',
+          quantity: 2,
+          price: 167,
+          originalPrice: 287,
+          perUnit: 83.50,
+          savings: 'Save $120',
+          popular: true,
+          gifts: [
+            { name: 'Free Shipping', value: '$10.00' },
+            { name: 'Free Frother', value: '$10.00' }
+          ]
+        },
+        {
+          id: 'triple',
+          label: 'Buy 3 Get 3 FREE',
+          quantity: 3,
+          price: 227,
+          originalPrice: 377,
+          perUnit: 75.67,
+          savings: 'Save $150',
+          gifts: [
+            { name: 'Free Shipping', value: '$10.00' },
+            { name: 'Free Frother', value: '$10.00' },
+            { name: 'Free Wellness Guide', value: '$10.00' }
+          ]
+        }
+      ],
+      benefits: [
+        'Clinically-backed formula',
+        '90-day transformation protocol',
+        'Free digital delivery',
+        'Expert support included'
+      ],
+      ctaText: 'START NOW',
+      ctaUrl: 'https://trygreens.com/dr-amy',
+      target: '_blank',
+      guaranteeText: '90-Day Money-Back Guarantee',
+      testimonial: {
+        quote: 'This totally changed my life!',
+        name: 'Sarah M.',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=face'
+      }
     },
     'data-overview': {
       headline: 'The Numbers Speak',
