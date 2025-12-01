@@ -58,8 +58,8 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
       );
       
     case 'comparison-table':
-      // Convert widget config to ComparisonTable format
-      const comparisonRows = [
+      // Use custom rows from config or fallback to defaults
+      const comparisonRows = widget.config.rows || [
         { feature: 'Clinical Studies', standard: 'Limited research', premium: 'Published in 5+ journals' },
         { feature: 'Bioavailability', standard: false, premium: true },
         { feature: 'Third-Party Tested', standard: false, premium: true },
@@ -70,8 +70,10 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
       return (
         <div className="my-8">
           <ComparisonTable
-            title={widget.config.headline || 'Compare Options'}
+            title={widget.config.title || widget.config.headline || 'Compare Options'}
             rows={comparisonRows}
+            leftColumnHeader={widget.config.leftColumnHeader || 'Standard'}
+            rightColumnHeader={widget.config.rightColumnHeader || 'Premium'}
           />
         </div>
       );
