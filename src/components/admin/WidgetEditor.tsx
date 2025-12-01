@@ -2491,6 +2491,9 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             {renderNumberField('Price', 'price', 0)}
             {renderNumberField('Original Price', 'originalPrice', 0)}
           </div>
+          {renderTextField('Savings Text (optional)', 'savingsText', 'Leave empty to auto-calculate')}
+          <p className="text-xs text-gray-500 -mt-2">If empty, will show "You save $X (Y% off)" based on prices above.</p>
+
           {renderTextField('Doctor Name', 'doctorName', 'Dr. Amy')}
           {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
           {renderTextField('Button URL', 'buttonUrl', '/checkout')}
@@ -2498,6 +2501,65 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             { value: '_self', label: 'Same tab' },
             { value: '_blank', label: 'New tab' }
           ])}
+
+          {/* Benefits List */}
+          <div className="border-t pt-4 mt-4">
+            <div className="flex justify-between items-center mb-3">
+              <label className="block text-sm font-medium text-gray-700">Benefits (green checkmarks)</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const benefits = (widget.config.benefits || []) as string[];
+                  onUpdate({ benefits: [...benefits, ''] });
+                }}
+                className="text-sm text-primary-600 hover:text-primary-700"
+              >
+                + Add Benefit
+              </button>
+            </div>
+            <div className="space-y-2">
+              {((widget.config.benefits || []) as string[]).map((benefit, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <span className="text-gray-400 text-sm w-6">{idx + 1}.</span>
+                  <input
+                    type="text"
+                    value={benefit}
+                    onChange={(e) => {
+                      const benefits = [...(widget.config.benefits || [])] as string[];
+                      benefits[idx] = e.target.value;
+                      onUpdate({ benefits });
+                    }}
+                    placeholder={`Benefit ${idx + 1}`}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const benefits = [...(widget.config.benefits || [])] as string[];
+                      benefits.splice(idx, 1);
+                      onUpdate({ benefits });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {((widget.config.benefits || []) as string[]).length === 0 && (
+                <p className="text-xs text-gray-500 italic">No benefits added. Click "+ Add Benefit" to add up to 5 bullet points.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Trust Badge Text */}
+          <div className="border-t pt-4 mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Trust Badge Labels</label>
+            <div className="space-y-3">
+              {renderTextField('Shipping Badge', 'shippingBadgeText', 'Free, Fast Shipping')}
+              {renderTextField('Guarantee Badge', 'guaranteeBadgeText', '90-Day Guarantee')}
+              {renderTextField('Evaluated Badge', 'evaluatedBadgeText', 'Medically Evaluated')}
+            </div>
+          </div>
         </div>
       )}
 

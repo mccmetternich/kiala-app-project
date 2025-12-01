@@ -10,6 +10,7 @@ interface ExclusiveProductCardProps {
   image?: string;
   price?: number;
   originalPrice?: number;
+  savingsText?: string; // Manual override for savings display (e.g., "Save $100")
   rating?: number;
   reviewCount?: number | string;
   benefits?: string[];
@@ -19,6 +20,9 @@ interface ExclusiveProductCardProps {
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
+  shippingBadgeText?: string; // Customizable shipping badge text
+  guaranteeBadgeText?: string; // Customizable guarantee badge text
+  evaluatedBadgeText?: string; // Customizable evaluated badge text
   showFreeShipping?: boolean;
   showGuarantee?: boolean;
   showMedicallyEvaluated?: boolean;
@@ -45,6 +49,10 @@ export default function ExclusiveProductCard({
   ctaText = 'TRY IT NOW',
   ctaUrl = '#',
   target = '_self',
+  shippingBadgeText = 'Free, Fast Shipping',
+  guaranteeBadgeText = '90-Day Guarantee',
+  evaluatedBadgeText = 'Medically Evaluated',
+  savingsText,
   showFreeShipping = true,
   showGuarantee = true,
   showMedicallyEvaluated = true
@@ -214,19 +222,19 @@ export default function ExclusiveProductCard({
               {showFreeShipping && (
                 <div className="flex flex-col items-center p-3 bg-green-50 rounded-lg border border-green-100">
                   <Truck className="w-6 h-6 text-green-600 mb-1" />
-                  <span className="text-xs font-medium text-green-800 text-center">Free Digital Delivery</span>
+                  <span className="text-xs font-medium text-green-800 text-center">{shippingBadgeText}</span>
                 </div>
               )}
               {showGuarantee && (
                 <div className="flex flex-col items-center p-3 bg-blue-50 rounded-lg border border-blue-100">
                   <Shield className="w-6 h-6 text-blue-600 mb-1" />
-                  <span className="text-xs font-medium text-blue-800 text-center">90-Day Guarantee</span>
+                  <span className="text-xs font-medium text-blue-800 text-center">{guaranteeBadgeText}</span>
                 </div>
               )}
               {showMedicallyEvaluated && (
                 <div className="flex flex-col items-center p-3 bg-purple-50 rounded-lg border border-purple-100">
                   <Award className="w-6 h-6 text-purple-600 mb-1" />
-                  <span className="text-xs font-medium text-purple-800 text-center">Medically Evaluated</span>
+                  <span className="text-xs font-medium text-purple-800 text-center">{evaluatedBadgeText}</span>
                 </div>
               )}
             </div>
@@ -239,7 +247,9 @@ export default function ExclusiveProductCard({
                     <span className="text-3xl font-bold text-gray-900">${price}</span>
                     <span className="text-lg text-gray-400 line-through">${originalPrice}</span>
                   </div>
-                  <p className="text-green-600 font-medium text-sm">You save ${savings} ({Math.round((savings/originalPrice)*100)}% off)</p>
+                  <p className="text-green-600 font-medium text-sm">
+                    {savingsText || `You save $${savings} (${Math.round((savings/originalPrice)*100)}% off)`}
+                  </p>
                 </div>
                 <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold animate-pulse">
                   LIMITED TIME
