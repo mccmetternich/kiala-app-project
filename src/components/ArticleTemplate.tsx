@@ -502,6 +502,7 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
           <ScrollingThumbnails
             headline={widget.config.headline}
             columns={widget.config.columns}
+            customImages={widget.config.customImages}
             speed={widget.config.speed}
             imageHeight={widget.config.imageHeight}
           />

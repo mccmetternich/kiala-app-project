@@ -9,6 +9,7 @@ interface ImageColumn {
 interface ScrollingThumbnailsProps {
   headline?: string;
   columns?: ImageColumn[];
+  customImages?: string[]; // Array of uploaded image URLs
   speed?: number;
   imageHeight?: number;
 }
@@ -37,21 +38,71 @@ const womenFaces = [
   'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face'
 ];
 
-// Generate 15 columns with rotating images (all verified working women faces)
-const betterDefaults: ImageColumn[] = Array(15).fill(null).map((_, colIndex) => ({
-  images: [
-    womenFaces[(colIndex * 3) % womenFaces.length],
-    womenFaces[(colIndex * 3 + 1) % womenFaces.length],
-    womenFaces[(colIndex * 3 + 2) % womenFaces.length]
-  ]
-}));
+// Generate columns from a list of images (custom + stock as needed)
+function generateColumns(customImages: string[] = [], columnCount: number = 15, imagesPerColumn: number = 3): ImageColumn[] {
+  // Combine custom images with stock photos to fill gaps
+  const totalImagesNeeded = columnCount * imagesPerColumn;
+  const allImages: string[] = [];
+
+  // Add custom images first
+  if (customImages.length > 0) {
+    allImages.push(...customImages);
+  }
+
+  // Fill remaining slots with stock photos (cycling through them)
+  let stockIndex = 0;
+  while (allImages.length < totalImagesNeeded) {
+    allImages.push(womenFaces[stockIndex % womenFaces.length]);
+    stockIndex++;
+  }
+
+  // Shuffle the combined array for variety (but keep custom images prominent)
+  // We'll interleave custom and stock rather than pure shuffle
+  const shuffled: string[] = [];
+  const customCount = customImages.length;
+  const stockCount = allImages.length - customCount;
+
+  if (customCount > 0) {
+    // Interleave custom images throughout
+    const customInterval = Math.max(1, Math.floor(totalImagesNeeded / customCount));
+    let customIdx = 0;
+    let stockIdx = customCount;
+
+    for (let i = 0; i < totalImagesNeeded; i++) {
+      if (customIdx < customCount && (i % customInterval === 0 || stockIdx >= allImages.length)) {
+        shuffled.push(allImages[customIdx]);
+        customIdx++;
+      } else if (stockIdx < allImages.length) {
+        shuffled.push(allImages[stockIdx]);
+        stockIdx++;
+      }
+    }
+  } else {
+    shuffled.push(...allImages);
+  }
+
+  // Generate columns from the shuffled images
+  return Array(columnCount).fill(null).map((_, colIndex) => ({
+    images: [
+      shuffled[(colIndex * imagesPerColumn) % shuffled.length],
+      shuffled[(colIndex * imagesPerColumn + 1) % shuffled.length],
+      shuffled[(colIndex * imagesPerColumn + 2) % shuffled.length]
+    ]
+  }));
+}
+
+// Default columns using only stock photos
+const defaultColumns: ImageColumn[] = generateColumns([], 15, 3);
 
 export default function ScrollingThumbnails({
   headline = 'Join 1,000,000+ Happy Customers',
-  columns = betterDefaults,
+  columns,
+  customImages = [],
   speed = 30,
   imageHeight = 100
 }: ScrollingThumbnailsProps) {
+  // Use provided columns, or generate from customImages, or use defaults
+  const displayColumnsData = columns || generateColumns(customImages, 15, 3);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,7 +133,7 @@ export default function ScrollingThumbnails({
   }, [speed]);
 
   // Duplicate columns for seamless loop
-  const displayColumns = [...columns, ...columns];
+  const displayColumns = [...displayColumnsData, ...displayColumnsData];
 
   return (
     <div className="my-8 overflow-hidden bg-gradient-to-r from-primary-50 via-white to-purple-50 rounded-2xl py-8">

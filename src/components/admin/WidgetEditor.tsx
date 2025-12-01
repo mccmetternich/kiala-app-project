@@ -2243,8 +2243,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
           {renderTextField('Headline', 'headline', 'Join 1,000,000+ Happy Customers')}
           {renderNumberField('Image Size (px)', 'imageHeight', 50, 200, '100')}
           {renderNumberField('Scroll Speed', 'speed', 10, 100, '30')}
-          <ImageGalleryField label="Customer Photos" field="images" />
-          <p className="text-xs text-gray-500">Upload customer photos for the scrolling gallery. Default images shown if none uploaded.</p>
+          <ImageGalleryField label="Customer Photos" field="customImages" />
+          <p className="text-xs text-gray-500">Upload customer photos for the scrolling gallery. Photos are interleaved with stock images to fill the wall. The more photos you upload, the more prominent they'll be.</p>
         </div>
       )}
 
@@ -2632,7 +2632,8 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     'scrolling-thumbnails': {
       headline: 'Join 1,000,000+ Happy Customers',
       speed: 30,
-      imageHeight: 100
+      imageHeight: 100,
+      customImages: []
     },
     'testimonial-hero': {
       headline: 'I Lost 22 lbs and My Energy is Through the Roof!',
