@@ -37,6 +37,7 @@ interface ArticleTemplateProps {
   sidebar?: ReactNode;
   views?: number;
   readTime?: number;
+  heroImage?: string;
 }
 
 // Widget renderer component
@@ -663,14 +664,17 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
 }
 
 export default function ArticleTemplate({
-  page, 
-  site, 
-  sidebar, 
+  page,
+  site,
+  sidebar,
   views = 0,
-  readTime = 5 
+  readTime = 5,
+  heroImage
 }: ArticleTemplateProps) {
-  // Sort widgets by position
-  const sortedWidgets = [...page.content.widgets].sort((a, b) => a.position - b.position);
+  // Sort widgets by position, excluding any hero-image text-block widget (now handled separately)
+  const sortedWidgets = [...page.content.widgets]
+    .filter(w => !(w.id === 'hero-image' && w.type === 'text-block'))
+    .sort((a, b) => a.position - b.position);
   
   return (
     <article className="max-w-4xl mx-auto">
@@ -725,6 +729,17 @@ export default function ArticleTemplate({
           </div>
         </div>
       </header>
+
+      {/* Hero Image - from article metadata */}
+      {heroImage && (
+        <div className="mb-8">
+          <img
+            src={heroImage}
+            alt={page.title}
+            className="w-full rounded-xl shadow-lg"
+          />
+        </div>
+      )}
 
       {/* Article Content with Widgets */}
       <div className="space-y-6">

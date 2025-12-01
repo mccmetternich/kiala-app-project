@@ -221,6 +221,7 @@ export default function ArticlePageClient() {
           site={transformedSite}
           views={article.views}
           readTime={article.read_time}
+          heroImage={article.image}
         />
       </SiteLayout>
     </TrackingProvider>

@@ -28,23 +28,15 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
   const categoryLower = article.category?.toLowerCase() || 'health';
 
   return [
-    // 1. Hero image
-    {
-      id: 'hero-image',
-      type: 'text-block',
-      enabled: true,
-      position: 1,
-      config: {
-        content: `<img src="${article.image}" alt="${article.title}" class="w-full rounded-xl shadow-lg mb-6" />`
-      }
-    },
+    // Hero image is now rendered directly from article.image in ArticleTemplate
+    // No longer needs to be a widget
 
-    // 2. Opening hook with warning
+    // 1. Opening hook with warning
     {
       id: 'opening-hook',
       type: 'text-block',
       enabled: true,
-      position: 2,
+      position: 1,
       config: {
         content: `
           <p class="text-xl text-gray-700 leading-relaxed mb-6 font-medium">${article.excerpt}</p>
@@ -55,12 +47,12 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
       }
     },
 
-    // 3. Before/After Comparison
+    // 2. Before/After Comparison
     {
       id: 'before-after-widget',
       type: 'before-after',
       enabled: true,
-      position: 3,
+      position: 2,
       config: {
         headline: 'Real Results From Real Women',
         name: 'Sarah M.',
@@ -86,12 +78,12 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
       }
     },
 
-    // 4. Before/After Side by Side
+    // 3. Before/After Side by Side
     {
       id: 'before-after-side-by-side-widget',
       type: 'before-after-side-by-side',
       enabled: true,
-      position: 4,
+      position: 3,
       config: {
         headline: "Michelle's Incredible Transformation",
         name: 'Michelle R.',
@@ -117,12 +109,12 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
       }
     },
 
-    // 5. Data Overview
+    // 4. Data Overview
     {
       id: 'data-overview-widget',
       type: 'data-overview',
       enabled: true,
-      position: 5,
+      position: 4,
       config: {
         headline: 'The Hormone Crisis By The Numbers',
         subheading: 'Why millions of women are struggling with their health',
@@ -137,12 +129,12 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
       }
     },
 
-    // 6. Main Article Content
+    // 5. Main Article Content
     {
       id: 'main-content',
       type: 'text-block',
       enabled: true,
-      position: 6,
+      position: 5,
       config: {
         content: `
           <div class="prose prose-lg max-w-none">
@@ -475,21 +467,13 @@ export function generateDefaultWidgetConfig(article: ArticleContext): Widget[] {
  * Generate a minimal widget config for a simple article (just content)
  */
 export function generateMinimalWidgetConfig(article: ArticleContext): Widget[] {
+  // Hero image is now rendered directly from article.image in ArticleTemplate
   return [
-    {
-      id: 'hero-image',
-      type: 'text-block',
-      enabled: true,
-      position: 1,
-      config: {
-        content: article.image ? `<img src="${article.image}" alt="${article.title}" class="w-full rounded-xl shadow-lg mb-6" />` : ''
-      }
-    },
     {
       id: 'intro',
       type: 'text-block',
       enabled: true,
-      position: 2,
+      position: 1,
       config: {
         content: `<p class="text-xl text-gray-700 leading-relaxed mb-6 font-medium">${article.excerpt}</p>`
       }
@@ -498,7 +482,7 @@ export function generateMinimalWidgetConfig(article: ArticleContext): Widget[] {
       id: 'main-content',
       type: 'text-block',
       enabled: true,
-      position: 3,
+      position: 2,
       config: {
         content: `<div class="prose prose-lg max-w-none">${article.content || ''}</div>`
       }
@@ -507,7 +491,7 @@ export function generateMinimalWidgetConfig(article: ArticleContext): Widget[] {
       id: 'email-capture',
       type: 'email-capture',
       enabled: true,
-      position: 4,
+      position: 3,
       config: {
         headline: 'Want More Tips Like This?',
         subheading: 'Join thousands getting weekly health insights',

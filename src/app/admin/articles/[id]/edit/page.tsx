@@ -368,8 +368,11 @@ export default function EditArticle() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Featured Image
+                        Hero Image
                       </label>
+                      <p className="text-xs text-gray-500 mb-2">
+                        This image appears at the top of the article and as the thumbnail in article lists.
+                      </p>
                       <div className="flex items-start gap-4">
                         {formData.image ? (
                           <div className="relative group">
