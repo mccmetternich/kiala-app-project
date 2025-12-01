@@ -25,28 +25,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Skip if it's the main app domain
-  if (!isCustomDomain) {
-    return NextResponse.next();
-  }
-
-  // Custom domain to site mapping
-  const domainToSite: Record<string, string> = {
-    'dramyheart.com': 'dr-amy',
-    'www.dramyheart.com': 'dr-amy',
-  };
-
-  const siteId = domainToSite[domain];
-
-  if (siteId) {
-    // Rewrite to the dynamic site route
-    const newUrl = url.clone();
-    newUrl.pathname = `/site/${siteId}${url.pathname}`;
-    return NextResponse.rewrite(newUrl);
-  }
-
-  // If no site found for this domain, show 404
-  return new NextResponse('Site not found', { status: 404 });
+  // Custom domains are handled by vercel.json rewrites
+  // This middleware only handles the main app domain
+  return NextResponse.next();
 }
 
 export const config = {
