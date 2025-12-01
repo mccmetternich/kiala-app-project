@@ -350,7 +350,7 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
                 widget={widget}
                 isSelected={selectedWidget === widget.id}
                 isDragging={draggedWidget === widget.id}
-                onSelect={() => setSelectedWidget(widget.id)}
+                onSelect={() => setSelectedWidget(selectedWidget === widget.id ? null : widget.id)}
                 onUpdate={(config) => updateWidget(widget.id, config)}
                 onDelete={() => deleteWidget(widget.id)}
                 onDuplicate={() => duplicateWidget(widget.id)}
