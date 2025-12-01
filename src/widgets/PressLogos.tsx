@@ -66,12 +66,12 @@ export default function PressLogos({
             className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow group"
           >
             {/* Logo - uploadable image */}
-            <div className="h-16 md:h-20 flex items-center justify-center mb-4 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="h-12 md:h-14 w-[160px] md:w-[180px] flex items-center justify-center mb-4 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
               {item.logo ? (
                 <img
                   src={item.logo}
                   alt={item.publication}
-                  className="max-h-full max-w-[180px] object-contain"
+                  className="h-full w-full object-contain"
                 />
               ) : (
                 <span className="text-2xl md:text-3xl font-bold text-gray-400 uppercase tracking-wider">{item.publication}</span>
