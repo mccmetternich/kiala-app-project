@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Heart, Eye, Clock, TrendingUp, Flame, Sparkles, Mail, CheckCircle } from 'lucide-react';
+import { useSiteUrl } from '@/hooks/useSiteUrl';
 
 interface Article {
   id: string;
@@ -140,6 +141,8 @@ export default function ArticleGrid({
   showProductTile = false,
   showEmailCapture = true
 }: ArticleGridProps) {
+  const { getSiteUrl } = useSiteUrl(siteId);
+
   // Filter featured articles if showFeatured is true
   const displayArticles = showFeatured
     ? articles.filter(article => article.featured)
@@ -200,7 +203,7 @@ export default function ArticleGrid({
                     <span className="text-lg text-gray-500 line-through">$197</span>
                   </div>
                   <a
-                    href={`/site/${siteId}/top-picks`}
+                    href={getSiteUrl('/top-picks')}
                     className="block w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
                   >
                     Learn More →
@@ -220,7 +223,7 @@ export default function ArticleGrid({
           return (
             <a
               key={article.id}
-              href={`/site/${siteId}/articles/${article.slug}`}
+              href={getSiteUrl(`/articles/${article.slug}`)}
               className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-300 block"
             >
               <div className="relative">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X, Bell, Play, Pause } from 'lucide-react';
 import { Site } from '@/types';
 import Badge from '../ui/Badge';
+import { useSiteUrl } from '@/hooks/useSiteUrl';
 
 interface SiteHeaderProps {
   site: Site;
@@ -32,8 +33,12 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
   // Get audio URL from site settings
   const effectiveAudioUrl = (site as any).settings?.audioUrl;
 
+  // Use domain-aware URL helper
+  const siteId = site.subdomain || site.id;
+  const { getSiteUrl, isCustomDomain } = useSiteUrl(siteId);
+
   // Determine the homepage URL based on subdomain or id
-  const homeUrl = site.subdomain ? `/site/${site.subdomain}` : `/site/${site.id}`;
+  const homeUrl = getSiteUrl('/');
 
   const brand = site.brand;
 
