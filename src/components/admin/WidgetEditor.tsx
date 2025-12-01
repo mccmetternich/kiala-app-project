@@ -3178,7 +3178,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       buttonText: 'Try Kiala Greens Risk-Free →',
       buttonUrl: 'https://trygreens.com/dr-amy',
       guaranteeBadge: '90-Day Money Back Guarantee',
-      satisfactionBadge: '100% Satisfaction Guarantee'
+      satisfactionBadge: 'Dr. Amy Community Approved'
     }
   };
 

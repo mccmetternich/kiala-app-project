@@ -51,7 +51,7 @@ export default function UsVsThemComparison({
   buttonUrl,
   target = '_blank',
   guaranteeBadge = '90-Day Money Back Guarantee',
-  satisfactionBadge = '100% Satisfaction Guarantee',
+  satisfactionBadge = 'Dr. Amy Community Approved',
   // Legacy props
   ctaText = 'Try Kiala Greens Risk-Free →',
   ctaUrl = 'https://trygreens.com/dr-amy'
