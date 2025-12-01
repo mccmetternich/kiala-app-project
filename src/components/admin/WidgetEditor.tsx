@@ -2560,6 +2560,27 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
               {renderTextField('Evaluated Badge', 'evaluatedBadgeText', 'Medically Evaluated')}
             </div>
           </div>
+
+          {/* Testimonial Section */}
+          <div className="border-t pt-4 mt-4">
+            <div className="flex justify-between items-center mb-3">
+              <label className="block text-sm font-medium text-gray-700">Testimonial (below product image)</label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={widget.config.showTestimonial !== false}
+                  onChange={(e) => onUpdate({ showTestimonial: e.target.checked })}
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <span className="text-gray-600">Show</span>
+              </label>
+            </div>
+            <div className="space-y-3">
+              {renderImageField('Avatar Photo', 'testimonialAvatar')}
+              {renderTextField('Customer Name', 'testimonialName', 'Sarah M., 47')}
+              {renderTextAreaField('Quote', 'testimonialQuote', 'This product changed my life...', 3)}
+            </div>
+          </div>
         </div>
       )}
 

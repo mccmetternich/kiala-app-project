@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Truck, BadgeCheck, Star, Award, Heart, Sparkles, CheckCircle, Clock } from 'lucide-react';
+import { Shield, Truck, BadgeCheck, Star, Award, Heart, Sparkles, CheckCircle, Clock, Quote } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
 interface ExclusiveProductCardProps {
@@ -26,6 +26,11 @@ interface ExclusiveProductCardProps {
   showFreeShipping?: boolean;
   showGuarantee?: boolean;
   showMedicallyEvaluated?: boolean;
+  // Testimonial section
+  testimonialQuote?: string;
+  testimonialName?: string;
+  testimonialAvatar?: string;
+  showTestimonial?: boolean;
 }
 
 export default function ExclusiveProductCard({
@@ -55,7 +60,11 @@ export default function ExclusiveProductCard({
   savingsText,
   showFreeShipping = true,
   showGuarantee = true,
-  showMedicallyEvaluated = true
+  showMedicallyEvaluated = true,
+  testimonialQuote = "This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!",
+  testimonialName = "Sarah M., 47",
+  testimonialAvatar = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face",
+  showTestimonial = true
 }: ExclusiveProductCardProps) {
   const { appendTracking } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
@@ -200,6 +209,45 @@ export default function ExclusiveProductCard({
               <span className="font-bold text-gray-900">4.7</span>
               <span className="text-gray-500">({formatReviewCount(reviewCount)} reviews)</span>
             </div>
+
+            {/* Testimonial Section */}
+            {showTestimonial && testimonialQuote && (
+              <div className="mt-6 bg-white rounded-xl p-5 shadow-md border border-gray-100 relative">
+                {/* Quote icon */}
+                <div className="absolute -top-3 left-4">
+                  <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
+                    <Quote className="w-4 h-4 text-white" />
+                  </div>
+                </div>
+
+                {/* Testimonial content */}
+                <div className="pt-2">
+                  <p className="text-gray-700 italic text-sm leading-relaxed mb-4">
+                    "{testimonialQuote}"
+                  </p>
+
+                  {/* Avatar and name */}
+                  <div className="flex items-center gap-3">
+                    {testimonialAvatar && (
+                      <img
+                        src={testimonialAvatar}
+                        alt={testimonialName}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-primary-200 shadow-sm"
+                      />
+                    )}
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                        ))}
+                        <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Details Side */}
