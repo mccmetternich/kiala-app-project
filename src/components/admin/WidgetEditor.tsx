@@ -839,12 +839,20 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
   );
 
 
-  // Multi-image field for carousels/galleries
+  // Multi-image field for carousels/galleries with drag-and-drop
   const ImageGalleryField = ({ label, field }: { label: string; field: string }) => {
     const images: string[] = (widget.config as any)[field] || [];
+    const [isDragging, setIsDragging] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const addImage = (url: string) => {
       onUpdate({ [field]: [...images, url] });
+    };
+
+    const addMultipleImages = (urls: string[]) => {
+      onUpdate({ [field]: [...images, ...urls] });
     };
 
     const removeImage = (index: number) => {
@@ -853,12 +861,74 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       onUpdate({ [field]: newImages });
     };
 
+    const handleFiles = async (files: FileList) => {
+      const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+      if (imageFiles.length === 0) return;
+
+      setUploading(true);
+      setUploadProgress(0);
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('siteId', siteId);
+
+        try {
+          const response = await fetch('/api/media', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            uploadedUrls.push(data.url);
+          }
+        } catch (error) {
+          console.error('Upload failed:', error);
+        }
+
+        setUploadProgress(Math.round(((i + 1) / imageFiles.length) * 100));
+      }
+
+      if (uploadedUrls.length > 0) {
+        addMultipleImages(uploadedUrls);
+      }
+      setUploading(false);
+      setUploadProgress(0);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      if (e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files);
+      }
+    };
+
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFiles(e.target.files);
+      }
+    };
+
     return (
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
         <div className="space-y-2">
           {images.length > 0 && (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {images.map((url, index) => (
                 <div key={index} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
                   <img src={url} alt="" className="w-full h-full object-cover" />
@@ -872,16 +942,68 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
               ))}
             </div>
           )}
-          <button
-            onClick={() => {
-              setActiveImageField(field);
-              setMediaLibraryOpen(true);
-            }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+
+          {/* Drag and drop zone */}
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+              isDragging
+                ? 'border-primary-500 bg-primary-50'
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
           >
-            <Plus className="w-4 h-4" />
-            Add Image
-          </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFileInputChange}
+              className="hidden"
+            />
+
+            {uploading ? (
+              <div className="text-center">
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div
+                    className="bg-primary-500 h-2 rounded-full transition-all"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <span className="text-sm text-gray-600">Uploading... {uploadProgress}%</span>
+              </div>
+            ) : (
+              <div className="text-center">
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-2">
+                  Drag & drop images here, or
+                </p>
+                <div className="flex gap-2 justify-center">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 bg-primary-500 text-white text-sm rounded-lg hover:bg-primary-600"
+                  >
+                    Browse Files
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveImageField(field);
+                      setMediaLibraryOpen(true);
+                    }}
+                    className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200"
+                  >
+                    Media Library
+                  </button>
+                </div>
+                <p className="text-xs text-gray-400 mt-2">
+                  Select multiple files at once
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -2637,10 +2759,10 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       {widget.type === 'scrolling-thumbnails' && (
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'Join 1,000,000+ Happy Customers')}
-          {renderNumberField('Image Size (px)', 'imageHeight', 50, 200, '100')}
+          {renderNumberField('Image Size (px)', 'imageHeight', 50, 300, '200')}
           {renderNumberField('Scroll Speed', 'speed', 10, 100, '30')}
           <ImageGalleryField label="Customer Photos" field="customImages" />
-          <p className="text-xs text-gray-500">Upload customer photos for the scrolling gallery. Photos are interleaved with stock images to fill the wall. The more photos you upload, the more prominent they'll be.</p>
+          <p className="text-xs text-gray-500">Upload customer photos for the scrolling gallery. Only your uploaded photos will be shown (stock photos only appear if no images uploaded).</p>
         </div>
       )}
 
@@ -3095,7 +3217,7 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     'scrolling-thumbnails': {
       headline: 'Join 1,000,000+ Happy Customers',
       speed: 30,
-      imageHeight: 100,
+      imageHeight: 200,
       customImages: []
     },
     'testimonial-hero-no-cta': {

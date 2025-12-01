@@ -38,71 +38,38 @@ const womenFaces = [
   'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face'
 ];
 
-// Generate columns from a list of images (custom + stock as needed)
-function generateColumns(customImages: string[] = [], columnCount: number = 15, imagesPerColumn: number = 3): ImageColumn[] {
-  // Combine custom images with stock photos to fill gaps
-  const totalImagesNeeded = columnCount * imagesPerColumn;
-  const allImages: string[] = [];
+// Generate columns from uploaded images only (no stock photos)
+function generateColumns(customImages: string[] = [], imagesPerColumn: number = 3): ImageColumn[] {
+  // If no custom images, fall back to stock photos
+  const imagesToUse = customImages.length > 0 ? customImages : womenFaces;
 
-  // Add custom images first
-  if (customImages.length > 0) {
-    allImages.push(...customImages);
-  }
+  // Calculate number of columns based on images available
+  const columnCount = Math.max(5, Math.ceil(imagesToUse.length / imagesPerColumn));
 
-  // Fill remaining slots with stock photos (cycling through them)
-  let stockIndex = 0;
-  while (allImages.length < totalImagesNeeded) {
-    allImages.push(womenFaces[stockIndex % womenFaces.length]);
-    stockIndex++;
-  }
-
-  // Shuffle the combined array for variety (but keep custom images prominent)
-  // We'll interleave custom and stock rather than pure shuffle
-  const shuffled: string[] = [];
-  const customCount = customImages.length;
-  const stockCount = allImages.length - customCount;
-
-  if (customCount > 0) {
-    // Interleave custom images throughout
-    const customInterval = Math.max(1, Math.floor(totalImagesNeeded / customCount));
-    let customIdx = 0;
-    let stockIdx = customCount;
-
-    for (let i = 0; i < totalImagesNeeded; i++) {
-      if (customIdx < customCount && (i % customInterval === 0 || stockIdx >= allImages.length)) {
-        shuffled.push(allImages[customIdx]);
-        customIdx++;
-      } else if (stockIdx < allImages.length) {
-        shuffled.push(allImages[stockIdx]);
-        stockIdx++;
-      }
-    }
-  } else {
-    shuffled.push(...allImages);
-  }
-
-  // Generate columns from the shuffled images
+  // Generate columns by cycling through available images
   return Array(columnCount).fill(null).map((_, colIndex) => ({
-    images: [
-      shuffled[(colIndex * imagesPerColumn) % shuffled.length],
-      shuffled[(colIndex * imagesPerColumn + 1) % shuffled.length],
-      shuffled[(colIndex * imagesPerColumn + 2) % shuffled.length]
-    ]
+    images: Array(imagesPerColumn).fill(null).map((_, imgIndex) => {
+      const imageIndex = (colIndex * imagesPerColumn + imgIndex) % imagesToUse.length;
+      return imagesToUse[imageIndex];
+    })
   }));
 }
 
-// Default columns using only stock photos
-const defaultColumns: ImageColumn[] = generateColumns([], 15, 3);
+// Default columns using stock photos (only shown when no custom images uploaded)
+const defaultColumns: ImageColumn[] = generateColumns([], 3);
 
 export default function ScrollingThumbnails({
   headline = 'Join 1,000,000+ Happy Customers',
   columns,
   customImages = [],
   speed = 30,
-  imageHeight = 100
+  imageHeight = 200
 }: ScrollingThumbnailsProps) {
-  // Use provided columns, or generate from customImages, or use defaults
-  const displayColumnsData = columns || generateColumns(customImages, 15, 3);
+  // Force minimum size of 200px (overrides any smaller saved values)
+  const actualImageHeight = Math.max(200, imageHeight || 200);
+
+  // Use provided columns, or generate from customImages (only uploaded images), or use defaults
+  const displayColumnsData = columns || generateColumns(customImages, 3);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -165,7 +132,7 @@ export default function ScrollingThumbnails({
                 <div
                   key={imgIndex}
                   className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                  style={{ width: imageHeight, height: imageHeight }}
+                  style={{ width: actualImageHeight, height: actualImageHeight }}
                 >
                   <img
                     src={image}
