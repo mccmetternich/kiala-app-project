@@ -21,6 +21,7 @@ export async function middleware(request: NextRequest) {
     url.pathname.startsWith('/_next') ||
     url.pathname.startsWith('/favicon.ico') ||
     url.pathname.startsWith('/site/') ||
+    url.pathname.startsWith('/uploads/') ||
     hostname === 'localhost:3000' ||
     hostname === '127.0.0.1:3000'
   ) {
