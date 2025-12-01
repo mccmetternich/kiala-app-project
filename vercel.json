@@ -1,24 +1,24 @@
 {
   "rewrites": [
     {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "dramyheart.com"
-        }
-      ],
-      "destination": "/site/dr-amy/:path*"
+      "source": "/",
+      "has": [{ "type": "host", "value": "dramyheart.com" }],
+      "destination": "/site/dr-amy"
     },
     {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.dramyheart.com"
-        }
-      ],
-      "destination": "/site/dr-amy/:path*"
+      "source": "/",
+      "has": [{ "type": "host", "value": "www.dramyheart.com" }],
+      "destination": "/site/dr-amy"
+    },
+    {
+      "source": "/((?!api|_next|admin|favicon.ico).*)",
+      "has": [{ "type": "host", "value": "dramyheart.com" }],
+      "destination": "/site/dr-amy/$1"
+    },
+    {
+      "source": "/((?!api|_next|admin|favicon.ico).*)",
+      "has": [{ "type": "host", "value": "www.dramyheart.com" }],
+      "destination": "/site/dr-amy/$1"
     }
   ]
 }
