@@ -2520,7 +2520,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
             <div className="space-y-2">
               {((widget.config.benefits || []) as string[]).map((benefit, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <span className="text-gray-400 text-sm w-6">{idx + 1}.</span>
+                  <span className="text-gray-500 text-sm w-6">{idx + 1}.</span>
                   <input
                     type="text"
                     value={benefit}
@@ -2530,7 +2530,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
                       onUpdate({ benefits });
                     }}
                     placeholder={`Benefit ${idx + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm bg-white text-gray-900"
                   />
                   <button
                     type="button"
