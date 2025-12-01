@@ -871,24 +871,29 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
     };
 
     const handleImageDragStart = (e: React.DragEvent, index: number) => {
+      e.stopPropagation();
       setDraggedImageIndex(index);
       e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', index.toString());
+      e.dataTransfer.setData('application/x-image-reorder', index.toString());
     };
 
     const handleImageDragOver = (e: React.DragEvent, index: number) => {
       e.preventDefault();
+      e.stopPropagation();
+      // Only handle if this is an image reorder drag (not file upload or widget drag)
       if (draggedImageIndex !== null && draggedImageIndex !== index) {
         setDragOverIndex(index);
       }
     };
 
-    const handleImageDragLeave = () => {
+    const handleImageDragLeave = (e: React.DragEvent) => {
+      e.stopPropagation();
       setDragOverIndex(null);
     };
 
     const handleImageDrop = (e: React.DragEvent, toIndex: number) => {
       e.preventDefault();
+      e.stopPropagation();
       if (draggedImageIndex !== null && draggedImageIndex !== toIndex) {
         reorderImages(draggedImageIndex, toIndex);
       }
@@ -896,7 +901,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
       setDragOverIndex(null);
     };
 
-    const handleImageDragEnd = () => {
+    const handleImageDragEnd = (e: React.DragEvent) => {
+      e.stopPropagation();
       setDraggedImageIndex(null);
       setDragOverIndex(null);
     };
@@ -977,9 +983,9 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
                     draggable
                     onDragStart={(e) => handleImageDragStart(e, index)}
                     onDragOver={(e) => handleImageDragOver(e, index)}
-                    onDragLeave={handleImageDragLeave}
+                    onDragLeave={(e) => handleImageDragLeave(e)}
                     onDrop={(e) => handleImageDrop(e, index)}
-                    onDragEnd={handleImageDragEnd}
+                    onDragEnd={(e) => handleImageDragEnd(e)}
                     className={`relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing transition-all ${
                       draggedImageIndex === index ? 'opacity-50 scale-95' : ''
                     } ${
