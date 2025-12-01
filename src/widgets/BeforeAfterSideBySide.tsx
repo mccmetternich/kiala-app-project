@@ -246,17 +246,17 @@ export default function BeforeAfterSideBySide({
         {(testimonial || name) && (
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 border-t">
             {testimonial && (
-              <blockquote className="text-center mb-4">
-                <p className="text-lg text-gray-700 italic mb-3">"{testimonial}"</p>
-                <div className="flex justify-center mb-2">
+              <blockquote className="text-center">
+                <div className="flex justify-center mb-3">
                   {[1,2,3,4,5].map(i => (
                     <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
+                <p className="text-lg text-gray-700 italic mb-2">"{testimonial}"</p>
               </blockquote>
             )}
             {name && (
-              <div className="flex items-center justify-center gap-3 text-gray-600">
+              <div className="flex items-center justify-center gap-3 text-gray-600 mt-1">
                 <span className="font-semibold text-gray-900">{name}</span>
                 {age && <span>• Age {age}</span>}
                 {location && <span>• {location}</span>}
