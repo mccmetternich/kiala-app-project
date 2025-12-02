@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Star, Shield, Truck, CheckCircle, Gift, BadgeCheck, Clock } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 import { trackInitiateCheckout } from '@/lib/meta-pixel';
@@ -154,6 +154,38 @@ export default function ShopNowWidget({
   );
   const { appendTracking } = useTracking();
 
+  // Touch swipe state for image gallery
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const minSwipeDistance = 50; // Minimum swipe distance to trigger change
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+    const isSwipeLeft = distance > minSwipeDistance;
+    const isSwipeRight = distance < -minSwipeDistance;
+
+    if (isSwipeLeft && selectedImage < images.length - 1) {
+      setSelectedImage(prev => prev + 1);
+    } else if (isSwipeRight && selectedImage > 0) {
+      setSelectedImage(prev => prev - 1);
+    }
+
+    // Reset
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   // Countdown timer state
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
 
@@ -266,13 +298,31 @@ export default function ShopNowWidget({
   // Image Gallery (without badges on image)
   const ImageGallery = () => (
     <>
-      <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-white shadow-md group cursor-pointer">
+      <div
+        className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-white shadow-md group cursor-pointer touch-pan-y"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <img
           src={images[selectedImage]?.url}
           alt={images[selectedImage]?.alt}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 select-none pointer-events-none"
+          draggable={false}
         />
-        {/* No badges on image anymore */}
+        {/* Swipe indicator dots for mobile */}
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 md:hidden">
+          {images.slice(0, 6).map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2 h-2 rounded-full transition-all ${
+                selectedImage === idx
+                  ? 'bg-primary-500 w-4'
+                  : 'bg-white/70'
+              }`}
+            />
+          ))}
+        </div>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-2">
         {images.slice(0, 6).map((image, idx) => (

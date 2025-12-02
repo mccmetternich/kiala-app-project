@@ -300,7 +300,7 @@ export default function StackedQuotes({
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
+                  className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-50 text-center"
                 >
                   {status === 'loading' ? 'Joining...' : 'Join Now'}
                 </button>
@@ -319,7 +319,7 @@ export default function StackedQuotes({
             <a
               href={trackedCtaUrl}
               target={target}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl mt-4"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl mt-4 text-center"
             >
               {ctaText}
             </a>

@@ -145,7 +145,7 @@ export default function SymptomsChecker({
                 {showCta && (
                   <a
                     href={computedCtaUrl}
-                    className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
                   >
                     {ctaText}
                   </a>
