@@ -291,18 +291,26 @@ export default function EditArticle() {
             <button
               onClick={() => handleSave(false)}
               disabled={loading}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm"
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm disabled:opacity-50"
             >
-              <Save className="w-4 h-4" />
-              <span className="hidden sm:inline">Save Draft</span>
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">{loading ? 'Saving...' : 'Save Draft'}</span>
             </button>
             <button
               onClick={() => handleSave(true)}
               disabled={loading}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium disabled:opacity-50"
             >
-              <Eye className="w-4 h-4" />
-              {formData.published ? 'Update' : 'Publish'}
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+              {loading ? 'Saving...' : (formData.published ? 'Update' : 'Publish')}
             </button>
           </div>
         </div>
@@ -350,18 +358,26 @@ export default function EditArticle() {
             <button
               onClick={() => handleSave(false)}
               disabled={loading}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
             >
-              <Save className="w-5 h-5" />
-              Save Draft
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Save className="w-5 h-5" />
+              )}
+              {loading ? 'Saving...' : 'Save Draft'}
             </button>
             <button
               onClick={() => handleSave(true)}
               disabled={loading}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
             >
-              <Eye className="w-5 h-5" />
-              {formData.published ? 'Update' : 'Publish'}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+              {loading ? 'Saving...' : (formData.published ? 'Update' : 'Publish')}
             </button>
           </div>
         </div>

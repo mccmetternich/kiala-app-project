@@ -172,8 +172,9 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
               <label className="block text-xs font-medium text-gray-600 mb-1">Sale Price ($)</label>
               <input
                 type="number"
-                value={option.price || 0}
-                onChange={(e) => updateOption(index, 'price', parseFloat(e.target.value))}
+                value={option.price === 0 || option.price ? option.price : ''}
+                onChange={(e) => updateOption(index, 'price', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                placeholder="97"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
@@ -181,23 +182,28 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
               <label className="block text-xs font-medium text-gray-600 mb-1">Original Price ($)</label>
               <input
                 type="number"
-                value={option.originalPrice || 0}
-                onChange={(e) => updateOption(index, 'originalPrice', parseFloat(e.target.value))}
+                value={option.originalPrice === 0 || option.originalPrice ? option.originalPrice : ''}
+                onChange={(e) => updateOption(index, 'originalPrice', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                placeholder="167"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
           </div>
 
-          {/* Savings Badge */}
-          <div className="mb-3">
-            <label className="block text-xs font-medium text-gray-600 mb-1">Savings Badge Text</label>
-            <input
-              type="text"
-              value={option.savings || ''}
-              onChange={(e) => updateOption(index, 'savings', e.target.value)}
-              placeholder="e.g., Save $70"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
-            />
+          {/* Savings Badge - Auto-calculated */}
+          <div className="mb-3 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-green-700">Savings Badge (auto-calculated)</span>
+              <span className="text-sm font-bold text-green-700">
+                Save ${((option.originalPrice || 0) - (option.price || 0) +
+                  ((option.gifts || []).reduce((sum: number, gift: any) => {
+                    const value = parseFloat((gift.value || '').replace(/[^0-9.]/g, '')) || 0;
+                    return sum + value;
+                  }, 0))
+                )}
+              </span>
+            </div>
+            <p className="text-xs text-green-600 mt-1">= (Original - Sale) + Gift Values</p>
           </div>
 
           {/* Popular Checkbox */}
