@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircle, Star } from 'lucide-react';
+import { useTracking } from '@/contexts/TrackingContext';
 
 interface StatItem {
   label: string;
@@ -22,6 +23,11 @@ interface BeforeAfterSideBySideProps {
   timeframe?: string;
   verified?: boolean;
   style?: 'simple' | 'detailed' | 'cards';
+  // CTA props
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  target?: '_self' | '_blank';
 }
 
 export default function BeforeAfterSideBySide({
@@ -38,8 +44,28 @@ export default function BeforeAfterSideBySide({
   testimonial,
   timeframe,
   verified = true,
-  style = 'detailed'
+  style = 'detailed',
+  showCta = false,
+  ctaText = 'Get The Same Results →',
+  ctaUrl = '#',
+  target = '_blank'
 }: BeforeAfterSideBySideProps) {
+  const { appendTracking } = useTracking();
+  const trackedCtaUrl = appendTracking(ctaUrl);
+
+  // CTA button component to reuse across styles
+  const CtaButton = () => showCta ? (
+    <div className="mt-6 text-center">
+      <a
+        href={trackedCtaUrl}
+        target={target}
+        rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+      >
+        {ctaText}
+      </a>
+    </div>
+  ) : null;
   if (style === 'simple') {
     return (
       <div className="my-8">
@@ -73,6 +99,7 @@ export default function BeforeAfterSideBySide({
         {timeframe && (
           <p className="text-center text-gray-600 mt-4">Results achieved in {timeframe}</p>
         )}
+        <CtaButton />
       </div>
     );
   }
@@ -159,6 +186,7 @@ export default function BeforeAfterSideBySide({
             )}
           </div>
         )}
+        <CtaButton />
       </div>
     );
   }
@@ -245,23 +273,35 @@ export default function BeforeAfterSideBySide({
         {/* Testimonial Section */}
         {(testimonial || name) && (
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 border-t">
-            {testimonial && (
-              <blockquote className="text-center">
-                <div className="flex justify-center mb-3">
-                  {[1,2,3,4,5].map(i => (
-                    <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-lg text-gray-700 italic mb-2">"{testimonial}"</p>
-              </blockquote>
-            )}
-            {name && (
-              <div className="flex items-center justify-center gap-3 text-gray-600 mt-1">
-                <span className="font-semibold text-gray-900">{name}</span>
-                {age && <span>• Age {age}</span>}
-                {location && <span>• {location}</span>}
+            <div className="text-center">
+              <div className="flex justify-center mb-2">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                ))}
               </div>
-            )}
+              {name && (
+                <div className="flex items-center justify-center gap-3 text-gray-600 mb-3">
+                  <span className="font-semibold text-gray-900">{name}</span>
+                  {age && <span>• Age {age}</span>}
+                  {location && <span>• {location}</span>}
+                </div>
+              )}
+              {testimonial && (
+                <p className="text-lg text-gray-700 italic">"{testimonial}"</p>
+              )}
+            </div>
+          </div>
+        )}
+        {showCta && (
+          <div className="p-6 border-t text-center">
+            <a
+              href={trackedCtaUrl}
+              target={target}
+              rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              {ctaText}
+            </a>
           </div>
         )}
       </div>

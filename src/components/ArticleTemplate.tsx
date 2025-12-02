@@ -207,6 +207,10 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             testimonial={widget.config.testimonial}
             verified={widget.config.verified !== false}
             style={widget.config.style as any}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
           />
         </div>
       );
