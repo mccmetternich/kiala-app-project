@@ -149,7 +149,7 @@ export default function IngredientListGrid({
                   <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-primary-600 transition-colors">
                     {ingredient.name}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                     {ingredient.description}
                   </p>
                 </div>

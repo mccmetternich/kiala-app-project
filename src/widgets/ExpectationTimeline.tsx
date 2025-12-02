@@ -169,7 +169,7 @@ export default function ExpectationTimeline({
                           {step.benefits.map((benefit, bIndex) => (
                             <div
                               key={bIndex}
-                              className="flex items-start gap-2 text-sm"
+                              className="flex items-start gap-2 text-sm md:text-base"
                             >
                               <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
                               <span className="text-gray-700">{benefit}</span>
