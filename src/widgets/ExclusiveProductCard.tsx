@@ -67,9 +67,8 @@ export default function ExclusiveProductCard({
   showTestimonial = true
 }: ExclusiveProductCardProps) {
   const { appendTracking } = useTracking();
-  // Compute the actual CTA URL based on type
-  const computedCtaUrl = ctaType === 'anchor' && anchorWidgetId ? `#widget-${anchorWidgetId}` : ctaUrl;
-  const trackedCtaUrl = appendTracking(computedCtaUrl);
+  // ctaUrl is computed at ArticleTemplate level for anchor links
+  const trackedCtaUrl = appendTracking(ctaUrl);
   const savings = originalPrice - price;
 
   // Countdown timer state - 24 hours from now
@@ -288,14 +287,7 @@ export default function ExclusiveProductCard({
             {/* CTA */}
             <a
               href={trackedCtaUrl}
-              target={ctaType === 'anchor' ? undefined : target}
-              onClick={ctaType === 'anchor' ? (e) => {
-                e.preventDefault();
-                const targetElement = document.querySelector(computedCtaUrl);
-                if (targetElement) {
-                  targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              } : undefined}
+              target={target}
               className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
             >
               <span className="flex items-center justify-center gap-2">

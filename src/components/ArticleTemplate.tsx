@@ -275,10 +275,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             doctorName={exclusiveDoctorName}
             doctorImage={exclusiveDoctorImage}
             ctaText={widget.config.ctaText || widget.config.buttonText}
-            ctaUrl={widget.config.ctaUrl || widget.config.buttonUrl}
-            target={widget.config.target}
-            ctaType={widget.config.ctaType}
-            anchorWidgetId={widget.config.anchorWidgetId}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
             shippingBadgeText={widget.config.shippingBadgeText}
             guaranteeBadgeText={widget.config.guaranteeBadgeText}
             evaluatedBadgeText={widget.config.evaluatedBadgeText}
