@@ -144,12 +144,13 @@ export default function ExitIntentPopup({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn">
-        {/* Close Button */}
+        {/* Close Button - More prominent */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+          className="absolute top-3 right-3 md:top-4 md:right-4 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg border border-gray-200 text-gray-600 hover:text-gray-900 transition-all z-20"
+          aria-label="Close popup"
         >
-          <X className="w-5 h-5" />
+          <X className="w-6 h-6" />
         </button>
 
         {/* Success State */}
