@@ -547,11 +547,11 @@ export default function ShopNowWidget({
             {description}
           </p>
 
-          {/* 5. Benefits with checkmarks (2 rows) */}
-          <BenefitsSection />
-
-          {/* 6. Select packages */}
+          {/* 5. Select packages (Buy boxes) */}
           <PricingSection />
+
+          {/* 6. Benefits with checkmarks */}
+          <BenefitsSection />
 
           {/* 7. CTA with icons */}
           <CTASection />

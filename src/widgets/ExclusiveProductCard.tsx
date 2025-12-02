@@ -278,37 +278,28 @@ export default function ExclusiveProductCard({
 
             {/* Testimonial Section - Below trust badges on mobile */}
             {showTestimonial && testimonialQuote && (
-              <div className="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-100 relative">
-                {/* Quote icon */}
-                <div className="absolute -top-3 left-4">
-                  <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
-                    <Quote className="w-4 h-4 text-white" />
-                  </div>
-                </div>
-
+              <div className="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
                 {/* Testimonial content */}
-                <div className="pt-2">
-                  <p className="text-gray-700 italic text-sm leading-relaxed mb-3">
-                    "{testimonialQuote}"
-                  </p>
+                <p className="text-gray-700 italic text-sm leading-relaxed mb-3">
+                  "{testimonialQuote}"
+                </p>
 
-                  {/* Avatar and name */}
-                  <div className="flex items-center gap-3">
-                    {testimonialAvatar && (
-                      <img
-                        src={testimonialAvatar}
-                        alt={testimonialName}
-                        className="w-10 h-10 rounded-full object-cover border-2 border-primary-200 shadow-sm"
-                      />
-                    )}
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
-                        ))}
-                        <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
-                      </div>
+                {/* Avatar and name */}
+                <div className="flex items-center gap-3">
+                  {testimonialAvatar && (
+                    <img
+                      src={testimonialAvatar}
+                      alt={testimonialName}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-primary-200 shadow-sm"
+                    />
+                  )}
+                  <div>
+                    <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                      ))}
+                      <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
                     </div>
                   </div>
                 </div>

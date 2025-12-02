@@ -136,79 +136,139 @@ export default function StackedQuotes({
       </div>
 
       {/* Stacked Quotes */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {quotes.map((quote, index) => (
           <div
             key={quote.id}
-            className={`bg-white rounded-2xl border border-gray-100 p-4 md:p-6 shadow-sm hover:shadow-md transition-all ${
+            className={`bg-white rounded-xl md:rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all ${
               index === 0 ? 'border-l-4 border-l-primary-500' : ''
             }`}
           >
-            <div className="flex flex-col md:flex-row gap-2 md:gap-4">
-              {/* Avatar & Info */}
-              <div className="flex items-center md:items-start gap-3 md:gap-4">
+            {/* Mobile Layout - Compact card */}
+            <div className="md:hidden p-3">
+              {/* Top row: Avatar + Name/Location/Result + Stars */}
+              <div className="flex items-start gap-2.5">
                 <div className="relative flex-shrink-0">
                   <img
                     src={quote.image}
                     alt={quote.name}
-                    className="w-12 h-12 md:w-16 md:h-16 rounded-full object-cover border-2 border-white shadow-lg"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-white shadow"
                   />
                   {quote.verified && showVerifiedBadge && (
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
-                      <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-white" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                      <CheckCircle className="w-2.5 h-2.5 text-white" />
                     </div>
                   )}
                 </div>
-
-                <div className="flex-1">
-                  {/* Name & Location */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-bold text-gray-900 text-sm md:text-base">{quote.name}</h4>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h4 className="font-semibold text-gray-900 text-sm">{quote.name}</h4>
                     {quote.location && (
-                      <span className="flex items-center gap-1 text-xs md:text-sm text-gray-500">
-                        <MapPin className="w-3 h-3" />
-                        {quote.location}
-                      </span>
+                      <span className="text-xs text-gray-400">{quote.location}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    {quote.rating && (
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-200'}`}
+                          />
+                        ))}
+                      </div>
                     )}
                     {quote.result && (
-                      <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                      <span className="bg-green-100 text-green-700 text-[10px] px-1.5 py-0.5 rounded font-medium">
                         {quote.result}
                       </span>
                     )}
                   </div>
-
-                  {/* Rating */}
-                  {quote.rating && (
-                    <div className="flex gap-0.5 mt-0.5 md:mt-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3 h-3 md:w-4 md:h-4 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-300'}`}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
-
-              {/* Quote icon - decorative */}
-              <Quote className="hidden md:block w-8 h-8 text-primary-100 flex-shrink-0" />
+              {/* Quote content - tight spacing */}
+              <p className="text-gray-700 text-sm leading-snug mt-2">
+                "{quote.content}"
+              </p>
+              {/* Verified badge - inline */}
+              {quote.verified && showVerifiedBadge && (
+                <div className="mt-1.5">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-gray-500">
+                    <CheckCircle className="w-3 h-3 text-green-500" />
+                    Verified Member
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Quote Content */}
-            <blockquote className="mt-2 md:mt-4 text-gray-700 leading-relaxed pl-0 md:pl-20 text-base md:text-lg">
-              "{quote.content}"
-            </blockquote>
+            {/* Desktop Layout */}
+            <div className="hidden md:block p-6">
+              <div className="flex gap-4">
+                {/* Avatar & Info */}
+                <div className="flex items-start gap-4">
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src={quote.image}
+                      alt={quote.name}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-lg"
+                    />
+                    {quote.verified && showVerifiedBadge && (
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                        <CheckCircle className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </div>
 
-            {/* Verified badge */}
-            {quote.verified && showVerifiedBadge && (
-              <div className="mt-2 md:mt-4 pl-0 md:pl-20">
-                <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
-                  <CheckCircle className="w-3 h-3 text-green-500" />
-                  Verified Member
-                </span>
+                  <div className="flex-1">
+                    {/* Name & Location */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-bold text-gray-900">{quote.name}</h4>
+                      {quote.location && (
+                        <span className="flex items-center gap-1 text-sm text-gray-500">
+                          <MapPin className="w-3 h-3" />
+                          {quote.location}
+                        </span>
+                      )}
+                      {quote.result && (
+                        <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                          {quote.result}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Rating */}
+                    {quote.rating && (
+                      <div className="flex gap-0.5 mt-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-300'}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quote icon - decorative */}
+                <Quote className="w-8 h-8 text-primary-100 flex-shrink-0" />
               </div>
-            )}
+
+              {/* Quote Content */}
+              <blockquote className="mt-4 text-gray-700 leading-relaxed pl-20 text-lg">
+                "{quote.content}"
+              </blockquote>
+
+              {/* Verified badge */}
+              {quote.verified && showVerifiedBadge && (
+                <div className="mt-4 pl-20">
+                  <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
+                    <CheckCircle className="w-3 h-3 text-green-500" />
+                    Verified Member
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
