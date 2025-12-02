@@ -884,16 +884,111 @@ export default function SiteSettings() {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Meta Pixel ID</label>
-                      <input
-                        type="text"
-                        value={settings.analytics?.metaPixelId || ''}
-                        onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, metaPixelId: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="123456789012345"
-                      />
-                      <p className="text-sm text-gray-400 mt-1">Facebook/Meta Pixel ID for conversion tracking</p>
+                    {/* Meta Pixel Section */}
+                    <div className="border-t border-gray-700 pt-4 mt-4">
+                      <h4 className="text-md font-medium text-gray-200 mb-4">Meta Pixel Configuration</h4>
+
+                      {/* Enable Meta Pixel Toggle */}
+                      <div className="flex items-center justify-between mb-4 p-3 bg-gray-750 rounded-lg">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300">Enable Meta Pixel</label>
+                          <p className="text-xs text-gray-500">Turn tracking on/off without removing settings</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => updateSettingsField('analytics', {
+                            ...settings.analytics,
+                            metaPixelEnabled: !settings.analytics?.metaPixelEnabled
+                          })}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            settings.analytics?.metaPixelEnabled ? 'bg-primary-500' : 'bg-gray-600'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              settings.analytics?.metaPixelEnabled ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      {/* Meta Pixel ID */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Meta Pixel ID</label>
+                        <input
+                          type="text"
+                          value={settings.analytics?.metaPixelId || ''}
+                          onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, metaPixelId: e.target.value })}
+                          className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder="696663729529775"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Get this from Meta Events Manager &rarr; Data Sources</p>
+                      </div>
+
+                      {/* Meta Domain Verification */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Meta Domain Verification Code</label>
+                        <input
+                          type="text"
+                          value={settings.analytics?.metaDomainVerification || ''}
+                          onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, metaDomainVerification: e.target.value })}
+                          className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder="abc123xyz..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Get this from Meta Business Manager &rarr; Brand Safety &rarr; Domains</p>
+                      </div>
+
+                      {/* Test Mode Toggle */}
+                      <div className="flex items-center justify-between p-3 bg-gray-750 rounded-lg">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300">Test Mode</label>
+                          <p className="text-xs text-gray-500">Log events to console without firing to Meta</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => updateSettingsField('analytics', {
+                            ...settings.analytics,
+                            metaTestMode: !settings.analytics?.metaTestMode
+                          })}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            settings.analytics?.metaTestMode ? 'bg-amber-500' : 'bg-gray-600'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              settings.analytics?.metaTestMode ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      {/* Status Indicator */}
+                      {settings.analytics?.metaPixelId && (
+                        <div className={`mt-4 p-3 rounded-lg ${
+                          settings.analytics?.metaPixelEnabled
+                            ? settings.analytics?.metaTestMode
+                              ? 'bg-amber-900/30 border border-amber-700'
+                              : 'bg-green-900/30 border border-green-700'
+                            : 'bg-gray-750 border border-gray-600'
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${
+                              settings.analytics?.metaPixelEnabled
+                                ? settings.analytics?.metaTestMode
+                                  ? 'bg-amber-400'
+                                  : 'bg-green-400'
+                                : 'bg-gray-500'
+                            }`} />
+                            <span className="text-sm text-gray-300">
+                              {settings.analytics?.metaPixelEnabled
+                                ? settings.analytics?.metaTestMode
+                                  ? 'Test Mode Active - Events logged to console only'
+                                  : 'Pixel Active - Tracking enabled'
+                                : 'Pixel Disabled - No tracking'}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

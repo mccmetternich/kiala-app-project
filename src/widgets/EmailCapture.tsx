@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, CheckCircle, Loader2, Gift } from 'lucide-react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface EmailCaptureProps {
   headline?: string;
@@ -63,6 +64,12 @@ export default function EmailCapture({
         setMessage(data.message || 'Successfully subscribed!');
         setEmail('');
         setName('');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: source || 'email_capture',
+          content_category: 'newsletter_signup'
+        });
       } else {
         setStatus('error');
         setMessage(data.error || 'Something went wrong. Please try again.');

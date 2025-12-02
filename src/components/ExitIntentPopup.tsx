@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { X, AlertCircle, Gift, CheckCircle, Loader2, Clock, Heart } from 'lucide-react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface ExitIntentPopupProps {
   siteId: string;
@@ -97,6 +98,12 @@ export default function ExitIntentPopup({
         setStatus('success');
         setMessage(data.message || 'Your guide is ready!');
         localStorage.setItem(`community_subscribed_${siteId}`, 'true');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: incentive || 'exit_intent_popup',
+          content_category: 'lead_magnet'
+        });
 
         // Trigger PDF download if URL is available
         if (leadMagnetPdfUrl) {

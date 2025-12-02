@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Users, Heart, Gift, CheckCircle, Loader2, Sparkles } from 'lucide-react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface CommunityPopupProps {
   siteId: string;
@@ -86,6 +87,12 @@ export default function CommunityPopup({
         setStatus('success');
         setMessage(data.message || 'Welcome to the community!');
         localStorage.setItem(`community_subscribed_${siteId}`, 'true');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: incentive || 'community_popup',
+          content_category: 'community_signup'
+        });
 
         // Trigger PDF download if URL is available
         if (leadMagnetPdfUrl) {

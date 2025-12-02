@@ -1,6 +1,8 @@
 /**
- * Tracking utilities for appending UTM parameters and fbclid to CTA links
+ * Tracking utilities for appending UTM parameters, fbclid, and Meta cookies to CTA links
  */
+
+import { getFbCookies } from './meta-pixel';
 
 export interface TrackingConfig {
   utm_source?: string;
@@ -8,6 +10,7 @@ export interface TrackingConfig {
   utm_campaign?: string;
   utm_content?: string;
   passthrough_fbclid?: boolean;
+  passthrough_fb_cookies?: boolean;
 }
 
 /**
@@ -73,6 +76,17 @@ export function appendTrackingParams(
         const fbclid = params.get('fbclid');
         if (fbclid && !targetUrl.searchParams.has('fbclid')) {
           targetUrl.searchParams.set('fbclid', fbclid);
+        }
+      }
+
+      // Pass through _fbc and _fbp cookies for cross-domain tracking (enabled by default)
+      if (trackingConfig.passthrough_fb_cookies !== false) {
+        const fbCookies = getFbCookies();
+        if (fbCookies.fbc && !targetUrl.searchParams.has('_fbc')) {
+          targetUrl.searchParams.set('_fbc', fbCookies.fbc);
+        }
+        if (fbCookies.fbp && !targetUrl.searchParams.has('_fbp')) {
+          targetUrl.searchParams.set('_fbp', fbCookies.fbp);
         }
       }
     }

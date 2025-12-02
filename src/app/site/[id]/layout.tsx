@@ -1,4 +1,6 @@
 import type { Metadata, ResolvingMetadata } from 'next';
+import SitePixelProvider from '@/components/SitePixelProvider';
+import db from '@/lib/db-enhanced';
 
 // Default metadata for the site
 const defaultMetadata = {
@@ -89,6 +91,43 @@ export async function generateMetadata(
   };
 }
 
-export default function SiteLayout({ children }: Props) {
-  return <>{children}</>;
+// Server-side function to get domain verification code for metadata
+async function getSiteAnalytics(subdomain: string) {
+  try {
+    const result = await db.execute({
+      sql: 'SELECT settings FROM sites WHERE subdomain = ?',
+      args: [subdomain]
+    });
+
+    if (result.rows.length > 0) {
+      const settings = result.rows[0].settings as string | null;
+      if (settings) {
+        const parsed = typeof settings === 'string' ? JSON.parse(settings) : settings;
+        return parsed.analytics || null;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching site analytics:', error);
+  }
+  return null;
+}
+
+export default async function SiteLayout({ params, children }: Props) {
+  const { id: subdomain } = await params;
+  const analytics = await getSiteAnalytics(subdomain);
+
+  return (
+    <>
+      {/* Meta Domain Verification - rendered in head via metadata would be better,
+          but for dynamic content we render it here */}
+      {analytics?.metaDomainVerification && (
+        <meta name="facebook-domain-verification" content={analytics.metaDomainVerification} />
+      )}
+
+      {/* Meta Pixel Provider - client component that loads pixel based on settings */}
+      <SitePixelProvider siteId={subdomain} />
+
+      {children}
+    </>
+  );
 }

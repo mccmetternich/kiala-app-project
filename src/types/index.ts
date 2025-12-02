@@ -319,6 +319,13 @@ export interface SEOSettings {
 
 export interface AnalyticsSettings {
   googleAnalytics?: string;
+  googleId?: string;
+  // Meta/Facebook Pixel
+  metaPixelId?: string;
+  metaPixelEnabled?: boolean;
+  metaDomainVerification?: string;
+  metaTestMode?: boolean;
+  // Legacy field (deprecated, use metaPixelId)
   facebookPixel?: string;
   customScripts?: string[];
 }

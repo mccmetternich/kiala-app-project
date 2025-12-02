@@ -8,6 +8,7 @@ import ArticleTemplate from '@/components/ArticleTemplate';
 import { Site, Page, Widget } from '@/types';
 import { generateDefaultWidgetConfig, parseWidgetConfig } from '@/lib/article-widget-defaults';
 import { TrackingProvider } from '@/contexts/TrackingContext';
+import { trackViewContent } from '@/lib/meta-pixel';
 
 // Fallback site data (same as other dynamic pages)
 const fallbackSite: Site = {
@@ -102,6 +103,14 @@ export default function ArticlePageClient() {
                 fetch(`/api/articles/${fetchedArticle.id}/view`, {
                   method: 'POST'
                 }).catch(console.error);
+
+                // Fire Meta Pixel ViewContent event
+                trackViewContent({
+                  content_name: fetchedArticle.title,
+                  content_type: 'article',
+                  content_ids: [fetchedArticle.id],
+                  content_category: fetchedArticle.category || 'Health'
+                });
               }
             }
           } else {

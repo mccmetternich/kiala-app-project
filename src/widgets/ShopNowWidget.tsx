@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Shield, Truck, CheckCircle, Gift, BadgeCheck, Clock } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
+import { trackInitiateCheckout } from '@/lib/meta-pixel';
 
 interface PricingOption {
   id: string;
@@ -438,11 +439,24 @@ export default function ShopNowWidget({
       : `${ctaUrl}?option=${selectedOption}`;
     const trackedUrl = appendTracking(baseUrl);
 
+    const handleCTAClick = () => {
+      // Fire InitiateCheckout event with product details
+      trackInitiateCheckout({
+        content_name: productName,
+        content_category: 'product',
+        content_ids: [selectedOption],
+        value: currentOption.price,
+        currency: 'USD',
+        num_items: currentOption.quantity
+      });
+    };
+
     return (
     <>
       <a
         href={trackedUrl}
         target={target}
+        onClick={handleCTAClick}
         className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
       >
         {ctaText} ${currentOption.price}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Star, Users, Shield, Zap } from 'lucide-react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface NewsletterSignupProps {
   title?: string;
@@ -50,6 +51,12 @@ export default function NewsletterSignup({
         setStatus('success');
         setMessage('Welcome to the community! Check your inbox.');
         setEmail('');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: 'newsletter_widget',
+          content_category: 'newsletter_signup'
+        });
       } else {
         const data = await response.json();
         setStatus('error');

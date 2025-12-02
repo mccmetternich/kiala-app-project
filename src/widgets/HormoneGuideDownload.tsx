@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface HormoneGuideDownloadProps {
   title?: string;
@@ -47,6 +48,12 @@ export default function HormoneGuideDownload({
         setStatus('success');
         setMessage('Check your inbox for your free guide!');
         setEmail('');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: title || 'hormone_guide_download',
+          content_category: 'lead_magnet'
+        });
       } else {
         const data = await response.json();
         setStatus('error');
