@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Star, Shield, Truck, CheckCircle, Gift, Sparkles, BadgeCheck, Clock, Quote } from 'lucide-react';
+import { Star, Shield, Truck, CheckCircle, Gift, Sparkles, BadgeCheck, Clock } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
 interface PricingOption {
@@ -104,15 +104,11 @@ const defaultBenefits = [
   'Clinically-backed hormone support formula',
   '90-day transformation protocol',
   'Complete meal plan & recipes',
-  'Weekly coaching video series'
+  'Weekly coaching video series',
+  'Private community access'
 ];
 
-const defaultBenefitsRow2 = [
-  'Private community access',
-  'Expert support included',
-  'No artificial ingredients',
-  'Made in the USA'
-];
+const defaultBenefitsRow2: string[] = [];
 
 export default function ShopNowWidget({
   productName = 'Complete Hormone Reset',
@@ -129,12 +125,12 @@ export default function ShopNowWidget({
   target = '_self',
   guaranteeText = '90-Day Money-Back Guarantee',
   doctorName = 'Dr. Amy',
-  doctorImage = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+  doctorImage = '',
   badges = ['#1 BEST SELLER'],
   badgeText,
   testimonialQuote = 'This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!',
   testimonialName = 'Sarah M., 47',
-  testimonialAvatar = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face',
+  testimonialAvatar = '',
   showTestimonial = true
 }: ShopNowWidgetProps) {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -185,11 +181,13 @@ export default function ShopNowWidget({
       {/* Mobile Layout */}
       <div className="md:hidden">
         <div className="flex items-center gap-2 mb-2">
-          <img
-            src={doctorImage}
-            alt={doctorName}
-            className="w-10 h-10 rounded-full border-2 border-white shadow-lg flex-shrink-0"
-          />
+          {doctorImage && (
+            <img
+              src={doctorImage}
+              alt={doctorName}
+              className="w-10 h-10 rounded-full border-2 border-white shadow-lg flex-shrink-0"
+            />
+          )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1">
               <BadgeCheck className="w-4 h-4 text-amber-300 flex-shrink-0" />
@@ -214,11 +212,13 @@ export default function ShopNowWidget({
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img
-            src={doctorImage}
-            alt={doctorName}
-            className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
-          />
+          {doctorImage && (
+            <img
+              src={doctorImage}
+              alt={doctorName}
+              className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
+            />
+          )}
           <div>
             <div className="flex items-center gap-2">
               <BadgeCheck className="w-5 h-5 text-amber-300" />
@@ -416,40 +416,31 @@ export default function ShopNowWidget({
   );
   };
 
-  // Testimonial Section (editable)
+  // Testimonial Section (editable) - simple border, no quote icon
   const TestimonialSection = () => (
     showTestimonial && testimonialQuote && (
-      <div className="bg-white rounded-xl p-5 shadow-md border border-gray-100 relative">
-        {/* Quote icon */}
-        <div className="absolute -top-3 left-4">
-          <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
-            <Quote className="w-4 h-4 text-white" />
-          </div>
-        </div>
-
+      <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
         {/* Testimonial content */}
-        <div className="pt-2">
-          <p className="text-gray-700 italic text-sm leading-relaxed mb-4">
-            "{testimonialQuote}"
-          </p>
+        <p className="text-gray-700 italic text-sm leading-relaxed mb-3">
+          "{testimonialQuote}"
+        </p>
 
-          {/* Avatar and name */}
-          <div className="flex items-center gap-3">
-            {testimonialAvatar && (
-              <img
-                src={testimonialAvatar}
-                alt={testimonialName}
-                className="w-12 h-12 rounded-full object-cover border-2 border-primary-200 shadow-sm"
-              />
-            )}
-            <div>
-              <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
-                ))}
-                <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
-              </div>
+        {/* Avatar and name */}
+        <div className="flex items-center gap-3">
+          {testimonialAvatar && (
+            <img
+              src={testimonialAvatar}
+              alt={testimonialName}
+              className="w-10 h-10 rounded-full object-cover border-2 border-primary-200"
+            />
+          )}
+          <div>
+            <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+              ))}
+              <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
             </div>
           </div>
         </div>

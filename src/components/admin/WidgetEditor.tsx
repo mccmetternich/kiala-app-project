@@ -3243,7 +3243,7 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       lovedByCount: '1,000,000+',
       // Doctor header props
       doctorName: 'Dr. Amy',
-      doctorImage: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+      doctorImage: '', // Set via admin
       badgeText: '#1 BEST SELLER',
       pricingOptions: [
         {
@@ -3289,14 +3289,10 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
         'Clinically-backed hormone support formula',
         '90-day transformation protocol',
         'Complete meal plan & recipes',
-        'Weekly coaching video series'
+        'Weekly coaching video series',
+        'Private community access'
       ],
-      benefitsRow2: [
-        'Private community access',
-        'Expert support included',
-        'No artificial ingredients',
-        'Made in the USA'
-      ],
+      benefitsRow2: [],
       ctaText: 'START NOW',
       ctaUrl: 'https://trygreens.com/dr-amy',
       target: '_blank',
@@ -3304,7 +3300,7 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       showTestimonial: true,
       testimonialQuote: 'This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!',
       testimonialName: 'Sarah M., 47',
-      testimonialAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face'
+      testimonialAvatar: '' // Set via admin
     },
     'data-overview': {
       headline: 'The Numbers Speak',
