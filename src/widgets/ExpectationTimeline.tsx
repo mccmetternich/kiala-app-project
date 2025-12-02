@@ -23,31 +23,38 @@ interface ExpectationTimelineProps {
 
 const defaultSteps: TimelineStep[] = [
   {
-    period: 'Week 1-2',
-    title: 'Initial Reset',
-    description: 'Your body begins adjusting to the new protocol',
-    benefits: ['Reduced bloating', 'Better sleep quality', 'Less brain fog'],
+    period: 'Days 1-7',
+    title: 'The Detox Phase',
+    description: 'Your body begins flushing out toxins and adjusting to the nutrient-dense formula. Some women notice immediate changes in digestion and energy.',
+    benefits: ['Reduced bloating within days', 'Improved digestion', 'Initial energy boost', 'Better hydration'],
     icon: 'zap'
   },
   {
-    period: 'Week 3-4',
-    title: 'Energy Surge',
-    description: 'Noticeable improvements in daily energy levels',
-    benefits: ['Sustained energy all day', 'Fewer cravings', 'Improved mood'],
+    period: 'Week 2-3',
+    title: 'The Awakening',
+    description: 'Your gut microbiome starts rebalancing. The 34+ superfoods begin working synergistically to support your hormonal pathways.',
+    benefits: ['Clearer thinking & less brain fog', 'More stable energy throughout the day', 'Reduced sugar cravings', 'Better sleep quality'],
+    icon: 'sparkles'
+  },
+  {
+    period: 'Week 4-6',
+    title: 'The Shift',
+    description: 'This is where the magic happens. Your metabolism starts responding, cortisol levels normalize, and your body enters fat-burning mode.',
+    benefits: ['Noticeable weight changes', 'Clothes fitting better', 'Mood improvements', 'Fewer hot flashes & night sweats'],
     icon: 'trending'
   },
   {
-    period: 'Week 5-8',
+    period: 'Week 7-9',
     title: 'Deep Transformation',
-    description: 'Hormones begin to balance naturally',
-    benefits: ['Weight loss begins', 'Better metabolism', 'Clearer skin'],
+    description: 'Hormones are actively rebalancing. Estrogen, progesterone, and cortisol find their optimal levels. Your body is healing from the inside out.',
+    benefits: ['Significant energy transformation', 'Skin clarity & glow', 'Stronger hair & nails', 'Improved libido'],
     icon: 'heart'
   },
   {
-    period: 'Week 9-12',
-    title: 'Full Results',
-    description: 'Complete hormone optimization achieved',
-    benefits: ['Optimal hormone levels', 'Sustained weight loss', 'Vibrant health'],
+    period: 'Week 10-12+',
+    title: 'The New You',
+    description: 'Full hormone optimization achieved. Women report feeling like themselves again—or even better than before. This is sustainable, lasting change.',
+    benefits: ['Optimal hormone balance', 'Sustained healthy weight', 'Vibrant energy daily', 'Complete wellness transformation'],
     icon: 'star'
   }
 ];
@@ -65,10 +72,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function ExpectationTimeline({
-  headline = 'Your Transformation Timeline',
-  subheading = 'What to expect when you start the Hormone Reset Protocol',
+  headline = 'Your 90-Day Transformation Journey',
+  subheading = 'Here\'s exactly what happens when you start supporting your hormones the right way',
   steps = defaultSteps,
-  ctaText = 'Start Your Journey Today →',
+  ctaText = 'Start Your Transformation →',
   ctaUrl = '#',
   target = '_self'
 }: ExpectationTimelineProps) {
@@ -164,19 +171,36 @@ export default function ExpectationTimeline({
           </div>
         </div>
 
+        {/* What to Expect Note */}
+        <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <Heart className="w-5 h-5 text-amber-600" />
+            </div>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Important: Everyone's Journey Is Unique</h4>
+              <p className="text-sm text-gray-600">
+                While this timeline reflects what most women experience, your results may vary based on your starting point,
+                consistency, and overall lifestyle. Some women see changes in days, others take a few weeks.
+                Trust the process—your body knows what to do when given the right support.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Summary Stats */}
-        <div className="mt-8 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl">
+        <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl">
           <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600">12</div>
-            <div className="text-sm text-gray-600">Weeks Total</div>
+            <div className="text-3xl font-bold text-primary-600">90</div>
+            <div className="text-sm text-gray-600">Day Protocol</div>
           </div>
           <div className="text-center border-x border-primary-100">
-            <div className="text-3xl font-bold text-primary-600">10k+</div>
-            <div className="text-sm text-gray-600">Success Stories</div>
+            <div className="text-3xl font-bold text-primary-600">1M+</div>
+            <div className="text-sm text-gray-600">Women Transformed</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-primary-600">94%</div>
-            <div className="text-sm text-gray-600">See Results</div>
+            <div className="text-sm text-gray-600">Report Results</div>
           </div>
         </div>
 
