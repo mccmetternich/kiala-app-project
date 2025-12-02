@@ -2211,22 +2211,26 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             />
           </div>
 
-          {/* Benefits Row 1 */}
+          {/* Benefits Grid - 6 individual benefits */}
           <div className="border-t pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits Row 1 (checkmarks)</label>
-            <BenefitsListEditor
-              benefits={(widget.config as any).benefits || []}
-              onChange={(benefits) => onUpdate({ benefits })}
-            />
-          </div>
-
-          {/* Benefits Row 2 */}
-          <div className="border-t pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits Row 2 (checkmarks)</label>
-            <BenefitsListEditor
-              benefits={(widget.config as any).benefitsRow2 || []}
-              onChange={(benefitsRow2) => onUpdate({ benefitsRow2 })}
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits (6 checkmarks in 3 rows × 2 columns)</label>
+            <div className="space-y-3">
+              {/* Row 1 */}
+              <div className="grid grid-cols-2 gap-3">
+                {renderTextField('Benefit 1', 'benefit1', 'Clinically studied ingredients')}
+                {renderTextField('Benefit 2', 'benefit2', '30-day supply')}
+              </div>
+              {/* Row 2 */}
+              <div className="grid grid-cols-2 gap-3">
+                {renderTextField('Benefit 3', 'benefit3', 'Hormone support blend')}
+                {renderTextField('Benefit 4', 'benefit4', 'No artificial sweeteners')}
+              </div>
+              {/* Row 3 */}
+              <div className="grid grid-cols-2 gap-3">
+                {renderTextField('Benefit 5', 'benefit5', 'Made in USA')}
+                {renderTextField('Benefit 6', 'benefit6', 'GMP certified')}
+              </div>
+            </div>
           </div>
 
           {renderTextField('Button Text', 'ctaText', 'START NOW')}

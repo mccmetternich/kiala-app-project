@@ -32,6 +32,13 @@ interface ShopNowWidgetProps {
   pricingOptions?: PricingOption[];
   benefits?: string[];
   benefitsRow2?: string[];
+  // Individual benefit fields (new approach)
+  benefit1?: string;
+  benefit2?: string;
+  benefit3?: string;
+  benefit4?: string;
+  benefit5?: string;
+  benefit6?: string;
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
@@ -120,6 +127,13 @@ export default function ShopNowWidget({
   pricingOptions = defaultPricingOptions,
   benefits = defaultBenefits,
   benefitsRow2 = defaultBenefitsRow2,
+  // Individual benefit fields
+  benefit1,
+  benefit2,
+  benefit3,
+  benefit4,
+  benefit5,
+  benefit6,
   ctaText = 'START NOW',
   ctaUrl = '#',
   target = '_self',
@@ -281,29 +295,59 @@ export default function ShopNowWidget({
     </>
   );
 
-  // Benefits Section (two rows)
-  const BenefitsSection = () => (
-    <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
-        {benefits.map((benefit, idx) => (
-          <div key={idx} className="flex items-start gap-2">
-            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-            <span className="text-gray-700 text-sm">{benefit}</span>
-          </div>
-        ))}
-      </div>
-      {benefitsRow2 && benefitsRow2.length > 0 && (
+  // Benefits Section - uses individual fields if set, otherwise falls back to arrays
+  const BenefitsSection = () => {
+    // Check if individual benefit fields are used
+    const hasIndividualBenefits = benefit1 || benefit2 || benefit3 || benefit4 || benefit5 || benefit6;
+
+    if (hasIndividualBenefits) {
+      // Use individual benefit fields in 3 rows x 2 columns
+      const benefitRows = [
+        [benefit1, benefit2],
+        [benefit3, benefit4],
+        [benefit5, benefit6]
+      ];
+
+      return (
+        <div className="space-y-3">
+          {benefitRows.map((row, rowIdx) => (
+            <div key={rowIdx} className="grid grid-cols-2 gap-3">
+              {row.map((benefit, colIdx) => benefit && (
+                <div key={colIdx} className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 text-sm">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Fallback to legacy array format
+    return (
+      <div className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          {benefitsRow2.map((benefit, idx) => (
+          {benefits.map((benefit, idx) => (
             <div key={idx} className="flex items-start gap-2">
               <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
               <span className="text-gray-700 text-sm">{benefit}</span>
             </div>
           ))}
         </div>
-      )}
-    </div>
-  );
+        {benefitsRow2 && benefitsRow2.length > 0 && (
+          <div className="grid grid-cols-2 gap-3">
+            {benefitsRow2.map((benefit, idx) => (
+              <div key={idx} className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700 text-sm">{benefit}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Helper to calculate total savings: (originalPrice - price) + sum of gift values
   const calculateSavings = (option: PricingOption) => {

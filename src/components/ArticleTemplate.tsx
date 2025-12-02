@@ -393,10 +393,27 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             images={shopImages}
             rating={widget.config.rating ? (typeof widget.config.rating === 'number' ? widget.config.rating : parseFloat(widget.config.rating)) : undefined}
             reviewCount={widget.config.reviewCount}
+            lovedByCount={widget.config.lovedByCount}
             pricingOptions={widget.config.pricingOptions}
             benefits={widget.config.benefits}
-            ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.buttonUrl}
+            benefitsRow2={widget.config.benefitsRow2}
+            benefit1={widget.config.benefit1}
+            benefit2={widget.config.benefit2}
+            benefit3={widget.config.benefit3}
+            benefit4={widget.config.benefit4}
+            benefit5={widget.config.benefit5}
+            benefit6={widget.config.benefit6}
+            ctaText={widget.config.ctaText || widget.config.buttonText}
+            ctaUrl={widget.config.ctaUrl || widget.config.buttonUrl}
+            target={widget.config.target}
+            guaranteeText={widget.config.guaranteeText}
+            doctorName={widget.config.doctorName}
+            doctorImage={widget.config.doctorImage}
+            badgeText={widget.config.badgeText}
+            testimonialQuote={widget.config.testimonialQuote}
+            testimonialName={widget.config.testimonialName}
+            testimonialAvatar={widget.config.testimonialAvatar}
+            showTestimonial={widget.config.showTestimonial}
           />
         </div>
       );
