@@ -63,6 +63,16 @@ export default function EditArticle() {
   const [trackingConfig, setTrackingConfig] = useState<TrackingConfig>({
     passthrough_fbclid: true
   });
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  // Show sticky bar when scrolled past header
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowStickyBar(window.scrollY > 100);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -247,8 +257,8 @@ export default function EditArticle() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Fixed Top Bar - Always visible when scrolling */}
-      <div className="fixed top-0 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-40 shadow-lg">
+      {/* Fixed Top Bar - Shows on scroll */}
+      <div className={`fixed top-0 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-40 shadow-lg transition-transform duration-300 ${showStickyBar ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
@@ -298,10 +308,10 @@ export default function EditArticle() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 pt-20">
+      <div className="max-w-7xl mx-auto p-6">
         {/* Save Success Message */}
         {saveMessage && (
-          <div className="fixed top-16 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-fade-in">
+          <div className={`fixed right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-fade-in transition-all duration-300 ${showStickyBar ? 'top-16' : 'top-4'}`}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
