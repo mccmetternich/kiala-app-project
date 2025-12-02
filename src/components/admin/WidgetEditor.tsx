@@ -2015,6 +2015,16 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {/* Shop Now */}
       {widget.type === 'shop-now' && (
         <div className="space-y-4">
+          {/* Doctor Header Section */}
+          <div className="border-b pb-4">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">Doctor Header (Top Bar)</label>
+            <div className="space-y-3 bg-purple-50 p-3 rounded-lg">
+              {renderTextField('Doctor Name', 'doctorName', 'Dr. Amy')}
+              {renderImageField('Doctor Image', 'doctorImage')}
+              {renderTextField('Badge Text', 'badgeText', '#1 BEST SELLER')}
+            </div>
+          </div>
+
           {renderTextField('Product Name', 'name', 'Kiala Greens')}
           {renderTextAreaField('Description', 'description', 'The all-in-one solution for naturally balancing your hormones and boosting your metabolism after 40.', 3)}
 
@@ -2037,12 +2047,21 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             />
           </div>
 
-          {/* Benefits */}
+          {/* Benefits Row 1 */}
           <div className="border-t pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits (checkmarks)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits Row 1 (checkmarks)</label>
             <BenefitsListEditor
               benefits={(widget.config as any).benefits || []}
               onChange={(benefits) => onUpdate({ benefits })}
+            />
+          </div>
+
+          {/* Benefits Row 2 */}
+          <div className="border-t pt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Benefits Row 2 (checkmarks)</label>
+            <BenefitsListEditor
+              benefits={(widget.config as any).benefitsRow2 || []}
+              onChange={(benefitsRow2) => onUpdate({ benefitsRow2 })}
             />
           </div>
 
@@ -2056,11 +2075,21 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
 
           {/* Testimonial */}
           <div className="border-t pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Featured Testimonial</label>
+            <label className="block text-sm font-semibold text-gray-900 mb-3">Featured Testimonial</label>
             <div className="space-y-3 bg-gray-50 p-3 rounded-lg">
-              {renderTextField('Quote', 'testimonial.quote', 'This totally changed my life!')}
-              {renderTextField('Customer Name', 'testimonial.name', 'Sarah M.')}
-              {renderImageField('Customer Avatar', 'testimonial.avatar')}
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  type="checkbox"
+                  id="showTestimonial"
+                  checked={(widget.config as any).showTestimonial !== false}
+                  onChange={(e) => onUpdate({ showTestimonial: e.target.checked })}
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <label htmlFor="showTestimonial" className="text-sm text-gray-700">Show testimonial</label>
+              </div>
+              {renderTextAreaField('Quote', 'testimonialQuote', 'This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!', 3)}
+              {renderTextField('Customer Name', 'testimonialName', 'Sarah M., 47')}
+              {renderImageField('Customer Avatar', 'testimonialAvatar')}
             </div>
           </div>
         </div>
@@ -3212,6 +3241,10 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       rating: 4.7,
       reviewCount: '1.2M',
       lovedByCount: '1,000,000+',
+      // Doctor header props
+      doctorName: 'Dr. Amy',
+      doctorImage: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+      badgeText: '#1 BEST SELLER',
       pricingOptions: [
         {
           id: 'single',
@@ -3253,20 +3286,25 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
         }
       ],
       benefits: [
-        'Clinically-backed formula',
+        'Clinically-backed hormone support formula',
         '90-day transformation protocol',
-        'Free digital delivery',
-        'Expert support included'
+        'Complete meal plan & recipes',
+        'Weekly coaching video series'
+      ],
+      benefitsRow2: [
+        'Private community access',
+        'Expert support included',
+        'No artificial ingredients',
+        'Made in the USA'
       ],
       ctaText: 'START NOW',
       ctaUrl: 'https://trygreens.com/dr-amy',
       target: '_blank',
       guaranteeText: '90-Day Money-Back Guarantee',
-      testimonial: {
-        quote: 'This totally changed my life!',
-        name: 'Sarah M.',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=face'
-      }
+      showTestimonial: true,
+      testimonialQuote: 'This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!',
+      testimonialName: 'Sarah M., 47',
+      testimonialAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face'
     },
     'data-overview': {
       headline: 'The Numbers Speak',

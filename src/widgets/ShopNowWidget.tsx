@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Star, Shield, Truck, CheckCircle, Package, Sparkles, Gift } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, Shield, Truck, CheckCircle, Gift, Sparkles, BadgeCheck, Clock, Quote } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
 interface PricingOption {
@@ -31,15 +31,21 @@ interface ShopNowWidgetProps {
   lovedByCount?: string;
   pricingOptions?: PricingOption[];
   benefits?: string[];
+  benefitsRow2?: string[];
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
   guaranteeText?: string;
-  testimonial?: {
-    quote: string;
-    name: string;
-    avatar: string;
-  };
+  // Doctor header props
+  doctorName?: string;
+  doctorImage?: string;
+  badges?: string[];
+  badgeText?: string; // Single badge text for admin editor
+  // Testimonial props (editable)
+  testimonialQuote?: string;
+  testimonialName?: string;
+  testimonialAvatar?: string;
+  showTestimonial?: boolean;
 }
 
 const defaultImages: ProductImage[] = [
@@ -94,6 +100,20 @@ const defaultPricingOptions: PricingOption[] = [
   }
 ];
 
+const defaultBenefits = [
+  'Clinically-backed hormone support formula',
+  '90-day transformation protocol',
+  'Complete meal plan & recipes',
+  'Weekly coaching video series'
+];
+
+const defaultBenefitsRow2 = [
+  'Private community access',
+  'Expert support included',
+  'No artificial ingredients',
+  'Made in the USA'
+];
+
 export default function ShopNowWidget({
   productName = 'Complete Hormone Reset',
   description = 'The all-in-one solution for naturally balancing your hormones and boosting your metabolism after 40.',
@@ -102,27 +122,46 @@ export default function ShopNowWidget({
   reviewCount = 1200000,
   lovedByCount = '1,000,000+',
   pricingOptions = defaultPricingOptions,
-  benefits = [
-    'Clinically-backed formula',
-    '90-day transformation protocol',
-    'Free digital delivery',
-    'Expert support included'
-  ],
+  benefits = defaultBenefits,
+  benefitsRow2 = defaultBenefitsRow2,
   ctaText = 'START NOW',
   ctaUrl = '#',
   target = '_self',
   guaranteeText = '90-Day Money-Back Guarantee',
-  testimonial = {
-    quote: 'This totally changed my life!',
-    name: 'Sarah M.',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=face'
-  }
+  doctorName = 'Dr. Amy',
+  doctorImage = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+  badges = ['#1 BEST SELLER'],
+  badgeText,
+  testimonialQuote = 'This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!',
+  testimonialName = 'Sarah M., 47',
+  testimonialAvatar = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face',
+  showTestimonial = true
 }: ShopNowWidgetProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOption, setSelectedOption] = useState(
     pricingOptions.find(opt => opt.popular)?.id || pricingOptions[1]?.id || pricingOptions[0].id
   );
   const { appendTracking } = useTracking();
+
+  // Countdown timer state
+  const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        } else if (prev.hours > 0) {
+          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        }
+        return { hours: 23, minutes: 59, seconds: 59 };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Format review count (e.g., 1.2M)
   const formatReviewCount = (count: number | string) => {
@@ -137,7 +176,84 @@ export default function ShopNowWidget({
 
   const currentOption = pricingOptions.find(opt => opt.id === selectedOption) || pricingOptions[0];
 
-  // Shared components for reuse
+  // Get badge display text (prefer badgeText from admin, fallback to badges array)
+  const displayBadge = badgeText || (badges && badges.length > 0 ? badges[0] : '#1 BEST SELLER');
+
+  // Dr Header Component (like ExclusiveProductCard)
+  const DrHeader = () => (
+    <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 text-white rounded-t-2xl p-3 md:p-4">
+      {/* Mobile Layout */}
+      <div className="md:hidden">
+        <div className="flex items-center gap-2 mb-2">
+          <img
+            src={doctorImage}
+            alt={doctorName}
+            className="w-10 h-10 rounded-full border-2 border-white shadow-lg flex-shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1">
+              <BadgeCheck className="w-4 h-4 text-amber-300 flex-shrink-0" />
+              <span className="font-bold text-sm truncate">{doctorName}'s #1 Pick</span>
+            </div>
+            <p className="text-primary-100 text-xs">Personally vetted & recommended</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-2 py-1 rounded-full">
+            <Clock className="w-3 h-3 text-amber-300" />
+            <span className="text-xs font-semibold">
+              {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+            </span>
+          </div>
+          <span className="px-2 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900">
+            {displayBadge}
+          </span>
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden md:flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src={doctorImage}
+            alt={doctorName}
+            className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
+          />
+          <div>
+            <div className="flex items-center gap-2">
+              <BadgeCheck className="w-5 h-5 text-amber-300" />
+              <span className="font-bold">{doctorName}'s #1 Pick</span>
+            </div>
+            <p className="text-primary-100 text-sm">Personally vetted & recommended</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+            <Clock className="w-3.5 h-3.5 text-amber-300" />
+            <span className="text-xs font-semibold">
+              {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+            </span>
+            <span className="text-xs text-primary-100">left</span>
+          </div>
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900">
+            {displayBadge}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Community Exclusive Badge (above review count, not on image)
+  const CommunityExclusiveBadge = () => (
+    <div className="flex justify-center md:justify-start mb-2">
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
+        <Sparkles className="w-3.5 h-3.5" />
+        COMMUNITY EXCLUSIVE
+      </div>
+    </div>
+  );
+
+  // Rating Section (below community exclusive badge)
   const RatingSection = () => (
     <div className="text-center md:text-left">
       <div className="flex items-center gap-2 justify-center md:justify-start flex-wrap">
@@ -153,6 +269,7 @@ export default function ShopNowWidget({
     </div>
   );
 
+  // Image Gallery (without badges on image)
   const ImageGallery = () => (
     <>
       <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-white shadow-md group cursor-pointer">
@@ -161,15 +278,7 @@ export default function ShopNowWidget({
           alt={images[selectedImage]?.alt}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-            BEST SELLER
-          </span>
-          <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
-            <Sparkles className="w-3 h-3" />
-            COMMUNITY EXCLUSIVE
-          </span>
-        </div>
+        {/* No badges on image anymore */}
       </div>
       <div className="flex gap-2 overflow-x-auto pb-2">
         {images.slice(0, 6).map((image, idx) => (
@@ -193,21 +302,34 @@ export default function ShopNowWidget({
     </>
   );
 
+  // Benefits Section (two rows)
   const BenefitsSection = () => (
-    <div className="grid grid-cols-2 gap-3">
-      {benefits.map((benefit, idx) => (
-        <div key={idx} className="flex items-center gap-2">
-          <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-          <span className="text-gray-700 text-sm">{benefit}</span>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        {benefits.map((benefit, idx) => (
+          <div key={idx} className="flex items-start gap-2">
+            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+            <span className="text-gray-700 text-sm">{benefit}</span>
+          </div>
+        ))}
+      </div>
+      {benefitsRow2 && benefitsRow2.length > 0 && (
+        <div className="grid grid-cols-2 gap-3">
+          {benefitsRow2.map((benefit, idx) => (
+            <div key={idx} className="flex items-start gap-2">
+              <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+              <span className="text-gray-700 text-sm">{benefit}</span>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 
   const PricingSection = () => (
     <div>
       <label className="block text-sm font-semibold text-gray-700 mb-3">
-        Select Your Package:
+        Choose Your Supply:
       </label>
       <div className="space-y-1.5">
         {pricingOptions.map((option) => (
@@ -266,7 +388,6 @@ export default function ShopNowWidget({
   );
 
   const CTASection = () => {
-    // Build the URL with option param, then apply tracking
     const baseUrl = ctaUrl.includes('?')
       ? `${ctaUrl}&option=${selectedOption}`
       : `${ctaUrl}?option=${selectedOption}`;
@@ -295,23 +416,41 @@ export default function ShopNowWidget({
   );
   };
 
+  // Testimonial Section (editable)
   const TestimonialSection = () => (
-    testimonial && (
-      <div className="bg-gray-50 md:bg-white rounded-xl p-4 border border-gray-200">
-        <div className="flex items-center gap-3">
-          <img
-            src={testimonial.avatar}
-            alt={testimonial.name}
-            className="w-12 h-12 rounded-full object-cover border-2 border-primary-200"
-          />
-          <div className="flex-1">
-            <div className="flex mb-1">
-              {[1,2,3,4,5].map((star) => (
-                <Star key={star} className="w-4 h-4 fill-current text-amber-400" />
-              ))}
+    showTestimonial && testimonialQuote && (
+      <div className="bg-white rounded-xl p-5 shadow-md border border-gray-100 relative">
+        {/* Quote icon */}
+        <div className="absolute -top-3 left-4">
+          <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
+            <Quote className="w-4 h-4 text-white" />
+          </div>
+        </div>
+
+        {/* Testimonial content */}
+        <div className="pt-2">
+          <p className="text-gray-700 italic text-sm leading-relaxed mb-4">
+            "{testimonialQuote}"
+          </p>
+
+          {/* Avatar and name */}
+          <div className="flex items-center gap-3">
+            {testimonialAvatar && (
+              <img
+                src={testimonialAvatar}
+                alt={testimonialName}
+                className="w-12 h-12 rounded-full object-cover border-2 border-primary-200 shadow-sm"
+              />
+            )}
+            <div>
+              <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                ))}
+                <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
+              </div>
             </div>
-            <p className="text-gray-700 italic text-sm">"{testimonial.quote}"</p>
-            <p className="text-gray-500 text-xs mt-1">— {testimonial.name}</p>
           </div>
         </div>
       </div>
@@ -319,70 +458,75 @@ export default function ShopNowWidget({
   );
 
   return (
-    <div className="my-6 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-      {/* Top Banner - Pink/Lavender theme */}
-      <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white px-4 py-3 text-center font-medium">
-        <Sparkles className="w-4 h-4 inline mr-2" />
-        Free shipping on all orders + Bonuses and Gifts included!
-        <Sparkles className="w-4 h-4 inline ml-2" />
-      </div>
+    <div className="my-6">
+      {/* Dr Header with countdown and badge */}
+      <DrHeader />
 
-      {/* Mobile Layout - Specific order */}
-      <div className="md:hidden p-4 space-y-5">
-        {/* 1. Rating, review count, and Join copy */}
-        <div className="text-center">
-          <RatingSection />
-          <p className="text-primary-600 font-medium mt-2">
-            Join {lovedByCount} women who've made Kiala Greens their daily wellness ritual
-          </p>
-        </div>
+      {/* Main Card */}
+      <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden border-2 border-t-0 border-primary-200">
+        {/* Mobile Layout - Specific order */}
+        <div className="md:hidden p-4 space-y-5">
+          {/* 1. Community Exclusive badge */}
+          <CommunityExclusiveBadge />
 
-        {/* 2. Main image and carousel */}
-        <ImageGallery />
+          {/* 2. Rating, review count, and Join copy */}
+          <div className="text-center">
+            <RatingSection />
+            <p className="text-primary-600 font-medium mt-2">
+              Join {lovedByCount} women who've made Kiala Greens their daily wellness ritual
+            </p>
+          </div>
 
-        {/* 3. Product description */}
-        <p className="text-gray-600 text-center">
-          {description}
-        </p>
-
-        {/* 4. Benefits with checkmarks */}
-        <BenefitsSection />
-
-        {/* 5. Select packages */}
-        <PricingSection />
-
-        {/* 6. CTA with icons */}
-        <CTASection />
-
-        {/* 7. Quote as final */}
-        <TestimonialSection />
-      </div>
-
-      {/* Desktop Layout - 2 column grid */}
-      <div className="hidden md:grid md:grid-cols-2 gap-0">
-        {/* Left: Image Gallery + Benefits */}
-        <div className="p-6 bg-gray-50">
+          {/* 3. Main image and carousel */}
           <ImageGallery />
-          <div className="mt-4">
-            <BenefitsSection />
-          </div>
-          <div className="mt-4">
-            <TestimonialSection />
-          </div>
+
+          {/* 4. Product description */}
+          <p className="text-gray-600 text-center">
+            {description}
+          </p>
+
+          {/* 5. Benefits with checkmarks (2 rows) */}
+          <BenefitsSection />
+
+          {/* 6. Testimonial */}
+          <TestimonialSection />
+
+          {/* 7. Select packages */}
+          <PricingSection />
+
+          {/* 8. CTA with icons */}
+          <CTASection />
         </div>
 
-        {/* Right: Product Details */}
-        <div className="p-6 md:p-8">
-          <RatingSection />
-
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 mt-4">{productName}</h2>
-          <p className="text-gray-600 mb-5">{description}</p>
-
-          <div className="mb-5">
-            <PricingSection />
+        {/* Desktop Layout - 2 column grid */}
+        <div className="hidden md:grid md:grid-cols-2 gap-0">
+          {/* Left: Image Gallery + Benefits + Testimonial */}
+          <div className="p-6 bg-gray-50">
+            <ImageGallery />
+            <div className="mt-4">
+              <BenefitsSection />
+            </div>
+            <div className="mt-4">
+              <TestimonialSection />
+            </div>
           </div>
 
-          <CTASection />
+          {/* Right: Product Details */}
+          <div className="p-6 md:p-8">
+            {/* Community Exclusive badge */}
+            <CommunityExclusiveBadge />
+
+            <RatingSection />
+
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 mt-4">{productName}</h2>
+            <p className="text-gray-600 mb-5">{description}</p>
+
+            <div className="mb-5">
+              <PricingSection />
+            </div>
+
+            <CTASection />
+          </div>
         </div>
       </div>
     </div>
