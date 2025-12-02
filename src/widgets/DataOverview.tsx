@@ -4,10 +4,9 @@ import { TrendingUp, Users, AlertTriangle, Clock, Percent, Heart, Target, Zap, C
 
 interface StatItem {
   value: string;
-  label: string;
-  description?: string;
+  label: string;  // The description text below the value
   icon?: string;
-  color?: 'red' | 'blue' | 'green' | 'amber' | 'purple';
+  color?: 'red' | 'blue' | 'green' | 'amber' | 'purple';  // Optional, defaults to purple
 }
 
 interface DataOverviewProps {
@@ -21,31 +20,23 @@ interface DataOverviewProps {
 const defaultStats: StatItem[] = [
   {
     value: '96%',
-    label: 'of women over 40',
-    description: 'experience hormonal imbalance symptoms',
-    icon: 'users',
-    color: 'red'
+    label: 'of women over 40 experience hormonal imbalance symptoms',
+    icon: 'users'
   },
   {
     value: '73%',
-    label: 'don\'t know the cause',
-    description: 'of their fatigue and weight gain',
-    icon: 'alert',
-    color: 'amber'
+    label: 'don\'t know the cause of their fatigue and weight gain',
+    icon: 'alert'
   },
   {
     value: '45',
-    label: 'average age',
-    description: 'when symptoms typically begin',
-    icon: 'clock',
-    color: 'blue'
+    label: 'average age when symptoms typically begin',
+    icon: 'clock'
   },
   {
     value: '15%',
-    label: 'lose weight successfully',
-    description: 'without addressing hormone health first',
-    icon: 'trending',
-    color: 'purple'
+    label: 'lose weight successfully without addressing hormone health first',
+    icon: 'trending'
   }
 ];
 
@@ -127,7 +118,7 @@ export default function DataOverview({
     );
   }
 
-  // Default: cards style
+  // Default: cards style - simplified with consistent purple theme
   return (
     <div className="my-8">
       {/* Header */}
@@ -140,7 +131,8 @@ export default function DataOverview({
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, idx) => {
           const Icon = iconMap[stat.icon || 'trending'] || TrendingUp;
-          const colors = colorMap[stat.color || 'blue'];
+          // Use purple as default, allow override if color is set
+          const colors = colorMap[stat.color || 'purple'];
 
           return (
             <div
@@ -152,18 +144,13 @@ export default function DataOverview({
                 <Icon className={`w-6 h-6 ${colors.text}`} />
               </div>
 
-              {/* Stat Value */}
+              {/* Stat Value - big purple number */}
               <div className={`text-4xl font-bold ${colors.text} mb-2`}>
                 {stat.value}
               </div>
 
-              {/* Label */}
-              <div className="font-semibold text-gray-900 mb-1">{stat.label}</div>
-
-              {/* Description */}
-              {stat.description && (
-                <div className="text-sm text-gray-600">{stat.description}</div>
-              )}
+              {/* Description - the text below the value */}
+              <div className="text-gray-700">{stat.label}</div>
 
               {/* Decorative gradient bar */}
               <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${colors.bg} rounded-b-xl`}></div>

@@ -1556,7 +1556,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 type="button"
                 onClick={() => {
                   const stats = (widget.config.stats || []) as any[];
-                  onUpdate({ stats: [...stats, { value: '', label: '', description: '', icon: 'trending', color: 'blue' }] });
+                  onUpdate({ stats: [...stats, { value: '', label: '', icon: 'trending', color: 'purple' }] });
                 }}
                 className="text-sm text-primary-600 hover:text-primary-700"
               >
@@ -1564,7 +1564,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </button>
             </div>
             {((widget.config.stats || []) as any[]).map((stat: any, idx: number) => (
-              <div key={idx} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
+              <div key={idx} className="border border-gray-200 rounded-lg p-4 mb-3 bg-gray-50">
                 <div className="flex justify-between items-start mb-3">
                   <span className="text-sm font-medium text-gray-600">Stat {idx + 1}</span>
                   <button
@@ -1581,7 +1581,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 </div>
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Value</label>
+                    <label className="block text-xs text-gray-500 mb-1">Value (big number)</label>
                     <input
                       type="text"
                       value={stat.value || ''}
@@ -1591,39 +1591,9 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                         onUpdate({ stats });
                       }}
                       placeholder="96%"
-                      className="w-full border border-gray-300 rounded p-2 text-sm"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900 bg-white"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">Label</label>
-                    <input
-                      type="text"
-                      value={stat.label || ''}
-                      onChange={(e) => {
-                        const stats = [...(widget.config.stats || []) as any[]];
-                        stats[idx] = { ...stats[idx], label: e.target.value };
-                        onUpdate({ stats });
-                      }}
-                      placeholder="of women over 40"
-                      className="w-full border border-gray-300 rounded p-2 text-sm"
-                    />
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <label className="block text-xs text-gray-500 mb-1">Description</label>
-                  <input
-                    type="text"
-                    value={stat.description || ''}
-                    onChange={(e) => {
-                      const stats = [...(widget.config.stats || []) as any[]];
-                      stats[idx] = { ...stats[idx], description: e.target.value };
-                      onUpdate({ stats });
-                    }}
-                    placeholder="experience hormonal imbalance symptoms"
-                    className="w-full border border-gray-300 rounded p-2 text-sm"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs text-gray-500 mb-1">Icon</label>
                     <select
@@ -1633,7 +1603,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                         stats[idx] = { ...stats[idx], icon: e.target.value };
                         onUpdate({ stats });
                       }}
-                      className="w-full border border-gray-300 rounded p-2 text-sm"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900 bg-white"
                     >
                       <option value="trending">Trending</option>
                       <option value="users">Users</option>
@@ -1648,24 +1618,20 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                       <option value="chart">Chart</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">Color</label>
-                    <select
-                      value={stat.color || 'blue'}
-                      onChange={(e) => {
-                        const stats = [...(widget.config.stats || []) as any[]];
-                        stats[idx] = { ...stats[idx], color: e.target.value };
-                        onUpdate({ stats });
-                      }}
-                      className="w-full border border-gray-300 rounded p-2 text-sm"
-                    >
-                      <option value="red">Red/Pink</option>
-                      <option value="blue">Blue</option>
-                      <option value="green">Green</option>
-                      <option value="amber">Amber</option>
-                      <option value="purple">Purple</option>
-                    </select>
-                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Description</label>
+                  <input
+                    type="text"
+                    value={stat.label || ''}
+                    onChange={(e) => {
+                      const stats = [...(widget.config.stats || []) as any[]];
+                      stats[idx] = { ...stats[idx], label: e.target.value };
+                      onUpdate({ stats });
+                    }}
+                    placeholder="of women over 40 experience hormonal imbalance"
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900 bg-white"
+                  />
                 </div>
               </div>
             ))}
@@ -3564,31 +3530,23 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       stats: [
         {
           value: '96%',
-          label: 'of women over 40',
-          description: 'experience hormonal imbalance symptoms',
-          icon: 'users',
-          color: 'red'
+          label: 'of women over 40 experience hormonal imbalance symptoms',
+          icon: 'users'
         },
         {
           value: '73%',
-          label: "don't know the cause",
-          description: 'of their fatigue and weight gain',
-          icon: 'alert',
-          color: 'amber'
+          label: "don't know the cause of their fatigue and weight gain",
+          icon: 'alert'
         },
         {
           value: '45',
-          label: 'average age',
-          description: 'when symptoms typically begin',
-          icon: 'clock',
-          color: 'blue'
+          label: 'average age when symptoms typically begin',
+          icon: 'clock'
         },
         {
           value: '15%',
-          label: 'lose weight successfully',
-          description: 'without addressing hormone health first',
-          icon: 'trending',
-          color: 'purple'
+          label: 'lose weight successfully without addressing hormone health first',
+          icon: 'trending'
         }
       ]
     },
