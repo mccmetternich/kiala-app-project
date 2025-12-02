@@ -172,10 +172,7 @@ export default function ShopNowWidget({
 
   const currentOption = pricingOptions.find(opt => opt.id === selectedOption) || pricingOptions[0];
 
-  // Get badge display text (prefer badgeText from admin, fallback to badges array)
-  const displayBadge = badgeText || (badges && badges.length > 0 ? badges[0] : '#1 BEST SELLER');
-
-  // Dr Header Component (like ExclusiveProductCard)
+  // Dr Header Component (like ExclusiveProductCard) - now with COMMUNITY EXCLUSIVE badge instead of best seller
   const DrHeader = () => (
     <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 text-white rounded-t-2xl p-3 md:p-4">
       {/* Mobile Layout */}
@@ -203,8 +200,9 @@ export default function ShopNowWidget({
               {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
             </span>
           </div>
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900">
-            {displayBadge}
+          <span className="px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center gap-1">
+            <Sparkles className="w-3 h-3" />
+            COMMUNITY EXCLUSIVE
           </span>
         </div>
       </div>
@@ -235,20 +233,11 @@ export default function ShopNowWidget({
             </span>
             <span className="text-xs text-primary-100">left</span>
           </div>
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900">
-            {displayBadge}
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" />
+            COMMUNITY EXCLUSIVE
           </span>
         </div>
-      </div>
-    </div>
-  );
-
-  // Community Exclusive Badge (above review count, not on image)
-  const CommunityExclusiveBadge = () => (
-    <div className="flex justify-center md:justify-start mb-2">
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
-        <Sparkles className="w-3.5 h-3.5" />
-        COMMUNITY EXCLUSIVE
       </div>
     </div>
   );
@@ -326,13 +315,22 @@ export default function ShopNowWidget({
     </div>
   );
 
+  // Helper to calculate total savings: (originalPrice - price) + sum of gift values
+  const calculateSavings = (option: PricingOption) => {
+    const priceSavings = option.originalPrice - option.price;
+    const giftSavings = option.gifts?.reduce((sum, gift) => {
+      // Parse gift value like "$10.00" to number
+      const value = parseFloat(gift.value.replace(/[^0-9.]/g, '')) || 0;
+      return sum + value;
+    }, 0) || 0;
+    return priceSavings + giftSavings;
+  };
+
   const PricingSection = () => (
-    <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-3">
-        Choose Your Supply:
-      </label>
-      <div className="space-y-1.5">
-        {pricingOptions.map((option) => (
+    <div className="space-y-1.5">
+      {pricingOptions.map((option) => {
+        const totalSavings = calculateSavings(option);
+        return (
           <label
             key={option.id}
             className={`relative block px-3 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${
@@ -362,7 +360,7 @@ export default function ShopNowWidget({
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-gray-900">{option.label}</span>
-                  <span className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">{option.savings}</span>
+                  <span className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">Save ${totalSavings}</span>
                 </div>
               </div>
               <div className="text-right">
@@ -382,8 +380,8 @@ export default function ShopNowWidget({
               </div>
             )}
           </label>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 
@@ -400,7 +398,7 @@ export default function ShopNowWidget({
         target={target}
         className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
       >
-        {ctaText} - ${currentOption.price}
+        {ctaText} ${currentOption.price}
       </a>
       <div className="flex items-center justify-center gap-4 md:gap-6 mt-4 text-gray-500 text-xs md:text-sm flex-wrap">
         <div className="flex items-center gap-1">
@@ -457,10 +455,7 @@ export default function ShopNowWidget({
       <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden border-2 border-t-0 border-primary-200">
         {/* Mobile Layout - Specific order */}
         <div className="md:hidden p-4 space-y-5">
-          {/* 1. Community Exclusive badge */}
-          <CommunityExclusiveBadge />
-
-          {/* 2. Rating, review count, and Join copy */}
+          {/* 1. Rating, review count, and Join copy */}
           <div className="text-center">
             <RatingSection />
             <p className="text-primary-600 font-medium mt-2">
@@ -504,9 +499,6 @@ export default function ShopNowWidget({
 
           {/* Right: Product Details */}
           <div className="p-6 md:p-8">
-            {/* Community Exclusive badge */}
-            <CommunityExclusiveBadge />
-
             <RatingSection />
 
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 mt-4">{productName}</h2>
