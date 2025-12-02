@@ -92,6 +92,181 @@ const categoryColors: Record<string, string> = {
   'Lead Gen': 'bg-yellow-100 text-yellow-700'
 };
 
+// Pricing Options Editor - moved outside main component to prevent re-renders
+const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange: (options: any[]) => void }) => {
+  const addOption = () => {
+    const newOption = {
+      id: `option-${Date.now()}`,
+      label: 'Buy 1 Get 1 FREE',
+      quantity: 1,
+      price: 97,
+      originalPrice: 167,
+      perUnit: 97,
+      savings: 'Save $70',
+      popular: false,
+      gifts: []
+    };
+    onChange([...options, newOption]);
+  };
+
+  const updateOption = (index: number, field: string, value: any) => {
+    const updated = [...options];
+    updated[index] = { ...updated[index], [field]: value };
+    onChange(updated);
+  };
+
+  const removeOption = (index: number) => {
+    onChange(options.filter((_, i) => i !== index));
+  };
+
+  const addGift = (optionIndex: number) => {
+    const updated = [...options];
+    updated[optionIndex].gifts = [...(updated[optionIndex].gifts || []), { name: 'Free Gift', value: '$10.00' }];
+    onChange(updated);
+  };
+
+  const updateGift = (optionIndex: number, giftIndex: number, field: string, value: string) => {
+    const updated = [...options];
+    updated[optionIndex].gifts[giftIndex] = { ...updated[optionIndex].gifts[giftIndex], [field]: value };
+    onChange(updated);
+  };
+
+  const removeGift = (optionIndex: number, giftIndex: number) => {
+    const updated = [...options];
+    updated[optionIndex].gifts = updated[optionIndex].gifts.filter((_: any, i: number) => i !== giftIndex);
+    onChange(updated);
+  };
+
+  return (
+    <div className="space-y-4">
+      {options.map((option, index) => (
+        <div key={option.id || index} className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+          {/* Package Header */}
+          <div className="flex justify-between items-center mb-4 pb-2 border-b border-purple-200">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-purple-900">Package {index + 1}</span>
+              {option.popular && (
+                <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full">Most Popular</span>
+              )}
+            </div>
+            <button type="button" onClick={() => removeOption(index)} className="text-red-500 hover:text-red-700">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Package Title */}
+          <div className="mb-3">
+            <label className="block text-xs font-medium text-gray-600 mb-1">Package Title</label>
+            <input
+              type="text"
+              value={option.label || ''}
+              onChange={(e) => updateOption(index, 'label', e.target.value)}
+              placeholder="e.g., Buy 1 Get 1 FREE"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+            />
+          </div>
+
+          {/* Pricing Row */}
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Sale Price ($)</label>
+              <input
+                type="number"
+                value={option.price || 0}
+                onChange={(e) => updateOption(index, 'price', parseFloat(e.target.value))}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Original Price ($)</label>
+              <input
+                type="number"
+                value={option.originalPrice || 0}
+                onChange={(e) => updateOption(index, 'originalPrice', parseFloat(e.target.value))}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+              />
+            </div>
+          </div>
+
+          {/* Savings Badge */}
+          <div className="mb-3">
+            <label className="block text-xs font-medium text-gray-600 mb-1">Savings Badge Text</label>
+            <input
+              type="text"
+              value={option.savings || ''}
+              onChange={(e) => updateOption(index, 'savings', e.target.value)}
+              placeholder="e.g., Save $70"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+            />
+          </div>
+
+          {/* Popular Checkbox */}
+          <div className="mb-3 flex items-center gap-2">
+            <input
+              type="checkbox"
+              id={`popular-${option.id || index}`}
+              checked={option.popular || false}
+              onChange={(e) => updateOption(index, 'popular', e.target.checked)}
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            <label htmlFor={`popular-${option.id || index}`} className="text-sm text-gray-700">
+              Mark as "Most Popular" (highlighted option)
+            </label>
+          </div>
+
+          {/* Free Gifts Section */}
+          <div className="mt-3 pt-3 border-t border-purple-200">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-medium text-gray-600">Free Gifts (optional)</label>
+              <button type="button" onClick={() => addGift(index)} className="text-xs text-primary-600 hover:text-primary-700 font-medium">
+                + Add Gift
+              </button>
+            </div>
+            {(option.gifts || []).length === 0 && (
+              <p className="text-xs text-gray-400 italic">No gifts added yet</p>
+            )}
+            {(option.gifts || []).map((gift: any, giftIndex: number) => (
+              <div key={giftIndex} className="flex gap-2 mb-2 items-end">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">Gift Name</label>
+                  <input
+                    type="text"
+                    value={gift.name || ''}
+                    onChange={(e) => updateGift(index, giftIndex, 'name', e.target.value)}
+                    placeholder="e.g., Free Recipe Book"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded text-gray-900 bg-white"
+                  />
+                </div>
+                <div className="w-24">
+                  <label className="block text-xs text-gray-500 mb-1">Value</label>
+                  <input
+                    type="text"
+                    value={gift.value || ''}
+                    onChange={(e) => updateGift(index, giftIndex, 'value', e.target.value)}
+                    placeholder="$19.99"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded text-gray-900 bg-white"
+                  />
+                </div>
+                <button type="button" onClick={() => removeGift(index, giftIndex)} className="text-red-500 hover:text-red-700 pb-1.5">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={addOption}
+        className="w-full flex items-center justify-center gap-2 px-3 py-3 border-2 border-dashed border-purple-300 rounded-lg hover:bg-purple-50 text-sm font-medium text-purple-600"
+      >
+        <Plus className="w-4 h-4" />
+        Add Pricing Package
+      </button>
+    </div>
+  );
+};
+
 export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = false, siteId, articleId }: WidgetEditorProps) {
   const [selectedWidget, setSelectedWidget] = useState<string | null>(null);
   const [showWidgetPalette, setShowWidgetPalette] = useState(false);
@@ -1059,180 +1234,6 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             )}
           </div>
         </div>
-      </div>
-    );
-  };
-
-  // Pricing Options Editor for Shop Now widget
-  const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange: (options: any[]) => void }) => {
-    const addOption = () => {
-      const newOption = {
-        id: `option-${Date.now()}`,
-        label: 'Buy 1 Get 1 FREE',
-        quantity: 1,
-        price: 97,
-        originalPrice: 167,
-        perUnit: 97,
-        savings: 'Save $70',
-        popular: false,
-        gifts: []
-      };
-      onChange([...options, newOption]);
-    };
-
-    const updateOption = (index: number, field: string, value: any) => {
-      const updated = [...options];
-      updated[index] = { ...updated[index], [field]: value };
-      onChange(updated);
-    };
-
-    const removeOption = (index: number) => {
-      onChange(options.filter((_, i) => i !== index));
-    };
-
-    const addGift = (optionIndex: number) => {
-      const updated = [...options];
-      updated[optionIndex].gifts = [...(updated[optionIndex].gifts || []), { name: 'Free Gift', value: '$10.00' }];
-      onChange(updated);
-    };
-
-    const updateGift = (optionIndex: number, giftIndex: number, field: string, value: string) => {
-      const updated = [...options];
-      updated[optionIndex].gifts[giftIndex] = { ...updated[optionIndex].gifts[giftIndex], [field]: value };
-      onChange(updated);
-    };
-
-    const removeGift = (optionIndex: number, giftIndex: number) => {
-      const updated = [...options];
-      updated[optionIndex].gifts = updated[optionIndex].gifts.filter((_: any, i: number) => i !== giftIndex);
-      onChange(updated);
-    };
-
-    return (
-      <div className="space-y-4">
-        {options.map((option, index) => (
-          <div key={option.id || index} className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-            {/* Package Header */}
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-purple-200">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-purple-900">Package {index + 1}</span>
-                {option.popular && (
-                  <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full">Most Popular</span>
-                )}
-              </div>
-              <button onClick={() => removeOption(index)} className="text-red-500 hover:text-red-700">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Package Title */}
-            <div className="mb-3">
-              <label className="block text-xs font-medium text-gray-600 mb-1">Package Title</label>
-              <input
-                type="text"
-                value={option.label || ''}
-                onChange={(e) => updateOption(index, 'label', e.target.value)}
-                placeholder="e.g., Buy 1 Get 1 FREE"
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
-              />
-            </div>
-
-            {/* Pricing Row */}
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Sale Price ($)</label>
-                <input
-                  type="number"
-                  value={option.price || 0}
-                  onChange={(e) => updateOption(index, 'price', parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Original Price ($)</label>
-                <input
-                  type="number"
-                  value={option.originalPrice || 0}
-                  onChange={(e) => updateOption(index, 'originalPrice', parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
-                />
-              </div>
-            </div>
-
-            {/* Savings Badge */}
-            <div className="mb-3">
-              <label className="block text-xs font-medium text-gray-600 mb-1">Savings Badge Text</label>
-              <input
-                type="text"
-                value={option.savings || ''}
-                onChange={(e) => updateOption(index, 'savings', e.target.value)}
-                placeholder="e.g., Save $70"
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
-              />
-            </div>
-
-            {/* Popular Checkbox */}
-            <div className="mb-3 flex items-center gap-2">
-              <input
-                type="checkbox"
-                id={`popular-${index}`}
-                checked={option.popular || false}
-                onChange={(e) => updateOption(index, 'popular', e.target.checked)}
-                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-              />
-              <label htmlFor={`popular-${index}`} className="text-sm text-gray-700">
-                Mark as "Most Popular" (highlighted option)
-              </label>
-            </div>
-
-            {/* Free Gifts Section */}
-            <div className="mt-3 pt-3 border-t border-purple-200">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-medium text-gray-600">Free Gifts (optional)</label>
-                <button onClick={() => addGift(index)} className="text-xs text-primary-600 hover:text-primary-700 font-medium">
-                  + Add Gift
-                </button>
-              </div>
-              {(option.gifts || []).length === 0 && (
-                <p className="text-xs text-gray-400 italic">No gifts added yet</p>
-              )}
-              {(option.gifts || []).map((gift: any, giftIndex: number) => (
-                <div key={giftIndex} className="flex gap-2 mb-2 items-end">
-                  <div className="flex-1">
-                    <label className="block text-xs text-gray-500 mb-1">Gift Name</label>
-                    <input
-                      type="text"
-                      value={gift.name || ''}
-                      onChange={(e) => updateGift(index, giftIndex, 'name', e.target.value)}
-                      placeholder="e.g., Free Recipe Book"
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded text-gray-900 bg-white"
-                    />
-                  </div>
-                  <div className="w-24">
-                    <label className="block text-xs text-gray-500 mb-1">Value</label>
-                    <input
-                      type="text"
-                      value={gift.value || ''}
-                      onChange={(e) => updateGift(index, giftIndex, 'value', e.target.value)}
-                      placeholder="$19.99"
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded text-gray-900 bg-white"
-                    />
-                  </div>
-                  <button onClick={() => removeGift(index, giftIndex)} className="text-red-500 hover:text-red-700 pb-1.5">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-        <button
-          onClick={addOption}
-          className="w-full flex items-center justify-center gap-2 px-3 py-3 border-2 border-dashed border-purple-300 rounded-lg hover:bg-purple-50 text-sm font-medium text-purple-600"
-        >
-          <Plus className="w-4 h-4" />
-          Add Pricing Package
-        </button>
       </div>
     );
   };
