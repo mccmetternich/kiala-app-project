@@ -543,7 +543,7 @@ export default function ShopNowWidget({
           <ImageGallery />
 
           {/* 4. Product description */}
-          <p className="text-gray-600 text-center text-sm">
+          <p className="text-gray-700 text-center text-base leading-relaxed">
             {description}
           </p>
 
