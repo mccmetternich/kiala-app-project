@@ -140,22 +140,22 @@ export default function StackedQuotes({
         {quotes.map((quote, index) => (
           <div
             key={quote.id}
-            className={`bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all ${
+            className={`bg-white rounded-2xl border border-gray-100 p-4 md:p-6 shadow-sm hover:shadow-md transition-all ${
               index === 0 ? 'border-l-4 border-l-primary-500' : ''
             }`}
           >
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4">
               {/* Avatar & Info */}
-              <div className="flex items-start gap-4">
+              <div className="flex items-center md:items-start gap-3 md:gap-4">
                 <div className="relative flex-shrink-0">
                   <img
                     src={quote.image}
                     alt={quote.name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-lg"
+                    className="w-12 h-12 md:w-16 md:h-16 rounded-full object-cover border-2 border-white shadow-lg"
                   />
                   {quote.verified && showVerifiedBadge && (
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
-                      <CheckCircle className="w-4 h-4 text-white" />
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                      <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-white" />
                     </div>
                   )}
                 </div>
@@ -163,9 +163,9 @@ export default function StackedQuotes({
                 <div className="flex-1">
                   {/* Name & Location */}
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-bold text-gray-900">{quote.name}</h4>
+                    <h4 className="font-bold text-gray-900 text-sm md:text-base">{quote.name}</h4>
                     {quote.location && (
-                      <span className="flex items-center gap-1 text-sm text-gray-500">
+                      <span className="flex items-center gap-1 text-xs md:text-sm text-gray-500">
                         <MapPin className="w-3 h-3" />
                         {quote.location}
                       </span>
@@ -179,11 +179,11 @@ export default function StackedQuotes({
 
                   {/* Rating */}
                   {quote.rating && (
-                    <div className="flex gap-0.5 mt-1">
+                    <div className="flex gap-0.5 mt-0.5 md:mt-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-4 h-4 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-300'}`}
+                          className={`w-3 h-3 md:w-4 md:h-4 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-300'}`}
                         />
                       ))}
                     </div>
@@ -196,13 +196,13 @@ export default function StackedQuotes({
             </div>
 
             {/* Quote Content */}
-            <blockquote className="mt-4 text-gray-700 leading-relaxed pl-0 md:pl-20 text-lg">
+            <blockquote className="mt-2 md:mt-4 text-gray-700 leading-relaxed pl-0 md:pl-20 text-base md:text-lg">
               "{quote.content}"
             </blockquote>
 
             {/* Verified badge */}
             {quote.verified && showVerifiedBadge && (
-              <div className="mt-4 pl-0 md:pl-20">
+              <div className="mt-2 md:mt-4 pl-0 md:pl-20">
                 <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
                   <CheckCircle className="w-3 h-3 text-green-500" />
                   Verified Member

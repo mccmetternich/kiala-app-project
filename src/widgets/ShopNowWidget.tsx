@@ -530,34 +530,34 @@ export default function ShopNowWidget({
       {/* Main Card */}
       <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden border-2 border-t-0 border-primary-200">
         {/* Mobile Layout - Specific order */}
-        <div className="md:hidden p-4 space-y-5">
-          {/* 1. Rating, review count, and Join copy */}
+        <div className="md:hidden p-4 space-y-4">
+          {/* 1. Rating, review count, and Loved by */}
           <div className="text-center">
             <RatingSection />
-            <p className="text-primary-600 font-medium mt-2">
-              Join {lovedByCount} women who've made Kiala Greens their daily wellness ritual
-            </p>
           </div>
+
+          {/* 2. Product Name Title */}
+          <h2 className="text-xl font-bold text-gray-900 text-center">{productName}</h2>
 
           {/* 3. Main image and carousel */}
           <ImageGallery />
 
           {/* 4. Product description */}
-          <p className="text-gray-600 text-center">
+          <p className="text-gray-600 text-center text-sm">
             {description}
           </p>
 
           {/* 5. Benefits with checkmarks (2 rows) */}
           <BenefitsSection />
 
-          {/* 6. Testimonial */}
-          <TestimonialSection />
-
-          {/* 7. Select packages */}
+          {/* 6. Select packages */}
           <PricingSection />
 
-          {/* 8. CTA with icons */}
+          {/* 7. CTA with icons */}
           <CTASection />
+
+          {/* 8. Testimonial - at the bottom as chaser */}
+          <TestimonialSection />
         </div>
 
         {/* Desktop Layout - 2 column grid */}

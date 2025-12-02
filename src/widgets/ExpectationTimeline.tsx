@@ -112,8 +112,8 @@ export default function ExpectationTimeline({
       {/* Timeline */}
       <div className="p-5 md:p-6">
         <div className="relative">
-          {/* Vertical Line */}
-          <div className="absolute left-7 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 via-purple-500 to-primary-400 hidden md:block"></div>
+          {/* Vertical Line - Desktop */}
+          <div className="absolute left-7 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 via-purple-500 to-primary-400 hidden md:block rounded-full"></div>
 
           {/* Timeline Steps */}
           <div className="space-y-5">
@@ -124,10 +124,15 @@ export default function ExpectationTimeline({
 
               return (
                 <div key={index} className="relative">
+                  {/* Mobile: Vertical line on left side */}
+                  {!isLast && (
+                    <div className="md:hidden absolute left-[6px] top-14 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-primary-300 rounded-full" style={{ height: 'calc(100% + 0.75rem)' }}></div>
+                  )}
+
                   <div className="flex flex-col md:flex-row gap-4">
                     {/* Icon Circle */}
                     <div className="flex-shrink-0 flex items-center gap-4 md:gap-0">
-                      <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${
+                      <div className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${
                         index === 0 ? 'bg-gradient-to-br from-primary-500 to-primary-600' :
                         index === 1 ? 'bg-gradient-to-br from-purple-500 to-purple-600' :
                         index === 2 ? 'bg-gradient-to-br from-primary-400 to-purple-500' :
@@ -142,7 +147,7 @@ export default function ExpectationTimeline({
                     </div>
 
                     {/* Content Card */}
-                    <div className="flex-1 bg-gray-50 rounded-xl p-4 md:ml-4 border border-gray-100 hover:border-primary-200 transition-all">
+                    <div className="flex-1 bg-gray-50 rounded-xl p-4 md:ml-4 border border-gray-100 hover:border-primary-200 transition-all ml-5 md:ml-4">
                       <div className="hidden md:block mb-2">
                         <span className="inline-block bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-bold">
                           {periodLabel}
@@ -184,13 +189,6 @@ export default function ExpectationTimeline({
                       )}
                     </div>
                   </div>
-
-                  {/* Connector arrow on mobile */}
-                  {!isLast && (
-                    <div className="md:hidden flex justify-center my-3">
-                      <div className="w-0.5 h-6 bg-gradient-to-b from-primary-500 to-primary-300"></div>
-                    </div>
-                  )}
                 </div>
               );
             })}

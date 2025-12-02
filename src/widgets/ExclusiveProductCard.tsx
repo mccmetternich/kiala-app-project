@@ -180,7 +180,145 @@ export default function ExclusiveProductCard({
 
       {/* Main Card */}
       <div className="bg-white rounded-b-2xl shadow-2xl border-2 border-t-0 border-primary-200 overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-0">
+        {/* Mobile Layout */}
+        <div className="md:hidden">
+          {/* Image Section */}
+          <div className="relative bg-gradient-to-br from-gray-50 to-primary-50 p-4">
+            {/* Community Exclusive badge */}
+            <div className="absolute top-4 left-4 z-10">
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                COMMUNITY EXCLUSIVE
+              </div>
+            </div>
+
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-auto rounded-xl shadow-xl"
+            />
+
+            {/* Rating - 4.7 stars */}
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="flex">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-5 h-5 ${star <= 4 ? 'fill-current text-amber-400' : 'fill-amber-400/70 text-amber-400/70'}`}
+                  />
+                ))}
+              </div>
+              <span className="font-bold text-gray-900">4.7</span>
+              <span className="text-gray-500 text-sm">({formatReviewCount(reviewCount)} reviews)</span>
+            </div>
+          </div>
+
+          {/* Details Section */}
+          <div className="p-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{name}</h2>
+            <p className="text-gray-600 text-sm mb-4">{description}</p>
+
+            {/* Benefits */}
+            <div className="space-y-2 mb-4">
+              {benefits.map((benefit, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 text-sm">{benefit}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Pricing */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-3 mb-4 border border-amber-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-gray-900">${price}</span>
+                    <span className="text-base text-gray-400 line-through">${originalPrice}</span>
+                  </div>
+                  <p className="text-green-600 font-medium text-xs">
+                    {savingsText || `You save $${savings} (${Math.round((savings/originalPrice)*100)}% off)`}
+                  </p>
+                </div>
+                <div className="bg-red-500 text-white px-3 py-1.5 rounded-lg font-bold text-xs animate-pulse">
+                  LIMITED TIME
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <a
+              href={trackedCtaUrl}
+              target={target}
+              className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-5 rounded-xl text-base transition-all shadow-lg hover:shadow-xl text-center"
+            >
+              <span className="flex items-center justify-center gap-2">
+                <Heart className="w-5 h-5" />
+                {ctaText}
+              </span>
+            </a>
+
+            {/* Trust Badges */}
+            <div className="flex items-center justify-center gap-3 mt-3 text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <Truck className="w-3.5 h-3.5" />
+                {shippingBadgeText}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Shield className="w-3.5 h-3.5" />
+                {guaranteeBadgeText}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Award className="w-3.5 h-3.5" />
+                {evaluatedBadgeText}
+              </span>
+            </div>
+
+            {/* Testimonial Section - Below trust badges on mobile */}
+            {showTestimonial && testimonialQuote && (
+              <div className="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-100 relative">
+                {/* Quote icon */}
+                <div className="absolute -top-3 left-4">
+                  <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
+                    <Quote className="w-4 h-4 text-white" />
+                  </div>
+                </div>
+
+                {/* Testimonial content */}
+                <div className="pt-2">
+                  <p className="text-gray-700 italic text-sm leading-relaxed mb-3">
+                    "{testimonialQuote}"
+                  </p>
+
+                  {/* Avatar and name */}
+                  <div className="flex items-center gap-3">
+                    {testimonialAvatar && (
+                      <img
+                        src={testimonialAvatar}
+                        alt={testimonialName}
+                        className="w-10 h-10 rounded-full object-cover border-2 border-primary-200 shadow-sm"
+                      />
+                    )}
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                        ))}
+                        <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:grid md:grid-cols-2 gap-0">
           {/* Image Side */}
           <div className="relative bg-gradient-to-br from-gray-50 to-primary-50 p-6">
             {/* Community Exclusive badge */}
@@ -211,7 +349,7 @@ export default function ExclusiveProductCard({
               <span className="text-gray-500">({formatReviewCount(reviewCount)} reviews)</span>
             </div>
 
-            {/* Testimonial Section */}
+            {/* Testimonial Section - Desktop */}
             {showTestimonial && testimonialQuote && (
               <div className="mt-6 bg-white rounded-xl p-5 shadow-md border border-gray-100 relative">
                 {/* Quote icon */}
