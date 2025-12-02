@@ -1109,80 +1109,117 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
     };
 
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         {options.map((option, index) => (
-          <div key={option.id || index} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-sm font-medium text-gray-700">Package {index + 1}</span>
+          <div key={option.id || index} className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+            {/* Package Header */}
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-purple-200">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-purple-900">Package {index + 1}</span>
+                {option.popular && (
+                  <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full">Most Popular</span>
+                )}
+              </div>
               <button onClick={() => removeOption(index)} className="text-red-500 hover:text-red-700">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-2 mb-2">
+
+            {/* Package Title */}
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Package Title</label>
               <input
                 type="text"
                 value={option.label || ''}
                 onChange={(e) => updateOption(index, 'label', e.target.value)}
-                placeholder="Label (e.g., Buy 1 Get 1 FREE)"
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                placeholder="e.g., Buy 1 Get 1 FREE"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
+            </div>
+
+            {/* Pricing Row */}
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Sale Price ($)</label>
+                <input
+                  type="number"
+                  value={option.price || 0}
+                  onChange={(e) => updateOption(index, 'price', parseFloat(e.target.value))}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Original Price ($)</label>
+                <input
+                  type="number"
+                  value={option.originalPrice || 0}
+                  onChange={(e) => updateOption(index, 'originalPrice', parseFloat(e.target.value))}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+                />
+              </div>
+            </div>
+
+            {/* Savings Badge */}
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Savings Badge Text</label>
               <input
                 type="text"
                 value={option.savings || ''}
                 onChange={(e) => updateOption(index, 'savings', e.target.value)}
-                placeholder="Savings text"
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                placeholder="e.g., Save $70"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
-            <div className="grid grid-cols-3 gap-2 mb-2">
+
+            {/* Popular Checkbox */}
+            <div className="mb-3 flex items-center gap-2">
               <input
-                type="number"
-                value={option.price || 0}
-                onChange={(e) => updateOption(index, 'price', parseFloat(e.target.value))}
-                placeholder="Price"
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                type="checkbox"
+                id={`popular-${index}`}
+                checked={option.popular || false}
+                onChange={(e) => updateOption(index, 'popular', e.target.checked)}
+                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
-              <input
-                type="number"
-                value={option.originalPrice || 0}
-                onChange={(e) => updateOption(index, 'originalPrice', parseFloat(e.target.value))}
-                placeholder="Original"
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
-              />
-              <label className="flex items-center gap-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={option.popular || false}
-                  onChange={(e) => updateOption(index, 'popular', e.target.checked)}
-                  className="rounded"
-                />
-                Popular
+              <label htmlFor={`popular-${index}`} className="text-sm text-gray-700">
+                Mark as "Most Popular" (highlighted option)
               </label>
             </div>
-            {/* Gifts */}
-            <div className="mt-2">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500">Free Gifts:</span>
-                <button onClick={() => addGift(index)} className="text-xs text-primary-600 hover:text-primary-700">+ Add Gift</button>
+
+            {/* Free Gifts Section */}
+            <div className="mt-3 pt-3 border-t border-purple-200">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-medium text-gray-600">Free Gifts (optional)</label>
+                <button onClick={() => addGift(index)} className="text-xs text-primary-600 hover:text-primary-700 font-medium">
+                  + Add Gift
+                </button>
               </div>
+              {(option.gifts || []).length === 0 && (
+                <p className="text-xs text-gray-400 italic">No gifts added yet</p>
+              )}
               {(option.gifts || []).map((gift: any, giftIndex: number) => (
-                <div key={giftIndex} className="flex gap-1 mb-1">
-                  <input
-                    type="text"
-                    value={gift.name || ''}
-                    onChange={(e) => updateGift(index, giftIndex, 'name', e.target.value)}
-                    placeholder="Gift name"
-                    className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
-                  />
-                  <input
-                    type="text"
-                    value={gift.value || ''}
-                    onChange={(e) => updateGift(index, giftIndex, 'value', e.target.value)}
-                    placeholder="Value"
-                    className="w-16 px-2 py-1 text-xs border border-gray-300 rounded"
-                  />
-                  <button onClick={() => removeGift(index, giftIndex)} className="text-red-500 hover:text-red-700">
-                    <X className="w-3 h-3" />
+                <div key={giftIndex} className="flex gap-2 mb-2 items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 mb-1">Gift Name</label>
+                    <input
+                      type="text"
+                      value={gift.name || ''}
+                      onChange={(e) => updateGift(index, giftIndex, 'name', e.target.value)}
+                      placeholder="e.g., Free Recipe Book"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded text-gray-900 bg-white"
+                    />
+                  </div>
+                  <div className="w-24">
+                    <label className="block text-xs text-gray-500 mb-1">Value</label>
+                    <input
+                      type="text"
+                      value={gift.value || ''}
+                      onChange={(e) => updateGift(index, giftIndex, 'value', e.target.value)}
+                      placeholder="$19.99"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded text-gray-900 bg-white"
+                    />
+                  </div>
+                  <button onClick={() => removeGift(index, giftIndex)} className="text-red-500 hover:text-red-700 pb-1.5">
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               ))}
@@ -1191,10 +1228,10 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         ))}
         <button
           onClick={addOption}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+          className="w-full flex items-center justify-center gap-2 px-3 py-3 border-2 border-dashed border-purple-300 rounded-lg hover:bg-purple-50 text-sm font-medium text-purple-600"
         >
           <Plus className="w-4 h-4" />
-          Add Package Option
+          Add Pricing Package
         </button>
       </div>
     );
