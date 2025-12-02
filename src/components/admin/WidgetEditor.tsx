@@ -739,6 +739,13 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
   const [mediaLibraryOpen, setMediaLibraryOpen] = useState(false);
   const [activeImageField, setActiveImageField] = useState<string | null>(null);
 
+  // Helper function to get widget display name
+  const getWidgetDisplayName = (w: Widget) => {
+    const widgetTypeInfo = widgetTypes.find(wt => wt.type === w.type);
+    const typeName = widgetTypeInfo?.name || w.type;
+    return typeName;
+  };
+
   // Handler functions for field updates - use useCallback to stabilize references
   const handleFieldChange = useCallback((field: string, value: any) => {
     // Handle nested fields like "testimonial.quote"
@@ -1661,7 +1668,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                     <select
                       value={widget.config.anchorWidgetId || ''}
                       onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Select a widget...</option>
                       {allWidgets
@@ -1669,7 +1676,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                         .sort((a: Widget, b: Widget) => a.position - b.position)
                         .map((w: Widget) => (
                           <option key={w.id} value={w.id}>
-                            {w.config?.label || w.config?.headline || w.config?.title || w.type} (Position {w.position + 1})
+                            {getWidgetDisplayName(w)} (Position {w.position + 1})
                           </option>
                         ))
                       }
@@ -3004,7 +3011,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               <select
                 value={widget.config.anchorWidgetId || ''}
                 onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">Select a widget...</option>
                 {allWidgets
@@ -3012,7 +3019,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                   .sort((a: Widget, b: Widget) => a.position - b.position)
                   .map((w: Widget) => (
                     <option key={w.id} value={w.id}>
-                      {w.config?.label || w.config?.headline || w.config?.title || w.type} (Position {w.position + 1})
+                      {getWidgetDisplayName(w)} (Position {w.position + 1})
                     </option>
                   ))
                 }
