@@ -1486,7 +1486,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                   </select>
                 </div>
 
-                {widget.config.ctaType === 'external' && (
+                {(!widget.config.ctaType || widget.config.ctaType === 'external') && (
                   <>
                     {renderTextField('Button URL', 'ctaUrl', 'https://example.com')}
                     {renderSelectField('Open in', 'target', [
