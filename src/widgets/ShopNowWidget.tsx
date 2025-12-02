@@ -437,9 +437,8 @@ export default function ShopNowWidget({
     const baseUrl = ctaUrl.includes('?')
       ? `${ctaUrl}&option=${selectedOption}`
       : `${ctaUrl}?option=${selectedOption}`;
-    const trackedUrl = appendTracking(baseUrl);
 
-    const handleCTAClick = () => {
+    const handleCTAClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       // Fire InitiateCheckout event with product details
       trackInitiateCheckout({
         content_name: productName,
@@ -449,12 +448,28 @@ export default function ShopNowWidget({
         currency: 'USD',
         num_items: currentOption.quantity
       });
+
+      // Append tracking params at click time (ensures cookies are available)
+      const trackedUrl = appendTracking(baseUrl);
+
+      // If URL was modified with tracking, update the navigation
+      if (trackedUrl !== baseUrl) {
+        e.preventDefault();
+        if (target === '_blank') {
+          window.open(trackedUrl, '_blank');
+        } else {
+          window.location.href = trackedUrl;
+        }
+      }
     };
+
+    // Pre-computed URL for href (fallback if JS disabled)
+    const hrefUrl = appendTracking(baseUrl);
 
     return (
     <>
       <a
-        href={trackedUrl}
+        href={hrefUrl}
         target={target}
         onClick={handleCTAClick}
         className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"

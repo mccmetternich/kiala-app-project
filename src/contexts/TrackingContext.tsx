@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { TrackingConfig, appendTrackingParams, getCurrentUrlParams } from '@/lib/tracking-utils';
+import { captureFbclid, initializeFbp } from '@/lib/meta-pixel';
 
 interface TrackingContextValue {
   trackingConfig: TrackingConfig | null;
@@ -29,6 +30,11 @@ export function TrackingProvider({ children, config }: TrackingProviderProps) {
   useEffect(() => {
     // Get current URL params on mount (client-side only)
     setCurrentParams(getCurrentUrlParams());
+
+    // Initialize Meta cookies immediately on mount
+    // This ensures _fbc/_fbp are available before any CTA clicks
+    captureFbclid(); // Capture fbclid from URL if present
+    initializeFbp(); // Initialize browser ID cookie (_fbp)
   }, []);
 
   const appendTracking = (url: string) => {
