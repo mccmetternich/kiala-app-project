@@ -2664,10 +2664,17 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
             {renderTextField('Button Text', 'ctaText', 'TRY IT NOW')}
 
-            {renderSelectField('Button Action', 'ctaType', [
-              { value: 'external', label: 'Link to URL' },
-              { value: 'anchor', label: 'Jump to Widget on Page' }
-            ])}
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+              <select
+                value={widget.config.ctaType || 'external'}
+                onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="external">Link to URL</option>
+                <option value="anchor">Jump to Widget on Page</option>
+              </select>
+            </div>
 
             {widget.config.ctaType !== 'anchor' && (
               <>
