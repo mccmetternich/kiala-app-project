@@ -117,14 +117,15 @@ export default function CommunityPopup({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn">
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn max-h-[90vh] overflow-y-auto">
+        {/* Close Button - More prominent */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+          className="absolute top-3 right-3 md:top-4 md:right-4 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg border border-gray-200 text-gray-600 hover:text-gray-900 transition-all z-20"
+          aria-label="Close popup"
         >
-          <X className="w-5 h-5" />
+          <X className="w-6 h-6" />
         </button>
 
         {/* Success State */}
@@ -160,34 +161,34 @@ export default function CommunityPopup({
           </div>
         ) : (
           <>
-            {/* Header with gradient */}
-            <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 text-white p-8 pb-12">
-              <div className="flex items-center gap-2 text-primary-100 text-sm mb-4">
+            {/* Header with gradient - more compact on mobile */}
+            <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 text-white p-5 pb-8 md:p-8 md:pb-12">
+              <div className="flex items-center gap-2 text-primary-100 text-sm mb-2 md:mb-4">
                 <Sparkles className="w-4 h-4" />
                 <span>Join {memberCount.toLocaleString()}+ members</span>
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold mb-3">
+              <h2 className="text-xl md:text-3xl font-bold mb-2 md:mb-3 pr-8">
                 Join {doctorName}'s {communityName}
               </h2>
 
-              <p className="text-primary-100">
+              <p className="text-primary-100 text-sm md:text-base">
                 Get exclusive health tips, protocols, and community support from women just like you.
               </p>
             </div>
 
-            {/* Content */}
-            <div className="px-8 pb-8 -mt-6">
+            {/* Content - more compact on mobile */}
+            <div className="px-5 pb-5 md:px-8 md:pb-8 -mt-4 md:-mt-6">
               {/* Benefits Card */}
-              <div className="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-100 shadow-sm">
-                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <div className="bg-gray-50 rounded-xl p-4 md:p-5 mb-4 md:mb-6 border border-gray-100 shadow-sm">
+                <h4 className="font-semibold text-gray-900 mb-2 md:mb-3 flex items-center gap-2 text-sm md:text-base">
                   <Heart className="w-4 h-4 text-primary-500" />
                   Member Benefits
                 </h4>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5 md:space-y-2">
                   {benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                      <CheckCircle className="w-4 h-4 text-secondary-500 mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-2 text-xs md:text-sm text-gray-700">
+                      <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-secondary-500 mt-0.5 flex-shrink-0" />
                       <span>{benefit}</span>
                     </li>
                   ))}
@@ -196,32 +197,32 @@ export default function CommunityPopup({
 
               {/* Incentive Banner */}
               {incentive && (
-                <div className="bg-gradient-to-r from-accent-50 to-accent-100 rounded-xl p-4 mb-6 border border-accent-200 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-accent-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Gift className="w-5 h-5 text-white" />
+                <div className="bg-gradient-to-r from-accent-50 to-accent-100 rounded-xl p-3 md:p-4 mb-4 md:mb-6 border border-accent-200 flex items-center gap-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-accent-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Gift className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">Free Gift When You Join</p>
-                    <p className="text-accent-700 text-sm">{incentive}</p>
+                    <p className="font-semibold text-gray-900 text-xs md:text-sm">Free Gift When You Join</p>
+                    <p className="text-accent-700 text-xs md:text-sm">{incentive}</p>
                   </div>
                 </div>
               )}
 
               {/* Email Form */}
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-2 md:space-y-3">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900"
+                  className="w-full px-4 py-2.5 md:py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 text-sm md:text-base"
                   disabled={status === 'loading'}
                 />
 
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white py-3 rounded-xl font-bold text-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25"
+                  className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white py-2.5 md:py-3 rounded-xl font-bold text-base md:text-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25"
                 >
                   {status === 'loading' ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -238,21 +239,21 @@ export default function CommunityPopup({
                 )}
               </form>
 
-              {/* Social Proof */}
-              <div className="mt-6 flex items-center justify-center gap-3">
+              {/* Social Proof - hidden on very small screens */}
+              <div className="mt-4 md:mt-6 flex items-center justify-center gap-2 md:gap-3">
                 <div className="flex -space-x-2">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-full border-2 border-white" />
-                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-full border-2 border-white" />
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-full border-2 border-white" />
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-full border-2 border-white" />
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
+                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   <span className="font-semibold text-gray-900">{memberCount.toLocaleString()}</span> women joined this month
                 </p>
               </div>
 
               {/* Privacy Note */}
-              <p className="text-center text-xs text-gray-500 mt-4">
+              <p className="text-center text-xs text-gray-500 mt-3 md:mt-4">
                 No spam, ever. Unsubscribe anytime.
               </p>
             </div>
