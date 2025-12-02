@@ -182,6 +182,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             timeframe={widget.config.timeframe}
             testimonial={widget.config.testimonial || widget.config.testimonialText}
             verified={widget.config.verified !== false}
+            ctaText={widget.config.ctaText}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
           />
         </div>
       );
@@ -231,8 +234,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             headline={widget.config.headline}
             subheading={widget.config.subheading}
             steps={widget.config.steps || widget.config.events}
-            ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.buttonUrl}
+            ctaText={widget.config.ctaText || widget.config.buttonText}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
           />
         </div>
       );
@@ -604,8 +608,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             column2Title={widget.config.column2Title}
             column2Features={widget.config.column2Features}
             buttonText={widget.config.buttonText}
-            buttonUrl={widget.config.buttonUrl}
-            target={widget.config.target}
+            buttonUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
             ctaText={widget.config.ctaText}
             ctaUrl={widget.config.ctaUrl}
             guaranteeBadge={widget.config.guaranteeBadge}

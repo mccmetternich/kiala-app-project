@@ -16,6 +16,7 @@ interface BeforeAfterComparisonProps {
   verified?: boolean;
   ctaText?: string;
   ctaUrl?: string;
+  target?: '_self' | '_blank';
 }
 
 export default function BeforeAfterComparison({
@@ -29,7 +30,8 @@ export default function BeforeAfterComparison({
   testimonial = "I can't believe this is me! After following the protocol, I feel like I've turned back the clock 10 years.",
   verified = true,
   ctaText = 'Get The Same Results',
-  ctaUrl = '#'
+  ctaUrl = '#',
+  target = '_self'
 }: BeforeAfterComparisonProps) {
   const { appendTracking } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
@@ -158,7 +160,9 @@ export default function BeforeAfterComparison({
             {/* CTA */}
             <a
               href={trackedCtaUrl}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl"
+              target={target}
+              rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />

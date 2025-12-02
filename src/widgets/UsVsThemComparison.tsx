@@ -16,6 +16,9 @@ interface UsVsThemComparisonProps {
   target?: '_self' | '_blank';
   guaranteeBadge?: string;
   satisfactionBadge?: string;
+  // CTA anchor support
+  ctaType?: 'external' | 'anchor';
+  anchorWidgetId?: string;
   // Legacy props for backwards compatibility
   ctaText?: string;
   ctaUrl?: string;
@@ -132,7 +135,7 @@ export default function UsVsThemComparison({
           </div>
 
           {/* Title */}
-          <h3 className="text-2xl font-bold text-gray-500 text-center mb-6">
+          <h3 className="text-2xl font-bold text-gray-700 text-center mb-6">
             {column2Title}
           </h3>
 
@@ -141,12 +144,12 @@ export default function UsVsThemComparison({
             {column2Features.map((feature, index) => (
               <div
                 key={index}
-                className="flex items-start gap-3 p-3"
+                className="flex items-start gap-3 bg-white/50 rounded-lg p-3"
               >
-                <div className="flex-shrink-0 w-7 h-7 bg-gray-200 rounded-full flex items-center justify-center">
-                  <X className="w-4 h-4 text-gray-400 stroke-[2.5]" />
+                <div className="flex-shrink-0 w-7 h-7 bg-red-100 rounded-full flex items-center justify-center">
+                  <X className="w-4 h-4 text-red-500 stroke-[2.5]" />
                 </div>
-                <span className="text-gray-500 leading-tight pt-0.5">
+                <span className="text-gray-700 leading-tight pt-0.5">
                   {feature}
                 </span>
               </div>
@@ -161,7 +164,7 @@ export default function UsVsThemComparison({
           href={trackedCtaUrl}
           target={target}
           rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-          className="inline-block bg-gradient-to-r from-primary-500 via-purple-500 to-primary-600 hover:from-primary-600 hover:via-purple-600 hover:to-primary-700 text-white font-bold text-lg md:text-xl py-4 px-10 rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+          className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
         >
           {finalButtonText}
         </a>

@@ -1372,8 +1372,56 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             </div>
           </div>
 
-          {renderTextField('CTA Button Text', 'ctaText', 'Get The Same Results')}
-          {renderTextField('CTA URL', 'ctaUrl', '#')}
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
+            {renderTextField('Button Text', 'ctaText', 'Get The Same Results')}
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+              <select
+                value={widget.config.ctaType || 'external'}
+                onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="external">Link to URL</option>
+                <option value="anchor">Jump to Widget on Page</option>
+              </select>
+            </div>
+
+            {widget.config.ctaType !== 'anchor' && (
+              <>
+                {renderTextField('Button URL', 'ctaUrl', '#')}
+                {renderSelectField('Open in', 'target', [
+                  { value: '_self', label: 'Same tab' },
+                  { value: '_blank', label: 'New tab' }
+                ])}
+              </>
+            )}
+
+            {widget.config.ctaType === 'anchor' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                <select
+                  value={widget.config.anchorWidgetId || ''}
+                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Select a widget...</option>
+                  {allWidgets
+                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                    .sort((a: Widget, b: Widget) => a.position - b.position)
+                    .map((w: Widget) => (
+                      <option key={w.id} value={w.id}>
+                        {getWidgetDisplayName(w)} (Position {w.position + 1})
+                      </option>
+                    ))
+                  }
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -1829,8 +1877,57 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'Your Transformation Journey')}
           {renderTextField('Subheading', 'subheading', 'What to expect when you start')}
-          {renderTextField('Button Text', 'ctaText', 'Start Your Journey →')}
-          {renderTextField('Button URL', 'ctaUrl', '/top-picks')}
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
+            {renderTextField('Button Text', 'ctaText', 'Start Your Journey →')}
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+              <select
+                value={widget.config.ctaType || 'external'}
+                onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="external">Link to URL</option>
+                <option value="anchor">Jump to Widget on Page</option>
+              </select>
+            </div>
+
+            {widget.config.ctaType !== 'anchor' && (
+              <>
+                {renderTextField('Button URL', 'ctaUrl', '/top-picks')}
+                {renderSelectField('Open in', 'target', [
+                  { value: '_self', label: 'Same tab' },
+                  { value: '_blank', label: 'New tab' }
+                ])}
+              </>
+            )}
+
+            {widget.config.ctaType === 'anchor' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                <select
+                  value={widget.config.anchorWidgetId || ''}
+                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Select a widget...</option>
+                  {allWidgets
+                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                    .sort((a: Widget, b: Widget) => a.position - b.position)
+                    .map((w: Widget) => (
+                      <option key={w.id} value={w.id}>
+                        {getWidgetDisplayName(w)} (Position {w.position + 1})
+                      </option>
+                    ))
+                  }
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+              </div>
+            )}
+          </div>
 
           {/* Summary Stats */}
           <div className="border-t pt-4 mt-4">
@@ -2234,12 +2331,57 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {widget.type === 'us-vs-them-comparison' && (
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'See The Difference')}
-          {renderTextField('Button Text', 'buttonText', 'Try Kiala Greens →')}
-          {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
+            {renderTextField('Button Text', 'buttonText', 'Try Kiala Greens →')}
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+              <select
+                value={widget.config.ctaType || 'external'}
+                onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="external">Link to URL</option>
+                <option value="anchor">Jump to Widget on Page</option>
+              </select>
+            </div>
+
+            {widget.config.ctaType !== 'anchor' && (
+              <>
+                {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
+                {renderSelectField('Open in', 'target', [
+                  { value: '_self', label: 'Same tab' },
+                  { value: '_blank', label: 'New tab' }
+                ])}
+              </>
+            )}
+
+            {widget.config.ctaType === 'anchor' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                <select
+                  value={widget.config.anchorWidgetId || ''}
+                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Select a widget...</option>
+                  {allWidgets
+                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                    .sort((a: Widget, b: Widget) => a.position - b.position)
+                    .map((w: Widget) => (
+                      <option key={w.id} value={w.id}>
+                        {getWidgetDisplayName(w)} (Position {w.position + 1})
+                      </option>
+                    ))
+                  }
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+              </div>
+            )}
+          </div>
 
           {/* Column 1 (Us / Kiala) */}
           <div className="border-t pt-4 mt-4">
