@@ -247,10 +247,61 @@ export default function EditArticle() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto p-6">
+      {/* Fixed Top Bar - Always visible when scrolling */}
+      <div className="fixed top-0 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-40 shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/articles"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <div className="truncate">
+              <h2 className="text-sm font-medium text-white truncate max-w-md">
+                {formData.title || 'Untitled Article'}
+              </h2>
+              <p className="text-xs text-gray-400">
+                {formData.published ? 'Published' : 'Draft'} • {widgets.length} widgets
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedSite && (
+              <a
+                href={`/site/${selectedSite.subdomain}/articles/${formData.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span className="hidden sm:inline">Preview</span>
+              </a>
+            )}
+            <button
+              onClick={() => handleSave(false)}
+              disabled={loading}
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm"
+            >
+              <Save className="w-4 h-4" />
+              <span className="hidden sm:inline">Save Draft</span>
+            </button>
+            <button
+              onClick={() => handleSave(true)}
+              disabled={loading}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium"
+            >
+              <Eye className="w-4 h-4" />
+              {formData.published ? 'Update' : 'Publish'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-6 pt-20">
         {/* Save Success Message */}
         {saveMessage && (
-          <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-fade-in">
+          <div className="fixed top-16 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-fade-in">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
