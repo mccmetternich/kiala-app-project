@@ -416,7 +416,7 @@ export default function ShopNowWidget({
       {pricingOptions.map((option) => {
         const totalSavings = calculateSavings(option);
         // Use badge text if provided, otherwise check popular flag for backward compatibility
-        const badgeText = option.badge || (option.popular ? 'MOST POPULAR' : null);
+        const optionBadgeText = option.badge || (option.popular ? 'MOST POPULAR' : null);
 
         return (
           <label
@@ -424,16 +424,27 @@ export default function ShopNowWidget({
             className={`relative block px-3 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${
               selectedOption === option.id
                 ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200'
-                : badgeText
+                : optionBadgeText
                   ? 'border-purple-300 bg-purple-50/50'
                   : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            {/* Badge ribbon - floated right above pricing */}
-            {badgeText && (
-              <div className="absolute -top-2.5 right-3">
+            {/* Mobile: Badges at top - both badge and savings on one line */}
+            <div className="absolute -top-2.5 right-3 flex items-center gap-1.5 md:hidden">
+              {optionBadgeText && (
+                <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+                  {optionBadgeText}
+                </span>
+              )}
+              <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+                Save ${totalSavings}
+              </span>
+            </div>
+            {/* Desktop: Only the badge ribbon at top */}
+            {optionBadgeText && (
+              <div className="absolute -top-2.5 right-3 hidden md:block">
                 <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                  {badgeText}
+                  {optionBadgeText}
                 </span>
               </div>
             )}
@@ -445,7 +456,7 @@ export default function ShopNowWidget({
               onChange={() => setSelectedOption(option.id)}
               className="sr-only"
             />
-            <div className={`flex items-center ${badgeText ? 'mt-1' : ''}`}>
+            <div className="flex items-center mt-1">
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0 ${
                 selectedOption === option.id
                   ? 'border-primary-500 bg-primary-500'
@@ -458,7 +469,8 @@ export default function ShopNowWidget({
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-gray-900">{option.label}</span>
-                  <span className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">Save ${totalSavings}</span>
+                  {/* Desktop only: savings badge inline */}
+                  <span className="hidden md:inline-block bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">Save ${totalSavings}</span>
                 </div>
               </div>
               <div className="text-right">
