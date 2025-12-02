@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Shield, Heart, Mail, Sparkles, CheckCircle, Users } from 'lucide-react';
 import { Site } from '@/types';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface SiteFooterProps {
   site: Site;
@@ -50,6 +51,12 @@ export default function SiteFooter({ site }: SiteFooterProps) {
         setStatus('success');
         setMessage(data.message || 'Welcome! Check your inbox.');
         setEmail('');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: 'footer_signup',
+          content_category: 'newsletter_signup'
+        });
       } else {
         setStatus('error');
         setMessage(data.error || 'Something went wrong. Please try again.');

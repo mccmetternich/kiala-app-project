@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Star, Download, Award, Shield, Play, Pause, Check } from 'lucide-react';
 import { BrandProfile, LeadMagnet } from '@/types';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface CredibilitySidebarProps {
   doctor: BrandProfile;
@@ -67,6 +68,13 @@ export default function CredibilitySidebar({
         // Mark as downloaded and trigger download
         localStorage.setItem(`health_guide_downloaded_${siteId || 'default'}`, 'true');
         setHasDownloaded(true);
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: leadMagnet?.title || 'sidebar_lead_magnet',
+          content_category: 'lead_magnet'
+        });
+
         // Trigger PDF download if URL exists
         if (leadMagnet?.downloadUrl) {
           window.open(leadMagnet.downloadUrl, '_blank');
