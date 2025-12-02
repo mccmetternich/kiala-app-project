@@ -62,9 +62,9 @@ export default function DoctorClosingWord({
                 return (
                   <p
                     key={index}
-                    className={`text-sm leading-relaxed ${
+                    className={`text-base leading-relaxed ${
                       isHighlight
-                        ? 'text-gray-900 font-bold text-base'
+                        ? 'text-gray-900 font-bold'
                         : 'text-gray-700'
                     }`}
                   >

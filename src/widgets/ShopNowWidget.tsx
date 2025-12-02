@@ -362,7 +362,7 @@ export default function ShopNowWidget({
   };
 
   const PricingSection = () => (
-    <div className="space-y-1.5">
+    <div className="space-y-3 md:space-y-1.5">
       {pricingOptions.map((option) => {
         const totalSavings = calculateSavings(option);
         // Use badge text if provided, otherwise check popular flag for backward compatibility
@@ -530,14 +530,14 @@ export default function ShopNowWidget({
       {/* Main Card */}
       <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden border-2 border-t-0 border-primary-200">
         {/* Mobile Layout - Specific order */}
-        <div className="md:hidden p-4 space-y-4">
-          {/* 1. Rating, review count, and Loved by */}
+        <div className="md:hidden p-4 space-y-5">
+          {/* 1. Product Name Title - above stars */}
+          <h2 className="text-2xl font-bold text-gray-900 text-center">{productName}</h2>
+
+          {/* 2. Rating, review count, and Loved by */}
           <div className="text-center">
             <RatingSection />
           </div>
-
-          {/* 2. Product Name Title */}
-          <h2 className="text-xl font-bold text-gray-900 text-center">{productName}</h2>
 
           {/* 3. Main image and carousel */}
           <ImageGallery />
@@ -547,14 +547,22 @@ export default function ShopNowWidget({
             {description}
           </p>
 
-          {/* 5. Select packages (Buy boxes) */}
-          <PricingSection />
+          {/* 5. Select packages (Buy boxes) - with more spacing */}
+          <div className="space-y-3">
+            <PricingSection />
+          </div>
+
+          {/* Divider between pricing and benefits */}
+          <div className="border-t border-gray-200 my-2"></div>
 
           {/* 6. Benefits with checkmarks */}
           <BenefitsSection />
 
-          {/* 7. CTA with icons */}
-          <CTASection />
+          {/* Extra space before CTA */}
+          <div className="pt-2">
+            {/* 7. CTA with icons */}
+            <CTASection />
+          </div>
 
           {/* 8. Testimonial - at the bottom as chaser */}
           <TestimonialSection />

@@ -71,7 +71,7 @@ export default function DoctorAssessment({
                 return (
                   <p
                     key={index}
-                    className={`text-sm leading-relaxed ${
+                    className={`text-base leading-relaxed ${
                       isHighlight
                         ? 'text-purple-800 font-semibold bg-purple-100/50 p-3 rounded-lg border-l-4 border-purple-500'
                         : 'text-gray-700'

@@ -187,7 +187,7 @@ export default function StackedQuotes({
                 </div>
               </div>
               {/* Quote content - tight spacing */}
-              <p className="text-gray-700 text-sm leading-snug mt-2">
+              <p className="text-gray-700 text-base leading-snug mt-2">
                 "{quote.content}"
               </p>
               {/* Verified badge - inline */}
