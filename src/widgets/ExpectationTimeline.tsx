@@ -1,12 +1,13 @@
 'use client';
 
-import { Check, Zap, TrendingUp, Heart, Star, Sparkles } from 'lucide-react';
+import { Check, Zap, TrendingUp, Heart, Star, Sparkles, Leaf, Sun, Moon, Crown } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
 interface TimelineStep {
   period?: string;
   week?: string;  // Alias for period
   title: string;
+  subtitle?: string;  // e.g., "Metabolic Priming" or ingredient list
   description: string;
   benefits?: string[];
   icon?: string;
@@ -19,43 +20,57 @@ interface ExpectationTimelineProps {
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
+  showDisclaimer?: boolean;
 }
 
 const defaultSteps: TimelineStep[] = [
   {
-    period: 'Days 1-7',
-    title: 'The Detox Phase',
-    description: 'Your body begins flushing out toxins and adjusting to the nutrient-dense formula. Some women notice immediate changes in digestion and energy.',
-    benefits: ['Reduced bloating within days', 'Improved digestion', 'Initial energy boost', 'Better hydration'],
+    period: 'Week 1',
+    title: 'Inflammation Reset Begins',
+    subtitle: 'Probiotics • Digestive Enzymes • Ginger Root • Turmeric',
+    description: 'Your Body Starts Calming Down',
+    benefits: ['Digestion feels smoother → bloating noticeably reduced', 'Morning puffiness begins to ease', 'First boost of clean energy + lighter mood'],
     icon: 'zap'
   },
   {
-    period: 'Week 2-3',
-    title: 'The Awakening',
-    description: 'Your gut microbiome starts rebalancing. The 34+ superfoods begin working synergistically to support your hormonal pathways.',
-    benefits: ['Clearer thinking & less brain fog', 'More stable energy throughout the day', 'Reduced sugar cravings', 'Better sleep quality'],
-    icon: 'sparkles'
+    period: 'Month 1',
+    title: 'Hormone + Gut Support',
+    subtitle: 'Adaptogens • Prebiotics • Vitamin-Rich Superfoods',
+    description: 'Real Change You Can Feel',
+    benefits: ['Hormonal chaos begins to steady → calmer days', 'Body releases trapped water + inflammation weight', 'Digestion becomes more regular and predictable'],
+    icon: 'leaf'
   },
   {
-    period: 'Week 4-6',
-    title: 'The Shift',
-    description: 'This is where the magic happens. Your metabolism starts responding, cortisol levels normalize, and your body enters fat-burning mode.',
-    benefits: ['Noticeable weight changes', 'Clothes fitting better', 'Mood improvements', 'Fewer hot flashes & night sweats'],
+    period: 'Month 2',
+    title: 'Deeper Inflammation Relief',
+    subtitle: 'Adaptogens • Polyphenols • Antioxidants',
+    description: 'The Menopause "Shift" Begins',
+    benefits: ['Evening bloating decreases noticeably', 'Sleep becomes deeper and more restorative', 'Mood swings soften as calm confidence returns'],
+    icon: 'moon'
+  },
+  {
+    period: 'Month 3',
+    title: 'Visible Body Composition Change',
+    subtitle: 'Probiotics + Enzymes • Supergreens • Estrogen-supporting botanicals',
+    description: 'Your Outside Reflects the Inner Work',
+    benefits: ['Stomach looks flatter, mornings feel lighter', 'Brain fog fades as clarity improves', 'Energy feels naturally steady all day'],
     icon: 'trending'
   },
   {
-    period: 'Week 7-9',
-    title: 'Deep Transformation',
-    description: 'Hormones are actively rebalancing. Estrogen, progesterone, and cortisol find their optimal levels. Your body is healing from the inside out.',
-    benefits: ['Significant energy transformation', 'Skin clarity & glow', 'Stronger hair & nails', 'Improved libido'],
-    icon: 'heart'
+    period: 'Month 6',
+    title: 'Hormonal Alignment & Weight Stability',
+    subtitle: 'Daily antioxidants • Cortisol-calming adaptogens • Anti-inflammatory botanicals',
+    description: 'Dramatic Internal & External Change',
+    benefits: ['Waistline visibly slimmer from reduced inflammation', 'Hormones feel more aligned → fewer menopause symptoms', 'Water retention stabilizes for steady weight'],
+    icon: 'sun'
   },
   {
-    period: 'Week 10-12+',
-    title: 'The New You',
-    description: 'Full hormone optimization achieved. Women report feeling like themselves again—or even better than before. This is sustainable, lasting change.',
-    benefits: ['Optimal hormone balance', 'Sustained healthy weight', 'Vibrant energy daily', 'Complete wellness transformation'],
-    icon: 'star'
+    period: 'Month 12',
+    title: 'Long-Term Renewal',
+    subtitle: 'Balanced hormones • Healthy gut microbiome • Clean metabolism',
+    description: 'The New You',
+    benefits: ['Radiant, hydrated, glowing skin', 'Stronger hair + nails from deeper nutrient absorption', 'Steady, reliable energy with easier weight maintenance'],
+    icon: 'crown'
   }
 ];
 
@@ -66,18 +81,22 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   heart: Heart,
   star: Star,
   sparkles: Sparkles,
-  seedling: Zap,
+  seedling: Leaf,
+  leaf: Leaf,
   rocket: TrendingUp,
-  crown: Star
+  crown: Crown,
+  sun: Sun,
+  moon: Moon
 };
 
 export default function ExpectationTimeline({
-  headline = 'Your 90-Day Transformation Journey',
-  subheading = 'Here\'s exactly what happens when you start supporting your hormones the right way',
+  headline = 'Your Transformation Timeline',
+  subheading = 'What to expect when you start supporting your hormones the right way',
   steps = defaultSteps,
   ctaText = 'Start Your Transformation →',
   ctaUrl = '#',
-  target = '_self'
+  target = '_self',
+  showDisclaimer = true
 }: ExpectationTimelineProps) {
   const { appendTracking } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
@@ -129,18 +148,25 @@ export default function ExpectationTimeline({
                           {periodLabel}
                         </span>
                       </div>
-                      <h3 className="hidden md:block text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
-                      <p className="text-gray-600 mb-3">{step.description}</p>
+                      <h3 className="hidden md:block text-lg font-bold text-gray-900 mb-1">{step.title}</h3>
+
+                      {/* Subtitle / Ingredients line */}
+                      {step.subtitle && (
+                        <p className="text-xs text-purple-600 font-medium mb-2 tracking-wide">{step.subtitle}</p>
+                      )}
+
+                      {/* Description as a highlighted tagline */}
+                      <p className="text-primary-700 font-semibold mb-3">{step.description}</p>
 
                       {/* Benefits */}
                       {step.benefits && step.benefits.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="space-y-1.5">
                           {step.benefits.map((benefit, bIndex) => (
                             <div
                               key={bIndex}
-                              className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-sm border border-gray-200"
+                              className="flex items-start gap-2 text-sm"
                             >
-                              <Check className="w-4 h-4 text-primary-500" />
+                              <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
                               <span className="text-gray-700">{benefit}</span>
                             </div>
                           ))}
@@ -172,27 +198,28 @@ export default function ExpectationTimeline({
         </div>
 
         {/* What to Expect Note */}
-        <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <Heart className="w-5 h-5 text-amber-600" />
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 mb-1">Important: Everyone's Journey Is Unique</h4>
-              <p className="text-sm text-gray-600">
-                While this timeline reflects what most women experience, your results may vary based on your starting point,
-                consistency, and overall lifestyle. Some women see changes in days, others take a few weeks.
-                Trust the process—your body knows what to do when given the right support.
-              </p>
+        {showDisclaimer && (
+          <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Heart className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 mb-1">Everyone's Journey Is Unique</h4>
+                <p className="text-sm text-gray-600">
+                  Results vary based on your starting point, consistency, and lifestyle. Some women notice changes within the first week,
+                  while deeper transformation unfolds over months. Trust the process—your body knows what to do when given the right support.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Summary Stats */}
         <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl">
           <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600">90</div>
-            <div className="text-sm text-gray-600">Day Protocol</div>
+            <div className="text-3xl font-bold text-primary-600">12</div>
+            <div className="text-sm text-gray-600">Month Journey</div>
           </div>
           <div className="text-center border-x border-primary-100">
             <div className="text-3xl font-bold text-primary-600">1M+</div>

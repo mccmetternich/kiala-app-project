@@ -2050,7 +2050,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 type="button"
                 onClick={() => {
                   const steps = (widget.config.steps || []) as any[];
-                  onUpdate({ steps: [...steps, { period: 'Week X', title: '', description: '', benefits: [], icon: 'zap' }] });
+                  onUpdate({ steps: [...steps, { period: 'Month X', title: '', subtitle: '', description: '', benefits: [], icon: 'zap' }] });
                 }}
                 className="text-sm text-primary-600 hover:text-primary-700"
               >
@@ -2099,8 +2099,12 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                       }}
                       className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
                     >
-                      <option value="zap">Zap</option>
+                      <option value="zap">Zap (Energy)</option>
+                      <option value="leaf">Leaf (Nature)</option>
+                      <option value="moon">Moon (Sleep/Rest)</option>
                       <option value="trending">Trending Up</option>
+                      <option value="sun">Sun (Vitality)</option>
+                      <option value="crown">Crown (Achievement)</option>
                       <option value="heart">Heart</option>
                       <option value="star">Star</option>
                       <option value="check">Check</option>
@@ -2109,7 +2113,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label className="block text-xs text-gray-500 mb-1">Title</label>
+                  <label className="block text-xs text-gray-500 mb-1">Title (Main heading for this phase)</label>
                   <input
                     type="text"
                     value={step.title || ''}
@@ -2118,12 +2122,26 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                       steps[idx] = { ...steps[idx], title: e.target.value };
                       onUpdate({ steps });
                     }}
-                    placeholder="Initial Reset"
+                    placeholder="Inflammation Reset Begins"
                     className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="block text-xs text-gray-500 mb-1">Description</label>
+                  <label className="block text-xs text-gray-500 mb-1">Ingredients/Subtitle (Key ingredients working)</label>
+                  <input
+                    type="text"
+                    value={step.subtitle || ''}
+                    onChange={(e) => {
+                      const steps = [...(widget.config.steps || []) as any[]];
+                      steps[idx] = { ...steps[idx], subtitle: e.target.value };
+                      onUpdate({ steps });
+                    }}
+                    placeholder="Probiotics • Digestive Enzymes • Ginger Root • Turmeric"
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="block text-xs text-gray-500 mb-1">Tagline (What's happening in your body)</label>
                   <input
                     type="text"
                     value={step.description || ''}
@@ -2132,7 +2150,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                       steps[idx] = { ...steps[idx], description: e.target.value };
                       onUpdate({ steps });
                     }}
-                    placeholder="Your body begins adjusting to the new protocol"
+                    placeholder="Your Body Starts Calming Down"
                     className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
                   />
                 </div>
@@ -2146,7 +2164,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                       steps[idx] = { ...steps[idx], benefits: e.target.value.split(',').map((b: string) => b.trim()).filter((b: string) => b) };
                       onUpdate({ steps });
                     }}
-                    placeholder="Reduced bloating, Better sleep quality, Less brain fog"
+                    placeholder="Digestion feels smoother → bloating reduced, Morning puffiness eases, First boost of clean energy"
                     className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
                   />
                 </div>
