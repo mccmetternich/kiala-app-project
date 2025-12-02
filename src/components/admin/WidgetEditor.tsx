@@ -3849,6 +3849,33 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       buttonUrl: 'https://trygreens.com/dr-amy',
       guaranteeBadge: '90-Day Money Back Guarantee',
       satisfactionBadge: 'Dr. Amy Community Approved'
+    },
+    'doctor-assessment': {
+      doctorName: 'Dr. Amy Heart',
+      doctorImage: '/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg',
+      doctorCredentials: 'Board Certified, 15+ Years Experience',
+      headline: 'My Professional Assessment',
+      paragraphs: [
+        'In 15 years of practice, I\'ve never endorsed a specific supplement—until now.',
+        'This product earned my recommendation through rigorous evaluation and consistent results.',
+        'I\'ve watched women who "tried everything" finally see results.'
+      ],
+      signature: '— Dr. Amy Heart',
+      highlightText: 'This product earned my recommendation through rigorous evaluation and consistent results.',
+      badgeText: 'Professional Assessment'
+    },
+    'doctor-closing-word': {
+      doctorName: 'Dr. Amy Heart',
+      doctorImage: '/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg',
+      headline: 'A Final Word From Dr. Amy',
+      paragraphs: [
+        'I know how frustrating this journey can be.',
+        'You\'re not alone. Your body is responding to real biological changes.',
+        'Give it 90 days. If it doesn\'t work for you, you get every penny back.'
+      ],
+      closingLine: 'Here\'s to your health,',
+      signature: '— Dr. Amy Heart',
+      highlightParagraph: 1
     }
   };
 
