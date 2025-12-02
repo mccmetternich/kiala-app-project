@@ -2630,13 +2630,14 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             </div>
           </div>
 
-          {/* Trust Badge Text - right after benefits */}
+          {/* Trust Badge Text (shown below CTA button) */}
           <div className="border-t border-gray-200 pt-4 mt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Trust Badge Labels</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Trust Badges (below CTA)</label>
+            <p className="text-xs text-gray-500 mb-3">These appear as small text with icons below the button</p>
             <div className="space-y-3">
-              {renderTextField('Shipping Badge', 'shippingBadgeText', 'Free, Fast Shipping')}
-              {renderTextField('Guarantee Badge', 'guaranteeBadgeText', '90-Day Guarantee')}
-              {renderTextField('Evaluated Badge', 'evaluatedBadgeText', 'Medically Evaluated')}
+              {renderTextField('Shipping', 'shippingBadgeText', 'Free Shipping')}
+              {renderTextField('Guarantee', 'guaranteeBadgeText', '90-Day Guarantee')}
+              {renderTextField('Third Badge', 'evaluatedBadgeText', 'Medically Evaluated')}
             </div>
           </div>
 
@@ -2661,12 +2662,45 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {/* Button/CTA */}
           <div className="border-t border-gray-200 pt-4 mt-2">
             <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
-            {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
-            {renderTextField('Button URL', 'buttonUrl', '/checkout')}
-            {renderSelectField('Open in', 'target', [
-              { value: '_self', label: 'Same tab' },
-              { value: '_blank', label: 'New tab' }
+            {renderTextField('Button Text', 'ctaText', 'TRY IT NOW')}
+
+            {renderSelectField('Button Action', 'ctaType', [
+              { value: 'external', label: 'Link to URL' },
+              { value: 'anchor', label: 'Jump to Widget on Page' }
             ])}
+
+            {widget.config.ctaType !== 'anchor' && (
+              <>
+                {renderTextField('Button URL', 'ctaUrl', 'https://kialanutrition.com')}
+                {renderSelectField('Open in', 'target', [
+                  { value: '_self', label: 'Same tab' },
+                  { value: '_blank', label: 'New tab' }
+                ])}
+              </>
+            )}
+
+            {widget.config.ctaType === 'anchor' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                <select
+                  value={widget.config.anchorWidgetId || ''}
+                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Select a widget...</option>
+                  {allWidgets
+                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                    .sort((a: Widget, b: Widget) => a.position - b.position)
+                    .map((w: Widget) => (
+                      <option key={w.id} value={w.id}>
+                        {getWidgetDisplayName(w)} (Position {w.position + 1})
+                      </option>
+                    ))
+                  }
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+              </div>
+            )}
           </div>
 
           {/* Testimonial Section */}

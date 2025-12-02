@@ -20,12 +20,13 @@ interface ExclusiveProductCardProps {
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
-  shippingBadgeText?: string; // Customizable shipping badge text
-  guaranteeBadgeText?: string; // Customizable guarantee badge text
-  evaluatedBadgeText?: string; // Customizable evaluated badge text
-  showFreeShipping?: boolean;
-  showGuarantee?: boolean;
-  showMedicallyEvaluated?: boolean;
+  // CTA anchor support
+  ctaType?: 'external' | 'anchor';
+  anchorWidgetId?: string;
+  // Trust badge text (now shown below CTA)
+  shippingBadgeText?: string;
+  guaranteeBadgeText?: string;
+  evaluatedBadgeText?: string;
   // Testimonial section
   testimonialQuote?: string;
   testimonialName?: string;
@@ -54,20 +55,21 @@ export default function ExclusiveProductCard({
   ctaText = 'TRY IT NOW',
   ctaUrl = '#',
   target = '_self',
-  shippingBadgeText = 'Free, Fast Shipping',
+  ctaType = 'external',
+  anchorWidgetId,
+  shippingBadgeText = 'Free Shipping',
   guaranteeBadgeText = '90-Day Guarantee',
   evaluatedBadgeText = 'Medically Evaluated',
   savingsText,
-  showFreeShipping = true,
-  showGuarantee = true,
-  showMedicallyEvaluated = true,
   testimonialQuote = "This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!",
   testimonialName = "Sarah M., 47",
   testimonialAvatar = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face",
   showTestimonial = true
 }: ExclusiveProductCardProps) {
   const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
+  // Compute the actual CTA URL based on type
+  const computedCtaUrl = ctaType === 'anchor' && anchorWidgetId ? `#widget-${anchorWidgetId}` : ctaUrl;
+  const trackedCtaUrl = appendTracking(computedCtaUrl);
   const savings = originalPrice - price;
 
   // Countdown timer state - 24 hours from now
@@ -265,28 +267,6 @@ export default function ExclusiveProductCard({
               ))}
             </div>
 
-            {/* Trust Badges Row */}
-            <div className="grid grid-cols-3 gap-2 mb-6">
-              {showFreeShipping && (
-                <div className="flex flex-col items-center p-3 bg-green-50 rounded-lg border border-green-100">
-                  <Truck className="w-6 h-6 text-green-600 mb-1" />
-                  <span className="text-xs font-medium text-green-800 text-center">{shippingBadgeText}</span>
-                </div>
-              )}
-              {showGuarantee && (
-                <div className="flex flex-col items-center p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <Shield className="w-6 h-6 text-blue-600 mb-1" />
-                  <span className="text-xs font-medium text-blue-800 text-center">{guaranteeBadgeText}</span>
-                </div>
-              )}
-              {showMedicallyEvaluated && (
-                <div className="flex flex-col items-center p-3 bg-purple-50 rounded-lg border border-purple-100">
-                  <Award className="w-6 h-6 text-purple-600 mb-1" />
-                  <span className="text-xs font-medium text-purple-800 text-center">{evaluatedBadgeText}</span>
-                </div>
-              )}
-            </div>
-
             {/* Pricing */}
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 mb-6 border border-amber-200">
               <div className="flex items-center justify-between">
@@ -317,9 +297,22 @@ export default function ExclusiveProductCard({
               </span>
             </a>
 
-            <p className="text-center text-xs text-gray-500 mt-3">
-              No Risk • Free Gifts • Limited Availability
-            </p>
+            <div className="flex items-center justify-center gap-3 mt-3 text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <Truck className="w-3.5 h-3.5" />
+                {shippingBadgeText}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Shield className="w-3.5 h-3.5" />
+                {guaranteeBadgeText}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Award className="w-3.5 h-3.5" />
+                {evaluatedBadgeText}
+              </span>
+            </div>
           </div>
         </div>
       </div>
