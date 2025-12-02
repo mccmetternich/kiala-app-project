@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Star, Shield, Truck, CheckCircle, Gift, Sparkles, BadgeCheck, Clock } from 'lucide-react';
+import { Star, Shield, Truck, CheckCircle, Gift, BadgeCheck, Clock } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
 interface PricingOption {
@@ -172,38 +172,34 @@ export default function ShopNowWidget({
 
   const currentOption = pricingOptions.find(opt => opt.id === selectedOption) || pricingOptions[0];
 
-  // Dr Header Component (like ExclusiveProductCard) - now with COMMUNITY EXCLUSIVE badge instead of best seller
+  // Dr Header Component (like ExclusiveProductCard) - with avatar and countdown only
   const DrHeader = () => (
     <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 text-white rounded-t-2xl p-3 md:p-4">
       {/* Mobile Layout */}
       <div className="md:hidden">
-        <div className="flex items-center gap-2 mb-2">
-          {doctorImage && (
-            <img
-              src={doctorImage}
-              alt={doctorName}
-              className="w-10 h-10 rounded-full border-2 border-white shadow-lg flex-shrink-0"
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1">
-              <BadgeCheck className="w-4 h-4 text-amber-300 flex-shrink-0" />
-              <span className="font-bold text-sm truncate">{doctorName}'s #1 Pick</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {doctorImage && (
+              <img
+                src={doctorImage}
+                alt={doctorName}
+                className="w-10 h-10 rounded-full border-2 border-white shadow-lg flex-shrink-0"
+              />
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="w-4 h-4 text-amber-300 flex-shrink-0" />
+                <span className="font-bold text-sm truncate">{doctorName}'s #1 Pick</span>
+              </div>
+              <p className="text-primary-100 text-xs">Personally vetted & recommended</p>
             </div>
-            <p className="text-primary-100 text-xs">Personally vetted & recommended</p>
           </div>
-        </div>
-        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-2 py-1 rounded-full">
             <Clock className="w-3 h-3 text-amber-300" />
             <span className="text-xs font-semibold">
               {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
             </span>
           </div>
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center gap-1">
-            <Sparkles className="w-3 h-3" />
-            COMMUNITY EXCLUSIVE
-          </span>
         </div>
       </div>
 
@@ -225,18 +221,12 @@ export default function ShopNowWidget({
             <p className="text-primary-100 text-sm">Personally vetted & recommended</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
-            <Clock className="w-3.5 h-3.5 text-amber-300" />
-            <span className="text-xs font-semibold">
-              {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
-            </span>
-            <span className="text-xs text-primary-100">left</span>
-          </div>
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            COMMUNITY EXCLUSIVE
+        <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+          <Clock className="w-3.5 h-3.5 text-amber-300" />
+          <span className="text-xs font-semibold">
+            {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
           </span>
+          <span className="text-xs text-primary-100">left</span>
         </div>
       </div>
     </div>
@@ -369,7 +359,7 @@ export default function ShopNowWidget({
               </div>
             </div>
             {option.gifts && option.gifts.length > 0 && (
-              <div className="mt-1 ml-9 flex flex-wrap gap-x-3 gap-y-0">
+              <div className="ml-9 flex flex-wrap gap-x-3 gap-y-0">
                 {option.gifts.map((gift, giftIdx) => (
                   <div key={giftIdx} className="flex items-center gap-1.5 text-sm">
                     <Gift className="w-4 h-4 text-primary-500" />
