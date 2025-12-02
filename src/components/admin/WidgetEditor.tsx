@@ -362,6 +362,7 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
                 onDragEnd={handleDragEnd}
                 siteId={siteId}
                 articleId={articleId}
+                allWidgets={widgets}
               />
             </div>
           ))}
@@ -434,7 +435,8 @@ function WidgetItem({
   onDragStart,
   onDragEnd,
   siteId,
-  articleId
+  articleId,
+  allWidgets
 }: {
   widget: Widget;
   isSelected: boolean;
@@ -451,6 +453,7 @@ function WidgetItem({
   onDragEnd: () => void;
   siteId: string;
   articleId?: string;
+  allWidgets: Widget[];
 }) {
   const widgetType = widgetTypes.find(wt => wt.type === widget.type);
 
@@ -544,6 +547,7 @@ function WidgetItem({
           onUpdate={onUpdate}
           siteId={siteId}
           articleId={articleId}
+          allWidgets={allWidgets}
         />
       )}
     </div>
@@ -725,11 +729,12 @@ function ImageField({
   );
 }
 
-function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
+function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: {
   widget: Widget;
   onUpdate: (config: Partial<WidgetConfig>) => void;
   siteId: string;
   articleId?: string;
+  allWidgets: Widget[];
 }) {
   const [mediaLibraryOpen, setMediaLibraryOpen] = useState(false);
   const [activeImageField, setActiveImageField] = useState<string | null>(null);
@@ -1621,6 +1626,58 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* CTA in Reveal Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Call-to-Action in Reveal</label>
+            <div className="flex items-center gap-2 mb-3">
+              <input
+                type="checkbox"
+                id="showCta"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              <label htmlFor="showCta" className="text-sm text-gray-700">Show CTA button in reveal section</label>
+            </div>
+
+            {widget.config.showCta && (
+              <div className="space-y-3 pl-4 border-l-2 border-primary-200">
+                {renderTextField('Button Text', 'ctaText', 'See The Solution →')}
+
+                {renderSelectField('Button Action', 'ctaType', [
+                  { value: 'external', label: 'Link to URL' },
+                  { value: 'anchor', label: 'Jump to Widget on Page' }
+                ])}
+
+                {widget.config.ctaType !== 'anchor' && (
+                  renderTextField('Button URL', 'ctaUrl', 'https://kialanutrition.com')
+                )}
+
+                {widget.config.ctaType === 'anchor' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                    <select
+                      value={widget.config.anchorWidgetId || ''}
+                      onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">Select a widget...</option>
+                      {allWidgets
+                        .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                        .sort((a: Widget, b: Widget) => a.position - b.position)
+                        .map((w: Widget) => (
+                          <option key={w.id} value={w.id}>
+                            {w.config?.label || w.config?.headline || w.config?.title || w.type} (Position {w.position + 1})
+                          </option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -2922,11 +2979,48 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId }: {
           {renderTextField('Title', 'headline', 'I Lost 22 lbs and My Energy is Through the Roof!')}
           {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text...', 6)}
           {renderTextField('Button Text', 'buttonText', 'TRY NOW - SAVE 50%')}
-          {renderTextField('Button URL', 'buttonUrl', 'https://kialanutrition.com/products/kiala-greens')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
+
+          {/* CTA Type Selection */}
+          {renderSelectField('Button Action', 'ctaType', [
+            { value: 'external', label: 'Link to URL' },
+            { value: 'anchor', label: 'Jump to Widget on Page' }
           ])}
+
+          {/* Show URL field if external link */}
+          {(widget.config.ctaType !== 'anchor') && (
+            <>
+              {renderTextField('Button URL', 'buttonUrl', 'https://kialanutrition.com/products/kiala-greens')}
+              {renderSelectField('Open in', 'target', [
+                { value: '_self', label: 'Same tab' },
+                { value: '_blank', label: 'New tab' }
+              ])}
+            </>
+          )}
+
+          {/* Show widget selector if anchor link */}
+          {widget.config.ctaType === 'anchor' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+              <select
+                value={widget.config.anchorWidgetId || ''}
+                onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="">Select a widget...</option>
+                {allWidgets
+                  .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                  .sort((a: Widget, b: Widget) => a.position - b.position)
+                  .map((w: Widget) => (
+                    <option key={w.id} value={w.id}>
+                      {w.config?.label || w.config?.headline || w.config?.title || w.type} (Position {w.position + 1})
+                    </option>
+                  ))
+                }
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+            </div>
+          )}
+
           <p className="text-xs text-gray-500">Benefit icons (90-day guarantee, no risk, free gifts) are shown by default.</p>
         </div>
       )}

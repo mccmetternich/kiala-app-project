@@ -40,8 +40,17 @@ interface ArticleTemplateProps {
   heroImage?: string;
 }
 
+// Helper function to get CTA URL (handles anchor links vs external)
+function getCtaUrl(config: Record<string, unknown>): string {
+  const ctaType = config.ctaType as string;
+  if (ctaType === 'anchor' && config.anchorWidgetId) {
+    return `#widget-${config.anchorWidgetId}`;
+  }
+  return (config.buttonUrl || config.ctaUrl || '#') as string;
+}
+
 // Widget renderer component
-function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: string; site?: Site }) {
+function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; siteId?: string; site?: Site; allWidgets?: Widget[] }) {
   if (!widget.enabled) return null;
 
   switch (widget.type) {
@@ -407,6 +416,11 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             conclusionHeadline={widget.config.conclusionHeadline}
             conclusionText={widget.config.conclusionText}
             minSymptoms={widget.config.minSymptoms}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
+            ctaType={widget.config.ctaType}
+            anchorWidgetId={widget.config.anchorWidgetId}
           />
         </div>
       );
@@ -539,8 +553,8 @@ function WidgetRenderer({ widget, siteId, site }: { widget: Widget; siteId?: str
             title={widget.config.headline}
             body={widget.config.body}
             ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.buttonUrl}
-            target={widget.config.target}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
             benefits={widget.config.benefits}
           />
         </div>
@@ -753,7 +767,9 @@ export default function ArticleTemplate({
       {/* Article Content with Widgets */}
       <div className="space-y-6">
         {sortedWidgets.map((widget) => (
-          <WidgetRenderer key={widget.id} widget={widget} siteId={site.id} site={site} />
+          <div key={widget.id} id={`widget-${widget.id}`} className="scroll-mt-4">
+            <WidgetRenderer widget={widget} siteId={site.id} site={site} allWidgets={sortedWidgets} />
+          </div>
         ))}
       </div>
 

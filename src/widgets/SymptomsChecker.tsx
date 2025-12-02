@@ -18,6 +18,12 @@ interface SymptomsCheckerProps {
   conclusionText?: string;
   minSymptoms?: number;
   results?: any;  // Optional results config
+  // CTA in reveal section
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  ctaType?: 'external' | 'anchor';
+  anchorWidgetId?: string;
 }
 
 const defaultSymptoms: Symptom[] = [
@@ -39,8 +45,15 @@ export default function SymptomsChecker({
   symptoms = defaultSymptoms,
   conclusionHeadline = 'If you checked 3 or more, this article was written for YOU',
   conclusionText = "These symptoms aren't just \"part of getting older\" — they're signs of hormonal imbalance that can be addressed naturally. Keep reading to discover the simple protocol that has helped over 47,000 women reclaim their energy, lose stubborn weight, and feel like themselves again.",
-  minSymptoms = 3
+  minSymptoms = 3,
+  showCta = false,
+  ctaText = 'See The Solution →',
+  ctaUrl = '#',
+  ctaType = 'external',
+  anchorWidgetId
 }: SymptomsCheckerProps) {
+  // Compute the actual CTA URL based on type
+  const computedCtaUrl = ctaType === 'anchor' && anchorWidgetId ? `#widget-${anchorWidgetId}` : ctaUrl;
   const [checkedSymptoms, setCheckedSymptoms] = useState<Set<number>>(new Set());
 
   const toggleSymptom = (index: number) => {
@@ -129,6 +142,14 @@ export default function SymptomsChecker({
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{conclusionHeadline}</h3>
                 <p className="text-gray-700 leading-relaxed">{conclusionText}</p>
+                {showCta && (
+                  <a
+                    href={computedCtaUrl}
+                    className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    {ctaText}
+                  </a>
+                )}
               </div>
             </div>
           </div>
