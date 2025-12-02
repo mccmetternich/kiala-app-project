@@ -206,18 +206,17 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
             <p className="text-xs text-green-600 mt-1">= (Original - Sale) + Gift Values</p>
           </div>
 
-          {/* Popular Checkbox */}
-          <div className="mb-3 flex items-center gap-2">
+          {/* Badge Text */}
+          <div className="mb-3">
+            <label className="block text-xs font-medium text-gray-600 mb-1">Badge Text (optional)</label>
             <input
-              type="checkbox"
-              id={`popular-${option.id || index}`}
-              checked={option.popular || false}
-              onChange={(e) => updateOption(index, 'popular', e.target.checked)}
-              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              type="text"
+              value={option.badge || ''}
+              onChange={(e) => updateOption(index, 'badge', e.target.value)}
+              placeholder="e.g., MOST POPULAR, BEST VALUE, BEST RESULTS"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
             />
-            <label htmlFor={`popular-${option.id || index}`} className="text-sm text-gray-700">
-              Mark as "Most Popular" (highlighted option)
-            </label>
+            <p className="text-xs text-gray-500 mt-1">Leave empty for no badge. Shows as a ribbon on the package.</p>
           </div>
 
           {/* Free Gifts Section */}

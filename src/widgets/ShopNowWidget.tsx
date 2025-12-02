@@ -364,15 +364,28 @@ export default function ShopNowWidget({
     <div className="space-y-1.5">
       {pricingOptions.map((option) => {
         const totalSavings = calculateSavings(option);
+        // Use badge text if provided, otherwise check popular flag for backward compatibility
+        const badgeText = option.badge || (option.popular ? 'MOST POPULAR' : null);
+
         return (
           <label
             key={option.id}
             className={`relative block px-3 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${
               selectedOption === option.id
                 ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200'
-                : 'border-gray-200 hover:border-gray-300'
+                : badgeText
+                  ? 'border-amber-300 bg-amber-50'
+                  : 'border-gray-200 hover:border-gray-300'
             }`}
           >
+            {/* Badge ribbon */}
+            {badgeText && (
+              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                  {badgeText}
+                </span>
+              </div>
+            )}
             <input
               type="radio"
               name="pricing"
@@ -381,7 +394,7 @@ export default function ShopNowWidget({
               onChange={() => setSelectedOption(option.id)}
               className="sr-only"
             />
-            <div className="flex items-center">
+            <div className={`flex items-center ${badgeText ? 'mt-1' : ''}`}>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0 ${
                 selectedOption === option.id
                   ? 'border-primary-500 bg-primary-500'
