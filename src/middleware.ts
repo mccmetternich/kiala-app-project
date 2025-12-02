@@ -6,6 +6,11 @@ const domainToSite: Record<string, string> = {
   'www.dramyheart.com': 'dr-amy',
 };
 
+// Auth token must match what's set in the login route
+const ADMIN_USERNAME = 'KialaGod';
+const ADMIN_PASSWORD = 'KialaG0D123';
+const AUTH_TOKEN = 'kiala_auth_' + Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64');
+
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || '';
@@ -13,6 +18,16 @@ export async function middleware(request: NextRequest) {
   // Extract the domain (remove port if present)
   const domain = hostname.split(':')[0];
   const isCustomDomain = domain !== 'localhost' && !domain.includes('vercel.app');
+
+  // Protect admin routes (except login-related)
+  if (url.pathname.startsWith('/admin')) {
+    const authCookie = request.cookies.get('kiala_admin_auth');
+
+    if (!authCookie || authCookie.value !== AUTH_TOKEN) {
+      // Redirect to login page
+      return NextResponse.redirect(new URL('/manage', request.url));
+    }
+  }
 
   // Skip middleware for these paths
   if (
@@ -22,6 +37,7 @@ export async function middleware(request: NextRequest) {
     url.pathname.startsWith('/favicon.ico') ||
     url.pathname.startsWith('/site/') ||
     url.pathname.startsWith('/uploads/') ||
+    url.pathname.startsWith('/manage') ||
     hostname === 'localhost:3000' ||
     hostname === '127.0.0.1:3000'
   ) {
@@ -60,8 +76,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - admin (admin routes)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|admin).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

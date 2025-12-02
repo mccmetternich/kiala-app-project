@@ -42,8 +42,13 @@ export default function ExitIntentPopup({
     if (e.clientY <= 0) {
       const hasShown = sessionStorage.getItem(`exit_popup_shown_${siteId}`);
       const hasSubscribed = localStorage.getItem(`community_subscribed_${siteId}`);
+      const communityPopupShown = sessionStorage.getItem(`community_popup_shown_${siteId}`);
 
-      if (!hasShown && !hasSubscribed) {
+      // Don't show exit popup if:
+      // 1. Already shown this session
+      // 2. User already subscribed
+      // 3. Community popup hasn't shown yet (don't interrupt the first popup flow)
+      if (!hasShown && !hasSubscribed && communityPopupShown) {
         setIsVisible(true);
         sessionStorage.setItem(`exit_popup_shown_${siteId}`, 'true');
       }
@@ -52,10 +57,11 @@ export default function ExitIntentPopup({
 
   useEffect(() => {
     // Delay adding the listener to prevent triggering on initial page load
-    // This gives the page time to fully render and stabilize
+    // Wait at least 10 seconds to ensure the community popup has had a chance to show first
+    // (default community popup delay is 8 seconds)
     const timeoutId = setTimeout(() => {
       document.addEventListener('mouseleave', handleMouseLeave);
-    }, 2000); // 2 second delay before enabling exit intent detection
+    }, 10000); // 10 second delay before enabling exit intent detection
 
     return () => {
       clearTimeout(timeoutId);

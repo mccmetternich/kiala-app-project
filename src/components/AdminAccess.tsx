@@ -1,14 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Settings, Eye, EyeOff } from 'lucide-react';
 
 export default function AdminAccess() {
   const [isVisible, setIsVisible] = useState(false);
   const [showButton, setShowButton] = useState(false);
+  const pathname = usePathname();
+
+  // Only show the admin access button on admin pages
+  // This hides it from public-facing article/site pages in production
+  const isAdminPage = pathname?.startsWith('/admin');
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
+    // Don't show on public pages
+    if (!isAdminPage && !isDevelopment) {
+      return;
+    }
+
     const handleKeyPress = (e: KeyboardEvent) => {
       // Show admin access with Cmd+Shift+A (Mac) or Ctrl+Shift+A (Windows)
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
@@ -19,14 +31,17 @@ export default function AdminAccess() {
 
     // Show button after a few seconds or on mouse movement
     const timer = setTimeout(() => setShowButton(true), 3000);
-    
+
     window.addEventListener('keydown', handleKeyPress);
-    
+
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
       clearTimeout(timer);
     };
-  }, []);
+  }, [isAdminPage, isDevelopment]);
+
+  // Don't render on public pages in production
+  if (!isAdminPage && !isDevelopment) return null;
 
   if (!showButton && !isVisible) return null;
 
