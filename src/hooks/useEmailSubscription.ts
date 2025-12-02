@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface SubscriptionResult {
   success: boolean;
@@ -62,6 +63,13 @@ export function useEmailSubscription({
 
       setSuccess(true);
       setMessage(data.message || 'Successfully subscribed!');
+
+      // Fire Meta Pixel Lead event
+      trackLead({
+        content_name: source || 'email_subscription',
+        content_category: 'newsletter_signup'
+      });
+
       onSuccess?.(data);
       return true;
 

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { clientAPI } from '@/lib/api';
 import { Play, Pause, Gift, CheckCircle, Heart } from 'lucide-react';
+import { trackLead } from '@/lib/meta-pixel';
 
 // Mini audio player component for compact display
 function AudioPlayerMini({ audioUrl }: { audioUrl: string }) {
@@ -113,6 +114,12 @@ export default function AboutPage() {
         setEmailStatus('success');
         setEmailMessage(data.message || 'Your guide is ready!');
         localStorage.setItem(`community_subscribed_${siteId}`, 'true');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: 'about_page_lead_magnet',
+          content_category: 'lead_magnet'
+        });
 
         // Trigger PDF download if URL is available
         if (leadMagnetPdfUrl) {

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Site } from '@/types';
 import { Mail, CheckCircle } from 'lucide-react';
+import { trackLead } from '@/lib/meta-pixel';
 
 interface ArticleFooterProps {
   site: Site;
@@ -31,6 +32,12 @@ export default function ArticleFooter({ site }: ArticleFooterProps) {
       if (response.ok) {
         setStatus('success');
         setEmail('');
+
+        // Fire Meta Pixel Lead event
+        trackLead({
+          content_name: 'article_footer',
+          content_category: 'newsletter_signup'
+        });
       } else {
         setStatus('error');
       }
