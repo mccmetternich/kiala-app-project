@@ -50,6 +50,17 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
     setProgress(0);
   };
 
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const duration = audioRef.current.duration;
+    if (duration) {
+      audioRef.current.currentTime = percentage * duration;
+    }
+  };
+
   const brand = site.brand;
 
   return (
@@ -158,9 +169,12 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                         <Play className="w-4 h-4 text-purple-600 ml-0.5" />
                       )}
                     </button>
-                    <div className="flex-1 mx-3 bg-white/30 rounded-full h-1.5">
+                    <div
+                      className="flex-1 mx-3 bg-white/30 rounded-full h-1.5 cursor-pointer"
+                      onClick={handleSeek}
+                    >
                       <div
-                        className="bg-white h-full rounded-full transition-all duration-100"
+                        className="bg-white h-full rounded-full transition-all duration-100 pointer-events-none"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -201,9 +215,12 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                           <Play className="w-3.5 h-3.5 text-purple-600 ml-0.5" />
                         )}
                       </button>
-                      <div className="flex-1 mx-2 bg-white/30 rounded-full h-1">
+                      <div
+                        className="flex-1 mx-2 bg-white/30 rounded-full h-1 cursor-pointer"
+                        onClick={handleSeek}
+                      >
                         <div
-                          className="bg-white h-full rounded-full transition-all duration-100"
+                          className="bg-white h-full rounded-full transition-all duration-100 pointer-events-none"
                           style={{ width: `${progress}%` }}
                         />
                       </div>

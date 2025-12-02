@@ -42,6 +42,17 @@ export default function ArticleCredibilitySidebar({
     setProgress(0);
   };
 
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const duration = audioRef.current.duration;
+    if (duration) {
+      audioRef.current.currentTime = percentage * duration;
+    }
+  };
+
   if (!brand) {
     return <div>Loading...</div>;
   }
@@ -105,9 +116,12 @@ export default function ArticleCredibilitySidebar({
                     
                     <div className="flex-1">
                       <div className="text-xs text-gray-600 mb-1">Personal Message</div>
-                      <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                        <div 
-                          className="bg-purple-300 h-full transition-all duration-100 ease-linear"
+                      <div
+                        className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden cursor-pointer"
+                        onClick={handleSeek}
+                      >
+                        <div
+                          className="bg-purple-300 h-full transition-all duration-100 ease-linear pointer-events-none"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
