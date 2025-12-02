@@ -138,7 +138,9 @@ export type WidgetType =
   | 'testimonial-hero'
   | 'testimonial-hero-no-cta'
   | 'ingredient-list-grid'
-  | 'us-vs-them-comparison';
+  | 'us-vs-them-comparison'
+  | 'doctor-assessment'
+  | 'doctor-closing-word';
 
 // Widget Configurations
 export interface WidgetConfig {
