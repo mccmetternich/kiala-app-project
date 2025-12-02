@@ -30,6 +30,8 @@ import TestimonialHeroNoCta from '@/widgets/TestimonialHeroNoCta';
 import CTAButton from '@/widgets/CTAButton';
 import IngredientListGrid from '@/widgets/IngredientListGrid';
 import UsVsThemComparison from '@/widgets/UsVsThemComparison';
+import DoctorAssessment from '@/widgets/DoctorAssessment';
+import DoctorClosingWord from '@/widgets/DoctorClosingWord';
 
 interface ArticleTemplateProps {
   page: Page;
@@ -701,6 +703,37 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
           >
             {widget.config.buttonText || 'Get Started'}
           </a>
+        </div>
+      );
+
+    case 'doctor-assessment':
+      return (
+        <div className="my-8" id={widget.id ? `widget-${widget.id}` : undefined}>
+          <DoctorAssessment
+            doctorName={widget.config.doctorName}
+            doctorImage={widget.config.doctorImage}
+            doctorCredentials={widget.config.doctorCredentials}
+            headline={widget.config.headline}
+            paragraphs={widget.config.paragraphs}
+            signature={widget.config.signature}
+            highlightText={widget.config.highlightText}
+            badgeText={widget.config.badgeText}
+          />
+        </div>
+      );
+
+    case 'doctor-closing-word':
+      return (
+        <div className="my-8" id={widget.id ? `widget-${widget.id}` : undefined}>
+          <DoctorClosingWord
+            doctorName={widget.config.doctorName}
+            doctorImage={widget.config.doctorImage}
+            headline={widget.config.headline}
+            paragraphs={widget.config.paragraphs}
+            closingLine={widget.config.closingLine}
+            signature={widget.config.signature}
+            highlightParagraph={widget.config.highlightParagraph}
+          />
         </div>
       );
 
