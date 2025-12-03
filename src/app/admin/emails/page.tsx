@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Download,
@@ -43,7 +43,22 @@ interface Site {
 
 type DatePreset = 'all' | 'today' | 'week' | 'month' | 'quarter' | 'custom';
 
+// Wrapper component to handle Suspense boundary for useSearchParams
 export default function EmailsPage() {
+  return (
+    <Suspense fallback={
+      <EnhancedAdminLayout>
+        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+          <div className="w-10 h-10 border-3 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </EnhancedAdminLayout>
+    }>
+      <EmailsPageContent />
+    </Suspense>
+  );
+}
+
+function EmailsPageContent() {
   const searchParams = useSearchParams();
   const preselectedSiteId = searchParams.get('siteId');
 
