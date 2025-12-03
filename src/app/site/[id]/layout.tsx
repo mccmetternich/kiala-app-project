@@ -53,6 +53,15 @@ export async function generateMetadata(
   const description = brand?.bio || defaultMetadata.description;
   const image = brand?.profileImage || brand?.authorImage || defaultMetadata.image;
 
+  // Get analytics settings for domain verification
+  const analytics = await getSiteAnalytics(subdomain);
+
+  // Build other metadata for custom meta tags like Facebook domain verification
+  const other: Record<string, string> = {};
+  if (analytics?.metaDomainVerification) {
+    other['facebook-domain-verification'] = analytics.metaDomainVerification;
+  }
+
   return {
     title: {
       default: title,
@@ -88,6 +97,9 @@ export async function generateMetadata(
       index: true,
       follow: true,
     },
+    // Facebook domain verification - renders in <head> as:
+    // <meta name="facebook-domain-verification" content="..." />
+    ...(Object.keys(other).length > 0 && { other }),
   };
 }
 
@@ -114,16 +126,9 @@ async function getSiteAnalytics(subdomain: string) {
 
 export default async function SiteLayout({ params, children }: Props) {
   const { id: subdomain } = await params;
-  const analytics = await getSiteAnalytics(subdomain);
 
   return (
     <>
-      {/* Meta Domain Verification - rendered in head via metadata would be better,
-          but for dynamic content we render it here */}
-      {analytics?.metaDomainVerification && (
-        <meta name="facebook-domain-verification" content={analytics.metaDomainVerification} />
-      )}
-
       {/* Meta Pixel Provider - client component that loads pixel based on settings */}
       <SitePixelProvider siteId={subdomain} />
 
