@@ -559,6 +559,38 @@ export default function EditArticle() {
         {/* DETAILS TAB */}
         {activeTab === 'details' && (
           <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+            {/* Stats - At Top */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary-400" />
+                  Statistics
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-white">{article.views.toLocaleString()}</p>
+                    <p className="text-sm text-gray-400 mt-1">Views</p>
+                  </div>
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-white">{widgets.length}</p>
+                    <p className="text-sm text-gray-400 mt-1">Widgets</p>
+                  </div>
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-white">{formData.read_time}</p>
+                    <p className="text-sm text-gray-400 mt-1">Min Read</p>
+                  </div>
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className={`text-3xl font-bold ${formData.published ? 'text-green-400' : 'text-gray-400'}`}>
+                      {formData.published ? 'Live' : 'Draft'}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">Status</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Article Info */}
             <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
               <div className="p-5 border-b border-gray-700 bg-gray-800/50">
@@ -823,37 +855,6 @@ export default function EditArticle() {
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-primary-400" />
-                  Statistics
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
-                    <p className="text-3xl font-bold text-white">{article.views.toLocaleString()}</p>
-                    <p className="text-sm text-gray-400 mt-1">Views</p>
-                  </div>
-                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
-                    <p className="text-3xl font-bold text-white">{widgets.length}</p>
-                    <p className="text-sm text-gray-400 mt-1">Widgets</p>
-                  </div>
-                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
-                    <p className="text-3xl font-bold text-white">{formData.read_time}</p>
-                    <p className="text-sm text-gray-400 mt-1">Min Read</p>
-                  </div>
-                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
-                    <p className={`text-3xl font-bold ${formData.published ? 'text-green-400' : 'text-gray-400'}`}>
-                      {formData.published ? 'Live' : 'Draft'}
-                    </p>
-                    <p className="text-sm text-gray-400 mt-1">Status</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         )}
       </div>
