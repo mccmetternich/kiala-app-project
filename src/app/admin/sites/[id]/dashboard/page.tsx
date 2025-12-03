@@ -779,46 +779,7 @@ export default function SiteDashboard() {
                 {/* Advanced */}
                 {settingsSubTab === 'advanced' && (
                   <div className="space-y-8">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Domain</h3>
-                      <div className="max-w-md">
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Custom Domain</label>
-                        <input
-                          type="text"
-                          value={site.domain || ''}
-                          onChange={(e) => updateSiteField('domain', e.target.value)}
-                          placeholder="www.example.com"
-                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Analytics</h3>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Google Analytics ID</label>
-                          <input
-                            type="text"
-                            value={settings.analytics?.googleId || ''}
-                            onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, googleId: e.target.value })}
-                            placeholder="G-XXXXXXXXXX"
-                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Meta Pixel ID</label>
-                          <input
-                            type="text"
-                            value={settings.analytics?.metaPixelId || ''}
-                            onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, metaPixelId: e.target.value })}
-                            placeholder="XXXXXXXXXXXXXXX"
-                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
+                    {/* Site Status */}
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-4">Site Status</h3>
                       <div className="flex items-center gap-4">
@@ -848,6 +809,209 @@ export default function SiteDashboard() {
                             <span className="font-medium text-white">Draft (Hidden)</span>
                           </div>
                         </button>
+                      </div>
+                    </div>
+
+                    {/* Domain */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-4">Custom Domain</h3>
+                      <div className="max-w-md">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Domain</label>
+                        <input
+                          type="text"
+                          value={site.domain || ''}
+                          onChange={(e) => updateSiteField('domain', e.target.value)}
+                          placeholder="www.example.com"
+                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        />
+                        <p className="text-xs text-gray-500 mt-2">Add your own domain to replace the default subdomain URL</p>
+                      </div>
+                    </div>
+
+                    {/* Meta/Facebook Pixel */}
+                    <div className="bg-gray-700/30 rounded-xl p-6 border border-gray-600">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">Meta Pixel</h3>
+                            <p className="text-sm text-gray-400">Track conversions and build audiences</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => updateSettingsField('analytics', {
+                            ...settings.analytics,
+                            metaPixelEnabled: !settings.analytics?.metaPixelEnabled
+                          })}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            settings.analytics?.metaPixelEnabled ? 'bg-green-500' : 'bg-gray-600'
+                          }`}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            settings.analytics?.metaPixelEnabled ? 'translate-x-6' : 'translate-x-1'
+                          }`} />
+                        </button>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Pixel ID</label>
+                          <input
+                            type="text"
+                            value={settings.analytics?.metaPixelId || ''}
+                            onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, metaPixelId: e.target.value })}
+                            placeholder="123456789012345"
+                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono"
+                          />
+                          <p className="text-xs text-gray-500 mt-2">Find this in Meta Events Manager → Data Sources → Your Pixel</p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Domain Verification Code</label>
+                          <input
+                            type="text"
+                            value={settings.analytics?.metaDomainVerification || ''}
+                            onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, metaDomainVerification: e.target.value })}
+                            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono"
+                          />
+                          <p className="text-xs text-gray-500 mt-2">
+                            Find this in Meta Business Settings → Brand Safety → Domains → Add → Meta-tag Verification
+                          </p>
+                        </div>
+
+                        {settings.analytics?.metaDomainVerification && (
+                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Check className="w-4 h-4 text-green-400" />
+                              <span className="text-sm font-medium text-green-400">Verification code configured</span>
+                            </div>
+                            <p className="text-xs text-gray-400 mb-3">
+                              The following meta tag will be added to your site's &lt;head&gt;:
+                            </p>
+                            <code className="block bg-gray-900 p-3 rounded-lg text-xs text-gray-300 overflow-x-auto">
+                              &lt;meta name="facebook-domain-verification" content="{settings.analytics.metaDomainVerification}" /&gt;
+                            </code>
+                            <p className="text-xs text-gray-500 mt-3">
+                              Save changes and verify in Meta Business Manager to complete domain verification.
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-600">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              id="metaTestMode"
+                              checked={settings.analytics?.metaTestMode || false}
+                              onChange={(e) => updateSettingsField('analytics', {
+                                ...settings.analytics,
+                                metaTestMode: e.target.checked
+                              })}
+                              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-primary-500 focus:ring-primary-500"
+                            />
+                            <label htmlFor="metaTestMode" className="text-sm text-gray-300">
+                              Test Mode
+                            </label>
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            Enables console logging without loading pixel
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Status indicator */}
+                      <div className="mt-6 pt-4 border-t border-gray-600">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-2 rounded-full ${
+                            settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId
+                              ? 'bg-green-400 animate-pulse'
+                              : 'bg-gray-500'
+                          }`} />
+                          <span className={`text-sm ${
+                            settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId
+                              ? 'text-green-400'
+                              : 'text-gray-500'
+                          }`}>
+                            {settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId
+                              ? 'Pixel is active and tracking'
+                              : settings.analytics?.metaPixelId
+                                ? 'Pixel configured but disabled'
+                                : 'Pixel not configured'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Google Analytics */}
+                    <div className="bg-gray-700/30 rounded-xl p-6 border border-gray-600">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-orange-400" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">Google Analytics</h3>
+                            <p className="text-sm text-gray-400">Website traffic and user behavior</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => updateSettingsField('analytics', {
+                            ...settings.analytics,
+                            googleEnabled: !settings.analytics?.googleEnabled
+                          })}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            settings.analytics?.googleEnabled ? 'bg-green-500' : 'bg-gray-600'
+                          }`}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            settings.analytics?.googleEnabled ? 'translate-x-6' : 'translate-x-1'
+                          }`} />
+                        </button>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Measurement ID</label>
+                          <input
+                            type="text"
+                            value={settings.analytics?.googleId || ''}
+                            onChange={(e) => updateSettingsField('analytics', { ...settings.analytics, googleId: e.target.value })}
+                            placeholder="G-XXXXXXXXXX"
+                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono"
+                          />
+                          <p className="text-xs text-gray-500 mt-2">
+                            Find this in Google Analytics → Admin → Data Streams → Your Stream
+                          </p>
+                        </div>
+
+                        {/* Status indicator */}
+                        <div className="pt-4 border-t border-gray-600">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full ${
+                              settings.analytics?.googleEnabled && settings.analytics?.googleId
+                                ? 'bg-green-400 animate-pulse'
+                                : 'bg-gray-500'
+                            }`} />
+                            <span className={`text-sm ${
+                              settings.analytics?.googleEnabled && settings.analytics?.googleId
+                                ? 'text-green-400'
+                                : 'text-gray-500'
+                            }`}>
+                              {settings.analytics?.googleEnabled && settings.analytics?.googleId
+                                ? 'Google Analytics is active'
+                                : settings.analytics?.googleId
+                                  ? 'Analytics configured but disabled'
+                                  : 'Analytics not configured'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
