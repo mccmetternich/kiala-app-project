@@ -60,9 +60,10 @@ export default function SiteDashboard() {
 
   const loadData = useCallback(async () => {
     try {
-      const [siteResponse, articlesData] = await Promise.all([
+      const [siteResponse, articlesData, subscribersResponse] = await Promise.all([
         fetch(`/api/sites/${id}`).then(res => res.json()),
-        clientAPI.getArticlesBySite(id, false)
+        clientAPI.getArticlesBySite(id, false),
+        fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 } }))
       ]);
 
       if (siteResponse.site) {
@@ -82,7 +83,7 @@ export default function SiteDashboard() {
         totalArticles: articlesData?.length || 0,
         publishedArticles: articlesData?.filter((a: any) => a.published)?.length || 0,
         totalViews: articlesData?.reduce((sum: number, a: any) => sum + (a.views || 0), 0) || 0,
-        totalEmails: 0
+        totalEmails: subscribersResponse?.stats?.total || 0
       });
     } catch (error) {
       console.error('Error loading data:', error);
