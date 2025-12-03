@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Download,
   Mail,
@@ -43,12 +44,16 @@ interface Site {
 type DatePreset = 'all' | 'today' | 'week' | 'month' | 'quarter' | 'custom';
 
 export default function EmailsPage() {
+  const searchParams = useSearchParams();
+  const preselectedSiteId = searchParams.get('siteId');
+
   const [allSubscribers, setAllSubscribers] = useState<EmailSubscriber[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedSiteIds, setSelectedSiteIds] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   // Filter states
   const [datePreset, setDatePreset] = useState<DatePreset>('all');
@@ -77,9 +82,16 @@ export default function EmailsPage() {
         const sitesData = await sitesResponse.json();
         const sitesList = sitesData.sites || [];
         setSites(sitesList);
-        // Select all sites by default
-        if (sitesList.length > 0) {
-          setSelectedSiteIds(new Set(sitesList.map((s: Site) => s.id)));
+
+        // If there's a preselected site from URL, only select that site
+        // Otherwise, select all sites by default
+        if (sitesList.length > 0 && !initialLoadDone) {
+          if (preselectedSiteId && sitesList.some((s: Site) => s.id === preselectedSiteId)) {
+            setSelectedSiteIds(new Set([preselectedSiteId]));
+          } else {
+            setSelectedSiteIds(new Set(sitesList.map((s: Site) => s.id)));
+          }
+          setInitialLoadDone(true);
         }
       }
     } catch (error) {

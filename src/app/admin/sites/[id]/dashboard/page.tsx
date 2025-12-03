@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Globe,
@@ -41,6 +41,7 @@ type SettingsSubTab = 'content' | 'appearance' | 'advanced';
 
 export default function SiteDashboard() {
   const { id } = useParams() as { id: string };
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [site, setSite] = useState<any>(null);
   const [articles, setArticles] = useState<any[]>([]);
@@ -165,6 +166,11 @@ export default function SiteDashboard() {
     return matchesSearch && matchesStatus;
   });
 
+  // Navigate to emails page with site filter
+  const navigateToEmails = () => {
+    router.push(`/admin/emails?siteId=${id}`);
+  };
+
   if (loading) {
     return (
       <EnhancedAdminLayout>
@@ -204,6 +210,7 @@ export default function SiteDashboard() {
   const brand = site.brand_profile || {};
   const settings = site.settings || {};
   const theme = settings.theme || {};
+  const isLive = site.status === 'published';
 
   const tabs = [
     { id: 'overview' as TabType, label: 'Overview', icon: LayoutDashboard },
@@ -246,7 +253,7 @@ export default function SiteDashboard() {
                 <div>
                   <div className="flex items-center gap-3">
                     <h1 className="text-2xl font-bold text-white">{site.name}</h1>
-                    {site.status === 'published' && (
+                    {isLive && (
                       <span className="flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded-full">
                         <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
                         Live
@@ -278,23 +285,23 @@ export default function SiteDashboard() {
               </div>
             </div>
 
-            {/* Tab Navigation */}
-            <div className="flex items-center gap-1 mt-8 -mb-px">
+            {/* Tab Navigation - More Prominent */}
+            <div className="flex items-center gap-2 mt-8">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-t-xl font-medium text-sm transition-all relative ${
+                  className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all ${
                     activeTab === tab.id
-                      ? 'bg-gray-900 text-white border-t border-l border-r border-gray-700'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                      ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
+                      : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                 >
-                  <tab.icon className="w-4 h-4" />
+                  <tab.icon className="w-5 h-5" />
                   {tab.label}
                   {tab.count !== undefined && (
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${
-                      activeTab === tab.id ? 'bg-gray-700 text-gray-300' : 'bg-gray-700/50 text-gray-500'
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                      activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-600 text-gray-300'
                     }`}>
                       {tab.count}
                     </span>
@@ -314,12 +321,20 @@ export default function SiteDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Articles', value: metrics?.totalArticles || 0, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                  { label: 'Published', value: metrics?.publishedArticles || 0, icon: Check, color: 'text-green-400', bg: 'bg-green-500/10' },
-                  { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                  { label: 'Email Signups', value: metrics?.totalEmails || 0, icon: Users, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+                  { label: 'Total Articles', value: metrics?.totalArticles || 0, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: false },
+                  { label: 'Published', value: metrics?.publishedArticles || 0, icon: Check, color: 'text-green-400', bg: 'bg-green-500/10', clickable: false },
+                  { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: false },
+                  { label: 'Email Signups', value: metrics?.totalEmails || 0, icon: Users, color: 'text-orange-400', bg: 'bg-orange-500/10', clickable: true, onClick: navigateToEmails },
                 ].map((stat, i) => (
-                  <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-5 hover:border-gray-600 transition-all">
+                  <div
+                    key={i}
+                    onClick={stat.clickable ? stat.onClick : undefined}
+                    className={`bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all ${
+                      stat.clickable
+                        ? 'cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10'
+                        : 'hover:border-gray-600'
+                    }`}
+                  >
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-gray-400 text-sm">{stat.label}</p>
@@ -329,6 +344,9 @@ export default function SiteDashboard() {
                         <stat.icon className={`w-6 h-6 ${stat.color}`} />
                       </div>
                     </div>
+                    {stat.clickable && (
+                      <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -405,13 +423,13 @@ export default function SiteDashboard() {
                         <Settings className="w-5 h-5" />
                         Site Settings
                       </button>
-                      <Link
-                        href={`/admin/sites/${id}/emails`}
+                      <button
+                        onClick={navigateToEmails}
                         className="flex items-center gap-3 w-full p-3 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all font-medium"
                       >
                         <Download className="w-5 h-5" />
                         Export Emails
-                      </Link>
+                      </button>
                     </div>
                   </div>
 
@@ -433,8 +451,9 @@ export default function SiteDashboard() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between py-2 border-t border-gray-700/50">
                         <span className="text-gray-400">Status</span>
-                        <span className={site.status === 'published' ? 'text-green-400' : 'text-yellow-400'}>
-                          {site.status === 'published' ? 'Live' : 'Draft'}
+                        <span className={`flex items-center gap-1.5 ${isLive ? 'text-green-400' : 'text-yellow-400'}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${isLive ? 'bg-green-400' : 'bg-yellow-400'}`}></span>
+                          {isLive ? 'Live' : 'Draft'}
                         </span>
                       </div>
                       <div className="flex justify-between py-2 border-t border-gray-700/50">
@@ -483,60 +502,51 @@ export default function SiteDashboard() {
                 </Link>
               </div>
 
-              {/* Articles Grid */}
+              {/* Articles List - Matching Recent Articles Style */}
               <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
                 <div className="divide-y divide-gray-700/50">
                   {filteredArticles.map((article) => (
-                    <div key={article.id} className="p-5 hover:bg-gray-750 transition-all group">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-start gap-4 min-w-0 flex-1">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                            article.published ? 'bg-green-500/10' : 'bg-gray-700'
-                          }`}>
-                            <FileText className={`w-6 h-6 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Link
-                                href={`/admin/articles/${article.id}/edit`}
-                                className="text-white font-semibold hover:text-primary-400 transition-colors truncate"
-                              >
-                                {article.title}
-                              </Link>
-                              <Badge variant={article.published ? 'trust' : 'default'} size="sm">
-                                {article.published ? 'Published' : 'Draft'}
-                              </Badge>
-                            </div>
-                            <p className="text-gray-400 text-sm line-clamp-1 mb-2">{article.excerpt}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
-                              <span className="flex items-center gap-1">
-                                <Eye className="w-4 h-4" />
-                                {article.views || 0} views
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-4 h-4" />
-                                {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
-                              </span>
-                            </div>
-                          </div>
+                    <Link
+                      key={article.id}
+                      href={`/admin/articles/${article.id}/edit`}
+                      className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
+                    >
+                      <div className="flex items-center gap-4 min-w-0 flex-1">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                          article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                        }`}>
+                          <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Link
-                            href={`/site/${site.subdomain}/articles/${article.slug}`}
-                            target="_blank"
-                            className="p-2 text-gray-500 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </Link>
-                          <Link
-                            href={`/admin/articles/${article.id}/edit`}
-                            className="p-2 text-gray-500 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all"
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </Link>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-3 mb-0.5">
+                            <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                              {article.title}
+                            </p>
+                            {!article.published && (
+                              <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
+                                Draft
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-500 text-sm">
+                            {article.views || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
+                          </p>
                         </div>
                       </div>
-                    </div>
+                      <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.open(`/site/${site.subdomain}/articles/${article.slug}`, '_blank');
+                          }}
+                          className="p-2 text-gray-600 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </span>
+                        <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
+                      </div>
+                    </Link>
                   ))}
                   {filteredArticles.length === 0 && (
                     <div className="p-12 text-center">
