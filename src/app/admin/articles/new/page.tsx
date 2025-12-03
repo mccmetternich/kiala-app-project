@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, Eye, Plus, Image as ImageIcon, Type, BarChart3, Users, Clock, Star, Zap, Upload } from 'lucide-react';
 import Link from 'next/link';
+import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import MediaLibrary from '@/components/admin/MediaLibrary';
 
 interface Site {
@@ -191,7 +192,9 @@ export default function NewArticle() {
       });
 
       if (response.ok) {
-        router.push('/admin/articles');
+        const { article } = await response.json();
+        // Navigate to edit the newly created article
+        router.push(`/admin/articles/${article.id}/edit`);
       } else {
         alert('Error saving article');
       }
@@ -206,8 +209,8 @@ export default function NewArticle() {
   const selectedSite = sites.find(site => site.id === formData.site_id);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto p-6">
+    <EnhancedAdminLayout>
+      <div className="max-w-7xl mx-auto p-4 md:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -500,6 +503,6 @@ Click 'Insert Widget' above to add interactive elements like testimonials, produ
           siteId={formData.site_id}
         />
       )}
-    </div>
+    </EnhancedAdminLayout>
   );
 }

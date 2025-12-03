@@ -339,10 +339,24 @@ export default function EmailsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                        {new Date(subscriber.subscribed_at || subscriber.created_at).toLocaleDateString()}
-                        <div className="text-xs text-gray-500">
-                          {new Date(subscriber.subscribed_at || subscriber.created_at).toLocaleTimeString()}
-                        </div>
+                        {(() => {
+                          const timestamp = subscriber.subscribed_at || subscriber.created_at;
+                          // Database stores UTC timestamps - parse and display consistently
+                          const date = new Date(timestamp.endsWith('Z') ? timestamp : timestamp + 'Z');
+                          return (
+                            <>
+                              {date.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' })}
+                              <div className="text-xs text-gray-500">
+                                {date.toLocaleTimeString('en-US', {
+                                  timeZone: 'America/Los_Angeles',
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true
+                                })} PT
+                              </div>
+                            </>
+                          );
+                        })()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         {subscriber.status === 'active' && (

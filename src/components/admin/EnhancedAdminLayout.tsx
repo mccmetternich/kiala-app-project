@@ -3,33 +3,23 @@
 import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  LayoutGrid, 
-  FileText, 
-  Settings, 
-  Users, 
-  BarChart3, 
-  Globe, 
-  Menu, 
-  X, 
+import {
+  LayoutGrid,
+  FileText,
+  Settings,
+  Users,
+  BarChart3,
+  Globe,
+  Menu,
+  X,
   LogOut,
-  Bell,
-  Search,
   Plus,
   Edit3,
   ChevronDown,
-  Home,
-  Palette,
   ExternalLink,
-  Activity,
-  Zap,
-  CheckCircle,
-  AlertCircle,
   Copy,
-  Archive,
   Eye,
-  Building2,
-  ToggleLeft
+  Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -58,8 +48,6 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
   const [currentSite, setCurrentSite] = useState<Site | null>(null);
   const [sites, setSites] = useState<Site[]>([]);
   const [showSiteSwitcher, setShowSiteSwitcher] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [showNotifications, setShowNotifications] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -363,18 +351,6 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="hidden md:block">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <input
-                    type="text"
-                    placeholder="Search sites, content..."
-                    className="w-64 pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  />
-                </div>
-              </div>
-
               {/* Quick actions */}
               <div className="hidden sm:flex items-center gap-2">
                 {quickActions.map((action, index) => (
@@ -407,52 +383,6 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
                 ))}
               </div>
 
-              {/* Notifications */}
-              <div className="relative">
-                <button 
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="p-2 text-gray-400 hover:text-gray-200 relative"
-                >
-                  <Bell className="w-5 h-5" />
-                  {notifications.length > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                  )}
-                </button>
-                
-                {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-700">
-                      <h3 className="text-sm font-medium text-gray-200">Notifications</h3>
-                    </div>
-                    <div className="max-h-64 overflow-y-auto">
-                      {notifications.length === 0 ? (
-                        <div className="px-4 py-3 text-sm text-gray-400">
-                          No new notifications
-                        </div>
-                      ) : (
-                        notifications.map((notification, index) => (
-                          <div key={index} className="px-4 py-3 hover:bg-gray-700 border-b border-gray-700 last:border-b-0">
-                            <div className="flex items-start gap-3">
-                              <div className="flex-shrink-0 mt-0.5">
-                                {notification.type === 'success' ? (
-                                  <CheckCircle className="w-4 h-4 text-green-500" />
-                                ) : (
-                                  <AlertCircle className="w-4 h-4 text-yellow-500" />
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-gray-200">{notification.message}</p>
-                                <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* User menu */}
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
@@ -460,7 +390,6 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-sm font-medium text-gray-200">Admin</div>
-                  <div className="text-xs text-gray-400">admin@cms.local</div>
                 </div>
               </div>
             </div>

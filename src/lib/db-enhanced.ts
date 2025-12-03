@@ -388,7 +388,7 @@ export class EnhancedQueries {
       return withCache(
         `articles:site:${siteId}:all`,
         CacheTTL.ARTICLE_CONTENT,
-        async () => queryAll('SELECT * FROM articles WHERE site_id = ? ORDER BY created_at DESC', [siteId])
+        async () => queryAll('SELECT * FROM articles WHERE site_id = ? ORDER BY updated_at DESC', [siteId])
       );
     },
 
