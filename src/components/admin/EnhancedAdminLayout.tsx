@@ -529,7 +529,11 @@ function SidebarContent({
       {/* Navigation */}
       <nav className="flex-1 px-4 py-4 space-y-1">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+          // More precise active state detection
+          const isExactMatch = pathname === item.href;
+          const isChildMatch = item.href !== '/admin' && pathname.startsWith(item.href + '/');
+          // For dashboard, only highlight on exact match
+          const isActive = item.href === '/admin' ? isExactMatch : (isExactMatch || isChildMatch);
           return (
             <Link
               key={item.name}

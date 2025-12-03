@@ -23,15 +23,45 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const siteId = searchParams.get('siteId');
     const format = searchParams.get('format'); // 'json' or 'csv'
+    const startDate = searchParams.get('startDate'); // ISO date string
+    const endDate = searchParams.get('endDate'); // ISO date string
+    const status = searchParams.get('status'); // 'active', 'unsubscribed', or 'all'
+    const source = searchParams.get('source'); // filter by source
 
     if (!siteId) {
       return NextResponse.json({ error: 'siteId is required' }, { status: 400 });
     }
 
-    const subscribers = await queryAll(
-      'SELECT * FROM email_subscribers WHERE site_id = ? ORDER BY created_at DESC',
-      [siteId]
-    );
+    // Build dynamic query with filters
+    let sql = 'SELECT * FROM email_subscribers WHERE site_id = ?';
+    const args: any[] = [siteId];
+
+    // Add date filters
+    if (startDate) {
+      sql += ' AND created_at >= ?';
+      args.push(startDate);
+    }
+    if (endDate) {
+      sql += ' AND created_at <= ?';
+      // Add end of day to include the whole end date
+      args.push(endDate + 'T23:59:59.999Z');
+    }
+
+    // Add status filter
+    if (status && status !== 'all') {
+      sql += ' AND status = ?';
+      args.push(status);
+    }
+
+    // Add source filter
+    if (source) {
+      sql += ' AND source = ?';
+      args.push(source);
+    }
+
+    sql += ' ORDER BY created_at DESC';
+
+    const subscribers = await queryAll(sql, args);
 
     // Return CSV if requested
     if (format === 'csv') {

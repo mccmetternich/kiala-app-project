@@ -346,7 +346,7 @@ export default function EditArticle() {
             {/* Left: Back + Title */}
             <div className="flex items-center gap-4 min-w-0">
               <Link
-                href="/admin/articles"
+                href={formData.site_id ? `/admin/sites/${formData.site_id}/dashboard` : '/admin/articles'}
                 className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-all flex-shrink-0"
               >
                 <ArrowLeft className="w-5 h-5" />
