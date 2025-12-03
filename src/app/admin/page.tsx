@@ -226,12 +226,12 @@ export default function AdminDashboard() {
                   return (
                     <div
                       key={site.id}
-                      className="bg-gray-800 rounded-xl border border-gray-700 hover:border-gray-600 transition-colors overflow-hidden"
+                      className="bg-gray-800 rounded-xl border border-gray-700 hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-200 overflow-hidden group"
                     >
                       {/* Site Header - Clickable */}
                       <Link
                         href={`/admin/sites/${site.id}/dashboard`}
-                        className="block p-5 border-b border-gray-700 hover:bg-gray-750 transition-colors"
+                        className="block p-5 border-b border-gray-700 group-hover:bg-gray-750 transition-colors"
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -239,20 +239,25 @@ export default function AdminDashboard() {
                               <img
                                 src={brand.profileImage || brand.sidebarImage}
                                 alt={brand?.name || site.name}
-                                className="w-10 h-10 rounded-full object-cover"
+                                className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-700 group-hover:ring-primary-500/50 transition-all"
                               />
                             ) : (
-                              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-700 group-hover:ring-primary-500/50 transition-all">
                                 <Globe className="w-5 h-5 text-white" />
                               </div>
                             )}
                             <div>
-                              <h3 className="font-semibold text-white">{site.name}</h3>
+                              <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors">{site.name}</h3>
                               <p className="text-xs text-gray-400">{site.subdomain}</p>
                             </div>
                           </div>
-                          {!isLive && (
-                            <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium">
+                          {isLive ? (
+                            <span className="flex items-center gap-1.5 px-2 py-0.5 bg-green-500/10 text-green-400 rounded-full text-xs font-medium">
+                              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                              Live
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium">
                               Draft
                             </span>
                           )}
