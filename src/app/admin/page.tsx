@@ -14,7 +14,6 @@ import {
   Clock
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
-import Badge from '@/components/ui/Badge';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Site {
@@ -338,20 +337,24 @@ export default function AdminDashboard() {
               </Link>
             </div>
             {recentArticles.length > 0 ? (
-              <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                <div className="space-y-2">
+              <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+                <div className="divide-y divide-gray-700/50">
                   {recentArticles.map((article) => {
                     const site = sites.find(s => s.id === article.site_id);
                     return (
                       <Link
                         key={article.id}
                         href={`/admin/articles/${article.id}/edit`}
-                        className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-700/50 transition-colors group"
+                        className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <FileText className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                          }`}>
+                            <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                          </div>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-gray-200 truncate group-hover:text-primary-300 transition-colors">
+                            <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
                               {article.title}
                             </p>
                             <p className="text-xs text-gray-500">
@@ -360,10 +363,14 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <Badge variant={article.published ? 'trust' : 'default'} size="sm">
-                            {article.published ? 'Live' : 'Draft'}
-                          </Badge>
-                          <Edit3 className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            article.published
+                              ? 'bg-green-900/50 text-green-300'
+                              : 'bg-gray-700 text-gray-400'
+                          }`}>
+                            {article.published ? 'Published' : 'Draft'}
+                          </span>
+                          <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
                         </div>
                       </Link>
                     );

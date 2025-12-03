@@ -1,12 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Save, Eye, ArrowLeft, Upload, Image as ImageIcon, ExternalLink, Link2, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  Save,
+  Eye,
+  ArrowLeft,
+  Upload,
+  Image as ImageIcon,
+  ExternalLink,
+  FileText,
+  Settings,
+  Layers,
+  Plus,
+  GripVertical,
+  ChevronRight,
+  Check,
+  Clock,
+  BarChart3,
+  Tag,
+  Link2,
+  Globe
+} from 'lucide-react';
 import Link from 'next/link';
 import MediaLibrary from '@/components/admin/MediaLibrary';
 import WidgetEditor from '@/components/admin/WidgetEditor';
-import { Widget } from '@/types';
+import { Widget, WidgetType } from '@/types';
 import { generateDefaultWidgetConfig, parseWidgetConfig, serializeWidgetConfig } from '@/lib/article-widget-defaults';
 
 interface Site {
@@ -46,11 +65,73 @@ interface Article {
   updated_at?: string;
 }
 
+type TabType = 'content' | 'details';
+
+// Widget type definitions for the library
+const widgetTypes: { type: WidgetType; name: string; icon: any; category: string; description: string }[] = [
+  // Content Widgets
+  { type: 'text-block', name: 'Text Block', icon: FileText, category: 'Content', description: 'Rich text content' },
+  { type: 'top-ten-list', name: 'Top 10 List', icon: BarChart3, category: 'Content', description: 'Numbered list' },
+  { type: 'expectation-timeline', name: 'Timeline', icon: Clock, category: 'Content', description: 'Visual timeline' },
+  { type: 'faq-accordion', name: 'FAQ', icon: FileText, category: 'Content', description: 'Expandable Q&A' },
+  { type: 'data-overview', name: 'Data Overview', icon: BarChart3, category: 'Content', description: 'Stats display' },
+  { type: 'symptoms-checker', name: 'Symptoms', icon: FileText, category: 'Content', description: 'Symptom checker' },
+  { type: 'ingredient-list-grid', name: 'Ingredients', icon: Layers, category: 'Content', description: 'Ingredient grid' },
+
+  // Social Proof
+  { type: 'testimonial', name: 'Testimonials', icon: FileText, category: 'Social Proof', description: 'Carousel' },
+  { type: 'stacked-quotes', name: 'Stacked Quotes', icon: FileText, category: 'Social Proof', description: 'Stacked testimonials' },
+  { type: 'before-after-comparison', name: 'Before/After', icon: FileText, category: 'Social Proof', description: 'Slider comparison' },
+  { type: 'before-after-side-by-side', name: 'Side by Side', icon: FileText, category: 'Social Proof', description: 'Static comparison' },
+  { type: 'rating-stars', name: 'Ratings', icon: FileText, category: 'Social Proof', description: 'Star display' },
+  { type: 'review-grid', name: 'Reviews', icon: FileText, category: 'Social Proof', description: 'Review cards' },
+  { type: 'press-logos', name: 'Press', icon: FileText, category: 'Social Proof', description: 'Media logos' },
+  { type: 'scrolling-thumbnails', name: 'Thumbnails', icon: FileText, category: 'Social Proof', description: 'Scrolling photos' },
+  { type: 'testimonial-hero-no-cta', name: 'Hero Quote', icon: FileText, category: 'Social Proof', description: 'Large testimonial' },
+  { type: 'testimonial-hero', name: 'Hero CTA', icon: FileText, category: 'Social Proof', description: 'Testimonial + CTA' },
+
+  // Conversion
+  { type: 'product-showcase', name: 'Product', icon: FileText, category: 'Conversion', description: 'Product card' },
+  { type: 'exclusive-product', name: '#1 Pick', icon: FileText, category: 'Conversion', description: 'Dr. recommended' },
+  { type: 'shop-now', name: 'Shop Now', icon: FileText, category: 'Conversion', description: '3x pricing options' },
+  { type: 'special-offer', name: 'Offer', icon: FileText, category: 'Conversion', description: 'Special offer' },
+  { type: 'dual-offer-comparison', name: 'Dual Offers', icon: FileText, category: 'Conversion', description: 'Compare offers' },
+  { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: FileText, category: 'Conversion', description: 'Product comparison' },
+  { type: 'comparison-table', name: 'Compare Table', icon: FileText, category: 'Conversion', description: 'Feature table' },
+  { type: 'cta-button', name: 'CTA Button', icon: ExternalLink, category: 'Conversion', description: 'Action button' },
+
+  // Urgency & Lead Gen
+  { type: 'countdown-timer', name: 'Countdown', icon: Clock, category: 'Urgency', description: 'Timer' },
+  { type: 'email-capture', name: 'Email Signup', icon: FileText, category: 'Lead Gen', description: 'Newsletter form' },
+
+  // Doctor Widgets
+  { type: 'doctor-assessment', name: 'Dr Assessment', icon: FileText, category: 'Doctor', description: 'Doctor quote' },
+  { type: 'doctor-closing-word', name: 'Dr Closing', icon: FileText, category: 'Doctor', description: 'Closing word' },
+
+  // Media
+  { type: 'hero-image', name: 'Hero Image', icon: ImageIcon, category: 'Media', description: 'Full-width image' },
+  { type: 'opening-hook', name: 'Opening Hook', icon: FileText, category: 'Media', description: 'Article intro' },
+  { type: 'main-content', name: 'Main Content', icon: FileText, category: 'Media', description: 'Body content' },
+  { type: 'final-cta', name: 'Final CTA', icon: ExternalLink, category: 'Media', description: 'Closing CTA' },
+];
+
+const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
+  'Content': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' },
+  'Social Proof': { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
+  'Conversion': { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/30' },
+  'Urgency': { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30' },
+  'Lead Gen': { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30' },
+  'Doctor': { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/30' },
+  'Media': { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/30' },
+};
+
 export default function EditArticle() {
   const router = useRouter();
   const params = useParams();
   const articleId = params?.id as string;
+  const contentRef = useRef<HTMLDivElement>(null);
 
+  const [activeTab, setActiveTab] = useState<TabType>('content');
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -60,18 +141,8 @@ export default function EditArticle() {
   const [trackingConfig, setTrackingConfig] = useState<TrackingConfig>({
     passthrough_fbclid: true
   });
-  const [showStickyBar, setShowStickyBar] = useState(false);
-  const [articleDetailsExpanded, setArticleDetailsExpanded] = useState(true);
-  const [settingsExpanded, setSettingsExpanded] = useState(false);
-
-  // Show sticky bar when scrolled past header
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowStickyBar(window.scrollY > 100);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>('Content');
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -128,12 +199,10 @@ export default function EditArticle() {
           read_time: data.article.read_time || 5
         });
 
-        // Load widgets from database or generate defaults
         const storedWidgets = parseWidgetConfig(data.article.widget_config);
         if (storedWidgets && storedWidgets.length > 0) {
           setWidgets(storedWidgets);
         } else {
-          // Generate default widgets based on article content
           const defaultWidgets = generateDefaultWidgetConfig({
             id: data.article.id,
             title: data.article.title,
@@ -147,7 +216,6 @@ export default function EditArticle() {
           setWidgets(defaultWidgets);
         }
 
-        // Load tracking config
         if (data.article.tracking_config) {
           try {
             const parsed = typeof data.article.tracking_config === 'string'
@@ -169,7 +237,6 @@ export default function EditArticle() {
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
-    // Auto-generate slug from title
     if (field === 'title') {
       const slug = value.toLowerCase()
         .replace(/[^\w\s-]/g, '')
@@ -179,8 +246,6 @@ export default function EditArticle() {
       setFormData(prev => ({ ...prev, slug }));
     }
   };
-
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const handleSave = async (publish?: boolean) => {
     if (!formData.title || !formData.site_id) {
@@ -213,7 +278,7 @@ export default function EditArticle() {
             published: Boolean(data.article.published)
           }));
         }
-        setSaveMessage(publish ? 'Article published!' : 'Changes saved!');
+        setSaveMessage(publish ? 'Published!' : 'Saved!');
         setTimeout(() => setSaveMessage(null), 3000);
       } else {
         alert('Error saving article');
@@ -226,13 +291,32 @@ export default function EditArticle() {
     }
   };
 
+  const addWidget = (type: WidgetType) => {
+    const newWidget: Widget = {
+      id: `widget-${Date.now()}`,
+      type,
+      config: {},
+      enabled: true
+    };
+    setWidgets(prev => [...prev, newWidget]);
+  };
+
   const selectedSite = sites.find(site => site.id === formData.site_id);
+
+  // Group widgets by category
+  const widgetsByCategory = widgetTypes.reduce((acc, widget) => {
+    if (!acc[widget.category]) {
+      acc[widget.category] = [];
+    }
+    acc[widget.category].push(widget);
+    return acc;
+  }, {} as Record<string, typeof widgetTypes>);
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-3 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading article...</p>
         </div>
       </div>
@@ -241,11 +325,12 @@ export default function EditArticle() {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
+          <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <p className="text-gray-400 mb-4">Article not found</p>
-          <Link href="/admin/articles" className="text-primary-400 hover:text-primary-300 underline">
-            Back to Articles
+          <Link href="/admin/articles" className="text-primary-400 hover:text-primary-300">
+            ← Back to Articles
           </Link>
         </div>
       </div>
@@ -253,425 +338,523 @@ export default function EditArticle() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Fixed Top Bar - Shows on scroll */}
-      <div className={`fixed top-0 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-40 shadow-lg transition-transform duration-300 ${showStickyBar ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/admin/articles" className="text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div className="truncate">
-              <h2 className="text-sm font-medium text-white truncate max-w-md">
-                {formData.title || 'Untitled Article'}
-              </h2>
-              <p className="text-xs text-gray-400">
-                {formData.published ? 'Published' : 'Draft'} · {widgets.length} widgets
-              </p>
+    <div className="min-h-screen bg-gray-900">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-50">
+        <div className="max-w-[1800px] mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between h-16">
+            {/* Left: Back + Title */}
+            <div className="flex items-center gap-4 min-w-0">
+              <Link
+                href="/admin/articles"
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-all flex-shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Link>
+              <div className="min-w-0">
+                <h1 className="text-lg font-semibold text-white truncate max-w-md">
+                  {formData.title || 'Untitled Article'}
+                </h1>
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <span className={`flex items-center gap-1 ${formData.published ? 'text-green-400' : ''}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${formData.published ? 'bg-green-400' : 'bg-gray-500'}`}></span>
+                    {formData.published ? 'Published' : 'Draft'}
+                  </span>
+                  <span>•</span>
+                  <span>{widgets.length} widgets</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Center: Tabs */}
+            <div className="hidden md:flex items-center gap-1 bg-gray-700/50 p-1 rounded-xl">
+              <button
+                onClick={() => setActiveTab('content')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  activeTab === 'content'
+                    ? 'bg-gray-600 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                Content
+              </button>
+              <button
+                onClick={() => setActiveTab('details')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  activeTab === 'details'
+                    ? 'bg-gray-600 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                Details
+              </button>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2">
+              {selectedSite && (
+                <a
+                  href={`/site/${selectedSite.subdomain}/articles/${formData.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-all text-sm"
+                >
+                  <Eye className="w-4 h-4" />
+                  Preview
+                </a>
+              )}
+              <button
+                onClick={() => handleSave(false)}
+                disabled={loading}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium ${
+                  saveMessage === 'Saved!'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-700 hover:bg-gray-600 text-white'
+                }`}
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : saveMessage === 'Saved!' ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                <span className="hidden sm:inline">{saveMessage === 'Saved!' ? 'Saved!' : 'Save'}</span>
+              </button>
+              <button
+                onClick={() => handleSave(true)}
+                disabled={loading}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium ${
+                  saveMessage === 'Published!'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20'
+                }`}
+              >
+                {saveMessage === 'Published!' ? <Check className="w-4 h-4" /> : null}
+                {formData.published ? 'Update' : 'Publish'}
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {selectedSite && (
-              <a
-                href={`/site/${selectedSite.subdomain}/articles/${formData.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span className="hidden sm:inline">Preview</span>
-              </a>
-            )}
+
+          {/* Mobile Tabs */}
+          <div className="md:hidden flex items-center gap-2 pb-3 -mt-1">
             <button
-              onClick={() => handleSave(false)}
-              disabled={loading}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm disabled:opacity-50"
+              onClick={() => setActiveTab('content')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'content'
+                  ? 'bg-gray-700 text-white'
+                  : 'text-gray-400'
+              }`}
             >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
-              <span className="hidden sm:inline">{loading ? 'Saving...' : 'Save'}</span>
+              <Layers className="w-4 h-4" />
+              Content
             </button>
             <button
-              onClick={() => handleSave(true)}
-              disabled={loading}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium disabled:opacity-50"
+              onClick={() => setActiveTab('details')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'details'
+                  ? 'bg-gray-700 text-white'
+                  : 'text-gray-400'
+              }`}
             >
-              {formData.published ? 'Update' : 'Publish'}
+              <Settings className="w-4 h-4" />
+              Details
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
-        {/* Save Success Message */}
-        {saveMessage && (
-          <div className={`fixed right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-fade-in transition-all duration-300 ${showStickyBar ? 'top-16' : 'top-4'}`}>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            {saveMessage}
+      {/* Main Content Area */}
+      <div className="pt-20 md:pt-16">
+        {/* CONTENT TAB */}
+        {activeTab === 'content' && (
+          <div className="flex">
+            {/* Widget Editor - 2/3 */}
+            <div ref={contentRef} className="flex-1 min-w-0 p-4 md:p-6 lg:pr-[340px]">
+              <div className="max-w-4xl mx-auto">
+                {/* Widget Editor */}
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <WidgetEditor
+                    widgets={widgets}
+                    onWidgetsChange={setWidgets}
+                    siteId={formData.site_id}
+                    articleId={articleId}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Widget Library - Floating Sidebar */}
+            <div className="hidden lg:block fixed right-0 top-16 bottom-0 w-[320px] bg-gray-800 border-l border-gray-700 overflow-hidden">
+              <div className="h-full flex flex-col">
+                {/* Library Header */}
+                <div className="p-4 border-b border-gray-700">
+                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Plus className="w-5 h-5 text-primary-400" />
+                    Widget Library
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">Click to add widgets to your article</p>
+                </div>
+
+                {/* Categories */}
+                <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                  {Object.entries(widgetsByCategory).map(([category, categoryWidgets]) => {
+                    const colors = categoryColors[category] || categoryColors['Content'];
+                    const isExpanded = expandedCategory === category;
+
+                    return (
+                      <div key={category} className={`rounded-xl border ${colors.border} overflow-hidden`}>
+                        {/* Category Header */}
+                        <button
+                          onClick={() => setExpandedCategory(isExpanded ? null : category)}
+                          className={`w-full flex items-center justify-between p-3 ${colors.bg} transition-all`}
+                        >
+                          <span className={`text-sm font-medium ${colors.text}`}>{category}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">{categoryWidgets.length}</span>
+                            <ChevronRight className={`w-4 h-4 ${colors.text} transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                          </div>
+                        </button>
+
+                        {/* Widgets in Category */}
+                        {isExpanded && (
+                          <div className="p-2 bg-gray-850 space-y-1">
+                            {categoryWidgets.map((widget) => (
+                              <button
+                                key={widget.type}
+                                onClick={() => addWidget(widget.type)}
+                                className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all group text-left"
+                              >
+                                <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0`}>
+                                  <Plus className={`w-4 h-4 ${colors.text} group-hover:scale-110 transition-transform`} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium text-white truncate">{widget.name}</p>
+                                  <p className="text-xs text-gray-500 truncate">{widget.description}</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Stats Footer */}
+                <div className="p-4 border-t border-gray-700 bg-gray-850">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Active Widgets</span>
+                    <span className="text-white font-medium">{widgets.filter(w => w.enabled).length} / {widgets.length}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <Link href="/admin/articles" className="text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-6 h-6" />
-            </Link>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white">Edit Article</h1>
-              <p className="text-gray-400 text-sm">
-                {article.views} views · Updated {new Date(article.updated_at || Date.now()).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2 md:gap-3">
-            {selectedSite && (
-              <a
-                href={`/site/${selectedSite.subdomain}/articles/${formData.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span className="hidden sm:inline">Preview</span>
-              </a>
-            )}
-            <button
-              onClick={() => handleSave(false)}
-              disabled={loading}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
-              {loading ? 'Saving...' : 'Save Draft'}
-            </button>
-            <button
-              onClick={() => handleSave(true)}
-              disabled={loading}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
-              {formData.published ? 'Update' : 'Publish'}
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main Content - Widget Editor */}
-          <div className="lg:col-span-3 space-y-4">
-            {/* Article Details Card - Collapsible */}
-            <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-              <button
-                onClick={() => setArticleDetailsExpanded(!articleDetailsExpanded)}
-                className="w-full px-4 py-3 flex items-center justify-between bg-gray-750 hover:bg-gray-700 transition-colors"
-              >
-                <div className="flex items-center gap-3">
+        {/* DETAILS TAB */}
+        {activeTab === 'details' && (
+          <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+            {/* Article Info */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary-400" />
-                  <div className="text-left">
-                    <h3 className="font-semibold text-white">Article Details</h3>
-                    <p className="text-xs text-gray-400">Title, excerpt, hero image, and body content</p>
-                  </div>
-                </div>
-                {articleDetailsExpanded ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
-                )}
-              </button>
-
-              {articleDetailsExpanded && (
-                <div className="p-4 md:p-6 space-y-4 border-t border-gray-700">
-                  {/* Title */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
-                    <input
-                      type="text"
-                      value={formData.title}
-                      onChange={(e) => handleInputChange('title', e.target.value)}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="Enter article title..."
-                    />
-                  </div>
-
-                  {/* Excerpt */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Excerpt</label>
-                    <textarea
-                      value={formData.excerpt}
-                      onChange={(e) => handleInputChange('excerpt', e.target.value)}
-                      rows={2}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="Brief description for previews..."
-                    />
-                  </div>
-
-                  {/* Hero Image */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Hero Image</label>
-                    <div className="flex items-start gap-4">
-                      {formData.image ? (
-                        <div className="relative group">
-                          <img
-                            src={formData.image}
-                            alt="Preview"
-                            className="w-24 h-16 object-cover rounded border border-gray-600"
-                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleInputChange('image', '')}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="w-24 h-16 bg-gray-700 border border-gray-600 border-dashed rounded flex items-center justify-center">
-                          <ImageIcon className="w-6 h-6 text-gray-500" />
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <button
-                          type="button"
-                          onClick={() => setShowMediaLibrary(true)}
-                          className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm mb-2"
-                        >
-                          <Upload className="w-4 h-4" />
-                          {formData.image ? 'Change' : 'Select'}
-                        </button>
-                        <input
-                          type="url"
-                          value={formData.image}
-                          onChange={(e) => handleInputChange('image', e.target.value)}
-                          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
-                          placeholder="Or paste image URL..."
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Article Body */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Article Body Content</label>
-                    <textarea
-                      value={formData.content}
-                      onChange={(e) => handleInputChange('content', e.target.value)}
-                      rows={8}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 font-mono text-sm"
-                      placeholder="Write your article content here (Markdown supported)..."
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Main article text. Use widgets below for rich, interactive content sections.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Widget Editor - Full Width */}
-            <div className="bg-white rounded-lg p-4 md:p-6">
-              <WidgetEditor
-                widgets={widgets}
-                onWidgetsChange={setWidgets}
-                siteId={formData.site_id}
-                articleId={articleId}
-              />
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-4">
-            {/* Publishing */}
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h3 className="font-semibold text-white mb-3">Publishing</h3>
-              <div className="space-y-3">
+                  Article Information
+                </h2>
+              </div>
+              <div className="p-6 space-y-6">
+                {/* Title */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Site *</label>
-                  <select
-                    value={formData.site_id}
-                    onChange={(e) => handleInputChange('site_id', e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    {sites.map(site => (
-                      <option key={site.id} value={site.id}>{site.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">URL Slug</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
                   <input
                     type="text"
-                    value={formData.slug}
-                    onChange={(e) => handleInputChange('slug', e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="article-url-slug"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Enter article title..."
                   />
-                  {selectedSite && (
-                    <p className="text-xs text-gray-500 mt-1 truncate">
-                      /{selectedSite.subdomain}/articles/{formData.slug}
-                    </p>
-                  )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                {/* Excerpt */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Excerpt</label>
+                  <textarea
+                    value={formData.excerpt}
+                    onChange={(e) => handleInputChange('excerpt', e.target.value)}
+                    rows={3}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    placeholder="Brief description for previews and SEO..."
+                  />
+                </div>
+
+                {/* Hero Image */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Hero Image</label>
+                  <div className="flex items-start gap-4">
+                    {formData.image ? (
+                      <div className="relative group">
+                        <img
+                          src={formData.image}
+                          alt="Preview"
+                          className="w-32 h-20 object-cover rounded-xl border border-gray-600"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('image', '')}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-32 h-20 bg-gray-700 border-2 border-dashed border-gray-600 rounded-xl flex items-center justify-center">
+                        <ImageIcon className="w-8 h-8 text-gray-500" />
+                      </div>
+                    )}
+                    <div className="flex-1 space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowMediaLibrary(true)}
+                        className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all text-sm"
+                      >
+                        <Upload className="w-4 h-4" />
+                        {formData.image ? 'Change Image' : 'Select Image'}
+                      </button>
+                      <input
+                        type="url"
+                        value={formData.image}
+                        onChange={(e) => handleInputChange('image', e.target.value)}
+                        className="w-full bg-gray-700 border border-gray-600 rounded-xl px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                        placeholder="Or paste image URL..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Body Content */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Article Body</label>
+                  <textarea
+                    value={formData.content}
+                    onChange={(e) => handleInputChange('content', e.target.value)}
+                    rows={8}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 font-mono text-sm resize-none"
+                    placeholder="Main article content (Markdown supported)..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    This is fallback content. Use widgets in the Content tab for rich layouts.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Publishing Settings */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-primary-400" />
+                  Publishing
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Site */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">Category</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Site *</label>
+                    <select
+                      value={formData.site_id}
+                      onChange={(e) => handleInputChange('site_id', e.target.value)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      {sites.map(site => (
+                        <option key={site.id} value={site.id}>{site.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Slug */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">URL Slug</label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(e) => handleInputChange('slug', e.target.value)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="article-url-slug"
+                    />
+                    {selectedSite && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        /site/{selectedSite.subdomain}/articles/{formData.slug}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
                     <input
                       type="text"
                       value={formData.category}
                       onChange={(e) => handleInputChange('category', e.target.value)}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Health"
                     />
                   </div>
+
+                  {/* Read Time */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">Read Time</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Read Time (minutes)</label>
                     <input
                       type="number"
                       value={formData.read_time}
                       onChange={(e) => handleInputChange('read_time', parseInt(e.target.value))}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                       min="1"
                       max="60"
                     />
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Visibility Flags */}
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h3 className="font-semibold text-white mb-3">Visibility</h3>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.featured}
-                    onChange={(e) => handleInputChange('featured', e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-sm text-white">Featured</span>
-                </label>
+                {/* Visibility Flags */}
+                <div className="mt-6 pt-6 border-t border-gray-700">
+                  <h3 className="text-sm font-medium text-gray-300 mb-4">Visibility Flags</h3>
+                  <div className="flex flex-wrap gap-4">
+                    <label className="flex items-center gap-3 cursor-pointer bg-gray-700/50 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
+                      <input
+                        type="checkbox"
+                        checked={formData.featured}
+                        onChange={(e) => handleInputChange('featured', e.target.checked)}
+                        className="w-5 h-5 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500"
+                      />
+                      <div>
+                        <span className="text-white font-medium">Featured</span>
+                        <p className="text-xs text-gray-500">Show in featured section</p>
+                      </div>
+                    </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.hero}
-                    onChange={(e) => handleInputChange('hero', e.target.checked)}
-                    className="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
-                  />
-                  <span className="text-sm text-white">Hero Article</span>
-                </label>
+                    <label className="flex items-center gap-3 cursor-pointer bg-gray-700/50 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
+                      <input
+                        type="checkbox"
+                        checked={formData.hero}
+                        onChange={(e) => handleInputChange('hero', e.target.checked)}
+                        className="w-5 h-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
+                      />
+                      <div>
+                        <span className="text-white font-medium">Hero Article</span>
+                        <p className="text-xs text-gray-500">Display as hero on homepage</p>
+                      </div>
+                    </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.trending}
-                    onChange={(e) => handleInputChange('trending', e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-sm text-white">Trending</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h3 className="font-semibold text-white mb-3">Stats</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Views</span>
-                  <span className="text-white">{article.views.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Widgets</span>
-                  <span className="text-white">{widgets.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Status</span>
-                  <span className={formData.published ? 'text-green-400' : 'text-gray-400'}>
-                    {formData.published ? 'Published' : 'Draft'}
-                  </span>
+                    <label className="flex items-center gap-3 cursor-pointer bg-gray-700/50 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
+                      <input
+                        type="checkbox"
+                        checked={formData.trending}
+                        onChange={(e) => handleInputChange('trending', e.target.checked)}
+                        className="w-5 h-5 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500"
+                      />
+                      <div>
+                        <span className="text-white font-medium">Trending</span>
+                        <p className="text-xs text-gray-500">Mark as trending</p>
+                      </div>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* CTA Link Tracking - Collapsible */}
-            <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-              <button
-                onClick={() => setSettingsExpanded(!settingsExpanded)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-750 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <Link2 className="w-4 h-4 text-primary-400" />
-                  <span className="font-semibold text-white text-sm">CTA Tracking</span>
-                </div>
-                {settingsExpanded ? (
-                  <ChevronUp className="w-4 h-4 text-gray-400" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                )}
-              </button>
-
-              {settingsExpanded && (
-                <div className="p-4 border-t border-gray-700 space-y-3">
+            {/* CTA Tracking */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Link2 className="w-5 h-5 text-primary-400" />
+                  CTA Link Tracking
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">utm_source</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">utm_source</label>
                     <input
                       type="text"
                       value={trackingConfig.utm_source || ''}
                       onChange={(e) => setTrackingConfig(prev => ({ ...prev, utm_source: e.target.value }))}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="facebook, google"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">utm_medium</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">utm_medium</label>
                     <input
                       type="text"
                       value={trackingConfig.utm_medium || ''}
                       onChange={(e) => setTrackingConfig(prev => ({ ...prev, utm_medium: e.target.value }))}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="cpc, social"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">utm_campaign</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">utm_campaign</label>
                     <input
                       type="text"
                       value={trackingConfig.utm_campaign || ''}
                       onChange={(e) => setTrackingConfig(prev => ({ ...prev, utm_campaign: e.target.value }))}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="hormone-article"
                     />
                   </div>
-                  <label className="flex items-center gap-2 pt-1">
-                    <input
-                      type="checkbox"
-                      checked={trackingConfig.passthrough_fbclid !== false}
-                      onChange={(e) => setTrackingConfig(prev => ({ ...prev, passthrough_fbclid: e.target.checked }))}
-                      className="w-4 h-4 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500"
-                    />
-                    <span className="text-white text-sm">Pass through fbclid</span>
-                  </label>
+                  <div className="flex items-center">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={trackingConfig.passthrough_fbclid !== false}
+                        onChange={(e) => setTrackingConfig(prev => ({ ...prev, passthrough_fbclid: e.target.checked }))}
+                        className="w-5 h-5 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500"
+                      />
+                      <span className="text-white">Pass through fbclid</span>
+                    </label>
+                  </div>
                 </div>
-              )}
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary-400" />
+                  Statistics
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-white">{article.views.toLocaleString()}</p>
+                    <p className="text-sm text-gray-400 mt-1">Views</p>
+                  </div>
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-white">{widgets.length}</p>
+                    <p className="text-sm text-gray-400 mt-1">Widgets</p>
+                  </div>
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-white">{formData.read_time}</p>
+                    <p className="text-sm text-gray-400 mt-1">Min Read</p>
+                  </div>
+                  <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                    <p className={`text-3xl font-bold ${formData.published ? 'text-green-400' : 'text-gray-400'}`}>
+                      {formData.published ? 'Live' : 'Draft'}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">Status</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Media Library Modal */}
