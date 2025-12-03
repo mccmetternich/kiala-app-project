@@ -231,22 +231,8 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
         }
       ];
     } else {
-      return [
-        {
-          label: 'Create New Site',
-          href: '/admin/sites/new',
-          icon: Plus,
-          className: 'bg-primary-600 hover:bg-primary-700 text-white',
-          description: 'Start a new site'
-        },
-        {
-          label: 'Email Management',
-          href: '/admin/emails',
-          icon: Users,
-          className: 'bg-green-600 hover:bg-green-700 text-white',
-          description: 'Global email management'
-        }
-      ];
+      // No quick actions on global dashboard - actions are in the page itself
+      return [];
     }
   };
 
