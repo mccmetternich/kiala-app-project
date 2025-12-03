@@ -166,20 +166,13 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
         }
       ];
     } else {
-      // Global navigation - simplified
+      // Global navigation - simplified (no separate Sites page - merged into Dashboard)
       return [
         {
           name: 'Dashboard',
           href: '/admin',
           icon: LayoutGrid,
-          description: 'Global overview and metrics'
-        },
-        {
-          name: 'All Sites',
-          href: '/admin/sites',
-          icon: Globe,
-          description: 'Manage all your sites',
-          badge: sites.length
+          description: 'Sites, articles and metrics'
         },
         {
           name: 'All Articles',
@@ -188,7 +181,7 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
           description: 'Articles across all sites'
         },
         {
-          name: 'Email Management',
+          name: 'Email Signups',
           href: '/admin/emails',
           icon: Users,
           description: 'All email subscribers'

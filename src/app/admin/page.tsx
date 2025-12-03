@@ -6,16 +6,15 @@ import {
   Globe,
   FileText,
   Eye,
-  TrendingUp,
   Users,
   Plus,
   Edit3,
   ExternalLink,
-  Settings
+  Settings,
+  Clock
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import Badge from '@/components/ui/Badge';
-import PublishToggle from '@/components/admin/PublishToggle';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Site {
@@ -30,6 +29,16 @@ interface Site {
   updated_at: string;
 }
 
+interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  status: 'draft' | 'published';
+  site_id: string;
+  updated_at: string;
+  views?: number;
+}
+
 interface DashboardStats {
   totalSites: number;
   totalArticles: number;
@@ -39,6 +48,7 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const [sites, setSites] = useState<Site[]>([]);
+  const [recentArticles, setRecentArticles] = useState<Article[]>([]);
   const [sitesMetrics, setSitesMetrics] = useState<Record<string, { articleCount: number; viewCount: number }>>({});
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,12 +69,14 @@ export default function AdminDashboard() {
           setStats(statsData.stats);
         }
 
-        // Get article counts and views for each site
+        // Get article counts and views for each site, and collect all articles
+        let allArticles: Article[] = [];
         const metricsPromises = sitesList.map(async (site: Site) => {
           try {
             const response = await fetch(`/api/articles?siteId=${site.id}`);
             const data = await response.json();
             const articles = data.articles || [];
+            allArticles = [...allArticles, ...articles.map((a: any) => ({ ...a, site_id: site.id }))];
             const viewCount = articles.reduce((sum: number, a: any) => sum + (a.views || 0), 0);
             return { siteId: site.id, articleCount: articles.length, viewCount };
           } catch {
@@ -79,6 +91,12 @@ export default function AdminDashboard() {
         }, {} as Record<string, { articleCount: number; viewCount: number }>);
 
         setSitesMetrics(metricsMap);
+
+        // Sort articles by updated_at and take the 5 most recent
+        const sortedArticles = allArticles.sort((a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        ).slice(0, 5);
+        setRecentArticles(sortedArticles);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
       } finally {
@@ -139,13 +157,22 @@ export default function AdminDashboard() {
             <h1 className="text-2xl md:text-3xl font-bold text-white">Dashboard</h1>
             <p className="text-gray-400 text-sm">Manage your sites and content</p>
           </div>
-          <Link
-            href="/admin/sites/new"
-            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            New Site
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/articles/new"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              New Article
+            </Link>
+            <Link
+              href="/admin/sites/new"
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+            >
+              <Globe className="w-4 h-4" />
+              New Site
+            </Link>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -167,13 +194,55 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Recent Articles */}
+        {recentArticles.length > 0 && (
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-gray-400" />
+                <h2 className="text-lg font-semibold text-white">Recent Articles</h2>
+              </div>
+              <Link href="/admin/articles" className="text-primary-400 hover:text-primary-300 text-sm">
+                View all →
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {recentArticles.map((article) => {
+                const site = sites.find(s => s.id === article.site_id);
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/admin/articles/${article.id}/edit`}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-700/50 transition-colors group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <FileText className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-200 truncate group-hover:text-primary-300 transition-colors">
+                          {article.title}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {site?.name || 'Unknown site'} • {formatRelativeTime(article.updated_at)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Badge variant={article.status === 'published' ? 'trust' : 'default'} size="sm">
+                        {article.status === 'published' ? 'Live' : 'Draft'}
+                      </Badge>
+                      <Edit3 className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Sites Grid */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-white">Your Sites</h2>
-            <Link href="/admin/articles" className="text-primary-400 hover:text-primary-300 text-sm">
-              View all articles →
-            </Link>
           </div>
 
           {sites.length === 0 ? (
@@ -301,53 +370,6 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* Quick Links */}
-        <div className="grid md:grid-cols-3 gap-4">
-          <Link
-            href="/admin/articles"
-            className="bg-gray-800 rounded-xl border border-gray-700 hover:border-gray-600 p-5 transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-blue-900/30 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-blue-400" />
-              </div>
-              <div>
-                <h3 className="font-medium text-white group-hover:text-primary-300 transition-colors">All Articles</h3>
-                <p className="text-xs text-gray-400">Manage content across sites</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/emails"
-            className="bg-gray-800 rounded-xl border border-gray-700 hover:border-gray-600 p-5 transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-green-400" />
-              </div>
-              <div>
-                <h3 className="font-medium text-white group-hover:text-primary-300 transition-colors">Email Signups</h3>
-                <p className="text-xs text-gray-400">View and export subscribers</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/monitoring"
-            className="bg-gray-800 rounded-xl border border-gray-700 hover:border-gray-600 p-5 transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-orange-900/30 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-orange-400" />
-              </div>
-              <div>
-                <h3 className="font-medium text-white group-hover:text-primary-300 transition-colors">System Monitor</h3>
-                <p className="text-xs text-gray-400">Performance & health</p>
-              </div>
-            </div>
-          </Link>
-        </div>
       </div>
     </EnhancedAdminLayout>
   );
