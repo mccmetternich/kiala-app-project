@@ -47,11 +47,17 @@ export async function generateMetadata(
     ? (typeof site.brand_profile === 'string' ? JSON.parse(site.brand_profile) : site.brand_profile)
     : null;
 
+  // Parse settings if it's a string
+  const siteSettings = site?.settings
+    ? (typeof site.settings === 'string' ? JSON.parse(site.settings) : site.settings)
+    : null;
+
   const title = brand?.name
     ? `${brand.name} - Women's Health Authority`
     : defaultMetadata.title;
 
-  const description = brand?.bio || defaultMetadata.description;
+  // Priority for description: settings.metaDescription > brand.bio > default
+  const description = siteSettings?.metaDescription || brand?.bio || defaultMetadata.description;
 
   // Priority for OG image: sidebarImage > aboutImage > authorImage > profileImage
   // sidebarImage is typically the best quality image for social sharing

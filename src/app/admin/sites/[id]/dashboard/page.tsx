@@ -649,6 +649,28 @@ export default function SiteDashboard() {
                       </div>
                     </div>
 
+                    {/* SEO / Meta Description */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-4">SEO Settings</h3>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Meta Description</label>
+                        <textarea
+                          rows={3}
+                          value={settings.metaDescription || ''}
+                          onChange={(e) => updateSettingsField('metaDescription', e.target.value)}
+                          maxLength={160}
+                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                          placeholder="A compelling description of your site for search engines and social sharing..."
+                        />
+                        <div className="flex justify-between mt-2">
+                          <p className="text-xs text-gray-500">This appears in search results and when articles are shared on social media</p>
+                          <p className={`text-xs ${(settings.metaDescription?.length || 0) > 155 ? 'text-yellow-400' : 'text-gray-500'}`}>
+                            {settings.metaDescription?.length || 0}/160
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Brand Profile */}
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-4">Brand Profile</h3>
@@ -717,6 +739,139 @@ export default function SiteDashboard() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+
+                    {/* Audio Messages */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-4">Audio Messages</h3>
+                      <p className="text-sm text-gray-400 mb-4">Add personal audio messages to different sections of your site.</p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {/* Sidebar Audio */}
+                        <div className="bg-gray-700/50 rounded-xl p-4">
+                          <label className="block text-sm font-medium text-gray-300 mb-1">Sidebar Audio</label>
+                          <p className="text-xs text-gray-500 mb-3">Plays in the credibility sidebar panel</p>
+                          {settings.audioUrl ? (
+                            <div className="space-y-3">
+                              <audio controls className="w-full h-10" src={settings.audioUrl}>
+                                Your browser does not support audio.
+                              </audio>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => { setMediaTarget('audio'); setShowMediaLibrary(true); }}
+                                  className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-gray-200 rounded-lg text-sm font-medium transition-all"
+                                >
+                                  Change
+                                </button>
+                                <button
+                                  onClick={() => updateSettingsField('audioUrl', undefined)}
+                                  className="px-3 py-1.5 bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-all"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => { setMediaTarget('audio'); setShowMediaLibrary(true); }}
+                              className="flex items-center gap-3 w-full p-3 bg-gray-700 rounded-lg border-2 border-dashed border-gray-600 hover:border-primary-500 transition-colors"
+                            >
+                              <Upload className="w-5 h-5 text-gray-400" />
+                              <div className="text-left">
+                                <p className="text-sm font-medium text-gray-300">Select audio</p>
+                                <p className="text-xs text-gray-500">From Media Library</p>
+                              </div>
+                            </button>
+                          )}
+                        </div>
+
+                        {/* About Page Audio */}
+                        <div className="bg-gray-700/50 rounded-xl p-4">
+                          <label className="block text-sm font-medium text-gray-300 mb-1">About Page Audio</label>
+                          <p className="text-xs text-gray-500 mb-3">Plays on the About page</p>
+                          {settings.aboutAudioUrl ? (
+                            <div className="space-y-3">
+                              <audio controls className="w-full h-10" src={settings.aboutAudioUrl}>
+                                Your browser does not support audio.
+                              </audio>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => { setMediaTarget('aboutAudio'); setShowMediaLibrary(true); }}
+                                  className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-gray-200 rounded-lg text-sm font-medium transition-all"
+                                >
+                                  Change
+                                </button>
+                                <button
+                                  onClick={() => updateSettingsField('aboutAudioUrl', undefined)}
+                                  className="px-3 py-1.5 bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-all"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => { setMediaTarget('aboutAudio'); setShowMediaLibrary(true); }}
+                              className="flex items-center gap-3 w-full p-3 bg-gray-700 rounded-lg border-2 border-dashed border-gray-600 hover:border-primary-500 transition-colors"
+                            >
+                              <Upload className="w-5 h-5 text-gray-400" />
+                              <div className="text-left">
+                                <p className="text-sm font-medium text-gray-300">Select audio</p>
+                                <p className="text-xs text-gray-500">From Media Library</p>
+                              </div>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Lead Magnet PDF */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-4">Lead Magnet PDF</h3>
+                      <p className="text-sm text-gray-400 mb-4">Upload a PDF that will be delivered to users when they sign up via popups or email capture forms.</p>
+                      <div className="bg-gray-700/50 rounded-xl p-4 max-w-md">
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Wellness Guide / Lead Magnet</label>
+                        <p className="text-xs text-gray-500 mb-3">This PDF will be automatically downloaded when users submit their email</p>
+                        {settings.leadMagnetPdfUrl ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg border border-gray-600">
+                              <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                                <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-200 truncate">Lead Magnet PDF</p>
+                                <p className="text-xs text-gray-500 truncate">{settings.leadMagnetPdfUrl}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => { setMediaTarget('leadMagnetPdf'); setShowMediaLibrary(true); }}
+                                className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-gray-200 rounded-lg text-sm font-medium transition-all"
+                              >
+                                Change
+                              </button>
+                              <button
+                                onClick={() => updateSettingsField('leadMagnetPdfUrl', undefined)}
+                                className="px-3 py-1.5 bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-all"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setMediaTarget('leadMagnetPdf'); setShowMediaLibrary(true); }}
+                            className="flex items-center gap-3 w-full p-3 bg-gray-700 rounded-lg border-2 border-dashed border-gray-600 hover:border-primary-500 transition-colors"
+                          >
+                            <Upload className="w-5 h-5 text-gray-400" />
+                            <div className="text-left">
+                              <p className="text-sm font-medium text-gray-300">Select PDF</p>
+                              <p className="text-xs text-gray-500">From Media Library</p>
+                            </div>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
