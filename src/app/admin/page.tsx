@@ -33,7 +33,7 @@ interface Article {
   id: string;
   title: string;
   slug: string;
-  status: 'draft' | 'published';
+  published: boolean;
   site_id: string;
   updated_at: string;
   views?: number;
@@ -360,8 +360,8 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <Badge variant={article.status === 'published' ? 'trust' : 'default'} size="sm">
-                            {article.status === 'published' ? 'Live' : 'Draft'}
+                          <Badge variant={article.published ? 'trust' : 'default'} size="sm">
+                            {article.published ? 'Live' : 'Draft'}
                           </Badge>
                           <Edit3 className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
