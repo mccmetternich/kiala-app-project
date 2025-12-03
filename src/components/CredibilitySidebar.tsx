@@ -126,7 +126,7 @@ export default function CredibilitySidebar({
           <div className="text-center">
             <div className="relative w-24 h-24 mx-auto mb-4">
               <img
-                src={doctor?.sidebarImage || doctor?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop'}
+                src={doctor?.sidebarImage || doctor?.profileImage}
                 alt={doctor?.name || 'Doctor'}
                 className="absolute inset-0 w-full h-full rounded-full object-cover border-4 border-primary-200 shadow-lg"
               />

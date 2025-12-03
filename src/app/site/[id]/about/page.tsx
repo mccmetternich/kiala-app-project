@@ -288,7 +288,7 @@ export default function AboutPage() {
                 {/* Left: Large Profile Image */}
                 <div className="relative h-80 md:h-auto md:min-h-[500px]">
                   <img
-                    src={brand.aboutImage || brand.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=600&fit=crop'}
+                    src={brand.aboutImage || brand.sidebarImage || brand.profileImage}
                     alt={brand.name}
                     className="absolute inset-0 w-full h-full object-cover"
                   />

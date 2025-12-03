@@ -139,7 +139,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                 {/* Top row: Avatar + Bio */}
                 <div className="flex items-center gap-3 mb-2">
                   <img
-                    src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=120&h=120&fit=crop'}
+                    src={brand?.logoImage || brand?.sidebarImage || brand?.profileImage}
                     alt={brand?.name || 'Doctor'}
                     className="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0"
                   />
@@ -188,7 +188,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                   {/* Left half: Avatar + Bio */}
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <img
-                      src={brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop'}
+                      src={brand?.logoImage || brand?.sidebarImage || brand?.profileImage}
                       alt={brand?.name || 'Doctor'}
                       className="w-8 h-8 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0"
                     />

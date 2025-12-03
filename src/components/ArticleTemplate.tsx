@@ -791,7 +791,7 @@ export default function ArticleTemplate({
         <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
           <div className="relative w-12 h-12">
             <img
-              src={site.brand?.authorImage || site.brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop'}
+              src={site.brand?.authorImage || site.brand?.sidebarImage || site.brand?.profileImage}
               alt={site.brand?.name || 'Author'}
               className="absolute inset-0 w-full h-full object-cover rounded-full"
             />

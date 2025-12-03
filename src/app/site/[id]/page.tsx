@@ -37,7 +37,7 @@ const fallbackSite: Site = {
     tagline: 'Your trusted source for health information',
     bio: 'We are a team of health experts dedicated to providing you with the most accurate and up-to-date health information.',
     logo: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=100&h=100&fit=crop',
-    profileImage: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop',
+    profileImage: '',
     quote: 'True wellness comes from understanding your body\'s unique needs.'
   },
   settings: {
@@ -189,7 +189,7 @@ export default function DynamicSiteHomepage() {
             views: heroArticle.views,
             readTime: heroArticle.read_time,
             author: transformedSite.brand?.name || 'Dr. Heart',
-            authorImage: transformedSite.brand?.authorImage || transformedSite.brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop'
+            authorImage: transformedSite.brand?.authorImage || transformedSite.brand?.sidebarImage || transformedSite.brand?.profileImage
           }} />
         ) : (
           <HeroStory config={{
@@ -198,7 +198,7 @@ export default function DynamicSiteHomepage() {
             image: 'https://images.unsplash.com/photo-1506629905270-11674e167d6f?w=600&h=400&fit=crop',
             buttonText: 'Learn More →',
             author: transformedSite.brand?.name || 'Dr. Heart',
-            authorImage: transformedSite.brand?.authorImage || transformedSite.brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop'
+            authorImage: transformedSite.brand?.authorImage || transformedSite.brand?.sidebarImage || transformedSite.brand?.profileImage
           }} />
         )}
         

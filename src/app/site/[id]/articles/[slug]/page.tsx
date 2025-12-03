@@ -56,9 +56,9 @@ export async function generateMetadata(
 
   // For OG/social sharing: Always use Dr. Amy's about image (not the article hero)
   // This ensures a consistent brand presence when articles are shared
-  const ogImagePath = brand?.aboutImage ||
-                      brand?.profileImage ||
-                      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&h=630&fit=crop';
+  const ogImagePath = brand?.sidebarImage ||
+                      brand?.aboutImage ||
+                      brand?.profileImage;
 
   // Ensure image URL is absolute - use Vercel URL for deployed environment
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||

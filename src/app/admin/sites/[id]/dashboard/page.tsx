@@ -304,7 +304,7 @@ export default function SiteDashboard() {
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-600">
                     <img 
-                      src={brand?.logo || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=48&h=48&fit=crop'} 
+                      src={brand?.logoImage || brand?.sidebarImage || brand?.profileImage} 
                       alt={brand?.name || 'Brand'} 
                       className="w-full h-full object-cover" 
                     />

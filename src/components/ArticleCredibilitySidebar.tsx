@@ -67,7 +67,7 @@ export default function ArticleCredibilitySidebar({
           <div className="text-center">
             <div className="relative w-24 h-24 mx-auto mb-4">
               <img
-                src={brand?.sidebarImage || brand?.profileImage || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop'}
+                src={brand?.sidebarImage || brand?.profileImage}
                 alt={brand?.name || 'Doctor'}
                 className="absolute inset-0 w-full h-full rounded-full object-cover border-4 border-primary-200 shadow-lg"
               />

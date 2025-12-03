@@ -227,7 +227,7 @@ export default function SitesPage() {
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-600 flex-shrink-0">
                         <img 
-                          src={brand?.logo || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=32&h=32&fit=crop'} 
+                          src={brand?.logoImage || brand?.sidebarImage || brand?.profileImage} 
                           alt={brand?.name || 'Brand'} 
                           className="w-full h-full object-cover" 
                         />
