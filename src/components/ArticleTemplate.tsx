@@ -48,7 +48,8 @@ function getCtaUrl(config: Record<string, unknown>): string {
   if (ctaType === 'anchor' && config.anchorWidgetId) {
     return `#widget-${config.anchorWidgetId}`;
   }
-  return (config.buttonUrl || config.ctaUrl || '#') as string;
+  // Prefer ctaUrl (new field) over buttonUrl (legacy field)
+  return (config.ctaUrl || config.buttonUrl || '#') as string;
 }
 
 // Widget renderer component
