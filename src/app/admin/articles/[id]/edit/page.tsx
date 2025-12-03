@@ -296,7 +296,8 @@ export default function EditArticle() {
       id: `widget-${Date.now()}`,
       type,
       config: {},
-      enabled: true
+      enabled: true,
+      position: widgets.length
     };
     setWidgets(prev => [...prev, newWidget]);
   };

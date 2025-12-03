@@ -252,9 +252,9 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           {!isLive && (
-                            <Badge variant="default" size="sm">
+                            <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium">
                               Draft
-                            </Badge>
+                            </span>
                           )}
                         </div>
 
