@@ -16,6 +16,7 @@ interface PricingOption {
   badge?: string;
   popular?: boolean;
   gifts?: { name: string; value: string }[];
+  url?: string; // Per-package checkout URL
 }
 
 interface ProductImage {
@@ -496,9 +497,11 @@ export default function ShopNowWidget({
   );
 
   const CTASection = () => {
-    const baseUrl = ctaUrl.includes('?')
-      ? `${ctaUrl}&option=${selectedOption}`
-      : `${ctaUrl}?option=${selectedOption}`;
+    // Use per-package URL if available, otherwise fall back to global ctaUrl
+    const packageUrl = currentOption.url || ctaUrl;
+    const baseUrl = packageUrl.includes('?')
+      ? `${packageUrl}&option=${selectedOption}`
+      : `${packageUrl}?option=${selectedOption}`;
 
     const handleCTAClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       // Fire InitiateCheckout event with product details

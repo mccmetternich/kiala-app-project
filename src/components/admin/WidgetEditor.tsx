@@ -104,7 +104,8 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
       perUnit: 97,
       savings: 'Save $70',
       popular: false,
-      gifts: []
+      gifts: [],
+      url: ''
     };
     onChange([...options, newOption]);
   };
@@ -217,6 +218,19 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
             />
             <p className="text-xs text-gray-500 mt-1">Leave empty for no badge. Shows as a ribbon on the package.</p>
+          </div>
+
+          {/* Package-specific Checkout URL */}
+          <div className="mb-3">
+            <label className="block text-xs font-medium text-gray-600 mb-1">Checkout URL (optional)</label>
+            <input
+              type="url"
+              value={option.url || ''}
+              onChange={(e) => updateOption(index, 'url', e.target.value)}
+              placeholder="https://checkout.example.com/package-1"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
+            />
+            <p className="text-xs text-gray-500 mt-1">Leave empty to use the default CTA URL. Meta tracking params are appended automatically.</p>
           </div>
 
           {/* Free Gifts Section */}
@@ -3535,7 +3549,8 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
           originalPrice: 167,
           perUnit: 97,
           savings: 'Save $70',
-          gifts: [{ name: 'Free Shipping', value: '$10.00' }]
+          gifts: [{ name: 'Free Shipping', value: '$10.00' }],
+          url: ''
         },
         {
           id: 'double',
@@ -3549,7 +3564,8 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
           gifts: [
             { name: 'Free Shipping', value: '$10.00' },
             { name: 'Free Frother', value: '$10.00' }
-          ]
+          ],
+          url: ''
         },
         {
           id: 'triple',
@@ -3563,7 +3579,8 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
             { name: 'Free Shipping', value: '$10.00' },
             { name: 'Free Frother', value: '$10.00' },
             { name: 'Free Wellness Guide', value: '$10.00' }
-          ]
+          ],
+          url: ''
         }
       ],
       benefits: [
