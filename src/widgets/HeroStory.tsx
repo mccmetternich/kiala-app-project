@@ -40,7 +40,7 @@ export default function HeroStory({
   ctaText = 'Read Full Article',
   ctaLink = '#',
   author = 'Dr. Amy Heart',
-  authorImage = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+  authorImage,
   likes = 1247,
   views = 8934,
   readTime = 5,

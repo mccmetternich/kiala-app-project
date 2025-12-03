@@ -2,11 +2,12 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import SitePixelProvider from '@/components/SitePixelProvider';
 import db from '@/lib/db-enhanced';
 
-// Default metadata for the site
+// Default metadata for the site - fallback only when no brand profile exists
 const defaultMetadata = {
   title: 'Dr. Amy Heart - Women\'s Health Authority',
   description: 'Join one of the fastest-growing communities of women over 40 discovering breakthrough research, evidence-based protocols, and transformative wellness strategies. Dr. Amy Heart shares clinically-validated insights that have helped thousands reclaim their energy, balance their hormones, and feel vibrant again.',
-  image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&h=630&fit=crop',
+  // No default image - will use brand images from database
+  image: '',
 };
 
 type Props = {
@@ -51,7 +52,15 @@ export async function generateMetadata(
     : defaultMetadata.title;
 
   const description = brand?.bio || defaultMetadata.description;
-  const image = brand?.profileImage || brand?.authorImage || defaultMetadata.image;
+
+  // Priority for OG image: sidebarImage > aboutImage > authorImage > profileImage
+  // sidebarImage is typically the best quality image for social sharing
+  const rawImage = brand?.sidebarImage || brand?.aboutImage || brand?.authorImage || brand?.profileImage || defaultMetadata.image;
+
+  // Convert relative paths to absolute URLs for OG images
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
+                  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+  const image = rawImage && rawImage.startsWith('/') ? `${baseUrl}${rawImage}` : rawImage;
 
   // Get analytics settings for domain verification
   const analytics = await getSiteAnalytics(subdomain);

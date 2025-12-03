@@ -51,7 +51,7 @@ export default function ExclusiveProductCard({
   ],
   badges = ['#1 BEST SELLER', 'DOCTOR RECOMMENDED'],
   doctorName = 'Dr. Heart',
-  doctorImage = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop',
+  doctorImage,
   ctaText = 'TRY IT NOW',
   ctaUrl = '#',
   target = '_self',
