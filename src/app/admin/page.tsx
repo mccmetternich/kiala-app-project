@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                     >
                       {/* Site Header - Clickable */}
                       <Link
-                        href={`/admin/sites/${site.id}/settings`}
+                        href={`/admin/sites/${site.id}/dashboard`}
                         className="block p-5 border-b border-gray-700 hover:bg-gray-750 transition-colors"
                       >
                         <div className="flex items-start justify-between mb-3">
@@ -287,18 +287,11 @@ export default function AdminDashboard() {
                       <div className="p-4">
                         <div className="flex items-center gap-2">
                           <Link
-                            href={`/admin/sites/${site.id}/articles`}
+                            href={`/admin/sites/${site.id}/dashboard`}
                             className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded-lg text-center text-sm font-medium transition-colors flex items-center justify-center gap-2"
                           >
                             <FileText className="w-4 h-4" />
-                            Manage Articles
-                          </Link>
-                          <Link
-                            href={`/admin/sites/${site.id}/settings`}
-                            className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-2 rounded-lg text-center text-sm font-medium transition-colors flex items-center justify-center gap-2"
-                          >
-                            <Settings className="w-4 h-4" />
-                            Settings
+                            Manage Site
                           </Link>
                           <a
                             href={`/site/${site.subdomain}`}
