@@ -189,7 +189,7 @@ export const domainManager = {
       throw new Error('Domain not found');
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.kiala.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dramyheart.com';
 
     return {
       domain: domain.domain,
@@ -208,8 +208,8 @@ export const domainManager = {
         },
         {
           type: 'TXT',
-          name: `_kiala-verify.${domain.domain}`,
-          value: `kiala-site-verification=${domainId}`,
+          name: `_cms-verify.${domain.domain}`,
+          value: `cms-site-verification=${domainId}`,
           ttl: 300
         }
       ],

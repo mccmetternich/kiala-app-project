@@ -38,13 +38,13 @@ export default function DomainSetupGuide({ domain, subdomain }: DomainSetupGuide
     {
       type: 'CNAME',
       name: '@',
-      value: 'kiala-dr-god.vercel.app',
+      value: 'cname.vercel-dns.com',
       description: 'Main domain redirect'
     },
     {
       type: 'CNAME',
       name: 'www',
-      value: 'kiala-dr-god.vercel.app',
+      value: 'cname.vercel-dns.com',
       description: 'WWW subdomain redirect'
     }
   ];
@@ -63,8 +63,8 @@ export default function DomainSetupGuide({ domain, subdomain }: DomainSetupGuide
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-sm text-gray-400">Kiala Subdomain:</span>
-              <div className="text-gray-200 font-mono">{subdomain}.kiala.com</div>
+              <span className="text-sm text-gray-400">Site Subdomain:</span>
+              <div className="text-gray-200 font-mono">/site/{subdomain}</div>
             </div>
             <div className="flex items-center gap-2 text-green-500">
               <CheckCircle className="w-4 h-4" />

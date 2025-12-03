@@ -119,10 +119,10 @@ function SidebarContent({ pathname, onClose }: { pathname: string; onClose?: () 
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-6 border-b border-gray-700">
         <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold text-sm">K</span>
+          <span className="text-white font-bold text-sm">DR</span>
         </div>
         <div>
-          <h1 className="text-lg font-bold text-gray-200">Kiala DR God</h1>
+          <h1 className="text-lg font-bold text-gray-200">DR CMS</h1>
           <p className="text-xs text-gray-400">Admin Panel</p>
         </div>
         {onClose && (

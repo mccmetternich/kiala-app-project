@@ -60,9 +60,9 @@ export async function generateMetadata(
                       brand?.aboutImage ||
                       brand?.profileImage;
 
-  // Ensure image URL is absolute - use Vercel URL for deployed environment
+  // Ensure image URL is absolute - use base URL or Vercel URL
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
-                  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://kiala-app-project.vercel.app');
+                  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://dramyheart.com');
 
   const ogImage = ogImagePath.startsWith('http')
     ? ogImagePath

@@ -322,7 +322,7 @@ export default function SiteDashboard() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Subdomain:</span>
-                    <span className="text-gray-200">{site.subdomain}.kiala.com</span>
+                    <span className="text-gray-200">{site.subdomain}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Status:</span>

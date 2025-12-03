@@ -389,7 +389,7 @@ export default function SiteSettings() {
                           placeholder="drsmith"
                         />
                         <span className="px-4 py-2 bg-gray-600 border border-l-0 border-gray-600 rounded-r-lg text-gray-300 text-sm">
-                          .kiala.com
+                          (subdomain)
                         </span>
                       </div>
                     </div>

@@ -62,7 +62,7 @@ export default function MetaPixel({
 
             // Initialize with first-party cookies enabled
             fbq('init', '${pixelId}', {}, {
-              agent: 'kiala-cms-1.0'
+              agent: 'dr-cms-1.0'
             });
 
             // Fire PageView event

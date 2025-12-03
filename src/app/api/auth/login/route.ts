@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simple hardcoded credentials
-// In production, you would use environment variables and proper hashing
-const ADMIN_USERNAME = 'KialaGod';
-const ADMIN_PASSWORD = 'KialaG0D123';
+// Credentials from environment variables
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
 
-// Simple auth token (in production, use proper JWT or session management)
-const AUTH_TOKEN = 'kiala_auth_' + Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64');
+// Auth token for session management
+const AUTH_TOKEN = 'cms_auth_' + Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64');
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +15,7 @@ export async function POST(request: NextRequest) {
       const response = NextResponse.json({ success: true });
 
       // Set auth cookie (expires in 7 days)
-      response.cookies.set('kiala_admin_auth', AUTH_TOKEN, {
+      response.cookies.set('cms_admin_auth', AUTH_TOKEN, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

@@ -456,11 +456,11 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
               {/* User menu */}
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">MM</span>
+                  <span className="text-white font-semibold text-sm">A</span>
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-sm font-medium text-gray-200">Admin</div>
-                  <div className="text-xs text-gray-400">matthias@kiala.com</div>
+                  <div className="text-xs text-gray-400">admin@cms.local</div>
                 </div>
               </div>
             </div>
@@ -503,10 +503,10 @@ function SidebarContent({
       <div className="flex flex-col border-b border-gray-700">
         <div className="flex h-16 items-center gap-3 px-6">
           <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">K</span>
+            <span className="text-white font-bold text-sm">DR</span>
           </div>
           <div className="flex-1">
-            <h1 className="text-lg font-bold text-gray-200">Kiala</h1>
+            <h1 className="text-lg font-bold text-gray-200">DR CMS</h1>
             <p className="text-xs text-gray-400">Direct Response CMS</p>
           </div>
           {onClose && (
@@ -533,7 +533,7 @@ function SidebarContent({
                       {currentSite.name}
                     </div>
                     <div className="text-xs text-gray-400">
-                      {currentSite.subdomain}.kiala.com
+                      {currentSite.subdomain}
                     </div>
                   </div>
                 </>
@@ -586,7 +586,7 @@ function SidebarContent({
                       {site.name}
                     </div>
                     <div className="text-xs text-gray-400 flex items-center gap-2">
-                      <span>{site.subdomain}.kiala.com</span>
+                      <span>{site.subdomain}</span>
                       {site.status === 'published' ? (
                         <span className="inline-flex items-center gap-1">
                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>

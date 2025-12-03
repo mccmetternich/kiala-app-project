@@ -7,9 +7,9 @@ const domainToSite: Record<string, string> = {
 };
 
 // Auth token must match what's set in the login route
-const ADMIN_USERNAME = 'KialaGod';
-const ADMIN_PASSWORD = 'KialaG0D123';
-const AUTH_TOKEN = 'kiala_auth_' + Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64');
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
+const AUTH_TOKEN = 'cms_auth_' + Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64');
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
 
   // Protect admin routes (except login-related)
   if (url.pathname.startsWith('/admin')) {
-    const authCookie = request.cookies.get('kiala_admin_auth');
+    const authCookie = request.cookies.get('cms_admin_auth');
 
     if (!authCookie || authCookie.value !== AUTH_TOKEN) {
       // Redirect to login page

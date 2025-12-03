@@ -22,7 +22,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kiala DR God - Direct Response CMS Platform",
+  title: "DR CMS - Direct Response Platform",
   description: "Multi-tenant direct response content management system for editorial-driven marketing sites",
   keywords: ["cms", "direct response", "marketing", "multi-tenant"],
 };

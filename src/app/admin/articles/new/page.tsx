@@ -406,7 +406,7 @@ Click 'Insert Widget' above to add interactive elements like testimonials, produ
                   </select>
                   {selectedSite && (
                     <p className="text-xs text-gray-400 mt-1">
-                      Will publish to: {selectedSite.subdomain}.kiala.com
+                      Will publish to: /site/{selectedSite.subdomain}
                     </p>
                   )}
                 </div>

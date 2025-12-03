@@ -239,7 +239,7 @@ export default function NewSitePage() {
                   className="flex-1 border border-gray-600 bg-gray-700 text-gray-200 rounded-l-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
                 <span className="px-3 py-3 bg-gray-600 border border-l-0 border-gray-600 rounded-r-lg text-gray-300 text-sm">
-                  .kiala.com
+                  (subdomain)
                 </span>
               </div>
               <p className="text-sm text-gray-400 mt-1">
