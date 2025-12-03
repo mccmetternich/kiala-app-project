@@ -8,9 +8,7 @@ import {
   Calendar,
   Trash2,
   Search,
-  Filter,
   Check,
-  ChevronDown,
   Clock,
   TrendingUp,
   Globe,
@@ -45,31 +43,32 @@ interface Site {
 type DatePreset = 'all' | 'today' | 'week' | 'month' | 'quarter' | 'custom';
 
 export default function EmailsPage() {
-  const [subscribers, setSubscribers] = useState<EmailSubscriber[]>([]);
+  const [allSubscribers, setAllSubscribers] = useState<EmailSubscriber[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
-  const [selectedSiteId, setSelectedSiteId] = useState<string>('');
+  const [selectedSiteIds, setSelectedSiteIds] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [stats, setStats] = useState({ total: 0, active: 0, thisWeek: 0, unsubscribed: 0 });
 
   // Filter states
   const [datePreset, setDatePreset] = useState<DatePreset>('all');
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'unsubscribed'>('all');
-  const [showFilters, setShowFilters] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   useEffect(() => {
     loadSites();
   }, []);
 
+  // Load subscribers when selected sites change
   useEffect(() => {
-    if (selectedSiteId) {
-      loadSubscribers();
+    if (selectedSiteIds.size > 0) {
+      loadAllSubscribers();
+    } else {
+      setAllSubscribers([]);
     }
-  }, [selectedSiteId]);
+  }, [selectedSiteIds]);
 
   const loadSites = async () => {
     try {
@@ -78,8 +77,9 @@ export default function EmailsPage() {
         const sitesData = await sitesResponse.json();
         const sitesList = sitesData.sites || [];
         setSites(sitesList);
-        if (sitesList.length > 0 && !selectedSiteId) {
-          setSelectedSiteId(sitesList[0].id);
+        // Select all sites by default
+        if (sitesList.length > 0) {
+          setSelectedSiteIds(new Set(sitesList.map((s: Site) => s.id)));
         }
       }
     } catch (error) {
@@ -87,25 +87,53 @@ export default function EmailsPage() {
     }
   };
 
-  const loadSubscribers = async () => {
-    if (!selectedSiteId) {
+  const loadAllSubscribers = async () => {
+    if (selectedSiteIds.size === 0) {
+      setAllSubscribers([]);
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/subscribers?siteId=${selectedSiteId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setSubscribers(data.subscribers || []);
-        setStats(data.stats || { total: 0, active: 0, thisWeek: 0, unsubscribed: 0 });
-      }
+
+      // Fetch subscribers for all selected sites
+      const promises = Array.from(selectedSiteIds).map(siteId =>
+        fetch(`/api/subscribers?siteId=${siteId}`).then(r => r.ok ? r.json() : { subscribers: [] })
+      );
+
+      const results = await Promise.all(promises);
+      const combined = results.flatMap(r => r.subscribers || []);
+
+      // Sort by created_at descending
+      combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setAllSubscribers(combined);
     } catch (error) {
       console.error('Error loading subscribers:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleSite = (siteId: string) => {
+    setSelectedSiteIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(siteId)) {
+        newSet.delete(siteId);
+      } else {
+        newSet.add(siteId);
+      }
+      return newSet;
+    });
+  };
+
+  const selectAllSites = () => {
+    setSelectedSiteIds(new Set(sites.map(s => s.id)));
+  };
+
+  const deselectAllSites = () => {
+    setSelectedSiteIds(new Set());
   };
 
   // Calculate date range based on preset
@@ -147,46 +175,53 @@ export default function EmailsPage() {
   };
 
   const handleDownloadCSV = async () => {
-    if (!selectedSiteId) {
-      alert('Please select a site first');
+    if (filteredSubscribers.length === 0) {
       return;
     }
 
     try {
       setIsDownloading(true);
 
-      // Build query with filters
-      const { startDate, endDate } = getDateRange();
-      let url = `/api/subscribers?siteId=${selectedSiteId}&format=csv`;
+      // Generate CSV from filtered subscribers
+      const csvHeaders = ['Email', 'Name', 'Site', 'Source', 'Status', 'Signed Up'];
+      const csvRows = filteredSubscribers.map(sub => {
+        const site = sites.find(s => s.id === sub.site_id);
+        return [
+          sub.email,
+          sub.name || '',
+          site?.name || sub.site_id,
+          sub.source || 'website',
+          sub.status,
+          new Date(sub.created_at).toISOString()
+        ];
+      });
 
-      if (startDate) url += `&startDate=${startDate}`;
-      if (endDate) url += `&endDate=${endDate}`;
-      if (statusFilter !== 'all') url += `&status=${statusFilter}`;
+      const csvContent = [
+        csvHeaders.join(','),
+        ...csvRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
 
-      const response = await fetch(url);
-      if (response.ok) {
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = downloadUrl;
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = downloadUrl;
 
-        // Generate filename with date range info
-        let filename = `subscribers-${selectedSiteId}`;
-        if (datePreset !== 'all') {
-          filename += `-${datePreset}`;
-        }
-        filename += `-${new Date().toISOString().split('T')[0]}.csv`;
-
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(downloadUrl);
-        document.body.removeChild(a);
-
-        setDownloadSuccess(true);
-        setTimeout(() => setDownloadSuccess(false), 3000);
+      // Generate filename
+      let filename = `subscribers`;
+      if (datePreset !== 'all') {
+        filename += `-${datePreset}`;
       }
+      filename += `-${new Date().toISOString().split('T')[0]}.csv`;
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(downloadUrl);
+      document.body.removeChild(a);
+
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
     } catch (error) {
       console.error('Error downloading CSV:', error);
     } finally {
@@ -194,17 +229,16 @@ export default function EmailsPage() {
     }
   };
 
-  const handleUnsubscribe = async (email: string) => {
-    if (!selectedSiteId) return;
+  const handleUnsubscribe = async (subscriber: EmailSubscriber) => {
     if (!confirm('Are you sure you want to unsubscribe this email?')) return;
 
     try {
-      const response = await fetch(`/api/subscribers?siteId=${selectedSiteId}&email=${encodeURIComponent(email)}`, {
+      const response = await fetch(`/api/subscribers?siteId=${subscriber.site_id}&email=${encodeURIComponent(subscriber.email)}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        loadSubscribers();
+        loadAllSubscribers();
       }
     } catch (error) {
       console.error('Error unsubscribing:', error);
@@ -213,7 +247,7 @@ export default function EmailsPage() {
 
   // Filter emails client-side for display
   const filteredSubscribers = useMemo(() => {
-    let filtered = subscribers;
+    let filtered = allSubscribers;
 
     // Search filter
     if (searchTerm) {
@@ -248,15 +282,18 @@ export default function EmailsPage() {
     }
 
     return filtered;
-  }, [subscribers, searchTerm, statusFilter, datePreset, customStartDate, customEndDate]);
+  }, [allSubscribers, searchTerm, statusFilter, datePreset, customStartDate, customEndDate]);
 
-  const selectedSite = sites.find(site => site.id === selectedSiteId);
-
-  // Get unique sources for filtering
-  const uniqueSources = useMemo(() => {
-    const sources = new Set(subscribers.map(s => s.source));
-    return Array.from(sources);
-  }, [subscribers]);
+  // Calculate stats from filtered data
+  const stats = useMemo(() => {
+    const total = filteredSubscribers.length;
+    const active = filteredSubscribers.filter(s => s.status === 'active').length;
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const thisWeek = filteredSubscribers.filter(s => new Date(s.created_at) >= weekAgo).length;
+    const unsubscribed = total - active;
+    return { total, active, thisWeek, unsubscribed };
+  }, [filteredSubscribers]);
 
   const datePresets = [
     { id: 'all' as DatePreset, label: 'All Time', icon: Globe },
@@ -264,7 +301,6 @@ export default function EmailsPage() {
     { id: 'week' as DatePreset, label: 'Last 7 Days', icon: Clock },
     { id: 'month' as DatePreset, label: 'Last 30 Days', icon: Calendar },
     { id: 'quarter' as DatePreset, label: 'Last 90 Days', icon: TrendingUp },
-    { id: 'custom' as DatePreset, label: 'Custom Range', icon: Filter },
   ];
 
   return (
@@ -272,40 +308,173 @@ export default function EmailsPage() {
       <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
 
-          {/* Header */}
-          <div className="bg-gradient-to-br from-blue-900/50 to-purple-900/30 rounded-2xl border border-gray-700 p-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center">
-                  <Mail className="w-7 h-7 text-blue-400" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Email Signups</h1>
-                  <p className="text-gray-400">Manage subscribers and export lists</p>
+          {/* Filters Section */}
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5 space-y-5">
+            {/* Sites Selection */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-gray-300">Sites</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={selectAllSites}
+                    className="text-xs text-primary-400 hover:text-primary-300 transition-colors"
+                  >
+                    Select All
+                  </button>
+                  <span className="text-gray-600">|</span>
+                  <button
+                    onClick={deselectAllSites}
+                    className="text-xs text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    Deselect All
+                  </button>
                 </div>
               </div>
+              <div className="flex flex-wrap gap-2">
+                {sites.map((site) => (
+                  <button
+                    key={site.id}
+                    onClick={() => toggleSite(site.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      selectedSiteIds.has(site.id)
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-gray-300'
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                      selectedSiteIds.has(site.id)
+                        ? 'bg-white border-white'
+                        : 'border-gray-500'
+                    }`}>
+                      {selectedSiteIds.has(site.id) && (
+                        <Check className="w-3 h-3 text-primary-600" />
+                      )}
+                    </div>
+                    {site.name}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-              {/* Site Selector */}
-              <div className="flex items-center gap-3">
-                <select
-                  value={selectedSiteId}
-                  onChange={(e) => setSelectedSiteId(e.target.value)}
-                  className="bg-gray-800 border border-gray-600 text-white rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500 min-w-[200px]"
-                >
-                  {sites.map(site => (
-                    <option key={site.id} value={site.id}>
-                      {site.name}
-                    </option>
-                  ))}
-                </select>
+            {/* Date Presets */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-3">Date Range</label>
+              <div className="flex flex-wrap gap-2">
+                {datePresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => setDatePreset(preset.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      datePreset === preset.id
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    <preset.icon className="w-4 h-4" />
+                    {preset.label}
+                  </button>
+                ))}
                 <button
-                  onClick={loadSubscribers}
-                  className="p-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl transition-all"
-                  title="Refresh"
+                  onClick={() => setDatePreset('custom')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                    datePreset === 'custom'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
                 >
-                  <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+                  Custom Range
                 </button>
               </div>
+
+              {/* Custom Date Range */}
+              {datePreset === 'custom' && (
+                <div className="grid md:grid-cols-2 gap-4 mt-4 p-4 bg-gray-700/50 rounded-xl">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
+                    <input
+                      type="date"
+                      value={customStartDate}
+                      onChange={(e) => setCustomStartDate(e.target.value)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                    <input
+                      type="date"
+                      value={customEndDate}
+                      onChange={(e) => setCustomEndDate(e.target.value)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Status Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-3">Status</label>
+              <div className="flex gap-2">
+                {[
+                  { id: 'all' as const, label: 'All' },
+                  { id: 'active' as const, label: 'Active Only' },
+                  { id: 'unsubscribed' as const, label: 'Unsubscribed Only' },
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => setStatusFilter(option.id)}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      statusFilter === option.id
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Download Button */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={loadAllSubscribers}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl text-sm text-gray-300 transition-all"
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
+                <span className="text-sm text-gray-400">
+                  {filteredSubscribers.length.toLocaleString()} emails match filters
+                </span>
+              </div>
+              <button
+                onClick={handleDownloadCSV}
+                disabled={isDownloading || filteredSubscribers.length === 0}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                  downloadSuccess
+                    ? 'bg-green-600 text-white'
+                    : 'bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {isDownloading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Preparing...
+                  </>
+                ) : downloadSuccess ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    Downloaded!
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-5 h-5" />
+                    Download {filteredSubscribers.length.toLocaleString()} Emails
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
@@ -331,145 +500,6 @@ export default function EmailsPage() {
             ))}
           </div>
 
-          {/* Export Card */}
-          <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-            <div className="p-5 border-b border-gray-700">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Download className="w-5 h-5 text-primary-400" />
-                  <h2 className="text-lg font-semibold text-white">Export Subscribers</h2>
-                </div>
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all ${
-                    showFilters ? 'bg-primary-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  <Filter className="w-4 h-4" />
-                  Filters
-                  <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-                </button>
-              </div>
-            </div>
-
-            {/* Filter Options */}
-            {showFilters && (
-              <div className="p-5 bg-gray-850 border-b border-gray-700 space-y-4">
-                {/* Date Presets */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Date Range</label>
-                  <div className="flex flex-wrap gap-2">
-                    {datePresets.map((preset) => (
-                      <button
-                        key={preset.id}
-                        onClick={() => setDatePreset(preset.id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                          datePreset === preset.id
-                            ? 'bg-primary-600 text-white'
-                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                      >
-                        <preset.icon className="w-4 h-4" />
-                        {preset.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Custom Date Range */}
-                {datePreset === 'custom' && (
-                  <div className="grid md:grid-cols-2 gap-4 p-4 bg-gray-800 rounded-xl">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
-                      <input
-                        type="date"
-                        value={customStartDate}
-                        onChange={(e) => setCustomStartDate(e.target.value)}
-                        className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">End Date</label>
-                      <input
-                        type="date"
-                        value={customEndDate}
-                        onChange={(e) => setCustomEndDate(e.target.value)}
-                        className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Status Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Status</label>
-                  <div className="flex gap-2">
-                    {[
-                      { id: 'all' as const, label: 'All' },
-                      { id: 'active' as const, label: 'Active Only' },
-                      { id: 'unsubscribed' as const, label: 'Unsubscribed Only' },
-                    ].map((option) => (
-                      <button
-                        key={option.id}
-                        onClick={() => setStatusFilter(option.id)}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                          statusFilter === option.id
-                            ? 'bg-primary-600 text-white'
-                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Export Summary & Button */}
-            <div className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="text-sm text-gray-400">
-                <span className="text-white font-medium">{filteredSubscribers.length.toLocaleString()}</span> subscribers match your filters
-                {datePreset !== 'all' && (
-                  <span className="ml-2 px-2 py-0.5 bg-gray-700 rounded-lg text-xs">
-                    {datePresets.find(p => p.id === datePreset)?.label}
-                  </span>
-                )}
-                {statusFilter !== 'all' && (
-                  <span className="ml-2 px-2 py-0.5 bg-gray-700 rounded-lg text-xs">
-                    {statusFilter}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={handleDownloadCSV}
-                disabled={isDownloading || filteredSubscribers.length === 0}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                  downloadSuccess
-                    ? 'bg-green-600 text-white'
-                    : 'bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                {isDownloading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Preparing CSV...
-                  </>
-                ) : downloadSuccess ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Downloaded!
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-5 h-5" />
-                    Download CSV
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
           {/* Search & Email List */}
           <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
             {/* Search Header */}
@@ -477,11 +507,9 @@ export default function EmailsPage() {
               <div className="flex items-center justify-between gap-4">
                 <h2 className="text-lg font-semibold text-white">
                   All Subscribers
-                  {selectedSite && (
-                    <span className="text-sm font-normal text-gray-400 ml-2">
-                      for {selectedSite.name}
-                    </span>
-                  )}
+                  <span className="text-sm font-normal text-gray-400 ml-2">
+                    ({filteredSubscribers.length.toLocaleString()})
+                  </span>
                 </h2>
                 <div className="relative w-full max-w-xs">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -502,10 +530,10 @@ export default function EmailsPage() {
                 <div className="w-10 h-10 border-3 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p className="text-gray-400">Loading subscribers...</p>
               </div>
-            ) : !selectedSiteId ? (
+            ) : selectedSiteIds.size === 0 ? (
               <div className="p-12 text-center">
                 <Mail className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Select a site to view subscribers</p>
+                <p className="text-gray-400">Select at least one site to view subscribers</p>
               </div>
             ) : filteredSubscribers.length === 0 ? (
               <div className="p-12 text-center">
@@ -526,6 +554,9 @@ export default function EmailsPage() {
                         Subscriber
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Site
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Source
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -540,61 +571,69 @@ export default function EmailsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700/50">
-                    {filteredSubscribers.map((subscriber) => (
-                      <tr key={subscriber.id} className="hover:bg-gray-750 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center flex-shrink-0">
-                              <span className="text-sm font-medium text-gray-300">
-                                {subscriber.email.charAt(0).toUpperCase()}
-                              </span>
+                    {filteredSubscribers.map((subscriber) => {
+                      const site = sites.find(s => s.id === subscriber.site_id);
+                      return (
+                        <tr key={subscriber.id} className="hover:bg-gray-750 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span className="text-sm font-medium text-gray-300">
+                                  {subscriber.email.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-white">{subscriber.email}</p>
+                                {subscriber.name && (
+                                  <p className="text-xs text-gray-500">{subscriber.name}</p>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-white">{subscriber.email}</p>
-                              {subscriber.name && (
-                                <p className="text-xs text-gray-500">{subscriber.name}</p>
-                              )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-sm text-gray-300">
+                              {site?.name || 'Unknown'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-900/50 text-blue-300">
+                              {subscriber.source}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${
+                              subscriber.status === 'active'
+                                ? 'bg-green-900/50 text-green-300'
+                                : 'bg-red-900/50 text-red-300'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                subscriber.status === 'active' ? 'bg-green-400' : 'bg-red-400'
+                              }`}></span>
+                              {subscriber.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-200">
+                              {formatDistanceToNow(new Date(subscriber.created_at.endsWith('Z') ? subscriber.created_at : subscriber.created_at + 'Z'), { addSuffix: true })}
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-900/50 text-blue-300">
-                            {subscriber.source}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${
-                            subscriber.status === 'active'
-                              ? 'bg-green-900/50 text-green-300'
-                              : 'bg-red-900/50 text-red-300'
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              subscriber.status === 'active' ? 'bg-green-400' : 'bg-red-400'
-                            }`}></span>
-                            {subscriber.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-200">
-                            {formatDistanceToNow(new Date(subscriber.created_at.endsWith('Z') ? subscriber.created_at : subscriber.created_at + 'Z'), { addSuffix: true })}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {new Date(subscriber.created_at.endsWith('Z') ? subscriber.created_at : subscriber.created_at + 'Z').toLocaleDateString()}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          {subscriber.status === 'active' && (
-                            <button
-                              onClick={() => handleUnsubscribe(subscriber.email)}
-                              className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all"
-                              title="Unsubscribe"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                            <div className="text-xs text-gray-500">
+                              {new Date(subscriber.created_at.endsWith('Z') ? subscriber.created_at : subscriber.created_at + 'Z').toLocaleDateString()}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            {subscriber.status === 'active' && (
+                              <button
+                                onClick={() => handleUnsubscribe(subscriber)}
+                                className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all"
+                                title="Unsubscribe"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -604,8 +643,8 @@ export default function EmailsPage() {
             {filteredSubscribers.length > 0 && (
               <div className="px-6 py-4 border-t border-gray-700 bg-gray-850">
                 <p className="text-sm text-gray-400">
-                  Showing <span className="text-white font-medium">{filteredSubscribers.length}</span> of{' '}
-                  <span className="text-white font-medium">{subscribers.length}</span> total subscribers
+                  Showing <span className="text-white font-medium">{filteredSubscribers.length.toLocaleString()}</span> of{' '}
+                  <span className="text-white font-medium">{allSubscribers.length.toLocaleString()}</span> total subscribers
                 </p>
               </div>
             )}
