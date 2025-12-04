@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Save,
@@ -26,7 +26,22 @@ interface Site {
   brand_profile?: any;
 }
 
-export default function NewArticle() {
+// Wrapper component to handle Suspense for useSearchParams
+export default function NewArticlePage() {
+  return (
+    <Suspense fallback={
+      <EnhancedAdminLayout>
+        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        </div>
+      </EnhancedAdminLayout>
+    }>
+      <NewArticle />
+    </Suspense>
+  );
+}
+
+function NewArticle() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedSiteId = searchParams.get('siteId');
