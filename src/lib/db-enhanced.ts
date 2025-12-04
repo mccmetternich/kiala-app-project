@@ -191,6 +191,7 @@ export async function initDb() {
       settings TEXT NOT NULL DEFAULT '{}',
       brand_profile TEXT NOT NULL DEFAULT '{}',
       content_profile TEXT NOT NULL DEFAULT '{}',
+      page_config TEXT NOT NULL DEFAULT '{}',
       status TEXT NOT NULL DEFAULT 'draft',
       created_by TEXT,
       published_at DATETIME,
@@ -203,6 +204,13 @@ export async function initDb() {
   // Add content_profile column if it doesn't exist (for existing databases)
   try {
     await execute(`ALTER TABLE sites ADD COLUMN content_profile TEXT NOT NULL DEFAULT '{}'`);
+  } catch {
+    // Column already exists, ignore error
+  }
+
+  // Add page_config column if it doesn't exist (for existing databases)
+  try {
+    await execute(`ALTER TABLE sites ADD COLUMN page_config TEXT NOT NULL DEFAULT '{}'`);
   } catch {
     // Column already exists, ignore error
   }
@@ -558,9 +566,14 @@ export class EnhancedQueries {
         ? data.content_profile
         : JSON.stringify(data.content_profile || {});
 
+      // Handle page_config - only stringify if it's an object
+      const pageConfigStr = typeof data.page_config === 'string'
+        ? data.page_config
+        : JSON.stringify(data.page_config || {});
+
       const result = await execute(`
         UPDATE sites SET name = ?, domain = ?, subdomain = ?, theme = ?,
-        settings = ?, brand_profile = ?, content_profile = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+        settings = ?, brand_profile = ?, content_profile = ?, page_config = ?, status = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `, [
         data.name,
@@ -570,6 +583,7 @@ export class EnhancedQueries {
         settingsStr,
         brandProfileStr,
         contentProfileStr,
+        pageConfigStr,
         data.status,
         id
       ]);

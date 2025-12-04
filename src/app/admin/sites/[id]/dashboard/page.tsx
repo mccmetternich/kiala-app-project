@@ -30,15 +30,22 @@ import {
   Check,
   X,
   BarChart3,
-  BookOpen
+  BookOpen,
+  GripVertical,
+  ChevronDown,
+  Sparkles,
+  MessageSquare,
+  Tag,
+  Package
 } from 'lucide-react';
+import { ContentProfile, DEFAULT_CONTENT_PROFILE } from '@/types';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import Badge from '@/components/ui/Badge';
 import MediaLibrary from '@/components/admin/MediaLibrary';
 import { formatDistanceToNow } from 'date-fns';
 import { clientAPI } from '@/lib/api';
 
-type TabType = 'overview' | 'articles' | 'settings';
+type TabType = 'overview' | 'articles' | 'pages' | 'emails' | 'analytics' | 'content-profile' | 'settings';
 type SettingsSubTab = 'content' | 'appearance' | 'advanced';
 
 export default function SiteDashboard() {
@@ -61,12 +68,32 @@ export default function SiteDashboard() {
   const [mediaTarget, setMediaTarget] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Emails state
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [subscriberStats, setSubscriberStats] = useState<any>({});
+
+  // Content Profile state
+  const [contentProfile, setContentProfile] = useState<ContentProfile>(DEFAULT_CONTENT_PROFILE);
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['mission']));
+
+  // Pages state
+  const [pageConfig, setPageConfig] = useState<any>({
+    pages: [
+      { id: 'home', type: 'homepage', slug: '/', title: 'Home', navLabel: 'Home', enabled: true, showInNav: true, navOrder: 1, navMode: 'global' },
+      { id: 'articles', type: 'articles', slug: '/articles', title: 'Articles', navLabel: 'Articles', enabled: true, showInNav: true, navOrder: 2, navMode: 'global' },
+      { id: 'about', type: 'about', slug: '/about', title: 'About', navLabel: 'About', enabled: true, showInNav: true, navOrder: 3, navMode: 'global' },
+      { id: 'top-picks', type: 'top-picks', slug: '/top-picks', title: 'Top Picks', navLabel: 'Top Picks', enabled: false, showInNav: false, navOrder: 4, navMode: 'global' },
+      { id: 'success-stories', type: 'success-stories', slug: '/success-stories', title: 'Success Stories', navLabel: 'Success Stories', enabled: false, showInNav: false, navOrder: 5, navMode: 'global' },
+    ],
+    defaultArticleNavMode: 'direct-response'
+  });
+
   const loadData = useCallback(async () => {
     try {
       const [siteResponse, articlesData, subscribersResponse] = await Promise.all([
         fetch(`/api/sites/${id}`).then(res => res.json()),
         clientAPI.getArticlesBySite(id, false),
-        fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 } }))
+        fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 }, subscribers: [] }))
       ]);
 
       if (siteResponse.site) {
@@ -78,10 +105,36 @@ export default function SiteDashboard() {
         if (typeof siteData.brand_profile === 'string') {
           try { siteData.brand_profile = JSON.parse(siteData.brand_profile); } catch { siteData.brand_profile = {}; }
         }
+        if (typeof siteData.content_profile === 'string') {
+          try { siteData.content_profile = JSON.parse(siteData.content_profile); } catch { siteData.content_profile = {}; }
+        }
+        if (typeof siteData.page_config === 'string') {
+          try { siteData.page_config = JSON.parse(siteData.page_config); } catch { siteData.page_config = {}; }
+        }
         setSite(siteData);
+
+        // Set content profile with defaults
+        const existingProfile = siteData.content_profile || {};
+        setContentProfile({
+          ...DEFAULT_CONTENT_PROFILE,
+          ...existingProfile,
+          audience: { ...DEFAULT_CONTENT_PROFILE.audience, ...existingProfile.audience },
+          style: { ...DEFAULT_CONTENT_PROFILE.style, ...existingProfile.style },
+          rules: { ...DEFAULT_CONTENT_PROFILE.rules, ...existingProfile.rules },
+          examples: { ...DEFAULT_CONTENT_PROFILE.examples, ...existingProfile.examples },
+          topics: { ...DEFAULT_CONTENT_PROFILE.topics, ...existingProfile.topics },
+          products: { ...DEFAULT_CONTENT_PROFILE.products, ...existingProfile.products },
+        });
+
+        // Set page config if exists
+        if (siteData.page_config?.pages) {
+          setPageConfig(siteData.page_config);
+        }
       }
 
       setArticles(articlesData || []);
+      setSubscribers(subscribersResponse?.subscribers || []);
+      setSubscriberStats(subscribersResponse?.stats || { total: 0 });
       setMetrics({
         totalArticles: articlesData?.length || 0,
         publishedArticles: articlesData?.filter((a: any) => a.published)?.length || 0,
@@ -106,7 +159,11 @@ export default function SiteDashboard() {
       const response = await fetch(`/api/sites/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(site),
+        body: JSON.stringify({
+          ...site,
+          content_profile: contentProfile,
+          page_config: pageConfig
+        }),
       });
       if (response.ok) {
         setSaveSuccess(true);
@@ -117,6 +174,35 @@ export default function SiteDashboard() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Content Profile section toggle
+  const toggleSection = (sectionId: string) => {
+    setOpenSections(prev => {
+      const next = new Set(prev);
+      if (next.has(sectionId)) {
+        next.delete(sectionId);
+      } else {
+        next.add(sectionId);
+      }
+      return next;
+    });
+  };
+
+  // Export emails as CSV
+  const exportEmails = () => {
+    const csv = [
+      ['Email', 'Source', 'Subscribed At'],
+      ...subscribers.map(s => [s.email, s.source || 'unknown', s.created_at])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${site?.subdomain || 'site'}-emails-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const updateSiteField = (field: string, value: any) => {
@@ -214,19 +300,15 @@ export default function SiteDashboard() {
   const theme = settings.theme || {};
   const isLive = site.status === 'published';
 
-  // Internal tabs (render content on this page)
-  const internalTabs = [
+  // All tabs - internal rendering
+  const tabs = [
     { id: 'overview' as TabType, label: 'Overview', icon: LayoutDashboard },
-    { id: 'articles' as TabType, label: 'Articles', icon: FileText, count: metrics?.totalArticles },
+    { id: 'articles' as TabType, label: 'Articles', icon: Edit3, count: metrics?.totalArticles },
+    { id: 'pages' as TabType, label: 'Pages', icon: FileText },
+    { id: 'emails' as TabType, label: 'Emails', icon: Users, count: metrics?.totalEmails },
+    { id: 'analytics' as TabType, label: 'Analytics', icon: BarChart3 },
+    { id: 'content-profile' as TabType, label: 'Content Profile', icon: BookOpen },
     { id: 'settings' as TabType, label: 'Settings', icon: Settings },
-  ];
-
-  // External tabs (link to separate pages)
-  const externalTabs = [
-    { label: 'Pages', icon: FileText, href: `/admin/sites/${id}/pages` },
-    { label: 'Emails', icon: Users, href: `/admin/sites/${id}/emails` },
-    { label: 'Analytics', icon: BarChart3, href: `/admin/sites/${id}/analytics` },
-    { label: 'Content Profile', icon: BookOpen, href: `/admin/sites/${id}/content-profile` },
   ];
 
   const settingsTabs = [
@@ -296,14 +378,13 @@ export default function SiteDashboard() {
               </div>
             </div>
 
-            {/* Tab Navigation - More Prominent */}
+            {/* Tab Navigation */}
             <div className="flex items-center gap-2 mt-8 flex-wrap">
-              {/* Internal tabs */}
-              {internalTabs.map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2.5 px-5 py-3 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
                     activeTab === tab.id
                       ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
                       : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -311,7 +392,7 @@ export default function SiteDashboard() {
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
-                  {tab.count !== undefined && (
+                  {tab.count !== undefined && tab.count > 0 && (
                     <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                       activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-600 text-gray-300'
                     }`}>
@@ -319,21 +400,6 @@ export default function SiteDashboard() {
                     </span>
                   )}
                 </button>
-              ))}
-
-              {/* Divider */}
-              <div className="w-px h-8 bg-gray-600 mx-2" />
-
-              {/* External tabs (links to other pages) */}
-              {externalTabs.map((tab) => (
-                <Link
-                  key={tab.label}
-                  href={tab.href}
-                  className="flex items-center gap-2.5 px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
-                </Link>
               ))}
             </div>
           </div>
@@ -1195,6 +1261,575 @@ export default function SiteDashboard() {
                           </div>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* PAGES TAB */}
+          {activeTab === 'pages' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white">Page Management</h2>
+                  <p className="text-gray-400 text-sm mt-1">Enable, disable, and configure pages for your site</p>
+                </div>
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+
+              {/* Navigation Order */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <div className="p-5 border-b border-gray-700">
+                  <h3 className="text-lg font-semibold text-white">Navigation Pages</h3>
+                  <p className="text-sm text-gray-400 mt-1">Pages that appear in your site navigation</p>
+                </div>
+                <div className="divide-y divide-gray-700/50">
+                  {pageConfig.pages
+                    .filter((p: any) => p.enabled)
+                    .sort((a: any, b: any) => a.navOrder - b.navOrder)
+                    .map((page: any) => (
+                      <div key={page.id} className="flex items-center gap-4 p-4 hover:bg-gray-750">
+                        <GripVertical className="w-5 h-5 text-gray-500 cursor-grab" />
+                        <div className="flex-1">
+                          <p className="font-medium text-white">{page.title}</p>
+                          <p className="text-sm text-gray-500">{page.slug}</p>
+                        </div>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={page.showInNav}
+                            onChange={(e) => {
+                              const updated = pageConfig.pages.map((p: any) =>
+                                p.id === page.id ? { ...p, showInNav: e.target.checked } : p
+                              );
+                              setPageConfig({ ...pageConfig, pages: updated });
+                            }}
+                            className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-primary-500"
+                          />
+                          <span className="text-sm text-gray-300">Show in Nav</span>
+                        </label>
+                        <select
+                          value={page.navMode}
+                          onChange={(e) => {
+                            const updated = pageConfig.pages.map((p: any) =>
+                              p.id === page.id ? { ...p, navMode: e.target.value } : p
+                            );
+                            setPageConfig({ ...pageConfig, pages: updated });
+                          }}
+                          className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 text-sm"
+                        >
+                          <option value="global">Global Nav</option>
+                          <option value="direct-response">Direct Response</option>
+                          <option value="minimal">Minimal</option>
+                        </select>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* Disabled Pages */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <div className="p-5 border-b border-gray-700">
+                  <h3 className="text-lg font-semibold text-white">Available Pages</h3>
+                  <p className="text-sm text-gray-400 mt-1">Enable additional pages for your site</p>
+                </div>
+                <div className="divide-y divide-gray-700/50">
+                  {pageConfig.pages
+                    .filter((p: any) => !p.enabled)
+                    .map((page: any) => (
+                      <div key={page.id} className="flex items-center justify-between p-4 hover:bg-gray-750">
+                        <div>
+                          <p className="font-medium text-gray-400">{page.title}</p>
+                          <p className="text-sm text-gray-500">{page.slug}</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const updated = pageConfig.pages.map((p: any) =>
+                              p.id === page.id ? { ...p, enabled: true, showInNav: true } : p
+                            );
+                            setPageConfig({ ...pageConfig, pages: updated });
+                          }}
+                          className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium"
+                        >
+                          Enable
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* Article Nav Mode */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Article Pages</h3>
+                <p className="text-sm text-gray-400 mb-4">Configure the default navigation mode for all article pages</p>
+                <select
+                  value={pageConfig.defaultArticleNavMode}
+                  onChange={(e) => setPageConfig({ ...pageConfig, defaultArticleNavMode: e.target.value })}
+                  className="px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                >
+                  <option value="global">Global Nav (full navigation)</option>
+                  <option value="direct-response">Direct Response (no links, social proof)</option>
+                  <option value="minimal">Minimal (logo only)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-2">
+                  Direct Response is recommended for conversion-focused articles
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* EMAILS TAB */}
+          {activeTab === 'emails' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white">Email Subscribers</h2>
+                  <p className="text-gray-400 text-sm mt-1">{subscriberStats.total || 0} total subscribers</p>
+                </div>
+                <button
+                  onClick={exportEmails}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl transition-all text-sm font-medium"
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">Total Subscribers</p>
+                  <p className="text-3xl font-bold text-white mt-1">{subscriberStats.total || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">This Week</p>
+                  <p className="text-3xl font-bold text-green-400 mt-1">{subscriberStats.thisWeek || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">This Month</p>
+                  <p className="text-3xl font-bold text-blue-400 mt-1">{subscriberStats.thisMonth || 0}</p>
+                </div>
+              </div>
+
+              {/* Subscribers List */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <div className="p-5 border-b border-gray-700">
+                  <h3 className="text-lg font-semibold text-white">Recent Subscribers</h3>
+                </div>
+                <div className="divide-y divide-gray-700/50 max-h-96 overflow-y-auto">
+                  {subscribers.length > 0 ? (
+                    subscribers.slice(0, 50).map((sub: any, i: number) => (
+                      <div key={i} className="flex items-center justify-between p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary-500/10 rounded-full flex items-center justify-center">
+                            <Users className="w-5 h-5 text-primary-400" />
+                          </div>
+                          <div>
+                            <p className="text-white font-medium">{sub.email}</p>
+                            <p className="text-sm text-gray-500">
+                              {sub.source || 'Direct'} • {formatDistanceToNow(new Date(sub.created_at), { addSuffix: true })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-12 text-center">
+                      <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-400">No subscribers yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ANALYTICS TAB */}
+          {activeTab === 'analytics' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-white">Analytics Overview</h2>
+                <p className="text-gray-400 text-sm mt-1">Site performance and traffic metrics</p>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">Total Views</p>
+                  <p className="text-3xl font-bold text-white mt-1">{metrics?.totalViews?.toLocaleString() || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">Articles</p>
+                  <p className="text-3xl font-bold text-white mt-1">{metrics?.totalArticles || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">Published</p>
+                  <p className="text-3xl font-bold text-green-400 mt-1">{metrics?.publishedArticles || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">Subscribers</p>
+                  <p className="text-3xl font-bold text-purple-400 mt-1">{metrics?.totalEmails || 0}</p>
+                </div>
+              </div>
+
+              {/* Top Articles */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <div className="p-5 border-b border-gray-700">
+                  <h3 className="text-lg font-semibold text-white">Top Performing Articles</h3>
+                </div>
+                <div className="divide-y divide-gray-700/50">
+                  {articles
+                    .sort((a, b) => (b.views || 0) - (a.views || 0))
+                    .slice(0, 10)
+                    .map((article, i) => (
+                      <div key={article.id} className="flex items-center justify-between p-4">
+                        <div className="flex items-center gap-4">
+                          <span className="text-2xl font-bold text-gray-600 w-8">{i + 1}</span>
+                          <div>
+                            <p className="text-white font-medium">{article.title}</p>
+                            <p className="text-sm text-gray-500">
+                              {article.published ? 'Published' : 'Draft'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xl font-bold text-white">{(article.views || 0).toLocaleString()}</p>
+                          <p className="text-sm text-gray-500">views</p>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* Tracking Status */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Tracking Status</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
+                    <div className={`w-3 h-3 rounded-full ${settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId ? 'bg-green-400' : 'bg-gray-500'}`} />
+                    <div>
+                      <p className="font-medium text-white">Meta Pixel</p>
+                      <p className="text-sm text-gray-400">
+                        {settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId ? 'Active' : 'Not configured'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
+                    <div className={`w-3 h-3 rounded-full ${settings.analytics?.googleEnabled && settings.analytics?.googleId ? 'bg-green-400' : 'bg-gray-500'}`} />
+                    <div>
+                      <p className="font-medium text-white">Google Analytics</p>
+                      <p className="text-sm text-gray-400">
+                        {settings.analytics?.googleEnabled && settings.analytics?.googleId ? 'Active' : 'Not configured'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setActiveTab('settings')}
+                  className="mt-4 text-primary-400 hover:text-primary-300 text-sm font-medium"
+                >
+                  Configure tracking in Settings →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* CONTENT PROFILE TAB */}
+          {activeTab === 'content-profile' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white">Content Profile</h2>
+                  <p className="text-gray-400 text-sm mt-1">Editorial guidelines for consistent AI-generated content</p>
+                </div>
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  {isSaving ? 'Saving...' : 'Save Profile'}
+                </button>
+              </div>
+
+              {/* Mission & Purpose */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <button
+                  onClick={() => toggleSection('mission')}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-750"
+                >
+                  <div className="flex items-center gap-3">
+                    <BookOpen className="w-5 h-5 text-primary-400" />
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Mission & Purpose</h3>
+                      <p className="text-sm text-gray-400">Define what this site is about</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSections.has('mission') ? 'rotate-180' : ''}`} />
+                </button>
+                {openSections.has('mission') && (
+                  <div className="px-5 pb-5 space-y-4 border-t border-gray-700 pt-5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Site Mission</label>
+                      <textarea
+                        rows={3}
+                        value={contentProfile.mission}
+                        onChange={(e) => setContentProfile(p => ({ ...p, mission: e.target.value }))}
+                        placeholder="This site helps..."
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 resize-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Unique Value</label>
+                      <textarea
+                        rows={2}
+                        value={contentProfile.uniqueValue}
+                        onChange={(e) => setContentProfile(p => ({ ...p, uniqueValue: e.target.value }))}
+                        placeholder="What makes this brand different..."
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 resize-none"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Target Audience */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <button
+                  onClick={() => toggleSection('audience')}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-750"
+                >
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-primary-400" />
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Target Audience</h3>
+                      <p className="text-sm text-gray-400">Who you're writing for</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSections.has('audience') ? 'rotate-180' : ''}`} />
+                </button>
+                {openSections.has('audience') && (
+                  <div className="px-5 pb-5 space-y-4 border-t border-gray-700 pt-5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Demographics</label>
+                      <input
+                        type="text"
+                        value={contentProfile.audience.demographics}
+                        onChange={(e) => setContentProfile(p => ({ ...p, audience: { ...p.audience, demographics: e.target.value } }))}
+                        placeholder="Women 40-65, health-conscious..."
+                        className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">How They Talk About Problems</label>
+                      <textarea
+                        rows={2}
+                        value={contentProfile.audience.language}
+                        onChange={(e) => setContentProfile(p => ({ ...p, audience: { ...p.audience, language: e.target.value } }))}
+                        placeholder="They say things like..."
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 resize-none"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Writing Style */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <button
+                  onClick={() => toggleSection('style')}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-750"
+                >
+                  <div className="flex items-center gap-3">
+                    <Edit3 className="w-5 h-5 text-primary-400" />
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Writing Style</h3>
+                      <p className="text-sm text-gray-400">Tone, voice, and personality</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSections.has('style') ? 'rotate-180' : ''}`} />
+                </button>
+                {openSections.has('style') && (
+                  <div className="px-5 pb-5 space-y-4 border-t border-gray-700 pt-5">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Tone</label>
+                        <input
+                          type="text"
+                          value={contentProfile.style.tone}
+                          onChange={(e) => setContentProfile(p => ({ ...p, style: { ...p.style, tone: e.target.value } }))}
+                          placeholder="Warm, authoritative, empathetic"
+                          className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Voice</label>
+                        <input
+                          type="text"
+                          value={contentProfile.style.voice}
+                          onChange={(e) => setContentProfile(p => ({ ...p, style: { ...p.style, voice: e.target.value } }))}
+                          placeholder="Like a trusted friend..."
+                          className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Perspective</label>
+                        <select
+                          value={contentProfile.style.perspective}
+                          onChange={(e) => setContentProfile(p => ({ ...p, style: { ...p.style, perspective: e.target.value as 'first' | 'third' } }))}
+                          className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                        >
+                          <option value="first">First Person ("I recommend...")</option>
+                          <option value="third">Third Person ("Dr. Amy recommends...")</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Reading Level</label>
+                        <select
+                          value={contentProfile.style.readingLevel}
+                          onChange={(e) => setContentProfile(p => ({ ...p, style: { ...p.style, readingLevel: e.target.value } }))}
+                          className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                        >
+                          <option value="6th grade">6th Grade (Very Simple)</option>
+                          <option value="8th grade">8th Grade (Accessible)</option>
+                          <option value="10th grade">10th Grade (Moderate)</option>
+                          <option value="College">College Level (Advanced)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Content Rules */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <button
+                  onClick={() => toggleSection('rules')}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-750"
+                >
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-primary-400" />
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Content Rules</h3>
+                      <p className="text-sm text-gray-400">What to always and never do</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSections.has('rules') ? 'rotate-180' : ''}`} />
+                </button>
+                {openSections.has('rules') && (
+                  <div className="px-5 pb-5 space-y-4 border-t border-gray-700 pt-5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">How to Mention Products</label>
+                      <textarea
+                        rows={2}
+                        value={contentProfile.rules.productMentions}
+                        onChange={(e) => setContentProfile(p => ({ ...p, rules: { ...p.rules, productMentions: e.target.value } }))}
+                        placeholder="Products should be mentioned naturally..."
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 resize-none"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Topics */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <button
+                  onClick={() => toggleSection('topics')}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-750"
+                >
+                  <div className="flex items-center gap-3">
+                    <Tag className="w-5 h-5 text-primary-400" />
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Topics & Expertise</h3>
+                      <p className="text-sm text-gray-400">Primary and secondary topics</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSections.has('topics') ? 'rotate-180' : ''}`} />
+                </button>
+                {openSections.has('topics') && (
+                  <div className="px-5 pb-5 space-y-4 border-t border-gray-700 pt-5">
+                    <p className="text-sm text-gray-400">Add topics as comma-separated values</p>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Primary Topics</label>
+                      <input
+                        type="text"
+                        value={contentProfile.topics.primary.join(', ')}
+                        onChange={(e) => setContentProfile(p => ({
+                          ...p,
+                          topics: { ...p.topics, primary: e.target.value.split(',').map(t => t.trim()).filter(Boolean) }
+                        }))}
+                        placeholder="Hormone health, Menopause, Perimenopause"
+                        className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Secondary Topics</label>
+                      <input
+                        type="text"
+                        value={contentProfile.topics.secondary.join(', ')}
+                        onChange={(e) => setContentProfile(p => ({
+                          ...p,
+                          topics: { ...p.topics, secondary: e.target.value.split(',').map(t => t.trim()).filter(Boolean) }
+                        }))}
+                        placeholder="Sleep, Stress, Weight management"
+                        className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Products */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <button
+                  onClick={() => toggleSection('products')}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-750"
+                >
+                  <div className="flex items-center gap-3">
+                    <Package className="w-5 h-5 text-primary-400" />
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Products & Affiliates</h3>
+                      <p className="text-sm text-gray-400">Products to promote</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSections.has('products') ? 'rotate-180' : ''}`} />
+                </button>
+                {openSections.has('products') && (
+                  <div className="px-5 pb-5 space-y-4 border-t border-gray-700 pt-5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Primary Products (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={contentProfile.products.primary.join(', ')}
+                        onChange={(e) => setContentProfile(p => ({
+                          ...p,
+                          products: { ...p.products, primary: e.target.value.split(',').map(t => t.trim()).filter(Boolean) }
+                        }))}
+                        placeholder="Product A, Product B"
+                        className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Affiliate Disclosure</label>
+                      <textarea
+                        rows={2}
+                        value={contentProfile.products.disclosureText}
+                        onChange={(e) => setContentProfile(p => ({ ...p, products: { ...p.products, disclosureText: e.target.value } }))}
+                        placeholder="This article contains affiliate links..."
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 resize-none"
+                      />
                     </div>
                   </div>
                 )}

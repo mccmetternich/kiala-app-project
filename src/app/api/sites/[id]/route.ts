@@ -26,7 +26,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const tenantId = request.headers.get('X-Tenant-Id') || undefined;
     const queries = createQueries(tenantId);
     
-    const { name, domain, subdomain, theme, settings, brand_profile, content_profile, status } = body;
+    const { name, domain, subdomain, theme, settings, brand_profile, content_profile, page_config, status } = body;
 
     const siteData = {
       name,
@@ -36,6 +36,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       settings,
       brand_profile,
       content_profile,
+      page_config,
       status,
     };
     await queries.siteQueries.update(id, siteData);
