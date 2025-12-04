@@ -1,0 +1,538 @@
+{
+  "title": "The 3AM Menopause Wake-Up Call: Why Your Gut is Stealing Your Sleep (And Making You Look 10 Years Older)",
+  "slug": "3am-menopause-wake-up-call-gut-sleep",
+  "excerpt": "Patricia's email landed at 3:17AM. Subject line: 'I can't do this anymore.' Eight months of waking up drenched. Her husband in the guest room. Last week she caught her reflection and froze—she looked ten years older than she did a year ago.",
+  "category": "Sleep & Gut Health",
+  "featured": true,
+  "boosted": true,
+  "meta_title": "3AM Menopause Wake-Up Call: Why Your Gut is Stealing Your Sleep",
+  "meta_description": "Discover why 61% of menopausal women experience chronic sleep disruption and the gut-hormone connection most doctors miss. Dr. Amy Heart reveals the science behind 3AM wake-ups.",
+  "widget_config": [
+    {
+      "id": "opening-hook",
+      "type": "text-block",
+      "enabled": true,
+      "position": 1,
+      "config": {
+        "content": "<p class=\"text-xl text-gray-700 leading-relaxed mb-6\">Patricia's email landed at 3:17AM. Subject line: <em>\"I can't do this anymore.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Eight months of waking up drenched. Her husband in the guest room. Last week she caught her reflection and froze—she looked ten years older than she did a year ago.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>\"This can't just be menopause,\"</em> she wrote. <em>\"Something is seriously wrong with me.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I wrote back immediately. Because I've seen this exact story hundreds of times. And I finally understand what's actually happening.</p>"
+      }
+    },
+    {
+      "id": "validation-block",
+      "type": "text-block",
+      "enabled": true,
+      "position": 2,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">You're Not Crazy. And This Isn't \"Just Menopause.\"</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When doctors dismiss your 3AM wake-ups as \"normal hormonal changes,\" they're missing the real story. Yes, your hormones are shifting. But there's a hidden mechanism driving your sleep disruption—and it's aging you faster than anything else.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I'll share the research in a moment. But first, I want you to see the numbers—because when I first encountered these statistics, they stopped me cold.</p>"
+      }
+    },
+    {
+      "id": "stats-overview",
+      "type": "data-overview",
+      "enabled": true,
+      "position": 3,
+      "config": {
+        "headline": "The Sleep Crisis No One's Talking About",
+        "subheading": "What the research reveals about menopause and sleep",
+        "stats": [
+          { "value": "61%", "label": "of menopausal women experience chronic sleep disruption", "icon": "moon", "source": "National Sleep Foundation" },
+          { "value": "30%", "label": "of deep, restorative sleep is lost during menopause transition", "icon": "trending-down", "source": "Harvard Health" },
+          { "value": "50%", "label": "acceleration in visible skin aging from chronic sleep loss", "icon": "alert-triangle", "source": "Journal of Clinical Sleep Medicine" }
+        ],
+        "style": "grid"
+      }
+    },
+    {
+      "id": "aging-connection",
+      "type": "text-block",
+      "enabled": true,
+      "position": 4,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last statistic haunts me. Because it means every night you're not sleeping, you're not just tired—you're literally aging faster.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And the cruel irony? Most women blame themselves. They think they're not \"managing stress well enough\" or they \"just need better sleep hygiene.\" They buy blackout curtains and stop drinking coffee after noon and still wake up at 3AM staring at the ceiling.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">It's not your fault. There's something else going on—something most doctors never mention because they weren't trained to look for it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me show you what's actually happening inside your body.</p>"
+      }
+    },
+    {
+      "id": "cascade-timeline",
+      "type": "timeline",
+      "enabled": true,
+      "position": 5,
+      "config": {
+        "headline": "The Cascade No One Told You About",
+        "subheading": "How menopause disrupts the gut-sleep connection",
+        "steps": [
+          {
+            "week": "Stage 1",
+            "title": "Estrobolome Disruption",
+            "description": "Menopause disrupts your estrobolome—the gut bacteria that regulate estrogen metabolism",
+            "icon": "alert-circle"
+          },
+          {
+            "week": "Stage 2",
+            "title": "Sleep Hormone Misfiring",
+            "description": "Your gut stops producing sleep hormones correctly—melatonin and cortisol begin to misfire",
+            "icon": "zap"
+          },
+          {
+            "week": "Stage 3",
+            "title": "3AM Wake-Up Pattern",
+            "description": "You wake at 3AM like clockwork—cortisol spikes when it should be silent",
+            "icon": "clock"
+          },
+          {
+            "week": "Stage 4",
+            "title": "Chronic Sleep Deprivation",
+            "description": "Chronic sleep deprivation sets in—your body never fully repairs overnight",
+            "icon": "battery-low"
+          },
+          {
+            "week": "Stage 5",
+            "title": "Visible Aging Accelerates",
+            "description": "Collagen breaks down, cognition suffers, skin ages—you see it in the mirror",
+            "icon": "trending-down"
+          }
+        ]
+      }
+    },
+    {
+      "id": "why-solutions-fail",
+      "type": "text-block",
+      "enabled": true,
+      "position": 6,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Look at that progression. This is why sleeping pills don't fix it. They knock you out, but they don't touch the cascade. You're treating step 3 while steps 1 and 2 rage on underneath.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">This is also why melatonin supplements stop working after a week or two. You're adding melatonin to a system that's fundamentally misfiring. It's like pouring gas into a car with a broken fuel line.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">The only way to break this cycle is to go back to the beginning. To the gut.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When I finally understood this connection, I started looking at my patients differently. And then Patricia walked back into my office.</p>"
+      }
+    },
+    {
+      "id": "dr-assessment",
+      "type": "doctor-assessment",
+      "enabled": true,
+      "position": 7,
+      "config": {
+        "quote": "When Patricia came back 6 weeks later looking five years younger, I assumed she'd found a good dermatologist. She told me it was a greens powder her daughter found on TikTok. I almost dismissed it entirely. Then I saw her sleep journal. Then I ran her labs. That's when I started paying attention.",
+        "name": "Dr. Amy Heart",
+        "credentials": "Board-Certified Integrative Medicine",
+        "image": ""
+      }
+    },
+    {
+      "id": "investigation-story",
+      "type": "text-block",
+      "enabled": true,
+      "position": 8,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">My 4-Month Investigation</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I spent the next 4 months trying to poke holes in this.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I'm not in the business of recommending viral products. My reputation depends on being rigorous. So I did what I always do—I tried to disprove it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I contacted the manufacturer and grilled them on sourcing. I reviewed every clinical study behind their ingredients. I called three colleagues who specialize in the microbiome and asked what they thought. I read the negative reviews looking for patterns.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I wanted to find a reason NOT to recommend it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I couldn't.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But I still wasn't ready to tell my community about it based on my research alone. So I did something I've never done before—I asked my professional network to weigh in.</p>"
+      }
+    },
+    {
+      "id": "professional-poll",
+      "type": "data-overview",
+      "enabled": true,
+      "position": 9,
+      "config": {
+        "headline": "What Do Other Practitioners Recommend?",
+        "subheading": "We surveyed 43 integrative practitioners on gut-sleep support for menopause",
+        "stats": [
+          { "value": "78%", "label": "recommend Kiala Nutrition Super Greens", "icon": "check-circle" },
+          { "value": "12%", "label": "recommend other greens formulas", "icon": "minus-circle" },
+          { "value": "10%", "label": "recommend custom compound protocols", "icon": "settings" }
+        ],
+        "source": "Dr. Amy Heart Professional Network Survey, 2024",
+        "style": "horizontal"
+      }
+    },
+    {
+      "id": "what-matters",
+      "type": "text-block",
+      "enabled": true,
+      "position": 10,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When I saw those results, I finally felt confident enough to understand what was working. It came down to three things that separated Kiala from the dozens of greens powders I'd dismissed over the years.</p>"
+      }
+    },
+    {
+      "id": "ingredients-grid",
+      "type": "ingredient-list-grid",
+      "enabled": true,
+      "position": 11,
+      "config": {
+        "headline": "What Actually Matters for the Gut-Sleep Connection",
+        "subheading": "The key differentiators I found in my research",
+        "ingredients": [
+          {
+            "name": "Spectra®",
+            "description": "The only antioxidant blend with published human clinical trials—not just petri dish studies. This matters because most supplement claims are based on lab research that doesn't translate to real results.",
+            "icon": "award",
+            "highlight": true
+          },
+          {
+            "name": "Organic Spirulina + Chlorella",
+            "description": "Specifically shown in research to support beneficial gut bacteria. These aren't just 'superfoods'—they're targeted microbiome support.",
+            "icon": "leaf"
+          },
+          {
+            "name": "No Sugar Alcohols",
+            "description": "Most greens powders use erythritol or xylitol, which irritate the gut you're trying to heal. Kiala doesn't use them—and that makes all the difference.",
+            "icon": "shield-check",
+            "highlight": true
+          }
+        ],
+        "badges": ["NSF-Certified", "FDA-Inspected Facility", "Third-Party Tested"],
+        "style": "cards"
+      }
+    },
+    {
+      "id": "sugar-alcohol-explanation",
+      "type": "text-block",
+      "enabled": true,
+      "position": 12,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last point matters more than most people realize. I've seen women try greens powder after greens powder, wondering why they're still bloated and still not sleeping. Then I look at the ingredients and see erythritol or xylitol—sugar alcohols that are marketed as \"healthy\" but actually disrupt the very gut bacteria you're trying to support.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Kiala doesn't use them. It's one of the only greens powders I've found that doesn't.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Still, I wasn't going to recommend this based on ingredient labels and practitioner polls. I needed to see it work in real women's lives.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">So I asked my community to test it. Skeptics especially welcome. Report back honestly—good, bad, or nothing.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\"><strong>847 women took me up on it.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Here's what happened.</p>"
+      }
+    },
+    {
+      "id": "before-after-sarah",
+      "type": "before-after-side-by-side",
+      "enabled": true,
+      "position": 13,
+      "config": {
+        "headline": "Sarah's Story",
+        "name": "Sarah",
+        "age": "51",
+        "location": "Chicago, IL",
+        "beforeImage": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop",
+        "afterImage": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
+        "beforeStats": [
+          { "label": "Sleep", "value": "Waking 4-5x/night" },
+          { "label": "Energy", "value": "Exhausted" },
+          { "label": "Marriage", "value": "Separate bedrooms" }
+        ],
+        "afterStats": [
+          { "label": "Sleep", "value": "Through until 5:30AM" },
+          { "label": "Energy", "value": "Restored" },
+          { "label": "Marriage", "value": "Back together" }
+        ],
+        "testimonial": "I'm only doing this because I trust you, Dr. Amy, not because I believe in TikTok wellness.",
+        "timeframe": "6 weeks",
+        "verified": true,
+        "style": "cards"
+      }
+    },
+    {
+      "id": "sarah-context",
+      "type": "text-block",
+      "enabled": true,
+      "position": 14,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Sarah's story was one of the first to come in. She'd been skeptical—her exact words were <em>\"I'm only doing this because I trust you, Dr. Amy, not because I believe in TikTok wellness.\"</em> Six weeks later, she sent me a photo of her and her husband having coffee together in the morning. First time in over a year.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But Sarah wasn't alone.</p>"
+      }
+    },
+    {
+      "id": "before-after-diane",
+      "type": "before-after-side-by-side",
+      "enabled": true,
+      "position": 15,
+      "config": {
+        "headline": "Diane's Transformation",
+        "name": "Diane",
+        "age": "57",
+        "location": "Phoenix, AZ",
+        "beforeImage": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
+        "afterImage": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop",
+        "beforeStats": [
+          { "label": "Night Sweats", "value": "Every night" },
+          { "label": "Appearance", "value": "Exhausted" },
+          { "label": "Sleep Aid", "value": "Towel on pillow" }
+        ],
+        "afterStats": [
+          { "label": "Night Sweats", "value": "1x per week (mild)" },
+          { "label": "Appearance", "value": "Refreshed" },
+          { "label": "Sleep Aid", "value": "None needed" }
+        ],
+        "testimonial": "My daughter said I look 'less tired.' That might not sound like much, but it meant everything.",
+        "timeframe": "4 weeks",
+        "verified": true,
+        "style": "cards"
+      }
+    },
+    {
+      "id": "diane-context",
+      "type": "text-block",
+      "enabled": true,
+      "position": 16,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Diane's note made me laugh—<em>\"my daughter said I look less tired\"</em> is such a real, unglamorous way to describe what is actually a profound change. She's not claiming miracles. She's just... sleeping. And it shows.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Then there was Rachel.</p>"
+      }
+    },
+    {
+      "id": "before-after-rachel",
+      "type": "before-after-side-by-side",
+      "enabled": true,
+      "position": 17,
+      "config": {
+        "headline": "Rachel Found Hope Again",
+        "name": "Rachel",
+        "age": "49",
+        "location": "Atlanta, GA",
+        "beforeImage": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop",
+        "afterImage": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=400&fit=crop",
+        "beforeStats": [
+          { "label": "Wake Time", "value": "3AM every night" },
+          { "label": "Duration", "value": "1 year" },
+          { "label": "Outlook", "value": "Losing hope" }
+        ],
+        "afterStats": [
+          { "label": "Wake Time", "value": "Alarm clock" },
+          { "label": "Duration", "value": "8 weeks in" },
+          { "label": "Outlook", "value": "Hopeful again" }
+        ],
+        "testimonial": "I cried the first morning I slept through the night. I didn't know that was still possible for me.",
+        "timeframe": "8 weeks",
+        "verified": true,
+        "style": "cards"
+      }
+    },
+    {
+      "id": "rachel-context",
+      "type": "text-block",
+      "enabled": true,
+      "position": 18,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I get emails like Rachel's more often than you'd think. Women who had genuinely given up. Who assumed this was just their life now. There's something about sleeping through the night for the first time in years that breaks something open emotionally.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">These three stories are representative, but I want to be transparent about the full picture. <strong>Not everyone saw results.</strong> Some women noticed changes in the first week; others took two months. A small percentage didn't notice a significant difference at all.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">But the overall pattern was clear.</p>"
+      }
+    },
+    {
+      "id": "stacked-quotes-widget",
+      "type": "stacked-quotes",
+      "enabled": true,
+      "position": 19,
+      "config": {
+        "headline": "What Our Community Is Saying",
+        "quotes": [
+          {
+            "text": "I was the biggest skeptic. TikTok product? Please. But I sleep better than I have in 3 years.",
+            "author": "Karen",
+            "age": "56",
+            "location": "Portland, OR",
+            "verified": true
+          },
+          {
+            "text": "My doctor noticed the change before I told her what I was taking.",
+            "author": "Monica",
+            "age": "61",
+            "location": "Dallas, TX",
+            "verified": true
+          },
+          {
+            "text": "Started for gut health, accidentally fixed my sleep. Best surprise of my 50s.",
+            "author": "Linda",
+            "age": "52",
+            "location": "Boston, MA",
+            "verified": true
+          }
+        ],
+        "showVerifiedBadge": true
+      }
+    },
+    {
+      "id": "survey-results",
+      "type": "data-overview",
+      "enabled": true,
+      "position": 20,
+      "config": {
+        "headline": "Community Survey Results",
+        "subheading": "847 verified community members reported back",
+        "stats": [
+          { "value": "71%", "label": "reported improved sleep within 3 weeks", "icon": "moon" },
+          { "value": "68%", "label": "reported reduced night sweats", "icon": "thermometer" },
+          { "value": "84%", "label": "would recommend to a friend in menopause", "icon": "heart" }
+        ],
+        "source": "Dr. Amy Heart Community Survey, 2024",
+        "style": "grid"
+      }
+    },
+    {
+      "id": "margaret-intro",
+      "type": "text-block",
+      "enabled": true,
+      "position": 21,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But the story that hit me hardest came from Margaret. She gave me permission to share it in full, because she said she wished someone had shared something like this with her two years ago.</p>"
+      }
+    },
+    {
+      "id": "margaret-hero",
+      "type": "testimonial-hero",
+      "enabled": true,
+      "position": 22,
+      "config": {
+        "headline": "Margaret's Story",
+        "name": "Margaret",
+        "age": "54",
+        "location": "Denver, CO",
+        "image": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop",
+        "quote": "I hadn't slept through the night in two years. I'd accepted it. Separate bedrooms. Too tired for my grandkids.\n\nThree weeks on Kiala, I woke at 6AM and realized I hadn't been up once. I laid there and cried.\n\nThat was two months ago. I sleep most nights now. I'm back in our bedroom. I feel like myself again.\n\nIf you're where I was—exhausted, hopeless, thinking this is just how menopause is—please try this.",
+        "verified": true,
+        "badge": "Verified Community Member",
+        "ctaText": "Get the Sleep You Deserve →",
+        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=3am_wakeup"
+      }
+    },
+    {
+      "id": "offer-intro",
+      "type": "text-block",
+      "enabled": true,
+      "position": 23,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">My Recommendation</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Here's where I'll be direct with you.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I don't make money from recommending products. That's not my business model, and it never will be. But I believe in this enough that I asked my team to reach out to Kiala and see if we could get something special for our community.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">They agreed to an exclusive bundle—the best pricing they've offered anywhere. I can't guarantee how long they'll hold this, and I can't guarantee inventory.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">What I can guarantee is this: <strong>if it doesn't work for you, it costs you nothing.</strong> 45-day money-back guarantee, no questions asked.</p>"
+      }
+    },
+    {
+      "id": "countdown-timer",
+      "type": "countdown-timer",
+      "enabled": true,
+      "position": 24,
+      "config": {
+        "headline": "Community Pricing Expires Soon",
+        "subheading": "Dr. Amy's exclusive bundle deal",
+        "endDate": "2025-12-31T23:59:59Z",
+        "style": "urgent"
+      }
+    },
+    {
+      "id": "product-card",
+      "type": "exclusive-product",
+      "enabled": true,
+      "position": 25,
+      "config": {
+        "name": "Kiala Nutrition Super Greens",
+        "description": "The only greens powder I trust for sleep disruption during menopause. NSF-certified, no sugar alcohols, with clinically-studied Spectra® antioxidant blend.",
+        "image": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541",
+        "price": 54.99,
+        "originalPrice": 69.99,
+        "savingsText": "Save $15 with community pricing",
+        "rating": 4.8,
+        "reviewCount": 12847,
+        "benefits": [
+          "Spectra® clinically-studied antioxidant blend",
+          "Organic spirulina & chlorella for gut support",
+          "No sugar alcohols (erythritol/xylitol free)",
+          "NSF-certified, FDA-inspected facility",
+          "45-day money-back guarantee"
+        ],
+        "badges": ["#1 Pick", "NSF Certified", "No Sugar Alcohols"],
+        "ctaText": "Claim Your Exclusive Offer →",
+        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=3am_wakeup",
+        "shippingBadgeText": "Free Shipping",
+        "guaranteeBadgeText": "45-Day Guarantee"
+      }
+    },
+    {
+      "id": "shop-now-bundles",
+      "type": "shop-now",
+      "enabled": true,
+      "position": 26,
+      "config": {
+        "name": "Super Greens",
+        "description": "Choose your bundle size",
+        "images": [
+          { "url": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541", "alt": "Kiala Super Greens" }
+        ],
+        "rating": 4.8,
+        "reviewCount": 12847,
+        "pricingOptions": [
+          {
+            "id": "single",
+            "label": "1-Month Supply",
+            "quantity": 1,
+            "price": 54.99,
+            "originalPrice": 69.99,
+            "perUnit": 54.99,
+            "savings": "Save $15",
+            "gifts": [
+              { "name": "Free Shipping", "value": "$8.99" }
+            ]
+          },
+          {
+            "id": "double",
+            "label": "2-Month Supply",
+            "quantity": 2,
+            "price": 99.99,
+            "originalPrice": 139.98,
+            "perUnit": 49.99,
+            "savings": "Save $40",
+            "popular": true,
+            "gifts": [
+              { "name": "Free Shipping", "value": "$8.99" },
+              { "name": "Free Recipe Guide", "value": "$19.99" }
+            ]
+          },
+          {
+            "id": "triple",
+            "label": "3-Month Supply",
+            "quantity": 3,
+            "price": 134.99,
+            "originalPrice": 209.97,
+            "perUnit": 44.99,
+            "savings": "Save $75",
+            "gifts": [
+              { "name": "Free Shipping", "value": "$8.99" },
+              { "name": "Free Recipe Guide", "value": "$19.99" },
+              { "name": "Free Frother", "value": "$14.99" }
+            ]
+          }
+        ],
+        "benefits": [
+          "Clinically-studied Spectra® blend",
+          "45-day money-back guarantee",
+          "Free shipping on all orders",
+          "NSF certified quality"
+        ],
+        "buttonText": "Add to Cart",
+        "buttonUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=3am_wakeup"
+      }
+    },
+    {
+      "id": "empowerment-close",
+      "type": "text-block",
+      "enabled": true,
+      "position": 27,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">You Deserve to Sleep Again</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I'll leave you with this.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Sleep isn't a luxury. It's when your body heals—when collagen regenerates, when your brain consolidates memories, when your hormones recalibrate.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When menopause steals your sleep, it steals <em>you</em>. Slowly. Night by night. You see it in the mirror. You feel it in your bones. You notice it in how you show up for the people you love.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">You don't have to accept that.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Patricia didn't. Margaret didn't. The 847 women in our survey didn't.</p>"
+      }
+    },
+    {
+      "id": "dr-closing",
+      "type": "doctor-closing-word",
+      "enabled": true,
+      "position": 28,
+      "config": {
+        "message": "You deserve to wake up feeling like yourself again—not like a ghost of who you used to be.",
+        "signoff": "Here's to sleeping through the night,",
+        "name": "Dr. Amy Heart",
+        "credentials": "Board-Certified Integrative Medicine",
+        "image": ""
+      }
+    },
+    {
+      "id": "email-capture-final",
+      "type": "email-capture",
+      "enabled": true,
+      "position": 29,
+      "config": {
+        "headline": "Join 50,000+ Women Navigating Menopause Together",
+        "subheading": "Get weekly insights on sleep, hormones, and feeling like yourself again",
+        "buttonText": "Subscribe for Weekly Insights →",
+        "style": "gradient"
+      }
+    },
+    {
+      "id": "disclaimer",
+      "type": "text-block",
+      "enabled": true,
+      "position": 30,
+      "config": {
+        "content": "<p class=\"text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200\"><em>This article is for informational purposes only and does not constitute medical advice. Always consult with your healthcare provider before starting any new supplement regimen. Individual results may vary.</em></p>"
+      }
+    }
+  ]
+}
