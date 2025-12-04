@@ -1029,7 +1029,7 @@ export class EnhancedQueries {
       return {
         views,
         clicks,
-        conversionRate: views > 0 ? ((clicks / views) * 100).toFixed(2) : '0',
+        conversionRate: views > 0 ? Math.min((clicks / views) * 100, 100).toFixed(2) : '0',
         widgetBreakdown
       };
     },
@@ -1050,8 +1050,8 @@ export class EnhancedQueries {
         totalViews,
         totalClicks,
         totalEmails,
-        clickThroughRate: totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(2) : '0',
-        emailConversionRate: totalViews > 0 ? ((totalEmails / totalViews) * 100).toFixed(2) : '0'
+        clickThroughRate: totalViews > 0 ? Math.min((totalClicks / totalViews) * 100, 100).toFixed(2) : '0',
+        emailConversionRate: totalViews > 0 ? Math.min((totalEmails / totalViews) * 100, 100).toFixed(2) : '0'
       };
     },
 
@@ -1063,7 +1063,7 @@ export class EnhancedQueries {
            COALESCE(av.unique_views, 0) as real_views,
            COALESCE(wc.unique_clicks, 0) as widget_clicks,
            CASE WHEN COALESCE(av.unique_views, 0) > 0
-             THEN ROUND(COALESCE(wc.unique_clicks, 0) * 100.0 / av.unique_views, 2)
+             THEN MIN(ROUND(COALESCE(wc.unique_clicks, 0) * 100.0 / av.unique_views, 2), 100)
              ELSE 0
            END as conversion_rate
          FROM articles a

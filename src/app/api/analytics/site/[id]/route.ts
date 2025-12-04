@@ -86,7 +86,7 @@ export async function GET(
         clickThroughRate: conversionMetrics.clickThroughRate,
         emailConversionRate: conversionMetrics.emailConversionRate,
         averageConversionRate: articlesWithAnalytics.length > 0
-          ? (articlesWithAnalytics.reduce((sum: number, a: any) => sum + parseFloat(a.conversion_rate || 0), 0) / articlesWithAnalytics.length).toFixed(2)
+          ? Math.min(articlesWithAnalytics.reduce((sum: number, a: any) => sum + parseFloat(a.conversion_rate || 0), 0) / articlesWithAnalytics.length, 100).toFixed(2)
           : '0'
       },
       articles: articlesWithAnalytics.map((article: any) => ({
@@ -97,7 +97,7 @@ export async function GET(
         boosted: article.boosted,
         realViews: article.real_views || 0,
         widgetClicks: article.widget_clicks || 0,
-        conversionRate: article.conversion_rate || 0,
+        conversionRate: Math.min(parseFloat(article.conversion_rate || 0), 100),
         createdAt: article.created_at
       })),
       topWidgets: topWidgets.map((widget: any) => ({

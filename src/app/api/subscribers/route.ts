@@ -99,13 +99,25 @@ export async function GET(request: NextRequest) {
       return subDate >= weekAgo;
     }).length;
 
+    // PDF download sources - these are email signups that came with a guide/PDF download
+    const pdfDownloadSources = [
+      'hormone_guide_widget', 'exit_intent_popup', 'community_popup',
+      'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide',
+      'homepage_lead_magnet', 'about_lead_magnet', 'article_lead_magnet'
+    ];
+    const pdfDownloads = subscribers.filter(s =>
+      pdfDownloadSources.some(src => s.source?.toLowerCase().includes(src.toLowerCase())) ||
+      (s.tags && s.tags.includes('lead_magnet'))
+    ).length;
+
     return NextResponse.json({
       subscribers,
       stats: {
         total: totalCount,
         active: activeCount,
         thisWeek,
-        unsubscribed: totalCount - activeCount
+        unsubscribed: totalCount - activeCount,
+        pdfDownloads
       }
     });
   } catch (error) {

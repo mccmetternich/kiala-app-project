@@ -74,6 +74,13 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         new Date(email.created_at) < new Date(startDate)
       );
 
+      // PDF download sources
+      const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide'];
+      const sitePdfDownloads = allSiteEmails.filter((email: any) =>
+        pdfDownloadSources.some(src => email.source?.toLowerCase().includes(src.toLowerCase())) ||
+        (email.tags && JSON.stringify(email.tags).includes('lead_magnet'))
+      ).length;
+
       // Get REAL views from article_views table
       const realSiteViews = await queries.analyticsQueries.getSiteViews(siteId);
       const topArticlesWithRealViews = await queries.analyticsQueries.getTopArticles(siteId, 5);
@@ -90,9 +97,10 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         totalArticles: totalSiteArticles,
         totalViews: realSiteViews,  // REAL views from article_views table
         totalEmails: totalSiteEmails,
+        pdfDownloads: sitePdfDownloads,
         recentEmails: recentSiteEmails.length,
         emailGrowth: `${emailGrowth}%`,
-        conversionRate: realSiteViews > 0 ? ((totalSiteEmails / realSiteViews) * 100).toFixed(1) : '0',
+        conversionRate: realSiteViews > 0 ? Math.min((totalSiteEmails / realSiteViews) * 100, 100).toFixed(1) : '0',
         topArticles: topArticlesWithRealViews.map((article: any) => ({
           title: article.title,
           views: article.real_views || 0,  // REAL views
@@ -146,6 +154,13 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       const boostedArticles = allArticles.filter((article: any) => article.boosted);
       const publishedSites = allSites.filter((site: any) => site.published || site.status === 'published');
 
+      // PDF download sources (global)
+      const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide'];
+      const totalPdfDownloads = allEmails.filter((email: any) =>
+        pdfDownloadSources.some(src => email.source?.toLowerCase().includes(src.toLowerCase())) ||
+        (email.tags && JSON.stringify(email.tags).includes('lead_magnet'))
+      ).length;
+
       // Calculate growth rates
       const emailGrowth = previousEmails.length > 0
         ? ((recentEmails.length - previousEmails.length) / previousEmails.length * 100).toFixed(1)
@@ -165,7 +180,7 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
           articlesCount: siteArticles.filter((article: { published: boolean; }) => article.published).length,
           viewsCount: realSiteViews,  // REAL views
           emailsCount: siteEmails.length,
-          conversionRate: realSiteViews > 0 ? ((siteEmails.length / realSiteViews) * 100).toFixed(1) : '0'
+          conversionRate: realSiteViews > 0 ? Math.min((siteEmails.length / realSiteViews) * 100, 100).toFixed(1) : '0'
         };
       });
       const sitePerformance = (await Promise.all(sitePerformancePromises))
@@ -190,10 +205,11 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         boostedArticles: boostedArticles.length,
         totalViews: totalRealViews,  // REAL views
         totalEmails: allEmails.length,
+        pdfDownloads: totalPdfDownloads,
         recentEmails: recentEmails.length,
         emailGrowth: `${emailGrowth}%`,
         articleGrowth: `${articleGrowth} this ${timeframe}`,
-        avgConversionRate: totalRealViews > 0 ? ((allEmails.length / totalRealViews) * 100).toFixed(1) : '0',
+        avgConversionRate: totalRealViews > 0 ? Math.min((allEmails.length / totalRealViews) * 100, 100).toFixed(1) : '0',
         sitePerformance,
         topArticlesGlobal: topArticlesWithRealViews.map((article: any) => {
           const site = allSites.find((s: { id: string; }) => s.id === article.site_id);
@@ -204,7 +220,8 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
             displayViews: article.views,  // Fake display views
             slug: article.slug,
             siteName: site?.name || 'Unknown',
-            siteId: article.site_id
+            siteId: article.site_id,
+            boosted: article.boosted
           };
         }),
         topWidgetsGlobal: topWidgetsGlobal.map((widget: any) => {

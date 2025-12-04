@@ -54,6 +54,7 @@ interface Page {
 interface DashboardStats {
   totalSites: number;
   totalArticles: number;
+  boostedArticles: number;
   totalViews: number;
   totalEmails: number;
 }
@@ -176,7 +177,7 @@ export default function AdminDashboard() {
 
   const dashboardStats = stats ? [
     { name: 'Sites', value: stats.totalSites, icon: Globe, color: 'text-blue-400', bg: 'bg-blue-900/30' },
-    { name: 'Articles', value: stats.totalArticles, icon: FileText, color: 'text-purple-400', bg: 'bg-purple-900/30' },
+    { name: 'Boosted', value: stats.boostedArticles || 0, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-900/30' },
     { name: 'Views', value: stats.totalViews >= 1000 ? `${(stats.totalViews / 1000).toFixed(1)}K` : stats.totalViews, icon: Eye, color: 'text-green-400', bg: 'bg-green-900/30' },
     { name: 'Email Signups', value: stats.totalEmails, icon: Users, color: 'text-orange-400', bg: 'bg-orange-900/30' },
   ] : [];
@@ -492,6 +493,12 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
+                          {article.boosted && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300">
+                              <Zap className="w-3 h-3" />
+                              Boosted
+                            </span>
+                          )}
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             article.published
                               ? 'bg-green-900/50 text-green-300'

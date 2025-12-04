@@ -89,6 +89,7 @@ export default function SiteDashboard() {
   const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
   const [emailsLoading, setEmailsLoading] = useState(false);
   const [emailDateFilter, setEmailDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'quarter'>('all');
+  const [emailSourceFilter, setEmailSourceFilter] = useState<'all' | 'pdf_downloads' | 'other'>('all');
   const [emailSortField, setEmailSortField] = useState<'email' | 'created_at'>('created_at');
   const [emailSortDir, setEmailSortDir] = useState<'asc' | 'desc'>('desc');
 
@@ -375,7 +376,13 @@ export default function SiteDashboard() {
     return matchesSearch && matchesStatus;
   });
 
-  // Filtered subscribers by tab, search, date, and sorted
+  // PDF download sources for filtering
+  const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide'];
+  const isPdfDownload = (sub: any) =>
+    pdfDownloadSources.some(src => sub.source?.toLowerCase().includes(src.toLowerCase())) ||
+    (sub.tags && JSON.stringify(sub.tags).includes('lead_magnet'));
+
+  // Filtered subscribers by tab, search, date, source, and sorted
   const filteredSubscribers = (() => {
     // First filter
     let result = subscribers.filter(sub => {
@@ -405,7 +412,15 @@ export default function SiteDashboard() {
         }
       }
 
-      return matchesTab && matchesSearch && matchesDate;
+      // Source filter (PDF downloads vs other)
+      let matchesSource = true;
+      if (emailSourceFilter === 'pdf_downloads') {
+        matchesSource = isPdfDownload(sub);
+      } else if (emailSourceFilter === 'other') {
+        matchesSource = !isPdfDownload(sub);
+      }
+
+      return matchesTab && matchesSearch && matchesDate && matchesSource;
     });
 
     // Then sort
@@ -654,14 +669,14 @@ export default function SiteDashboard() {
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* Stats Cards - Reordered: Pages, Boosted, Articles, Emails, Views */}
+              {/* Stats Cards - Reordered: Views, Emails, Downloads, Boosted, Pages */}
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 {[
-                  { label: 'Total Pages', value: totalPageCount, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
-                  { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
-                  { label: 'Total Articles', value: metrics?.totalArticles || 0, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('articles') },
-                  { label: 'Total Emails', value: metrics?.totalEmails || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
                   { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: true, onClick: () => setActiveTab('analytics') },
+                  { label: 'Total Emails', value: metrics?.totalEmails || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
+                  { label: 'PDF Downloads', value: subscriberStats?.pdfDownloads || 0, icon: Download, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('emails') },
+                  { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
+                  { label: 'Total Pages', value: totalPageCount, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
                 ].map((stat, i) => (
                   <div
                     key={i}
@@ -2010,6 +2025,31 @@ export default function SiteDashboard() {
                   </div>
                 </div>
 
+                {/* Source Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-3">Source Type</label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'all' as const, label: 'All Signups', icon: Users },
+                      { id: 'pdf_downloads' as const, label: 'PDF Downloads', icon: Download },
+                      { id: 'other' as const, label: 'Other', icon: Mail },
+                    ].map((option) => (
+                      <button
+                        key={option.id}
+                        onClick={() => setEmailSourceFilter(option.id)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                          emailSourceFilter === option.id
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        }`}
+                      >
+                        <option.icon className="w-4 h-4" />
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Search and Sort Row */}
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-700">
                   <div className="flex items-center gap-4">
@@ -2082,7 +2122,7 @@ export default function SiteDashboard() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-5 gap-4">
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
                   <p className="text-gray-400 text-sm">Total Emails</p>
                   <p className="text-3xl font-bold text-white mt-1">{subscribers.length}</p>
@@ -2092,8 +2132,17 @@ export default function SiteDashboard() {
                   <p className="text-3xl font-bold text-green-400 mt-1">{activeSubscriberCount}</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">This Week</p>
-                  <p className="text-3xl font-bold text-blue-400 mt-1">{subscriberStats.thisWeek || 0}</p>
+                  <p className="text-gray-400 text-sm">PDF Downloads</p>
+                  <p className="text-3xl font-bold text-blue-400 mt-1">{subscriberStats.pdfDownloads || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">
+                    {emailDateFilter === 'all' ? 'All Time' :
+                     emailDateFilter === 'today' ? 'Today' :
+                     emailDateFilter === 'week' ? 'Last 7 Days' :
+                     emailDateFilter === 'month' ? 'Last 30 Days' : 'Last 90 Days'}
+                  </p>
+                  <p className="text-3xl font-bold text-purple-400 mt-1">{filteredSubscribers.length}</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
                   <p className="text-gray-400 text-sm">Unsubscribed</p>
@@ -2764,23 +2813,68 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                   <div className="bg-gray-700/50 rounded-xl p-4">
                     {articleDetails[article.id] ? (
                       <div className="space-y-4">
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="text-center">
+                        {/* Performance Metrics */}
+                        <div className="grid grid-cols-4 gap-3">
+                          <div className="bg-gray-800 rounded-lg p-3 text-center">
                             <p className="text-2xl font-bold text-white">{articleDetails[article.id].analytics?.views || 0}</p>
                             <p className="text-xs text-gray-400">Total Views</p>
                           </div>
-                          <div className="text-center">
+                          <div className="bg-gray-800 rounded-lg p-3 text-center">
                             <p className="text-2xl font-bold text-blue-400">{articleDetails[article.id].analytics?.clicks || 0}</p>
                             <p className="text-xs text-gray-400">Widget Clicks</p>
                           </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-green-400">{articleDetails[article.id].analytics?.conversionRate || 0}%</p>
-                            <p className="text-xs text-gray-400">Conversion Rate</p>
+                          <div className="bg-gray-800 rounded-lg p-3 text-center">
+                            <p className="text-2xl font-bold text-green-400">{articleDetails[article.id].analytics?.emailSignups || 0}</p>
+                            <p className="text-xs text-gray-400">Email Signups</p>
+                          </div>
+                          <div className="bg-gray-800 rounded-lg p-3 text-center">
+                            <p className="text-2xl font-bold text-purple-400">{articleDetails[article.id].analytics?.conversionRate || 0}%</p>
+                            <p className="text-xs text-gray-400">Conversion</p>
                           </div>
                         </div>
 
+                        {/* Email Signups from this Article */}
+                        {articleDetails[article.id].analytics?.emails?.length > 0 && (
+                          <div className="border-t border-gray-600 pt-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-sm font-medium text-gray-300">Recent Email Signups</p>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // Export these emails
+                                  const emails = articleDetails[article.id].analytics.emails;
+                                  const csv = [
+                                    ['Email', 'Source', 'Date'],
+                                    ...emails.map((em: any) => [em.email, em.source || 'unknown', em.createdAt])
+                                  ].map((row: any[]) => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+                                  const blob = new Blob([csv], { type: 'text/csv' });
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = `${article.slug}-emails.csv`;
+                                  a.click();
+                                  URL.revokeObjectURL(url);
+                                }}
+                                className="text-xs text-primary-400 hover:text-primary-300"
+                              >
+                                <Download className="w-3 h-3 inline mr-1" />
+                                Download
+                              </button>
+                            </div>
+                            <div className="space-y-1 max-h-32 overflow-y-auto">
+                              {articleDetails[article.id].analytics.emails.map((em: any, i: number) => (
+                                <div key={i} className="flex items-center justify-between bg-gray-600/50 rounded px-2 py-1.5 text-xs">
+                                  <span className="text-gray-300 truncate">{em.email}</span>
+                                  <span className="text-gray-500 flex-shrink-0 ml-2">{em.source || 'website'}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Widget Breakdown */}
                         {articleDetails[article.id].analytics?.widgetBreakdown?.length > 0 && (
-                          <div>
+                          <div className="border-t border-gray-600 pt-4">
                             <p className="text-sm font-medium text-gray-300 mb-2">Widget Breakdown</p>
                             <div className="space-y-2">
                               {articleDetails[article.id].analytics.widgetBreakdown.map((widget: any, i: number) => (
@@ -2796,16 +2890,18 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                           </div>
                         )}
 
-                        {(!articleDetails[article.id].analytics?.widgetBreakdown?.length) && (
-                          <p className="text-sm text-gray-400 text-center py-2">No widget clicks recorded yet</p>
+                        {(!articleDetails[article.id].analytics?.widgetBreakdown?.length && !articleDetails[article.id].analytics?.emails?.length) && (
+                          <p className="text-sm text-gray-400 text-center py-2">No conversions recorded yet</p>
                         )}
 
-                        <Link
-                          href={`/admin/articles/${article.id}/edit`}
-                          className="block w-full text-center text-primary-400 hover:text-primary-300 text-sm font-medium py-2 border border-gray-600 rounded-lg hover:bg-gray-600/50 transition-colors"
-                        >
-                          Edit Article →
-                        </Link>
+                        <div className="pt-2 border-t border-gray-600">
+                          <Link
+                            href={`/admin/articles/${article.id}/edit`}
+                            className="block w-full text-center text-primary-400 hover:text-primary-300 text-sm font-medium py-2 border border-gray-600 rounded-lg hover:bg-gray-600/50 transition-colors"
+                          >
+                            Edit Article →
+                          </Link>
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center py-4">

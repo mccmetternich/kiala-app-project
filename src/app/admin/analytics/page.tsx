@@ -107,6 +107,7 @@ interface DashboardStats {
     slug: string;
     siteName: string;
     siteId: string;
+    boosted?: boolean;
   }[];
   topWidgetsGlobal?: {
     type: string;
@@ -429,9 +430,16 @@ export default function GlobalAnalyticsPage() {
                       {index + 1}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
-                        {article.title}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
+                          {article.title}
+                        </p>
+                        {article.boosted && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300 flex-shrink-0">
+                            <Zap className="w-3 h-3" />
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-500">
                         {article.siteName || 'Unknown site'}
                       </p>
