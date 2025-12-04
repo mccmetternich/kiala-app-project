@@ -3,18 +3,21 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   ArrowRight,
-  Check, 
-  Globe, 
-  User, 
-  Palette, 
+  Check,
+  Globe,
+  User,
+  Palette,
   Rocket,
-  Sparkles
+  Sparkles,
+  ChevronDown,
+  Type
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import Badge from '@/components/ui/Badge';
+import { themePresets, categoryLabels, fontOptions, type ThemePreset } from '@/lib/theme-presets';
 
 interface WizardStep {
   id: string;
@@ -50,42 +53,12 @@ const steps: WizardStep[] = [
   }
 ];
 
-const themes = [
-  {
-    id: 'medical',
-    name: 'Medical Authority',
-    description: 'Professional medical authority with trust-building elements',
-    colors: { primary: '#ec4899', secondary: '#22c55e', accent: '#f59e0b' },
-    preview: 'bg-gradient-to-br from-pink-500 to-pink-600'
-  },
-  {
-    id: 'wellness',
-    name: 'Wellness Professional',
-    description: 'Holistic wellness approach with calming colors',
-    colors: { primary: '#059669', secondary: '#3b82f6', accent: '#f59e0b' },
-    preview: 'bg-gradient-to-br from-emerald-500 to-emerald-600'
-  },
-  {
-    id: 'clinical',
-    name: 'Clinical Research',
-    description: 'Research-based clinical approach with professional styling',
-    colors: { primary: '#3b82f6', secondary: '#8b5cf6', accent: '#f59e0b' },
-    preview: 'bg-gradient-to-br from-blue-500 to-blue-600'
-  },
-  {
-    id: 'lifestyle',
-    name: 'Lifestyle & Beauty',
-    description: 'Lifestyle and beauty focus with modern styling',
-    colors: { primary: '#8b5cf6', secondary: '#ec4899', accent: '#f59e0b' },
-    preview: 'bg-gradient-to-br from-purple-500 to-purple-600'
-  }
-];
-
 export default function NewSitePage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isCreating, setIsCreating] = useState(false);
-  
+  const [expandedCategory, setExpandedCategory] = useState<string | null>('medical');
+
   const [siteData, setSiteData] = useState({
     name: '',
     domain: '',
@@ -98,7 +71,11 @@ export default function NewSitePage() {
       profileImage: '/api/placeholder/200/200',
       quote: ''
     },
-    theme: themes[0],
+    theme: themePresets[0],
+    fonts: {
+      heading: 'Playfair Display',
+      body: 'Inter'
+    },
     settings: {
       navigation: [
         { label: 'Home', url: '/', type: 'internal' },
@@ -133,6 +110,33 @@ export default function NewSitePage() {
       brand: { ...prev.brand, [field]: value }
     }));
   };
+
+  const updateFonts = (field: 'heading' | 'body', value: string) => {
+    setSiteData(prev => ({
+      ...prev,
+      fonts: { ...prev.fonts, [field]: value }
+    }));
+  };
+
+  const selectTheme = (theme: ThemePreset) => {
+    setSiteData(prev => ({
+      ...prev,
+      theme,
+      fonts: {
+        heading: theme.fonts.heading,
+        body: theme.fonts.body
+      }
+    }));
+  };
+
+  // Group themes by category
+  const themesByCategory = themePresets.reduce((acc, theme) => {
+    if (!acc[theme.category]) {
+      acc[theme.category] = [];
+    }
+    acc[theme.category].push(theme);
+    return acc;
+  }, {} as Record<string, ThemePreset[]>);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -183,6 +187,8 @@ export default function NewSitePage() {
           domain: siteData.domain,
           subdomain: siteData.subdomain,
           theme: siteData.theme.id,
+          theme_colors: siteData.theme.colors,
+          theme_fonts: siteData.fonts,
           settings: siteData.settings,
           brand_profile: siteData.brand,
           status: 'draft'
@@ -191,7 +197,7 @@ export default function NewSitePage() {
 
       if (response.ok) {
         const data = await response.json();
-        router.push(`/admin/sites/${data.site.id}/settings`);
+        router.push(`/admin/sites/${data.site.id}/dashboard`);
       } else {
         alert('Error creating site. Please try again.');
         setIsCreating(false);
@@ -326,39 +332,136 @@ export default function NewSitePage() {
 
       case 2: // Theme Selection
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* Theme Library */}
             <div>
-              <h3 className="text-lg font-medium text-gray-200 mb-4">Choose Your Site Style</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {themes.map((theme) => (
-                  <div
-                    key={theme.id}
-                    onClick={() => updateSiteData('theme', theme)}
-                    className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                      siteData.theme.id === theme.id
-                        ? 'border-primary-500 bg-gray-700'
-                        : 'border-gray-600 hover:border-gray-500 bg-gray-800'
-                    }`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`w-16 h-16 rounded-lg ${theme.preview}`}></div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h4 className="font-semibold text-gray-200">{theme.name}</h4>
-                          {siteData.theme.id === theme.id && (
-                            <Check className="w-5 h-5 text-primary-400" />
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-400">{theme.description}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.primary }}></div>
-                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.secondary }}></div>
-                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.accent }}></div>
+              <h3 className="text-lg font-medium text-gray-200 mb-4">Choose Your Theme</h3>
+              <p className="text-sm text-gray-400 mb-6">
+                Select a pre-designed theme that matches your brand. You can customize colors and fonts after creation.
+              </p>
+
+              <div className="space-y-4">
+                {Object.entries(themesByCategory).map(([category, themes]) => (
+                  <div key={category} className="border border-gray-700 rounded-lg overflow-hidden">
+                    <button
+                      onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
+                      className="w-full flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-750 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-gray-200">
+                          {categoryLabels[category] || category}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {themes.length} themes
+                        </span>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${
+                        expandedCategory === category ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+
+                    {expandedCategory === category && (
+                      <div className="p-4 bg-gray-850 border-t border-gray-700">
+                        <div className="grid md:grid-cols-2 gap-3">
+                          {themes.map((theme) => (
+                            <div
+                              key={theme.id}
+                              onClick={() => selectTheme(theme)}
+                              className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                                siteData.theme.id === theme.id
+                                  ? 'border-primary-500 bg-gray-700'
+                                  : 'border-gray-600 hover:border-gray-500 bg-gray-800'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className={`w-12 h-12 rounded-lg flex-shrink-0 bg-gradient-to-br ${theme.preview.gradient}`}></div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="font-medium text-sm text-gray-200 truncate">{theme.name}</h4>
+                                    {siteData.theme.id === theme.id && (
+                                      <Check className="w-4 h-4 text-primary-400 flex-shrink-0" />
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-400 line-clamp-2">{theme.description}</p>
+                                  <div className="flex items-center gap-1.5 mt-2">
+                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.primary }}></div>
+                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.secondary }}></div>
+                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.accent }}></div>
+                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.trust }}></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Font Selection */}
+            <div className="border-t border-gray-700 pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Type className="w-5 h-5 text-gray-400" />
+                <h3 className="text-lg font-medium text-gray-200">Typography</h3>
+              </div>
+              <p className="text-sm text-gray-400 mb-4">
+                Customize the fonts for your site. These are automatically set based on your theme but can be changed.
+              </p>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Heading Font
+                  </label>
+                  <select
+                    value={siteData.fonts.heading}
+                    onChange={(e) => updateFonts('heading', e.target.value)}
+                    className="w-full border border-gray-600 bg-gray-700 text-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    {fontOptions.heading.map((font) => (
+                      <option key={font.id} value={font.name}>
+                        {font.name} - {font.preview}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Body Font
+                  </label>
+                  <select
+                    value={siteData.fonts.body}
+                    onChange={(e) => updateFonts('body', e.target.value)}
+                    className="w-full border border-gray-600 bg-gray-700 text-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    {fontOptions.body.map((font) => (
+                      <option key={font.id} value={font.name}>
+                        {font.name} - {font.preview}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Font Preview */}
+              <div className="mt-4 p-4 bg-gray-700 rounded-lg">
+                <div className="text-xs text-gray-400 mb-2">Preview</div>
+                <div
+                  className="text-xl text-gray-200 mb-1"
+                  style={{ fontFamily: siteData.fonts.heading }}
+                >
+                  {siteData.brand.name || 'Your Brand Name'}
+                </div>
+                <div
+                  className="text-sm text-gray-300"
+                  style={{ fontFamily: siteData.fonts.body }}
+                >
+                  {siteData.brand.tagline || 'Your tagline will appear here in the body font.'}
+                </div>
               </div>
             </div>
           </div>
@@ -393,10 +496,6 @@ export default function NewSitePage() {
                       <span className="text-gray-200">{siteData.domain}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Theme:</span>
-                    <span className="text-gray-200">{siteData.theme.name}</span>
-                  </div>
                 </div>
               </div>
 
@@ -409,8 +508,34 @@ export default function NewSitePage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Tagline:</span>
-                    <span className="text-gray-200 text-right">{siteData.brand.tagline}</span>
+                    <span className="text-gray-200 text-right max-w-[200px] truncate">{siteData.brand.tagline}</span>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Theme & Typography Summary */}
+            <div className="bg-gray-700 rounded-lg p-4">
+              <h4 className="font-semibold text-gray-200 mb-3">Theme & Typography</h4>
+              <div className="flex flex-wrap gap-6">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${siteData.theme.preview.gradient}`}></div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-200">{siteData.theme.name}</div>
+                    <div className="text-xs text-gray-400">{categoryLabels[siteData.theme.category]}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: siteData.theme.colors.primary }}></div>
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: siteData.theme.colors.secondary }}></div>
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: siteData.theme.colors.accent }}></div>
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: siteData.theme.colors.trust }}></div>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-400">Fonts:</span>{' '}
+                  <span className="text-gray-200">{siteData.fonts.heading}</span>
+                  <span className="text-gray-500"> / </span>
+                  <span className="text-gray-200">{siteData.fonts.body}</span>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import { CTABlock as CTABlockType } from '@/types/blocks';
 import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import { useTracking } from '@/contexts/TrackingContext';
 
 interface CTABlockProps {
   block: CTABlockType;
@@ -9,6 +10,7 @@ interface CTABlockProps {
 
 export default function CTABlock({ block }: CTABlockProps) {
   const { settings } = block;
+  const { trackWidgetClick } = useTracking();
 
   const getStyleClasses = () => {
     switch (settings.style) {
@@ -24,10 +26,18 @@ export default function CTABlock({ block }: CTABlockProps) {
   };
 
   const handleClick = () => {
-    // Fire InitiateCheckout event for CTA block clicks
+    // Fire InitiateCheckout event for CTA block clicks (Meta Pixel)
     trackInitiateCheckout({
       content_name: settings.ctaText || 'CTA Block',
       content_category: 'cta_block'
+    });
+
+    // Track widget click internally for analytics
+    trackWidgetClick({
+      widget_type: 'cta-block',
+      widget_name: settings.title || settings.ctaText || 'CTA Block',
+      click_type: 'cta',
+      destination_url: settings.ctaLink
     });
   };
 

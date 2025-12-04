@@ -72,7 +72,7 @@ export default function SiteDashboard() {
   // Articles state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [articlesSubTab, setArticlesSubTab] = useState<ArticlesSubTab>('all');
+  const [articlesSubTab, setArticlesSubTab] = useState<ArticlesSubTab>('boosted');
 
   // Settings state
   const [settingsSubTab, setSettingsSubTab] = useState<SettingsSubTab>('content');
@@ -88,6 +88,9 @@ export default function SiteDashboard() {
   const [emailSearch, setEmailSearch] = useState('');
   const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
   const [emailsLoading, setEmailsLoading] = useState(false);
+  const [emailDateFilter, setEmailDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'quarter'>('all');
+  const [emailSortField, setEmailSortField] = useState<'email' | 'created_at'>('created_at');
+  const [emailSortDir, setEmailSortDir] = useState<'asc' | 'desc'>('desc');
 
   // Content Profile state
   const [contentProfile, setContentProfile] = useState<ContentProfile>(DEFAULT_CONTENT_PROFILE);
@@ -112,7 +115,7 @@ export default function SiteDashboard() {
     try {
       const [siteResponse, articlesData, subscribersResponse] = await Promise.all([
         fetch(`/api/sites/${id}`).then(res => res.json()),
-        clientAPI.getArticlesBySite(id, false),
+        fetch(`/api/articles?siteId=${id}&published=false&includeRealViews=true`).then(res => res.json()).then(data => data.articles || []),
         fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 }, subscribers: [] }))
       ]);
 
@@ -158,7 +161,7 @@ export default function SiteDashboard() {
       setMetrics({
         totalArticles: articlesData?.length || 0,
         publishedArticles: articlesData?.filter((a: any) => a.published)?.length || 0,
-        totalViews: articlesData?.reduce((sum: number, a: any) => sum + (a.views || 0), 0) || 0,
+        totalViews: articlesData?.reduce((sum: number, a: any) => sum + (a.realViews || 0), 0) || 0,
         totalEmails: subscribersResponse?.stats?.total || 0
       });
     } catch (error) {
@@ -372,12 +375,56 @@ export default function SiteDashboard() {
     return matchesSearch && matchesStatus;
   });
 
-  // Filtered subscribers by tab and search
-  const filteredSubscribers = subscribers.filter(sub => {
-    const matchesTab = emailsSubTab === 'active' ? sub.status === 'active' : sub.status !== 'active';
-    const matchesSearch = !emailSearch || sub.email.toLowerCase().includes(emailSearch.toLowerCase()) || sub.name?.toLowerCase().includes(emailSearch.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
+  // Filtered subscribers by tab, search, date, and sorted
+  const filteredSubscribers = (() => {
+    // First filter
+    let result = subscribers.filter(sub => {
+      const matchesTab = emailsSubTab === 'active' ? sub.status === 'active' : sub.status !== 'active';
+      const matchesSearch = !emailSearch || sub.email.toLowerCase().includes(emailSearch.toLowerCase()) || sub.name?.toLowerCase().includes(emailSearch.toLowerCase());
+
+      // Date filter
+      let matchesDate = true;
+      if (emailDateFilter !== 'all') {
+        const subDate = new Date(sub.created_at);
+        const now = new Date();
+        const diffDays = Math.floor((now.getTime() - subDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        switch (emailDateFilter) {
+          case 'today':
+            matchesDate = diffDays < 1;
+            break;
+          case 'week':
+            matchesDate = diffDays <= 7;
+            break;
+          case 'month':
+            matchesDate = diffDays <= 30;
+            break;
+          case 'quarter':
+            matchesDate = diffDays <= 90;
+            break;
+        }
+      }
+
+      return matchesTab && matchesSearch && matchesDate;
+    });
+
+    // Then sort
+    result.sort((a, b) => {
+      let aVal: any, bVal: any;
+      if (emailSortField === 'email') {
+        aVal = a.email.toLowerCase();
+        bVal = b.email.toLowerCase();
+      } else {
+        aVal = new Date(a.created_at).getTime();
+        bVal = new Date(b.created_at).getTime();
+      }
+      if (aVal < bVal) return emailSortDir === 'asc' ? -1 : 1;
+      if (aVal > bVal) return emailSortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  })();
 
   // Email stats
   const activeSubscriberCount = subscribers.filter(s => s.status === 'active').length;
@@ -672,7 +719,7 @@ export default function SiteDashboard() {
                               {article.title}
                             </p>
                             <p className="text-gray-500 text-sm">
-                              {article.views || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
+                              {article.realViews || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
                             </p>
                           </div>
                         </div>
@@ -919,7 +966,7 @@ export default function SiteDashboard() {
                               )}
                             </div>
                             <p className="text-gray-500 text-sm">
-                              {article.views || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
+                              {article.realViews || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
                             </p>
                           </div>
                         </div>
@@ -1255,42 +1302,112 @@ export default function SiteDashboard() {
                 {/* Appearance */}
                 {settingsSubTab === 'appearance' && (
                   <div className="space-y-8">
+                    {/* Theme Library */}
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Theme</h3>
-                      <div className="grid md:grid-cols-4 gap-4">
-                        {['medical', 'wellness', 'clinical', 'lifestyle'].map((themeName) => (
-                          <button
-                            key={themeName}
-                            onClick={() => updateSiteField('theme', themeName)}
-                            className={`p-4 rounded-xl border-2 transition-all ${
-                              site.theme === themeName
-                                ? 'border-primary-500 bg-primary-500/10'
-                                : 'border-gray-600 bg-gray-700 hover:border-gray-500'
-                            }`}
-                          >
-                            <div className="h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg mb-3"></div>
-                            <p className="font-medium text-white capitalize">{themeName}</p>
-                          </button>
-                        ))}
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">Theme Library</h3>
+                          <p className="text-sm text-gray-400 mt-1">Choose a preset theme or customize colors below</p>
+                        </div>
+                        <span className="px-3 py-1 bg-primary-500/20 text-primary-300 rounded-full text-xs font-medium">
+                          {site.theme || 'medical'}
+                        </span>
                       </div>
+
+                      {/* Theme Categories */}
+                      {['medical', 'wellness', 'clinical', 'lifestyle', 'premium'].map((category) => (
+                        <div key={category} className="mb-6">
+                          <h4 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-3">
+                            {category === 'medical' ? 'Medical & Healthcare' :
+                             category === 'wellness' ? 'Wellness & Holistic' :
+                             category === 'clinical' ? 'Clinical & Research' :
+                             category === 'lifestyle' ? 'Lifestyle & Beauty' :
+                             'Premium & Luxury'}
+                          </h4>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {[
+                              // Medical themes
+                              ...(category === 'medical' ? [
+                                { id: 'medical-authority', name: 'Medical Authority', colors: { primary: '#ec4899', secondary: '#22c55e' }, gradient: 'from-pink-500 to-pink-600' },
+                                { id: 'medical-professional', name: 'Medical Professional', colors: { primary: '#3b82f6', secondary: '#22c55e' }, gradient: 'from-blue-500 to-blue-600' },
+                              ] : []),
+                              // Wellness themes
+                              ...(category === 'wellness' ? [
+                                { id: 'wellness-professional', name: 'Wellness Professional', colors: { primary: '#059669', secondary: '#3b82f6' }, gradient: 'from-emerald-500 to-emerald-600' },
+                                { id: 'wellness-natural', name: 'Natural Wellness', colors: { primary: '#84cc16', secondary: '#059669' }, gradient: 'from-lime-500 to-green-600' },
+                              ] : []),
+                              // Clinical themes
+                              ...(category === 'clinical' ? [
+                                { id: 'clinical-research', name: 'Clinical Research', colors: { primary: '#3b82f6', secondary: '#8b5cf6' }, gradient: 'from-blue-500 to-indigo-600' },
+                                { id: 'clinical-modern', name: 'Modern Clinical', colors: { primary: '#06b6d4', secondary: '#14b8a6' }, gradient: 'from-cyan-500 to-teal-600' },
+                              ] : []),
+                              // Lifestyle themes
+                              ...(category === 'lifestyle' ? [
+                                { id: 'lifestyle-beauty', name: 'Lifestyle & Beauty', colors: { primary: '#8b5cf6', secondary: '#ec4899' }, gradient: 'from-purple-500 to-pink-500' },
+                                { id: 'lifestyle-modern', name: 'Modern Lifestyle', colors: { primary: '#f97316', secondary: '#ec4899' }, gradient: 'from-orange-500 to-rose-500' },
+                              ] : []),
+                              // Premium themes
+                              ...(category === 'premium' ? [
+                                { id: 'premium-gold', name: 'Premium Gold', colors: { primary: '#d97706', secondary: '#1e3a5f' }, gradient: 'from-amber-500 to-amber-700' },
+                                { id: 'premium-dark', name: 'Premium Dark', colors: { primary: '#a855f7', secondary: '#22d3ee' }, gradient: 'from-purple-600 to-cyan-600' },
+                              ] : []),
+                            ].map((preset) => (
+                              <button
+                                key={preset.id}
+                                onClick={() => {
+                                  updateSiteField('theme', preset.id.split('-')[0]);
+                                  updateThemeField('primaryColor', preset.colors.primary);
+                                  updateThemeField('secondaryColor', preset.colors.secondary);
+                                }}
+                                className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left ${
+                                  site.theme === preset.id.split('-')[0] || theme.primaryColor === preset.colors.primary
+                                    ? 'border-primary-500 bg-primary-500/10'
+                                    : 'border-gray-600 bg-gray-700/50 hover:border-gray-500'
+                                }`}
+                              >
+                                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${preset.gradient} flex-shrink-0`}></div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-medium text-white">{preset.name}</p>
+                                    {(site.theme === preset.id.split('-')[0] || theme.primaryColor === preset.colors.primary) && (
+                                      <Check className="w-4 h-4 text-primary-400 flex-shrink-0" />
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <div className="w-5 h-5 rounded-full border-2 border-gray-600" style={{ backgroundColor: preset.colors.primary }}></div>
+                                    <div className="w-5 h-5 rounded-full border-2 border-gray-600" style={{ backgroundColor: preset.colors.secondary }}></div>
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Colors</h3>
+                    {/* Custom Colors */}
+                    <div className="border-t border-gray-700 pt-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">Custom Colors</h3>
+                          <p className="text-sm text-gray-400 mt-1">Fine-tune your theme colors</p>
+                        </div>
+                      </div>
                       <div className="grid md:grid-cols-3 gap-6">
                         {[
-                          { id: 'primaryColor', label: 'Primary', default: '#ec4899' },
-                          { id: 'secondaryColor', label: 'Secondary', default: '#9333ea' },
-                          { id: 'accentColor', label: 'Accent', default: '#ef4444' },
+                          { id: 'primaryColor', label: 'Primary', default: '#ec4899', desc: 'Main buttons, links, highlights' },
+                          { id: 'secondaryColor', label: 'Secondary', default: '#22c55e', desc: 'Success states, badges' },
+                          { id: 'accentColor', label: 'Accent', default: '#f59e0b', desc: 'Warnings, special highlights' },
                         ].map((color) => (
-                          <div key={color.id}>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">{color.label}</label>
+                          <div key={color.id} className="bg-gray-700/30 rounded-xl p-4">
+                            <label className="block text-sm font-medium text-gray-300 mb-1">{color.label}</label>
+                            <p className="text-xs text-gray-500 mb-3">{color.desc}</p>
                             <div className="flex items-center gap-3">
                               <input
                                 type="color"
                                 value={theme[color.id] || color.default}
                                 onChange={(e) => updateThemeField(color.id, e.target.value)}
-                                className="w-14 h-12 rounded-lg border border-gray-600 cursor-pointer"
+                                className="w-14 h-12 rounded-lg border border-gray-600 cursor-pointer bg-transparent"
                               />
                               <input
                                 type="text"
@@ -1301,6 +1418,66 @@ export default function SiteDashboard() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+
+                    {/* Font Selection */}
+                    <div className="border-t border-gray-700 pt-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">Typography</h3>
+                          <p className="text-sm text-gray-400 mt-1">Choose fonts for headings and body text</p>
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="bg-gray-700/30 rounded-xl p-4">
+                          <label className="block text-sm font-medium text-gray-300 mb-3">Heading Font</label>
+                          <div className="space-y-2">
+                            {[
+                              { id: 'Playfair Display', preview: 'Elegant Serif' },
+                              { id: 'Inter', preview: 'Clean Sans-Serif' },
+                              { id: 'Montserrat', preview: 'Modern Sans' },
+                              { id: 'Lora', preview: 'Readable Serif' },
+                            ].map((font) => (
+                              <button
+                                key={font.id}
+                                onClick={() => updateThemeField('headingFont', font.id)}
+                                className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all ${
+                                  (theme.headingFont || 'Playfair Display') === font.id
+                                    ? 'border-primary-500 bg-primary-500/10'
+                                    : 'border-gray-600 hover:border-gray-500'
+                                }`}
+                              >
+                                <span className="text-white" style={{ fontFamily: font.id }}>{font.id}</span>
+                                <span className="text-xs text-gray-500">{font.preview}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded-xl p-4">
+                          <label className="block text-sm font-medium text-gray-300 mb-3">Body Font</label>
+                          <div className="space-y-2">
+                            {[
+                              { id: 'Inter', preview: 'Clean & Readable' },
+                              { id: 'Open Sans', preview: 'Friendly & Clear' },
+                              { id: 'Roboto', preview: 'Modern & Neutral' },
+                              { id: 'Lato', preview: 'Warm & Humanist' },
+                            ].map((font) => (
+                              <button
+                                key={font.id}
+                                onClick={() => updateThemeField('bodyFont', font.id)}
+                                className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all ${
+                                  (theme.bodyFont || 'Inter') === font.id
+                                    ? 'border-primary-500 bg-primary-500/10'
+                                    : 'border-gray-600 hover:border-gray-500'
+                                }`}
+                              >
+                                <span className="text-white" style={{ fontFamily: font.id }}>{font.id}</span>
+                                <span className="text-xs text-gray-500">{font.preview}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1759,7 +1936,7 @@ export default function SiteDashboard() {
           {/* EMAILS TAB */}
           {activeTab === 'emails' && (
             <div className="space-y-6">
-              {/* Tabs */}
+              {/* Tabs and Export */}
               <div className="flex items-center justify-between">
                 <div className="flex border-b border-gray-700">
                   <button
@@ -1804,6 +1981,106 @@ export default function SiteDashboard() {
                 </button>
               </div>
 
+              {/* Filters Section */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5 space-y-4">
+                {/* Date Range Filters */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-3">Date Range</label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'all' as const, label: 'All Time', icon: Globe },
+                      { id: 'today' as const, label: 'Today', icon: Calendar },
+                      { id: 'week' as const, label: 'Last 7 Days', icon: Clock },
+                      { id: 'month' as const, label: 'Last 30 Days', icon: Calendar },
+                      { id: 'quarter' as const, label: 'Last 90 Days', icon: TrendingUp },
+                    ].map((preset) => (
+                      <button
+                        key={preset.id}
+                        onClick={() => setEmailDateFilter(preset.id)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                          emailDateFilter === preset.id
+                            ? 'bg-primary-600 text-white'
+                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        }`}
+                      >
+                        <preset.icon className="w-4 h-4" />
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Search and Sort Row */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-700">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                      <input
+                        type="text"
+                        placeholder="Search emails..."
+                        value={emailSearch}
+                        onChange={(e) => setEmailSearch(e.target.value)}
+                        className="w-64 pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                    {selectedEmails.size > 0 && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-primary-400 font-medium">{selectedEmails.size} selected</span>
+                        <button onClick={deselectAllEmails} className="text-xs text-gray-400 hover:text-gray-300">Clear</button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    {/* Sort Options */}
+                    <div className="flex items-center gap-2 bg-gray-700 rounded-xl p-1">
+                      <button
+                        onClick={() => setEmailSortField('created_at')}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                          emailSortField === 'created_at'
+                            ? 'bg-gray-600 text-white'
+                            : 'text-gray-400 hover:text-gray-300'
+                        }`}
+                      >
+                        Date
+                      </button>
+                      <button
+                        onClick={() => setEmailSortField('email')}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                          emailSortField === 'email'
+                            ? 'bg-gray-600 text-white'
+                            : 'text-gray-400 hover:text-gray-300'
+                        }`}
+                      >
+                        Email
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setEmailSortDir(emailSortDir === 'asc' ? 'desc' : 'asc')}
+                      className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                      title={emailSortDir === 'asc' ? 'Ascending' : 'Descending'}
+                    >
+                      {emailSortDir === 'asc' ? (
+                        <ArrowUp className="w-4 h-4 text-gray-300" />
+                      ) : (
+                        <ArrowDown className="w-4 h-4 text-gray-300" />
+                      )}
+                    </button>
+                    <button
+                      onClick={loadSubscribers}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all text-sm font-medium"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${emailsLoading ? 'animate-spin' : ''}`} />
+                      Refresh
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-sm text-gray-400">
+                  {filteredSubscribers.length.toLocaleString()} emails match filters
+                </div>
+              </div>
+
               {/* Stats */}
               <div className="grid grid-cols-4 gap-4">
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
@@ -1822,35 +2099,6 @@ export default function SiteDashboard() {
                   <p className="text-gray-400 text-sm">Unsubscribed</p>
                   <p className="text-3xl font-bold text-red-400 mt-1">{unsubscribedCount}</p>
                 </div>
-              </div>
-
-              {/* Search & Bulk Actions */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="relative max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input
-                      type="text"
-                      placeholder="Search emails..."
-                      value={emailSearch}
-                      onChange={(e) => setEmailSearch(e.target.value)}
-                      className="w-64 pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    />
-                  </div>
-                  {selectedEmails.size > 0 && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-primary-400 font-medium">{selectedEmails.size} selected</span>
-                      <button onClick={deselectAllEmails} className="text-xs text-gray-400 hover:text-gray-300">Clear</button>
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={loadSubscribers}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all text-sm font-medium"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  Refresh
-                </button>
               </div>
 
               {/* Subscribers List */}
@@ -1953,92 +2201,13 @@ export default function SiteDashboard() {
 
           {/* ANALYTICS TAB */}
           {activeTab === 'analytics' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-white">Analytics Overview</h2>
-                <p className="text-gray-400 text-sm mt-1">Site performance and traffic metrics</p>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Total Views</p>
-                  <p className="text-3xl font-bold text-white mt-1">{metrics?.totalViews?.toLocaleString() || 0}</p>
-                </div>
-                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Articles</p>
-                  <p className="text-3xl font-bold text-white mt-1">{metrics?.totalArticles || 0}</p>
-                </div>
-                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Published</p>
-                  <p className="text-3xl font-bold text-green-400 mt-1">{metrics?.publishedArticles || 0}</p>
-                </div>
-                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Subscribers</p>
-                  <p className="text-3xl font-bold text-purple-400 mt-1">{metrics?.totalEmails || 0}</p>
-                </div>
-              </div>
-
-              {/* Top Articles */}
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-                <div className="p-5 border-b border-gray-700">
-                  <h3 className="text-lg font-semibold text-white">Top Performing Articles</h3>
-                </div>
-                <div className="divide-y divide-gray-700/50">
-                  {articles
-                    .sort((a, b) => (b.views || 0) - (a.views || 0))
-                    .slice(0, 10)
-                    .map((article, i) => (
-                      <div key={article.id} className="flex items-center justify-between p-4">
-                        <div className="flex items-center gap-4">
-                          <span className="text-2xl font-bold text-gray-600 w-8">{i + 1}</span>
-                          <div>
-                            <p className="text-white font-medium">{article.title}</p>
-                            <p className="text-sm text-gray-500">
-                              {article.published ? 'Published' : 'Draft'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xl font-bold text-white">{(article.views || 0).toLocaleString()}</p>
-                          <p className="text-sm text-gray-500">views</p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {/* Tracking Status */}
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Tracking Status</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
-                    <div className={`w-3 h-3 rounded-full ${settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId ? 'bg-green-400' : 'bg-gray-500'}`} />
-                    <div>
-                      <p className="font-medium text-white">Meta Pixel</p>
-                      <p className="text-sm text-gray-400">
-                        {settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId ? 'Active' : 'Not configured'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
-                    <div className={`w-3 h-3 rounded-full ${settings.analytics?.googleEnabled && settings.analytics?.googleId ? 'bg-green-400' : 'bg-gray-500'}`} />
-                    <div>
-                      <p className="font-medium text-white">Google Analytics</p>
-                      <p className="text-sm text-gray-400">
-                        {settings.analytics?.googleEnabled && settings.analytics?.googleId ? 'Active' : 'Not configured'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveTab('settings')}
-                  className="mt-4 text-primary-400 hover:text-primary-300 text-sm font-medium"
-                >
-                  Configure tracking in Settings →
-                </button>
-              </div>
-            </div>
+            <AnalyticsTab
+              siteId={id}
+              articles={articles}
+              metrics={metrics}
+              settings={settings}
+              onNavigateToSettings={() => setActiveTab('settings')}
+            />
           )}
 
           {/* CONTENT PROFILE TAB */}
@@ -2346,5 +2515,353 @@ export default function SiteDashboard() {
         />
       </div>
     </EnhancedAdminLayout>
+  );
+}
+
+// Enhanced Analytics Tab Component
+interface AnalyticsTabProps {
+  siteId: string;
+  articles: any[];
+  metrics: any;
+  settings: any;
+  onNavigateToSettings: () => void;
+}
+
+function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSettings }: AnalyticsTabProps) {
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
+  const [expandedArticle, setExpandedArticle] = useState<string | null>(null);
+  const [articleDetails, setArticleDetails] = useState<Record<string, any>>({});
+  const [sortField, setSortField] = useState<'views' | 'clicks' | 'conversion'>('views');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [siteId, timeRange]);
+
+  const loadAnalytics = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/analytics/site/${siteId}?timeRange=${timeRange}`);
+      if (response.ok) {
+        const data = await response.json();
+        setAnalyticsData(data);
+      }
+    } catch (error) {
+      console.error('Failed to load analytics:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadArticleDetails = async (articleId: string) => {
+    if (articleDetails[articleId]) return;
+    try {
+      const response = await fetch(`/api/analytics/article/${articleId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setArticleDetails(prev => ({ ...prev, [articleId]: data }));
+      }
+    } catch (error) {
+      console.error('Failed to load article details:', error);
+    }
+  };
+
+  const toggleArticle = (articleId: string) => {
+    if (expandedArticle === articleId) {
+      setExpandedArticle(null);
+    } else {
+      setExpandedArticle(articleId);
+      loadArticleDetails(articleId);
+    }
+  };
+
+  const sortedArticles = [...(analyticsData?.articles || [])].sort((a, b) => {
+    const getValue = (article: any) => {
+      switch (sortField) {
+        case 'views': return article.realViews || 0;
+        case 'clicks': return article.widgetClicks || 0;
+        case 'conversion': return parseFloat(article.conversionRate) || 0;
+        default: return 0;
+      }
+    };
+    const aVal = getValue(a);
+    const bVal = getValue(b);
+    return sortDir === 'desc' ? bVal - aVal : aVal - bVal;
+  });
+
+  if (loading && !analyticsData) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-10 h-10 border-3 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header with Time Range Filter */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-white">Analytics Overview</h2>
+          <p className="text-gray-400 text-sm mt-1">Site performance, conversions, and traffic metrics</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {(['7d', '30d', '90d'] as const).map((range) => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                timeRange === range
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : '90 Days'}
+            </button>
+          ))}
+          <button
+            onClick={loadAnalytics}
+            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+            title="Refresh"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <p className="text-gray-400 text-sm">Total Views</p>
+          <p className="text-3xl font-bold text-white mt-1">{(analyticsData?.summary?.totalViews || 0).toLocaleString()}</p>
+        </div>
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <p className="text-gray-400 text-sm">CTA Clicks</p>
+          <p className="text-3xl font-bold text-blue-400 mt-1">{(analyticsData?.summary?.totalClicks || 0).toLocaleString()}</p>
+        </div>
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <p className="text-gray-400 text-sm">Click-Through Rate</p>
+          <p className="text-3xl font-bold text-yellow-400 mt-1">{analyticsData?.summary?.clickThroughRate || 0}%</p>
+        </div>
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <p className="text-gray-400 text-sm">Email Signups</p>
+          <p className="text-3xl font-bold text-purple-400 mt-1">{(analyticsData?.summary?.totalEmails || metrics?.totalEmails || 0).toLocaleString()}</p>
+        </div>
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <p className="text-gray-400 text-sm">Email Conversion</p>
+          <p className="text-3xl font-bold text-green-400 mt-1">{analyticsData?.summary?.emailConversionRate || 0}%</p>
+        </div>
+      </div>
+
+      {/* Top Widgets */}
+      {analyticsData?.topWidgets?.length > 0 && (
+        <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+          <div className="p-5 border-b border-gray-700">
+            <h3 className="text-lg font-semibold text-white">Top Performing Widgets</h3>
+            <p className="text-sm text-gray-400 mt-1">Which CTAs and widgets are driving the most clicks</p>
+          </div>
+          <div className="divide-y divide-gray-700/50">
+            {analyticsData.topWidgets.slice(0, 5).map((widget: any, i: number) => (
+              <div key={i} className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-2xl font-bold text-gray-600 w-8">{i + 1}</span>
+                  <div>
+                    <p className="text-white font-medium">{widget.name || widget.type}</p>
+                    <p className="text-sm text-gray-500">{widget.type}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xl font-bold text-blue-400">{widget.clicks}</p>
+                  <p className="text-sm text-gray-500">clicks</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Articles with Analytics - Expandable */}
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+        <div className="p-5 border-b border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-white">Article Performance</h3>
+              <p className="text-sm text-gray-400 mt-1">Click on an article to see detailed widget analytics</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <select
+                value={sortField}
+                onChange={(e) => setSortField(e.target.value as any)}
+                className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 text-sm"
+              >
+                <option value="views">Sort by Views</option>
+                <option value="clicks">Sort by Clicks</option>
+                <option value="conversion">Sort by Conversion</option>
+              </select>
+              <button
+                onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
+                className="p-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
+              >
+                {sortDir === 'desc' ? <ArrowDown className="w-4 h-4" /> : <ArrowUp className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="divide-y divide-gray-700/50">
+          {sortedArticles.map((article: any) => (
+            <div key={article.id}>
+              <button
+                onClick={() => toggleArticle(article.id)}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-750 transition-colors text-left"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${
+                    expandedArticle === article.id ? 'rotate-180' : ''
+                  }`} />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-white font-medium truncate">{article.title}</p>
+                      {article.boosted && (
+                        <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex items-center gap-1 flex-shrink-0">
+                          <Zap className="w-3 h-3" />
+                          Boosted
+                        </span>
+                      )}
+                      {!article.published && (
+                        <span className="px-2 py-0.5 bg-gray-600 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
+                          Draft
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6 flex-shrink-0">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-white">{(article.realViews || 0).toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">views</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-blue-400">{article.widgetClicks || 0}</p>
+                    <p className="text-xs text-gray-500">clicks</p>
+                  </div>
+                  <div className="text-right min-w-[60px]">
+                    <p className={`text-lg font-bold ${
+                      parseFloat(article.conversionRate) >= 5 ? 'text-green-400' :
+                      parseFloat(article.conversionRate) >= 2 ? 'text-yellow-400' : 'text-gray-400'
+                    }`}>
+                      {article.conversionRate || 0}%
+                    </p>
+                    <p className="text-xs text-gray-500">conv.</p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Expanded Article Details */}
+              {expandedArticle === article.id && (
+                <div className="px-4 pb-4 bg-gray-850">
+                  <div className="bg-gray-700/50 rounded-xl p-4">
+                    {articleDetails[article.id] ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="text-center">
+                            <p className="text-2xl font-bold text-white">{articleDetails[article.id].analytics?.views || 0}</p>
+                            <p className="text-xs text-gray-400">Total Views</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-2xl font-bold text-blue-400">{articleDetails[article.id].analytics?.clicks || 0}</p>
+                            <p className="text-xs text-gray-400">Widget Clicks</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-2xl font-bold text-green-400">{articleDetails[article.id].analytics?.conversionRate || 0}%</p>
+                            <p className="text-xs text-gray-400">Conversion Rate</p>
+                          </div>
+                        </div>
+
+                        {articleDetails[article.id].analytics?.widgetBreakdown?.length > 0 && (
+                          <div>
+                            <p className="text-sm font-medium text-gray-300 mb-2">Widget Breakdown</p>
+                            <div className="space-y-2">
+                              {articleDetails[article.id].analytics.widgetBreakdown.map((widget: any, i: number) => (
+                                <div key={i} className="flex items-center justify-between bg-gray-600/50 rounded-lg px-3 py-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-gray-300">{widget.name || widget.type}</span>
+                                    <span className="text-xs text-gray-500">{widget.type}</span>
+                                  </div>
+                                  <span className="text-blue-400 font-medium">{widget.clicks} clicks</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {(!articleDetails[article.id].analytics?.widgetBreakdown?.length) && (
+                          <p className="text-sm text-gray-400 text-center py-2">No widget clicks recorded yet</p>
+                        )}
+
+                        <Link
+                          href={`/admin/articles/${article.id}/edit`}
+                          className="block w-full text-center text-primary-400 hover:text-primary-300 text-sm font-medium py-2 border border-gray-600 rounded-lg hover:bg-gray-600/50 transition-colors"
+                        >
+                          Edit Article →
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          {sortedArticles.length === 0 && (
+            <div className="p-8 text-center text-gray-500">
+              No articles found
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Tracking Status */}
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Tracking Status</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
+            <div className="w-3 h-3 rounded-full bg-green-400" />
+            <div>
+              <p className="font-medium text-white">Internal Analytics</p>
+              <p className="text-sm text-gray-400">Active - Tracking views & clicks</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
+            <div className={`w-3 h-3 rounded-full ${settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId ? 'bg-green-400' : 'bg-gray-500'}`} />
+            <div>
+              <p className="font-medium text-white">Meta Pixel</p>
+              <p className="text-sm text-gray-400">
+                {settings.analytics?.metaPixelEnabled && settings.analytics?.metaPixelId ? 'Active' : 'Not configured'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl">
+            <div className={`w-3 h-3 rounded-full ${settings.analytics?.googleEnabled && settings.analytics?.googleId ? 'bg-green-400' : 'bg-gray-500'}`} />
+            <div>
+              <p className="font-medium text-white">Google Analytics</p>
+              <p className="text-sm text-gray-400">
+                {settings.analytics?.googleEnabled && settings.analytics?.googleId ? 'Active' : 'Not configured'}
+              </p>
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={onNavigateToSettings}
+          className="mt-4 text-primary-400 hover:text-primary-300 text-sm font-medium"
+        >
+          Configure tracking in Settings →
+        </button>
+      </div>
+    </div>
   );
 }

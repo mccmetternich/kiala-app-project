@@ -3,21 +3,18 @@
 import { useState, useEffect } from 'react';
 import {
   Plus,
-  Edit,
   Trash2,
   Eye,
   Search,
   Copy,
   ExternalLink,
   FileText,
-  TrendingUp,
-  Calendar,
-  BarChart3,
-  Filter,
   Check,
   Clock,
-  Star,
-  ChevronDown
+  ChevronDown,
+  Zap,
+  Edit3,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -32,14 +29,18 @@ interface Article {
   featured: boolean;
   trending: boolean;
   hero: boolean;
+  boosted: boolean;
   published: boolean;
-  views: number;
+  views: number;        // Vanity/display views (fake)
+  realViews?: number;   // Real views from tracking
   read_time: number;
   slug: string;
   created_at: string;
   updated_at: string;
   site_id: string;
 }
+
+type ArticlesTab = 'boosted' | 'all' | 'drafts';
 
 interface Site {
   id: string;
@@ -55,7 +56,7 @@ export default function ArticlesAdmin() {
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedSite, setSelectedSite] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterPublished, setFilterPublished] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState<ArticlesTab>('boosted');
   const [loading, setLoading] = useState(true);
   const [duplicating, setDuplicating] = useState<string | null>(null);
 
@@ -66,7 +67,7 @@ export default function ArticlesAdmin() {
 
   useEffect(() => {
     filterArticles();
-  }, [selectedSite, filterPublished, allArticles]);
+  }, [selectedSite, activeTab, allArticles]);
 
   const fetchSites = async () => {
     try {
@@ -81,8 +82,8 @@ export default function ArticlesAdmin() {
   const fetchAllArticles = async () => {
     try {
       setLoading(true);
-      // Fetch all articles across all sites
-      const response = await fetch('/api/articles?all=true');
+      // Fetch all articles across all sites with real view counts
+      const response = await fetch('/api/articles?all=true&includeRealViews=true');
       const data = await response.json();
       setAllArticles(data.articles || []);
     } catch (error) {
@@ -100,10 +101,10 @@ export default function ArticlesAdmin() {
       filtered = filtered.filter(a => a.site_id === selectedSite);
     }
 
-    // Filter by status
-    if (filterPublished === 'true') {
-      filtered = filtered.filter(a => a.published);
-    } else if (filterPublished === 'false') {
+    // Filter by tab
+    if (activeTab === 'boosted') {
+      filtered = filtered.filter(a => a.boosted);
+    } else if (activeTab === 'drafts') {
       filtered = filtered.filter(a => !a.published);
     }
 
@@ -172,14 +173,13 @@ export default function ArticlesAdmin() {
     article.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Calculate stats
+  // Calculate stats - using real views for admin
   const stats = {
     total: allArticles.length,
     published: allArticles.filter(a => a.published).length,
     drafts: allArticles.filter(a => !a.published).length,
-    totalViews: allArticles.reduce((sum, a) => sum + (a.views || 0), 0),
-    featured: allArticles.filter(a => a.featured).length,
-    trending: allArticles.filter(a => a.trending).length,
+    boosted: allArticles.filter(a => a.boosted).length,
+    totalRealViews: allArticles.reduce((sum, a) => sum + (a.realViews || 0), 0),
   };
 
   const getSiteName = (siteId: string) => {
@@ -195,7 +195,7 @@ export default function ArticlesAdmin() {
   return (
     <EnhancedAdminLayout>
       <div className="min-h-screen bg-gray-900">
-        {/* Hero Header */}
+        {/* Header */}
         <div className="bg-gradient-to-br from-gray-800 via-gray-800 to-gray-900 border-b border-gray-700">
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -213,7 +213,18 @@ export default function ArticlesAdmin() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
+                    <Zap className="w-5 h-5 text-yellow-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.boosted}</p>
+                    <p className="text-xs text-gray-400">Boosted</p>
+                  </div>
+                </div>
+              </div>
               <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
@@ -221,7 +232,7 @@ export default function ArticlesAdmin() {
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-white">{stats.total}</p>
-                    <p className="text-xs text-gray-400">Total Articles</p>
+                    <p className="text-xs text-gray-400">Total</p>
                   </div>
                 </div>
               </div>
@@ -238,8 +249,8 @@ export default function ArticlesAdmin() {
               </div>
               <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-yellow-400" />
+                  <div className="w-10 h-10 bg-gray-500/10 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-gray-400" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-white">{stats.drafts}</p>
@@ -253,30 +264,8 @@ export default function ArticlesAdmin() {
                     <Eye className="w-5 h-5 text-purple-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-white">{stats.totalViews.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400">Total Views</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                    <Star className="w-5 h-5 text-orange-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-white">{stats.featured}</p>
-                    <p className="text-xs text-gray-400">Featured</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-red-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-white">{stats.trending}</p>
-                    <p className="text-xs text-gray-400">Trending</p>
+                    <p className="text-2xl font-bold text-white">{stats.totalRealViews.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400">Real Views</p>
                   </div>
                 </div>
               </div>
@@ -286,89 +275,71 @@ export default function ArticlesAdmin() {
 
         {/* Content */}
         <div className="max-w-7xl mx-auto p-6">
-          {/* Filters */}
-          <div className="bg-gray-800 rounded-2xl border border-gray-700 p-4 mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              {/* Search */}
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                  <input
-                    type="text"
-                    placeholder="Search articles by title or category..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
+          {/* Tabs and Filters */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            {/* Tabs */}
+            <div className="flex border-b border-gray-700">
+              {[
+                { id: 'boosted' as ArticlesTab, label: 'Boosted', count: stats.boosted, icon: Zap, color: 'yellow' },
+                { id: 'all' as ArticlesTab, label: 'All Articles', count: stats.total, icon: FileText, color: 'blue' },
+                { id: 'drafts' as ArticlesTab, label: 'Drafts', count: stats.drafts, icon: Clock, color: 'gray' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+                    activeTab === tab.id
+                      ? 'border-primary-500 text-white'
+                      : 'border-transparent text-gray-400 hover:text-gray-300'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    activeTab === tab.id
+                      ? tab.color === 'yellow' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-primary-500/20 text-primary-400'
+                      : 'bg-gray-700 text-gray-400'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              ))}
+            </div>
 
-              {/* Site Filter */}
+            {/* Search & Site Filter */}
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-48 pl-9 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-700 rounded"
+                  >
+                    <X className="w-3 h-3 text-gray-400" />
+                  </button>
+                )}
+              </div>
               <div className="relative">
                 <select
                   value={selectedSite}
                   onChange={(e) => setSelectedSite(e.target.value)}
-                  className="appearance-none w-full md:w-48 px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 pr-10"
+                  className="appearance-none px-4 py-2 pr-8 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 >
                   <option value="all">All Sites</option>
                   {sites.map(site => (
-                    <option key={site.id} value={site.id}>
-                      {site.name}
-                    </option>
+                    <option key={site.id} value={site.id}>{site.name}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Status Filter */}
-              <div className="relative">
-                <select
-                  value={filterPublished}
-                  onChange={(e) => setFilterPublished(e.target.value)}
-                  className="appearance-none w-full md:w-40 px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 pr-10"
-                >
-                  <option value="all">All Status</option>
-                  <option value="true">Published</option>
-                  <option value="false">Drafts</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
             </div>
-
-            {/* Active Filters */}
-            {(selectedSite !== 'all' || filterPublished !== 'all' || searchTerm) && (
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-700">
-                <span className="text-sm text-gray-400">Active filters:</span>
-                {selectedSite !== 'all' && (
-                  <span className="px-3 py-1 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium flex items-center gap-1">
-                    {getSiteName(selectedSite)}
-                    <button onClick={() => setSelectedSite('all')} className="ml-1 hover:text-primary-300">×</button>
-                  </span>
-                )}
-                {filterPublished !== 'all' && (
-                  <span className="px-3 py-1 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium flex items-center gap-1">
-                    {filterPublished === 'true' ? 'Published' : 'Drafts'}
-                    <button onClick={() => setFilterPublished('all')} className="ml-1 hover:text-primary-300">×</button>
-                  </span>
-                )}
-                {searchTerm && (
-                  <span className="px-3 py-1 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium flex items-center gap-1">
-                    "{searchTerm}"
-                    <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-primary-300">×</button>
-                  </span>
-                )}
-                <button
-                  onClick={() => {
-                    setSelectedSite('all');
-                    setFilterPublished('all');
-                    setSearchTerm('');
-                  }}
-                  className="text-sm text-gray-500 hover:text-gray-300 ml-2"
-                >
-                  Clear all
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Articles List */}
@@ -415,6 +386,12 @@ export default function ArticlesAdmin() {
                           <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
                             {article.title}
                           </p>
+                          {article.boosted && (
+                            <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex-shrink-0 flex items-center gap-1">
+                              <Zap className="w-3 h-3" />
+                              Boosted
+                            </span>
+                          )}
                           {!article.published && (
                             <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
                               Draft
@@ -425,16 +402,6 @@ export default function ArticlesAdmin() {
                               Hero
                             </span>
                           )}
-                          {article.featured && (
-                            <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex-shrink-0">
-                              Featured
-                            </span>
-                          )}
-                          {article.trending && (
-                            <span className="px-2 py-0.5 bg-red-500/10 text-red-400 rounded-full text-xs font-medium flex-shrink-0">
-                              Trending
-                            </span>
-                          )}
                         </div>
                         <div className="flex items-center gap-3 text-sm text-gray-500">
                           <span className="px-2 py-0.5 bg-gray-700/50 rounded text-gray-400 text-xs">
@@ -442,7 +409,10 @@ export default function ArticlesAdmin() {
                           </span>
                           <span>{article.category || 'Uncategorized'}</span>
                           <span>•</span>
-                          <span>{article.views?.toLocaleString() || 0} views</span>
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" />
+                            {(article.realViews ?? 0).toLocaleString()} real
+                          </span>
                           <span>•</span>
                           <span>{formatDistanceToNow(new Date(article.updated_at), { addSuffix: true })}</span>
                         </div>
@@ -490,7 +460,7 @@ export default function ArticlesAdmin() {
                       >
                         <Trash2 className="w-4 h-4" />
                       </span>
-                      <Edit className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors ml-2" />
+                      <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors ml-2" />
                     </div>
                   </Link>
                 ))}

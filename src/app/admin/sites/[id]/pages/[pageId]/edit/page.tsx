@@ -65,33 +65,58 @@ const PAGE_TYPE_INFO: Record<string, { description: string; suggestedWidgets: Wi
   }
 };
 
-// Widget library for pages
+// Unified Widget Library - same widgets available for both articles and pages
 const widgetTypes: { type: WidgetType; name: string; category: string; description: string }[] = [
-  // Content
-  { type: 'text-block', name: 'Text Block', category: 'Content', description: 'Rich text content' },
-  { type: 'hero-story', name: 'Hero Story', category: 'Content', description: 'Hero section with image' },
-  { type: 'article-grid', name: 'Article Grid', category: 'Content', description: 'Display articles' },
-  { type: 'faq-accordion', name: 'FAQ', category: 'Content', description: 'Expandable Q&A' },
+  // Page-Specific Widgets
+  { type: 'hero-story', name: 'Hero Story', category: 'Page Layout', description: 'Hero section with headline, image, CTA' },
+  { type: 'article-grid', name: 'Article Grid', category: 'Page Layout', description: 'Display articles from site' },
+  { type: 'social-proof', name: 'Social Proof Banner', category: 'Page Layout', description: 'Community count and trust indicators' },
 
-  // Social Proof
-  { type: 'testimonial', name: 'Testimonials', category: 'Social Proof', description: 'Customer quotes' },
-  { type: 'stacked-quotes', name: 'Stacked Quotes', category: 'Social Proof', description: 'Multiple quotes' },
-  { type: 'before-after-comparison', name: 'Before/After', category: 'Social Proof', description: 'Transformation slider' },
-  { type: 'review-grid', name: 'Review Grid', category: 'Social Proof', description: 'Review cards' },
-  { type: 'social-proof', name: 'Social Proof', category: 'Social Proof', description: 'Trust indicators' },
+  // Content Widgets (from articles)
+  { type: 'text-block', name: 'Text Block', category: 'Content', description: 'Rich text editor for content' },
+  { type: 'top-ten-list', name: 'Top 10 List', category: 'Content', description: 'Numbered routine or tips list' },
+  { type: 'expectation-timeline', name: 'Timeline', category: 'Content', description: 'Visual timeline of expected results' },
+  { type: 'faq-accordion', name: 'FAQ Accordion', category: 'Content', description: 'Expandable FAQ section' },
+  { type: 'data-overview', name: 'Data Overview', category: 'Content', description: 'Statistics and data points display' },
+  { type: 'symptoms-checker', name: 'Symptoms Checker', category: 'Content', description: '"Is this you?" symptom checker' },
+  { type: 'ingredient-list-grid', name: 'Ingredient List Grid', category: 'Content', description: 'Grid of ingredients with avatars' },
 
-  // Conversion
-  { type: 'product-showcase', name: 'Product Card', category: 'Conversion', description: 'Product display' },
-  { type: 'exclusive-product', name: '#1 Pick', category: 'Conversion', description: 'Featured product' },
-  { type: 'shop-now', name: 'Shop Now', category: 'Conversion', description: 'Pricing options' },
-  { type: 'cta-button', name: 'CTA Button', category: 'Conversion', description: 'Action button' },
-  { type: 'email-capture', name: 'Email Signup', category: 'Conversion', description: 'Newsletter form' },
+  // Social Proof Widgets
+  { type: 'testimonial', name: 'Testimonial Carousel', category: 'Social Proof', description: 'Customer success stories carousel' },
+  { type: 'stacked-quotes', name: 'Stacked Quotes', category: 'Social Proof', description: 'Vertically stacked testimonials' },
+  { type: 'before-after-comparison', name: 'Before/After Slider', category: 'Social Proof', description: 'Interactive drag-to-compare transformation' },
+  { type: 'before-after-side-by-side', name: 'Before/After Static', category: 'Social Proof', description: 'Side-by-side transformation images' },
+  { type: 'rating-stars', name: 'Rating Display', category: 'Social Proof', description: 'Star ratings and reviews' },
+  { type: 'review-grid', name: 'Review Grid', category: 'Social Proof', description: '4-column review cards with ratings' },
+  { type: 'press-logos', name: 'Press Logos', category: 'Social Proof', description: 'Featured press mentions with quotes' },
+  { type: 'scrolling-thumbnails', name: 'Scrolling Thumbnails', category: 'Social Proof', description: 'Infinite scrolling customer photos' },
+  { type: 'testimonial-hero-no-cta', name: 'Testimonial Hero - No CTA', category: 'Social Proof', description: 'Large testimonial with image, no button' },
+  { type: 'testimonial-hero', name: 'Testimonial Hero - With CTA', category: 'Social Proof', description: 'Large testimonial with image and CTA button' },
+
+  // Conversion Widgets
+  { type: 'product-showcase', name: 'Product Showcase', category: 'Conversion', description: 'Featured product with ratings and CTA' },
+  { type: 'exclusive-product', name: "Dr's #1 Pick", category: 'Conversion', description: 'Doctor recommended product card' },
+  { type: 'shop-now', name: 'Shop Now - 3x Options', category: 'Conversion', description: 'Product with pricing options' },
+  { type: 'special-offer', name: 'Special Offer', category: 'Conversion', description: 'Offer with countdown and social proof' },
+  { type: 'dual-offer-comparison', name: 'Dual Offers', category: 'Conversion', description: 'Side-by-side offer comparison' },
+  { type: 'us-vs-them-comparison', name: 'Us Vs Them', category: 'Conversion', description: 'Two-column product comparison' },
+  { type: 'comparison-table', name: 'Comparison Table', category: 'Conversion', description: 'Us vs them product comparison' },
+  { type: 'cta-button', name: 'CTA Button', category: 'Conversion', description: 'Call-to-action button' },
+
+  // Urgency Widgets
+  { type: 'countdown-timer', name: 'Countdown Timer', category: 'Urgency', description: 'Limited time offer countdown' },
+
+  // Lead Gen Widgets
+  { type: 'email-capture', name: 'Email Capture', category: 'Lead Gen', description: 'Newsletter signup with lead magnet' }
 ];
 
 const categoryColors: Record<string, { bg: string; text: string }> = {
+  'Page Layout': { bg: 'bg-cyan-500/10', text: 'text-cyan-400' },
   'Content': { bg: 'bg-blue-500/10', text: 'text-blue-400' },
   'Social Proof': { bg: 'bg-purple-500/10', text: 'text-purple-400' },
   'Conversion': { bg: 'bg-green-500/10', text: 'text-green-400' },
+  'Urgency': { bg: 'bg-red-500/10', text: 'text-red-400' },
+  'Lead Gen': { bg: 'bg-yellow-500/10', text: 'text-yellow-400' },
 };
 
 // Default pages fallback (same as dashboard)
@@ -119,7 +144,7 @@ export default function EditPage() {
   const [seoDescription, setSeoDescription] = useState('');
   const [showWidgetLibrary, setShowWidgetLibrary] = useState(false);
   const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Content', 'Social Proof', 'Conversion']));
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Page Layout', 'Content', 'Social Proof', 'Conversion', 'Urgency', 'Lead Gen']));
 
   useEffect(() => {
     loadData();

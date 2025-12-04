@@ -56,9 +56,11 @@ interface Article {
   featured: boolean;
   trending: boolean;
   hero: boolean;
+  boosted: boolean;
   published: boolean;
   read_time: number;
   views: number;
+  realViews?: number;
   widget_config?: string;
   tracking_config?: string;
   created_at?: string;
@@ -162,6 +164,7 @@ export default function EditArticle() {
     featured: false,
     trending: false,
     hero: false,
+    boosted: false,
     published: false,
     read_time: 5,
     published_at: '',
@@ -193,11 +196,19 @@ export default function EditArticle() {
   const fetchArticle = async () => {
     try {
       setInitialLoading(true);
-      const response = await fetch(`/api/articles/${articleId}`);
-      const data = await response.json();
+      const [articleResponse, realViewsResponse] = await Promise.all([
+        fetch(`/api/articles/${articleId}`),
+        fetch(`/api/articles?all=true&includeRealViews=true`).then(r => r.json()).catch(() => ({ articles: [] }))
+      ]);
+      const data = await articleResponse.json();
+      const realViewsMap = new Map((realViewsResponse.articles || []).map((a: any) => [a.id, a.realViews || 0]));
 
       if (data.article) {
-        setArticle(data.article);
+        const articleWithRealViews = {
+          ...data.article,
+          realViews: realViewsMap.get(data.article.id) || 0
+        };
+        setArticle(articleWithRealViews);
         setFormData({
           site_id: data.article.site_id,
           title: data.article.title,
@@ -209,6 +220,7 @@ export default function EditArticle() {
           featured: Boolean(data.article.featured),
           trending: Boolean(data.article.trending),
           hero: Boolean(data.article.hero),
+          boosted: Boolean(data.article.boosted),
           published: Boolean(data.article.published),
           read_time: data.article.read_time || 5,
           published_at: data.article.published_at || '',
@@ -377,6 +389,14 @@ export default function EditArticle() {
                   {formData.title || 'Untitled Article'}
                 </h1>
                 <div className="flex items-center gap-2 text-xs text-gray-400">
+                  {formData.boosted && (
+                    <>
+                      <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium flex items-center gap-1">
+                        Boosted
+                      </span>
+                      <span>•</span>
+                    </>
+                  )}
                   <span className={`flex items-center gap-1 ${formData.published ? 'text-green-400' : ''}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${formData.published ? 'bg-green-400' : 'bg-gray-500'}`}></span>
                     {formData.published ? 'Published' : 'Draft'}
@@ -590,8 +610,8 @@ export default function EditArticle() {
               <div className="p-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-gray-700/50 rounded-xl p-4 text-center">
-                    <p className="text-3xl font-bold text-white">{article.views.toLocaleString()}</p>
-                    <p className="text-sm text-gray-400 mt-1">Views</p>
+                    <p className="text-3xl font-bold text-white">{(article.realViews || 0).toLocaleString()}</p>
+                    <p className="text-sm text-gray-400 mt-1">Real Views</p>
                   </div>
                   <div className="bg-gray-700/50 rounded-xl p-4 text-center">
                     <p className="text-3xl font-bold text-white">{widgets.length}</p>
@@ -790,23 +810,38 @@ export default function EditArticle() {
                   </div>
                 </div>
 
+                {/* Boosted Article - Internal Tagging */}
+                <div className="mt-6 pt-6 border-t border-gray-700">
+                  <h3 className="text-sm font-medium text-gray-300 mb-4">Campaign Tracking</h3>
+                  <label className={`flex items-center gap-4 cursor-pointer p-4 rounded-xl transition-all border-2 ${
+                    formData.boosted
+                      ? 'bg-yellow-500/10 border-yellow-500/50'
+                      : 'bg-gray-700/50 border-transparent hover:bg-gray-700'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={formData.boosted}
+                      onChange={(e) => handleInputChange('boosted', e.target.checked)}
+                      className="w-6 h-6 text-yellow-500 bg-gray-700 border-gray-600 rounded focus:ring-yellow-500"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-semibold text-lg">Boosted Article</span>
+                        {formData.boosted && (
+                          <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">Active</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-400 mt-1">
+                        Mark this article as boosted to track active ad campaigns. This is for internal tracking only and won't be visible to visitors.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
                 {/* Visibility Flags */}
                 <div className="mt-6 pt-6 border-t border-gray-700">
                   <h3 className="text-sm font-medium text-gray-300 mb-4">Visibility Flags</h3>
                   <div className="flex flex-wrap gap-4">
-                    <label className="flex items-center gap-3 cursor-pointer bg-gray-700/50 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
-                      <input
-                        type="checkbox"
-                        checked={formData.featured}
-                        onChange={(e) => handleInputChange('featured', e.target.checked)}
-                        className="w-5 h-5 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500"
-                      />
-                      <div>
-                        <span className="text-white font-medium">Featured</span>
-                        <p className="text-xs text-gray-500">Show in featured section</p>
-                      </div>
-                    </label>
-
                     <label className="flex items-center gap-3 cursor-pointer bg-gray-700/50 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
                       <input
                         type="checkbox"
@@ -817,19 +852,6 @@ export default function EditArticle() {
                       <div>
                         <span className="text-white font-medium">Hero Article</span>
                         <p className="text-xs text-gray-500">Display as hero on homepage</p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-center gap-3 cursor-pointer bg-gray-700/50 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
-                      <input
-                        type="checkbox"
-                        checked={formData.trending}
-                        onChange={(e) => handleInputChange('trending', e.target.checked)}
-                        className="w-5 h-5 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500"
-                      />
-                      <div>
-                        <span className="text-white font-medium">Trending</span>
-                        <p className="text-xs text-gray-500">Mark as trending</p>
                       </div>
                     </label>
                   </div>

@@ -16,14 +16,22 @@ export default function CTAButton({
   target = '_self',
   style = 'primary'
 }: CTAButtonProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackWidgetClick } = useTracking();
   const trackedUrl = appendTracking(buttonUrl);
 
   const handleClick = () => {
-    // Fire InitiateCheckout event for CTA clicks
+    // Fire InitiateCheckout event for CTA clicks (Meta Pixel)
     trackInitiateCheckout({
       content_name: buttonText || 'CTA Button',
       content_category: 'cta_button'
+    });
+
+    // Track widget click internally for analytics
+    trackWidgetClick({
+      widget_type: 'cta-button',
+      widget_name: buttonText || 'CTA Button',
+      click_type: 'cta',
+      destination_url: buttonUrl
     });
   };
 

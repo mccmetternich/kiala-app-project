@@ -38,6 +38,17 @@ interface Article {
   site_id: string;
   updated_at: string;
   views?: number;
+  boosted?: boolean;
+}
+
+interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  published: boolean;
+  site_id: string;
+  updated_at: string;
+  template?: string;
 }
 
 interface DashboardStats {
@@ -50,7 +61,8 @@ interface DashboardStats {
 export default function AdminDashboard() {
   const [sites, setSites] = useState<Site[]>([]);
   const [recentArticles, setRecentArticles] = useState<Article[]>([]);
-  const [sitesMetrics, setSitesMetrics] = useState<Record<string, { articleCount: number; viewCount: number }>>({});
+  const [recentPages, setRecentPages] = useState<Page[]>([]);
+  const [sitesMetrics, setSitesMetrics] = useState<Record<string, { articleCount: number; boostedCount: number; viewCount: number; pageCount: number; emailCount: number }>>({});
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -70,26 +82,40 @@ export default function AdminDashboard() {
           setStats(statsData.stats);
         }
 
-        // Get article counts and views for each site, and collect all articles
+        // Get article counts, page counts, emails, and real views for each site
         let allArticles: Article[] = [];
+        let allPages: Page[] = [];
         const metricsPromises = sitesList.map(async (site: Site) => {
           try {
-            const response = await fetch(`/api/articles?siteId=${site.id}`);
-            const data = await response.json();
-            const articles = data.articles || [];
+            // Fetch articles with real views
+            const articlesResponse = await fetch(`/api/articles?siteId=${site.id}&includeRealViews=true`);
+            const articlesData = await articlesResponse.json();
+            const articles = articlesData.articles || [];
             allArticles = [...allArticles, ...articles.map((a: any) => ({ ...a, site_id: site.id }))];
-            const viewCount = articles.reduce((sum: number, a: any) => sum + (a.views || 0), 0);
-            return { siteId: site.id, articleCount: articles.length, viewCount };
+            const viewCount = articles.reduce((sum: number, a: any) => sum + (a.realViews || 0), 0);
+            const boostedCount = articles.filter((a: any) => a.boosted).length;
+
+            // Fetch pages
+            const pagesResponse = await fetch(`/api/pages?siteId=${site.id}`);
+            const pages = await pagesResponse.json();
+            allPages = [...allPages, ...pages.map((p: any) => ({ ...p, site_id: site.id }))];
+
+            // Fetch email count
+            const emailsResponse = await fetch(`/api/subscribers?siteId=${site.id}`);
+            const emailsData = await emailsResponse.json();
+            const emailCount = emailsData.stats?.active || emailsData.subscribers?.length || 0;
+
+            return { siteId: site.id, articleCount: articles.length, boostedCount, viewCount, pageCount: pages.length, emailCount };
           } catch {
-            return { siteId: site.id, articleCount: 0, viewCount: 0 };
+            return { siteId: site.id, articleCount: 0, boostedCount: 0, viewCount: 0, pageCount: 0, emailCount: 0 };
           }
         });
 
         const metricsResults = await Promise.all(metricsPromises);
         const metricsMap = metricsResults.reduce((acc, result) => {
-          acc[result.siteId] = { articleCount: result.articleCount, viewCount: result.viewCount };
+          acc[result.siteId] = { articleCount: result.articleCount, boostedCount: result.boostedCount, viewCount: result.viewCount, pageCount: result.pageCount, emailCount: result.emailCount };
           return acc;
-        }, {} as Record<string, { articleCount: number; viewCount: number }>);
+        }, {} as Record<string, { articleCount: number; boostedCount: number; viewCount: number; pageCount: number; emailCount: number }>);
 
         setSitesMetrics(metricsMap);
 
@@ -98,6 +124,12 @@ export default function AdminDashboard() {
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
         ).slice(0, 5);
         setRecentArticles(sortedArticles);
+
+        // Sort pages by updated_at and take the 5 most recent
+        const sortedPages = allPages.sort((a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        ).slice(0, 5);
+        setRecentPages(sortedPages);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
       } finally {
@@ -202,8 +234,8 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Two Column Layout: Sites and Recent Articles */}
-        <div className="grid lg:grid-cols-2 gap-6">
+        {/* Three Column Layout: Sites, Recent Pages, Recent Articles */}
+        <div className="grid lg:grid-cols-3 gap-6">
           {/* Sites Column */}
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -230,7 +262,7 @@ export default function AdminDashboard() {
                     ? JSON.parse(site.brand_profile)
                     : site.brand_profile;
                   const isLive = site.status === 'published';
-                  const metrics = sitesMetrics[site.id] || { articleCount: 0, viewCount: 0 };
+                  const metrics = sitesMetrics[site.id] || { articleCount: 0, boostedCount: 0, viewCount: 0, pageCount: 0, emailCount: 0 };
 
                   return (
                     <div
@@ -280,18 +312,33 @@ export default function AdminDashboard() {
                         )}
                       </Link>
 
-                      {/* Metrics */}
+                      {/* Metrics - Pages, Boosted, Articles, Emails, Real Views */}
                       <div className="px-5 py-3 bg-gray-850 border-b border-gray-700">
-                        <div className="flex items-center gap-6 text-sm">
+                        <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-sm">
                           <div className="flex items-center gap-1.5">
-                            <FileText className="w-4 h-4 text-gray-500" />
+                            <Layers className="w-4 h-4 text-indigo-400" />
+                            <span className="text-gray-300">{metrics.pageCount}</span>
+                            <span className="text-gray-500">pages</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Zap className="w-4 h-4 text-yellow-400" />
+                            <span className="text-gray-300">{metrics.boostedCount}</span>
+                            <span className="text-gray-500">boosted</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <FileText className="w-4 h-4 text-blue-400" />
                             <span className="text-gray-300">{metrics.articleCount}</span>
                             <span className="text-gray-500">articles</span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <Eye className="w-4 h-4 text-gray-500" />
+                            <Users className="w-4 h-4 text-green-400" />
+                            <span className="text-gray-300">{metrics.emailCount}</span>
+                            <span className="text-gray-500">emails</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Eye className="w-4 h-4 text-purple-400" />
                             <span className="text-gray-300">{metrics.viewCount}</span>
-                            <span className="text-gray-500">views</span>
+                            <span className="text-gray-500">real views</span>
                           </div>
                         </div>
                       </div>
@@ -334,6 +381,74 @@ export default function AdminDashboard() {
                   </div>
                   <h3 className="font-semibold text-gray-300 mb-1">Create New Site</h3>
                   <p className="text-sm text-gray-500">Launch another DR site</p>
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Recent Pages Column */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Layers className="w-5 h-5 text-gray-400" />
+                <h2 className="text-lg font-semibold text-white">Recent Pages</h2>
+              </div>
+              <Link href="/admin/pages/new" className="text-primary-400 hover:text-primary-300 text-sm">
+                + New Page
+              </Link>
+            </div>
+            {recentPages.length > 0 ? (
+              <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+                <div className="divide-y divide-gray-700/50">
+                  {recentPages.map((page) => {
+                    const site = sites.find(s => s.id === page.site_id);
+                    return (
+                      <Link
+                        key={page.id}
+                        href={`/admin/sites/${page.site_id}/pages/${page.id}`}
+                        className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
+                      >
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            page.published ? 'bg-blue-500/10' : 'bg-gray-700'
+                          }`}>
+                            <Layers className={`w-5 h-5 ${page.published ? 'text-blue-400' : 'text-gray-500'}`} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
+                              {page.title}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {site?.name || 'Unknown site'} • {formatRelativeTime(page.updated_at)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            page.published
+                              ? 'bg-blue-900/50 text-blue-300'
+                              : 'bg-gray-700 text-gray-400'
+                          }`}>
+                            {page.published ? 'Live' : 'Draft'}
+                          </span>
+                          <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
+                <Layers className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">No pages yet</h3>
+                <p className="text-gray-400 mb-6">Pages are created per site</p>
+                <Link
+                  href="/admin/pages/new"
+                  className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 transition-colors"
+                >
+                  <Plus className="w-5 h-5" />
+                  Create Page
                 </Link>
               </div>
             )}

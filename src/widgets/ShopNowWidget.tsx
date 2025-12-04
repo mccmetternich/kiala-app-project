@@ -153,7 +153,7 @@ export default function ShopNowWidget({
   const [selectedOption, setSelectedOption] = useState(
     pricingOptions.find(opt => opt.popular)?.id || pricingOptions[1]?.id || pricingOptions[0].id
   );
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackWidgetClick } = useTracking();
 
   // Touch swipe state for image gallery
   const touchStartX = useRef<number | null>(null);
@@ -504,7 +504,7 @@ export default function ShopNowWidget({
       : `${packageUrl}?option=${selectedOption}`;
 
     const handleCTAClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      // Fire InitiateCheckout event with product details
+      // Fire InitiateCheckout event with product details (Meta Pixel)
       trackInitiateCheckout({
         content_name: productName,
         content_category: 'product',
@@ -512,6 +512,14 @@ export default function ShopNowWidget({
         value: currentOption.price,
         currency: 'USD',
         num_items: currentOption.quantity
+      });
+
+      // Track widget click internally for analytics
+      trackWidgetClick({
+        widget_type: 'shop-now',
+        widget_name: productName,
+        click_type: 'checkout',
+        destination_url: baseUrl
       });
 
       // Append tracking params at click time (ensures cookies are available)

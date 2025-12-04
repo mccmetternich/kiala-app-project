@@ -141,10 +141,16 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
       description: 'Articles across all sites'
     },
     {
-      name: 'Email Signups',
+      name: 'All Emails',
       href: '/admin/emails',
       icon: Users,
       description: 'All email subscribers'
+    },
+    {
+      name: 'Analytics',
+      href: '/admin/analytics',
+      icon: BarChart3,
+      description: 'Global analytics'
     }
   ];
 

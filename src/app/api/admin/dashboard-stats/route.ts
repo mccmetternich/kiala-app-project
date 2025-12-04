@@ -178,6 +178,9 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         .sort((a: any, b: any) => b.realViews - a.realViews)
         .slice(0, 10);
 
+      // Top widgets by clicks (global)
+      const topWidgetsGlobal = await queries.analyticsQueries.getTopWidgetsGlobal(10);
+
       const globalStats = {
         totalSites: allSites.length,
         totalArticles: publishedArticles.length,
@@ -191,12 +194,23 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         topArticlesGlobal: topArticlesWithRealViews.map((article: any) => {
           const site = allSites.find((s: { id: string; }) => s.id === article.site_id);
           return {
+            id: article.id,
             title: article.title,
             views: article.realViews,  // REAL views
             displayViews: article.views,  // Fake display views
             slug: article.slug,
             siteName: site?.name || 'Unknown',
             siteId: article.site_id
+          };
+        }),
+        topWidgetsGlobal: topWidgetsGlobal.map((widget: any) => {
+          const site = allSites.find((s: { id: string; }) => s.id === widget.site_id);
+          return {
+            type: widget.widget_type,
+            name: widget.widget_name || widget.widget_type,
+            clicks: widget.clicks,
+            siteName: site?.name || 'Unknown',
+            siteId: widget.site_id
           };
         }),
         recentActivity: [

@@ -29,10 +29,11 @@ export default function SiteArticlesPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [siteData, articlesData] = await Promise.all([
+        const [siteData, articlesResponse] = await Promise.all([
           fetch(`/api/sites/${id}`).then(res => res.json()),
-          clientAPI.getArticlesBySite(id, false) // Get both published and draft
+          fetch(`/api/articles?siteId=${id}&published=false&includeRealViews=true`).then(res => res.json())
         ]);
+        const articlesData = articlesResponse.articles || [];
 
         setSite(siteData.site);
         setArticles(articlesData);
@@ -164,6 +165,11 @@ export default function SiteArticlesPage() {
                     <h3 className="text-xl font-semibold text-gray-200">{article.title}</h3>
                     
                     <div className="flex items-center gap-2">
+                      {article.boosted && (
+                        <Badge variant="limited" size="sm">
+                          ⚡ Boosted
+                        </Badge>
+                      )}
                       {article.hero && (
                         <Badge variant="clinical" size="sm">
                           ⭐ Hero
@@ -194,7 +200,7 @@ export default function SiteArticlesPage() {
                   <div className="flex items-center gap-6 text-sm text-gray-400">
                     <span className="capitalize">{article.category || 'Article'}</span>
                     <span>{article.read_time || 5} min read</span>
-                    <span>{article.views || 0} views</span>
+                    <span>{article.realViews || 0} views</span>
                     <span>
                       {article.published 
                         ? `Published ${formatDistanceToNow(new Date(article.published_at || article.created_at), { addSuffix: true })}`
