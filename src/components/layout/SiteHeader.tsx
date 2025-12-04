@@ -8,6 +8,15 @@ import Badge from '../ui/Badge';
 import { useSiteUrl } from '@/hooks/useSiteUrl';
 import { formatCommunityCount } from '@/lib/format-community-count';
 
+interface NavItem {
+  id: string;
+  slug: string;
+  navLabel: string;
+  navOrder: number;
+  showInNav: boolean;
+  enabled: boolean;
+}
+
 interface SiteHeaderProps {
   site: Site;
 }
@@ -45,6 +54,34 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
 
   // Get formatted community count from settings
   const communityCount = formatCommunityCount((site as any).settings);
+
+  // Build navigation from page_config or use defaults
+  const getNavItems = (): { label: string; href: string }[] => {
+    const pageConfig = (site as any).page_config;
+
+    if (pageConfig?.pages && Array.isArray(pageConfig.pages)) {
+      // Filter to enabled pages that should show in nav, sort by navOrder
+      const navPages = pageConfig.pages
+        .filter((p: NavItem) => p.enabled && p.showInNav)
+        .sort((a: NavItem, b: NavItem) => (a.navOrder || 0) - (b.navOrder || 0));
+
+      if (navPages.length > 0) {
+        return navPages.map((p: NavItem) => ({
+          label: p.navLabel || p.id,
+          href: getSiteUrl(p.slug === '/' ? '/' : p.slug)
+        }));
+      }
+    }
+
+    // Default navigation if no config
+    return [
+      { label: 'Home', href: homeUrl },
+      { label: 'Articles', href: getSiteUrl('/articles') },
+      { label: 'About', href: getSiteUrl('/about') }
+    ];
+  };
+
+  const navItems = getNavItems();
 
   // Track scroll for collapsed header on mobile
   useEffect(() => {
@@ -136,9 +173,15 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
 
             {/* Desktop Navigation */}
             <div className="flex items-center gap-8">
-              <Link href={homeUrl} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Home</Link>
-              <Link href={getSiteUrl('/articles')} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Articles</Link>
-              <Link href={getSiteUrl('/about')} className="text-gray-700 hover:text-primary-600 font-medium transition-colors">About</Link>
+              {navItems.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
 
             {/* CTA Button */}
@@ -300,30 +343,19 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
           </div>
 
           {/* Mobile Menu Dropdown */}
-          <div className={`overflow-hidden transition-all duration-300 ease-out ${isMenuOpen ? 'max-h-64' : 'max-h-0'}`}>
+          <div className={`overflow-hidden transition-all duration-300 ease-out ${isMenuOpen ? 'max-h-80' : 'max-h-0'}`}>
             <div className="bg-purple-700/95 backdrop-blur-sm border-t border-white/10">
               <div className="px-4 py-4 space-y-2">
-                <Link
-                  href={homeUrl}
-                  className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  href={getSiteUrl('/articles')}
-                  className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Articles
-                </Link>
-                <Link
-                  href={getSiteUrl('/about')}
-                  className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  About
-                </Link>
+                {navItems.map((item, index) => (
+                  <Link
+                    key={index}
+                    href={item.href}
+                    className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
                 <div className="pt-2">
                   <a
                     href={getSiteUrl('/#newsletter')}

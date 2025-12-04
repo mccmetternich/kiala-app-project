@@ -203,16 +203,34 @@ export default function AboutPage() {
 
   const transformedSite = siteData ? {
     ...siteData,
-    brand: typeof siteData.brand_profile === 'string' 
-      ? JSON.parse(siteData.brand_profile) 
+    brand: typeof siteData.brand_profile === 'string'
+      ? JSON.parse(siteData.brand_profile)
       : siteData.brand_profile,
-    settings: typeof siteData.settings === 'string' 
+    settings: typeof siteData.settings === 'string'
       ? JSON.parse(siteData.settings)
-      : siteData.settings
+      : siteData.settings,
+    page_config: typeof siteData.page_config === 'string'
+      ? JSON.parse(siteData.page_config || '{}')
+      : siteData.page_config
   } : null;
 
   if (!transformedSite) {
     return <div>Site not found.</div>;
+  }
+
+  // Check if this page is enabled in page_config
+  const pageConfig = transformedSite.page_config;
+  if (pageConfig?.pages) {
+    const aboutPage = pageConfig.pages.find((p: any) => p.id === 'about' || p.slug === '/about');
+    if (aboutPage && !aboutPage.enabled) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600">This page is not available.</p>
+          </div>
+        </div>
+      );
+    }
   }
 
   const brand = transformedSite.brand;
@@ -221,6 +239,7 @@ export default function AboutPage() {
     <SiteLayout
       site={transformedSite}
       showSidebar={false}
+      pageSlug="/about"
     >
       <div className="space-y-12">
         {/* Custom Page Content or Default Doctor Profile */}

@@ -126,10 +126,26 @@ export default function TopPicksPage() {
     );
   }
 
+  // Check if this page is enabled in page_config
+  const pageConfig = site?.page_config;
+  if (pageConfig?.pages) {
+    const topPicksPage = pageConfig.pages.find((p: any) => p.id === 'top-picks' || p.slug === '/top-picks');
+    if (topPicksPage && !topPicksPage.enabled) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600">This page is not available.</p>
+          </div>
+        </div>
+      );
+    }
+  }
+
   return (
     <SiteLayout
       site={site}
       showSidebar={true}
+      pageSlug="/top-picks"
       sidebar={
         <CredibilitySidebar
           doctor={site.brand}

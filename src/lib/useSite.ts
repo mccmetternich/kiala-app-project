@@ -114,12 +114,15 @@ export function useSite(siteId: string) {
   const transformedSite = siteData ? {
     ...fallbackSite,
     ...siteData,
-    brand: typeof siteData.brand_profile === 'string' 
-      ? JSON.parse(siteData.brand_profile) 
+    brand: typeof siteData.brand_profile === 'string'
+      ? JSON.parse(siteData.brand_profile)
       : siteData.brand_profile || fallbackSite.brand,
-    settings: typeof siteData.settings === 'string' 
-      ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) } 
-      : { ...fallbackSite.settings, ...siteData.settings }
+    settings: typeof siteData.settings === 'string'
+      ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
+      : { ...fallbackSite.settings, ...siteData.settings },
+    page_config: typeof siteData.page_config === 'string'
+      ? JSON.parse(siteData.page_config || '{}')
+      : siteData.page_config || {}
   } : fallbackSite;
 
   return { site: transformedSite, loading, error };

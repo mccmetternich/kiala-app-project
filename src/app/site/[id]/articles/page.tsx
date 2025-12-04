@@ -125,18 +125,22 @@ export default function DynamicArticlesPage() {
   const transformedSite = siteData ? {
     ...fallbackSite,
     ...siteData,
-    brand: typeof siteData.brand_profile === 'string' 
-      ? JSON.parse(siteData.brand_profile) 
+    brand: typeof siteData.brand_profile === 'string'
+      ? JSON.parse(siteData.brand_profile)
       : siteData.brand_profile || fallbackSite.brand,
-    settings: typeof siteData.settings === 'string' 
-      ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) } 
-      : { ...fallbackSite.settings, ...siteData.settings }
+    settings: typeof siteData.settings === 'string'
+      ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
+      : { ...fallbackSite.settings, ...siteData.settings },
+    page_config: typeof siteData.page_config === 'string'
+      ? JSON.parse(siteData.page_config || '{}')
+      : siteData.page_config || {}
   } : fallbackSite;
-  
+
   return (
     <SiteLayout
       site={transformedSite}
       showSidebar={true}
+      pageSlug="/articles"
       sidebar={
         <CredibilitySidebar
           doctor={transformedSite.brand}

@@ -3,9 +3,10 @@ import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import ArticleHeader from './ArticleHeader';
 import ArticleFooter from './ArticleFooter';
+import MinimalHeader from './MinimalHeader';
 import PopupProvider from '@/components/PopupProvider';
 import ThemeProvider from '@/components/ThemeProvider';
-import { Site } from '@/types';
+import { Site, NavMode } from '@/types';
 import { getCommunityCount } from '@/lib/format-community-count';
 
 interface SiteLayoutProps {
@@ -14,7 +15,9 @@ interface SiteLayoutProps {
   showSidebar?: boolean;
   sidebar?: ReactNode;
   showPopups?: boolean;
-  isArticle?: boolean;  // Use article-specific header/footer
+  isArticle?: boolean;  // Legacy: Use article-specific header/footer
+  navMode?: NavMode;    // New: Explicit nav mode control (overrides isArticle)
+  pageSlug?: string;    // Current page slug to look up config
 }
 
 export default function SiteLayout({
@@ -23,12 +26,55 @@ export default function SiteLayout({
   showSidebar = false,
   sidebar,
   showPopups = true,
-  isArticle = false
+  isArticle = false,
+  navMode,
+  pageSlug
 }: SiteLayoutProps) {
+  // Determine effective nav mode
+  // Priority: explicit navMode prop > page_config lookup > isArticle legacy > default
+  const getEffectiveNavMode = (): NavMode => {
+    // If explicit navMode provided, use it
+    if (navMode) return navMode;
+
+    // Look up from page_config if we have a pageSlug
+    const pageConfig = (site as any).page_config;
+    if (pageSlug && pageConfig?.pages) {
+      const pageSettings = pageConfig.pages.find((p: any) => p.slug === pageSlug || p.slug === `/${pageSlug}`);
+      if (pageSettings?.navMode) return pageSettings.navMode;
+    }
+
+    // Legacy: isArticle maps to direct-response
+    if (isArticle) {
+      // Check if there's a default article nav mode in config
+      if (pageConfig?.defaultArticleNavMode) {
+        return pageConfig.defaultArticleNavMode;
+      }
+      return 'direct-response';
+    }
+
+    return 'global';
+  };
+
+  const effectiveNavMode = getEffectiveNavMode();
+  const useArticleFooter = effectiveNavMode === 'direct-response' || isArticle;
+
+  // Render the appropriate header based on nav mode
+  const renderHeader = () => {
+    switch (effectiveNavMode) {
+      case 'minimal':
+        return <MinimalHeader site={site} />;
+      case 'direct-response':
+        return <ArticleHeader site={site} />;
+      case 'global':
+      default:
+        return <SiteHeader site={site} />;
+    }
+  };
+
   return (
     <ThemeProvider site={site}>
     <div className="min-h-screen bg-gray-50">
-      {isArticle ? <ArticleHeader site={site} /> : <SiteHeader site={site} />}
+      {renderHeader()}
 
       {showPopups && (
         <PopupProvider
@@ -80,7 +126,7 @@ export default function SiteLayout({
         </div>
       </main>
       
-      {isArticle ? <ArticleFooter site={site} /> : <SiteFooter site={site} />}
+      {useArticleFooter ? <ArticleFooter site={site} /> : <SiteFooter site={site} />}
     </div>
     </ThemeProvider>
   );

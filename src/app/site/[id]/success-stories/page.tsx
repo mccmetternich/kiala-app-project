@@ -233,13 +233,30 @@ export default function SuccessStoriesPage() {
   const transformedSite = {
     ...siteData,
     brand: typeof siteData.brand_profile === 'string' ? JSON.parse(siteData.brand_profile) : siteData.brand_profile,
-    settings: typeof siteData.settings === 'string' ? JSON.parse(siteData.settings) : siteData.settings
+    settings: typeof siteData.settings === 'string' ? JSON.parse(siteData.settings) : siteData.settings,
+    page_config: typeof siteData.page_config === 'string' ? JSON.parse(siteData.page_config || '{}') : siteData.page_config || {}
   };
-  
+
+  // Check if this page is enabled in page_config
+  const pageConfig = transformedSite.page_config;
+  if (pageConfig?.pages) {
+    const successPage = pageConfig.pages.find((p: any) => p.id === 'success-stories' || p.slug === '/success-stories');
+    if (successPage && !successPage.enabled) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600">This page is not available.</p>
+          </div>
+        </div>
+      );
+    }
+  }
+
   return (
-    <SiteLayout 
+    <SiteLayout
       site={transformedSite}
       showSidebar={true}
+      pageSlug="/success-stories"
       sidebar={
         <CredibilitySidebar
           doctor={transformedSite.brand}
