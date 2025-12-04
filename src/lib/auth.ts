@@ -4,8 +4,17 @@ import { NextRequest } from 'next/server';
 import { createQueries } from './db-enhanced';
 import { z } from 'zod';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+// JWT configuration - NO FALLBACK for secret (security requirement)
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+// Validate JWT_SECRET exists before operations
+const getJwtSecret = (): string => {
+  if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is not configured');
+  }
+  return JWT_SECRET;
+};
 
 export interface User {
   id: string;
@@ -52,12 +61,12 @@ export const generateToken = (user: Pick<User, 'id' | 'email' | 'role' | 'tenant
     tenantId: user.tenantId
   };
   
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] });
 };
 
 export const verifyToken = (token: string): JWTPayload => {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return jwt.verify(token, getJwtSecret()) as JWTPayload;
   } catch (error) {
     throw new Error('Invalid or expired token');
   }

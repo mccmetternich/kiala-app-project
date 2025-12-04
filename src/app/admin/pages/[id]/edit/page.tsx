@@ -15,7 +15,7 @@ import {
   Image as ImageIcon,
   Upload
 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import WidgetEditor from '@/components/admin/WidgetEditor';
 import Badge from '@/components/ui/Badge';
 import { Page, Site, Widget } from '@/types';
@@ -140,7 +140,7 @@ export default function PageEditor() {
   };
 
   return (
-    <AdminLayout>
+    <EnhancedAdminLayout>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-gray-800 border-b border-gray-700 sticky top-16 z-30">
@@ -570,6 +570,6 @@ export default function PageEditor() {
           )}
         </div>
       </div>
-    </AdminLayout>
+    </EnhancedAdminLayout>
   );
 }
