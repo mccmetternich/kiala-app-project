@@ -36,7 +36,18 @@ import {
   Sparkles,
   MessageSquare,
   Tag,
-  Package
+  Package,
+  Layers,
+  Zap,
+  Mail,
+  Calendar,
+  RefreshCw,
+  RotateCcw,
+  CheckSquare,
+  Square,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { ContentProfile, DEFAULT_CONTENT_PROFILE } from '@/types';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
@@ -47,6 +58,7 @@ import { clientAPI } from '@/lib/api';
 
 type TabType = 'overview' | 'articles' | 'pages' | 'emails' | 'analytics' | 'content-profile' | 'settings';
 type SettingsSubTab = 'content' | 'appearance' | 'advanced';
+type ArticlesSubTab = 'boosted' | 'all' | 'drafts';
 
 export default function SiteDashboard() {
   const { id } = useParams() as { id: string };
@@ -60,6 +72,7 @@ export default function SiteDashboard() {
   // Articles state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [articlesSubTab, setArticlesSubTab] = useState<ArticlesSubTab>('all');
 
   // Settings state
   const [settingsSubTab, setSettingsSubTab] = useState<SettingsSubTab>('content');
@@ -71,6 +84,10 @@ export default function SiteDashboard() {
   // Emails state
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [subscriberStats, setSubscriberStats] = useState<any>({});
+  const [emailsSubTab, setEmailsSubTab] = useState<'active' | 'unsubscribed'>('active');
+  const [emailSearch, setEmailSearch] = useState('');
+  const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
+  const [emailsLoading, setEmailsLoading] = useState(false);
 
   // Content Profile state
   const [contentProfile, setContentProfile] = useState<ContentProfile>(DEFAULT_CONTENT_PROFILE);
@@ -154,6 +171,17 @@ export default function SiteDashboard() {
   useEffect(() => {
     if (id) loadData();
   }, [id, loadData]);
+
+  // Separate function to reload subscribers only
+  const loadSubscribers = async () => {
+    try {
+      const subscribersResponse = await fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 }, subscribers: [] }));
+      setSubscribers(subscribersResponse?.subscribers || []);
+      setSubscriberStats(subscribersResponse?.stats || { total: 0 });
+    } catch (error) {
+      console.error('Error loading subscribers:', error);
+    }
+  };
 
   // Settings handlers
   const handleSave = async () => {
@@ -277,16 +305,20 @@ export default function SiteDashboard() {
 
   // Export emails as CSV
   const exportEmails = () => {
+    const toExport = selectedEmails.size > 0
+      ? filteredSubscribers.filter(s => selectedEmails.has(s.id))
+      : filteredSubscribers;
+
     const csv = [
-      ['Email', 'Source', 'Subscribed At'],
-      ...subscribers.map(s => [s.email, s.source || 'unknown', s.created_at])
-    ].map(row => row.join(',')).join('\n');
+      ['Email', 'Name', 'Source', 'Status', 'Subscribed At'],
+      ...toExport.map(s => [s.email, s.name || '', s.source || 'unknown', s.status, s.created_at])
+    ].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${site?.subdomain || 'site'}-emails-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${site?.subdomain || 'site'}-emails-${emailsSubTab}-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -340,6 +372,64 @@ export default function SiteDashboard() {
     return matchesSearch && matchesStatus;
   });
 
+  // Filtered subscribers by tab and search
+  const filteredSubscribers = subscribers.filter(sub => {
+    const matchesTab = emailsSubTab === 'active' ? sub.status === 'active' : sub.status !== 'active';
+    const matchesSearch = !emailSearch || sub.email.toLowerCase().includes(emailSearch.toLowerCase()) || sub.name?.toLowerCase().includes(emailSearch.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
+
+  // Email stats
+  const activeSubscriberCount = subscribers.filter(s => s.status === 'active').length;
+  const unsubscribedCount = subscribers.filter(s => s.status !== 'active').length;
+
+  // Toggle email selection
+  const toggleEmailSelection = (id: string) => {
+    setSelectedEmails(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const selectAllEmails = () => {
+    setSelectedEmails(new Set(filteredSubscribers.map(s => s.id)));
+  };
+
+  const deselectAllEmails = () => {
+    setSelectedEmails(new Set());
+  };
+
+  // Handle unsubscribe
+  const handleUnsubscribe = async (subscriber: any) => {
+    if (!confirm('Are you sure you want to unsubscribe this email?')) return;
+    try {
+      await fetch(`/api/subscribers?siteId=${id}&email=${encodeURIComponent(subscriber.email)}`, { method: 'DELETE' });
+      loadSubscribers();
+    } catch (error) {
+      console.error('Error unsubscribing:', error);
+    }
+  };
+
+  // Handle resubscribe
+  const handleResubscribe = async (subscriber: any) => {
+    if (!confirm('Re-subscribe this email?')) return;
+    try {
+      await fetch(`/api/subscribers/resubscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ siteId: id, email: subscriber.email })
+      });
+      loadSubscribers();
+    } catch (error) {
+      console.error('Error resubscribing:', error);
+    }
+  };
+
   // Navigate to emails page with site filter
   const navigateToEmails = () => {
     router.push(`/admin/emails?siteId=${id}`);
@@ -389,15 +479,17 @@ export default function SiteDashboard() {
   // All tabs - internal rendering
   // Count visible pages (enabled + showInNav)
   const visiblePageCount = pageConfig.pages?.filter((p: any) => p.enabled && p.showInNav)?.length || 0;
+  const totalPageCount = pageConfig.pages?.length || 0;
+  const boostedArticleCount = articles.filter((a: any) => a.boosted).length;
 
-  const tabs = [
-    { id: 'overview' as TabType, label: 'Overview', icon: LayoutDashboard },
-    { id: 'articles' as TabType, label: 'Articles', icon: Edit3, count: metrics?.totalArticles },
-    { id: 'pages' as TabType, label: 'Pages', icon: FileText, count: visiblePageCount },
-    { id: 'emails' as TabType, label: 'Emails', icon: Users, count: metrics?.totalEmails },
-    { id: 'analytics' as TabType, label: 'Analytics', icon: BarChart3 },
-    { id: 'content-profile' as TabType, label: 'Content Profile', icon: BookOpen },
-    { id: 'settings' as TabType, label: 'Settings', icon: Settings },
+  const tabs: { id: TabType; label: string; icon: any; count?: number; dividerBefore?: boolean }[] = [
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'pages', label: 'Pages', icon: Layers, count: totalPageCount, dividerBefore: true },
+    { id: 'articles', label: 'Articles', icon: Edit3, count: metrics?.totalArticles },
+    { id: 'emails', label: 'Emails', icon: Mail, count: metrics?.totalEmails },
+    { id: 'content-profile', label: 'Profile', icon: BookOpen },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   ];
 
   const settingsTabs = [
@@ -457,6 +549,17 @@ export default function SiteDashboard() {
                   <ExternalLink className="w-4 h-4" />
                   View Site
                 </a>
+                <button
+                  onClick={() => {
+                    // Navigate to pages tab and trigger new page creation
+                    setActiveTab('pages');
+                    // Could add state to trigger new page modal
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all text-sm font-medium"
+                >
+                  <Plus className="w-4 h-4" />
+                  New Page
+                </button>
                 <Link
                   href={`/admin/articles/new?siteId=${id}`}
                   className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-primary-600/20"
@@ -469,26 +572,30 @@ export default function SiteDashboard() {
 
             {/* Tab Navigation */}
             <div className="flex items-center gap-2 mt-8 flex-wrap">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
-                    activeTab === tab.id
-                      ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
-                      : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
-                >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
-                  {tab.count !== undefined && tab.count > 0 && (
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                      activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-600 text-gray-300'
-                    }`}>
-                      {tab.count}
-                    </span>
+              {tabs.map((tab, index) => (
+                <div key={tab.id} className="flex items-center gap-2">
+                  {tab.dividerBefore && (
+                    <div className="w-px h-6 bg-gray-600 mx-1" />
                   )}
-                </button>
+                  <button
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
+                        : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }`}
+                  >
+                    <tab.icon className="w-4 h-4" />
+                    {tab.label}
+                    {tab.count !== undefined && tab.count > 0 && (
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                        activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-600 text-gray-300'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -500,13 +607,14 @@ export default function SiteDashboard() {
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* Stats Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Stats Cards - Reordered: Pages, Boosted, Articles, Emails, Views */}
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 {[
+                  { label: 'Total Pages', value: totalPageCount, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
+                  { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
                   { label: 'Total Articles', value: metrics?.totalArticles || 0, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('articles') },
-                  { label: 'Published', value: metrics?.publishedArticles || 0, icon: Check, color: 'text-green-400', bg: 'bg-green-500/10', clickable: false },
-                  { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: false },
-                  { label: 'Email Signups', value: metrics?.totalEmails || 0, icon: Users, color: 'text-orange-400', bg: 'bg-orange-500/10', clickable: true, onClick: navigateToEmails },
+                  { label: 'Total Emails', value: metrics?.totalEmails || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
+                  { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: true, onClick: () => setActiveTab('analytics') },
                 ].map((stat, i) => (
                   <div
                     key={i}
@@ -599,6 +707,13 @@ export default function SiteDashboard() {
                         New Article
                       </Link>
                       <button
+                        onClick={() => setActiveTab('pages')}
+                        className="flex items-center gap-3 w-full p-3 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all font-medium"
+                      >
+                        <Plus className="w-5 h-5" />
+                        New Page
+                      </button>
+                      <button
                         onClick={() => setActiveTab('settings')}
                         className="flex items-center gap-3 w-full p-3 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all font-medium"
                       >
@@ -606,7 +721,7 @@ export default function SiteDashboard() {
                         Site Settings
                       </button>
                       <button
-                        onClick={navigateToEmails}
+                        onClick={() => setActiveTab('emails')}
                         className="flex items-center gap-3 w-full p-3 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all font-medium"
                       >
                         <Download className="w-5 h-5" />
@@ -614,6 +729,21 @@ export default function SiteDashboard() {
                       </button>
                     </div>
                   </div>
+
+                  {/* Pages Tile */}
+                  <button
+                    onClick={() => setActiveTab('pages')}
+                    className="w-full bg-gray-800 rounded-2xl border border-gray-700 p-5 hover:border-primary-500 hover:bg-gray-750 transition-all text-left"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center">
+                        <Layers className="w-5 h-5 text-indigo-400" />
+                      </div>
+                      <span className="text-2xl font-bold text-white">{totalPageCount}</span>
+                    </div>
+                    <h3 className="font-semibold text-white">Pages</h3>
+                    <p className="text-sm text-gray-400 mt-1">{visiblePageCount} visible in nav</p>
+                  </button>
 
                   {/* Site Status Card */}
                   <div className="bg-gradient-to-br from-gray-800 to-gray-800/50 rounded-2xl border border-gray-700 p-5">
@@ -652,28 +782,34 @@ export default function SiteDashboard() {
           {/* ARTICLES TAB */}
           {activeTab === 'articles' && (
             <div className="space-y-6">
-              {/* Search and Filters */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input
-                      type="text"
-                      placeholder="Search articles..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    />
-                  </div>
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-gray-200 focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="published">Published</option>
-                    <option value="draft">Draft</option>
-                  </select>
+              {/* Sub-tabs: Boosted, All, Drafts */}
+              <div className="flex items-center justify-between">
+                <div className="flex border-b border-gray-700">
+                  {[
+                    { id: 'boosted' as ArticlesSubTab, label: 'Boosted', count: boostedArticleCount, icon: Zap },
+                    { id: 'all' as ArticlesSubTab, label: 'All Articles', count: articles.length, icon: FileText },
+                    { id: 'drafts' as ArticlesSubTab, label: 'Drafts', count: articles.filter(a => !a.published).length, icon: Edit3 },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setArticlesSubTab(tab.id)}
+                      className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+                        articlesSubTab === tab.id
+                          ? 'border-primary-500 text-white'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${
+                        articlesSubTab === tab.id
+                          ? tab.id === 'boosted' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-primary-500/20 text-primary-400'
+                          : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    </button>
+                  ))}
                 </div>
                 <Link
                   href={`/admin/articles/new?siteId=${id}`}
@@ -684,68 +820,125 @@ export default function SiteDashboard() {
                 </Link>
               </div>
 
-              {/* Articles List - Matching Recent Articles Style */}
+              {/* Search */}
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Articles List */}
               <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
                 <div className="divide-y divide-gray-700/50">
-                  {filteredArticles.map((article) => (
-                    <Link
-                      key={article.id}
-                      href={`/admin/articles/${article.id}/edit`}
-                      className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
-                    >
-                      <div className="flex items-center gap-4 min-w-0 flex-1">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          article.published ? 'bg-green-500/10' : 'bg-gray-700'
-                        }`}>
-                          <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                  {(() => {
+                    // Filter articles based on sub-tab
+                    let displayArticles = articles;
+                    if (articlesSubTab === 'boosted') {
+                      displayArticles = articles.filter(a => a.boosted);
+                    } else if (articlesSubTab === 'drafts') {
+                      displayArticles = articles.filter(a => !a.published);
+                    }
+                    // Apply search filter
+                    if (searchQuery) {
+                      displayArticles = displayArticles.filter(a =>
+                        a.title?.toLowerCase().includes(searchQuery.toLowerCase())
+                      );
+                    }
+
+                    if (displayArticles.length === 0) {
+                      return (
+                        <div className="p-12 text-center">
+                          {articlesSubTab === 'boosted' ? (
+                            <>
+                              <Zap className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-white mb-2">No boosted articles</h3>
+                              <p className="text-gray-400 mb-6">Mark articles as boosted to track active campaigns</p>
+                            </>
+                          ) : articlesSubTab === 'drafts' ? (
+                            <>
+                              <Edit3 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-white mb-2">No drafts</h3>
+                              <p className="text-gray-400 mb-6">All your articles are published!</p>
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-white mb-2">No articles found</h3>
+                              <p className="text-gray-400 mb-6">
+                                {searchQuery ? 'Try adjusting your search terms' : 'Create your first article to get started'}
+                              </p>
+                              <Link
+                                href={`/admin/articles/new?siteId=${id}`}
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl transition-all font-medium"
+                              >
+                                <Plus className="w-4 h-4" />
+                                Create Article
+                              </Link>
+                            </>
+                          )}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-3 mb-0.5">
-                            <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
-                              {article.title}
-                            </p>
-                            {!article.published && (
-                              <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
-                                Draft
-                              </span>
+                      );
+                    }
+
+                    return displayArticles.map((article) => (
+                      <Link
+                        key={article.id}
+                        href={`/admin/articles/${article.id}/edit`}
+                        className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
+                      >
+                        <div className="flex items-center gap-4 min-w-0 flex-1">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                          }`}>
+                            {article.boosted ? (
+                              <Zap className="w-5 h-5 text-yellow-400" />
+                            ) : (
+                              <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
                             )}
                           </div>
-                          <p className="text-gray-500 text-sm">
-                            {article.views || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
-                          </p>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                                {article.title}
+                              </p>
+                              {article.boosted && (
+                                <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex-shrink-0 flex items-center gap-1">
+                                  <Zap className="w-3 h-3" />
+                                  Boosted
+                                </span>
+                              )}
+                              {!article.published && (
+                                <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
+                                  Draft
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-gray-500 text-sm">
+                              {article.views || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(`/site/${site.subdomain}/articles/${article.slug}`, '_blank');
-                          }}
-                          className="p-2 text-gray-600 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </span>
-                        <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
-                      </div>
-                    </Link>
-                  ))}
-                  {filteredArticles.length === 0 && (
-                    <div className="p-12 text-center">
-                      <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-white mb-2">No articles found</h3>
-                      <p className="text-gray-400 mb-6">
-                        {searchQuery ? 'Try adjusting your search terms' : 'Create your first article to get started'}
-                      </p>
-                      <Link
-                        href={`/admin/articles/new?siteId=${id}`}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl transition-all font-medium"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Create Article
+                        <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                          <span
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.open(`/site/${site.subdomain}/articles/${article.slug}`, '_blank');
+                            }}
+                            className="p-2 text-gray-600 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </span>
+                          <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
+                        </div>
                       </Link>
-                    </div>
-                  )}
+                    ));
+                  })()}
                 </div>
               </div>
             </div>
@@ -1566,65 +1759,194 @@ export default function SiteDashboard() {
           {/* EMAILS TAB */}
           {activeTab === 'emails' && (
             <div className="space-y-6">
+              {/* Tabs */}
               <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-white">Email Subscribers</h2>
-                  <p className="text-gray-400 text-sm mt-1">{subscriberStats.total || 0} total subscribers</p>
+                <div className="flex border-b border-gray-700">
+                  <button
+                    onClick={() => { setEmailsSubTab('active'); setSelectedEmails(new Set()); }}
+                    className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+                      emailsSubTab === 'active'
+                        ? 'border-primary-500 text-white'
+                        : 'border-transparent text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    <Users className="w-4 h-4" />
+                    Active Subscribers
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${
+                      emailsSubTab === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-700 text-gray-400'
+                    }`}>
+                      {activeSubscriberCount}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => { setEmailsSubTab('unsubscribed'); setSelectedEmails(new Set()); }}
+                    className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+                      emailsSubTab === 'unsubscribed'
+                        ? 'border-primary-500 text-white'
+                        : 'border-transparent text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    <X className="w-4 h-4" />
+                    Unsubscribed
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${
+                      emailsSubTab === 'unsubscribed' ? 'bg-red-500/20 text-red-400' : 'bg-gray-700 text-gray-400'
+                    }`}>
+                      {unsubscribedCount}
+                    </span>
+                  </button>
                 </div>
                 <button
                   onClick={exportEmails}
                   className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl transition-all text-sm font-medium"
                 >
                   <Download className="w-4 h-4" />
-                  Export CSV
+                  Export {selectedEmails.size > 0 ? selectedEmails.size : filteredSubscribers.length} Emails
                 </button>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-4 gap-4">
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Total Subscribers</p>
-                  <p className="text-3xl font-bold text-white mt-1">{subscriberStats.total || 0}</p>
+                  <p className="text-gray-400 text-sm">Total Emails</p>
+                  <p className="text-3xl font-bold text-white mt-1">{subscribers.length}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+                  <p className="text-gray-400 text-sm">Active</p>
+                  <p className="text-3xl font-bold text-green-400 mt-1">{activeSubscriberCount}</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
                   <p className="text-gray-400 text-sm">This Week</p>
-                  <p className="text-3xl font-bold text-green-400 mt-1">{subscriberStats.thisWeek || 0}</p>
+                  <p className="text-3xl font-bold text-blue-400 mt-1">{subscriberStats.thisWeek || 0}</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">This Month</p>
-                  <p className="text-3xl font-bold text-blue-400 mt-1">{subscriberStats.thisMonth || 0}</p>
+                  <p className="text-gray-400 text-sm">Unsubscribed</p>
+                  <p className="text-3xl font-bold text-red-400 mt-1">{unsubscribedCount}</p>
                 </div>
+              </div>
+
+              {/* Search & Bulk Actions */}
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative max-w-md">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <input
+                      type="text"
+                      placeholder="Search emails..."
+                      value={emailSearch}
+                      onChange={(e) => setEmailSearch(e.target.value)}
+                      className="w-64 pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                  </div>
+                  {selectedEmails.size > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-primary-400 font-medium">{selectedEmails.size} selected</span>
+                      <button onClick={deselectAllEmails} className="text-xs text-gray-400 hover:text-gray-300">Clear</button>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={loadSubscribers}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-xl transition-all text-sm font-medium"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Refresh
+                </button>
               </div>
 
               {/* Subscribers List */}
               <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-                <div className="p-5 border-b border-gray-700">
-                  <h3 className="text-lg font-semibold text-white">Recent Subscribers</h3>
+                {/* Table Header */}
+                <div className="flex items-center gap-4 px-4 py-3 border-b border-gray-700 bg-gray-850">
+                  <button
+                    onClick={() => {
+                      if (selectedEmails.size === filteredSubscribers.length) {
+                        deselectAllEmails();
+                      } else {
+                        selectAllEmails();
+                      }
+                    }}
+                    className="p-1 hover:bg-gray-700 rounded transition-colors"
+                  >
+                    {selectedEmails.size === filteredSubscribers.length && filteredSubscribers.length > 0 ? (
+                      <CheckSquare className="w-5 h-5 text-primary-400" />
+                    ) : (
+                      <Square className="w-5 h-5 text-gray-500" />
+                    )}
+                  </button>
+                  <span className="text-xs font-medium text-gray-400 uppercase tracking-wider flex-1">Email</span>
+                  <span className="text-xs font-medium text-gray-400 uppercase tracking-wider w-24">Source</span>
+                  <span className="text-xs font-medium text-gray-400 uppercase tracking-wider w-32">Date</span>
+                  <span className="text-xs font-medium text-gray-400 uppercase tracking-wider w-20 text-right">Action</span>
                 </div>
-                <div className="divide-y divide-gray-700/50 max-h-96 overflow-y-auto">
-                  {subscribers.length > 0 ? (
-                    subscribers.slice(0, 50).map((sub: any, i: number) => (
-                      <div key={i} className="flex items-center justify-between p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary-500/10 rounded-full flex items-center justify-center">
-                            <Users className="w-5 h-5 text-primary-400" />
-                          </div>
-                          <div>
-                            <p className="text-white font-medium">{sub.email}</p>
-                            <p className="text-sm text-gray-500">
-                              {sub.source || 'Direct'} • {formatDistanceToNow(new Date(sub.created_at), { addSuffix: true })}
-                            </p>
-                          </div>
+
+                {/* List */}
+                <div className="divide-y divide-gray-700/50 max-h-[500px] overflow-y-auto">
+                  {filteredSubscribers.length > 0 ? (
+                    filteredSubscribers.map((sub: any) => (
+                      <div key={sub.id} className={`flex items-center gap-4 px-4 py-3 hover:bg-gray-750 transition-colors ${selectedEmails.has(sub.id) ? 'bg-primary-500/5' : ''}`}>
+                        <button
+                          onClick={() => toggleEmailSelection(sub.id)}
+                          className="p-1 hover:bg-gray-700 rounded transition-colors"
+                        >
+                          {selectedEmails.has(sub.id) ? (
+                            <CheckSquare className="w-5 h-5 text-primary-400" />
+                          ) : (
+                            <Square className="w-5 h-5 text-gray-500" />
+                          )}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white font-medium truncate">{sub.email}</p>
+                          {sub.name && <p className="text-xs text-gray-500">{sub.name}</p>}
+                        </div>
+                        <span className="w-24 px-2.5 py-1 bg-blue-900/50 text-blue-300 rounded-lg text-xs font-medium text-center">
+                          {sub.source || 'website'}
+                        </span>
+                        <span className="w-32 text-sm text-gray-400">
+                          {formatDistanceToNow(new Date(sub.created_at), { addSuffix: true })}
+                        </span>
+                        <div className="w-20 text-right">
+                          {emailsSubTab === 'active' ? (
+                            <button
+                              onClick={() => handleUnsubscribe(sub)}
+                              className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all"
+                              title="Unsubscribe"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleResubscribe(sub)}
+                              className="p-2 text-gray-500 hover:text-green-400 hover:bg-gray-700 rounded-lg transition-all"
+                              title="Re-subscribe"
+                            >
+                              <RotateCcw className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))
                   ) : (
                     <div className="p-12 text-center">
                       <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-400">No subscribers yet</p>
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        {emailsSubTab === 'active' ? 'No active subscribers' : 'No unsubscribed emails'}
+                      </h3>
+                      <p className="text-gray-400">
+                        {emailSearch ? 'Try adjusting your search' : emailsSubTab === 'active' ? 'Subscribers will appear here' : 'No unsubscribed emails yet'}
+                      </p>
                     </div>
                   )}
                 </div>
+
+                {/* Footer */}
+                {filteredSubscribers.length > 0 && (
+                  <div className="px-6 py-4 border-t border-gray-700 bg-gray-850">
+                    <p className="text-sm text-gray-400">
+                      Showing <span className="text-white font-medium">{filteredSubscribers.length}</span>{' '}
+                      {emailsSubTab === 'active' ? 'active subscribers' : 'unsubscribed emails'}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}

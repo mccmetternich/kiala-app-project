@@ -493,29 +493,15 @@ function EmailsPageContent() {
       <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: 'Total Emails', value: stats.total, icon: Mail, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: 'Active Subscribers', value: stats.active, icon: Users, color: 'text-green-400', bg: 'bg-green-500/10' },
-              { label: 'New This Week', value: stats.thisWeek, icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-              { label: 'Unsubscribed', value: stats.unsubscribed, icon: X, color: 'text-red-400', bg: 'bg-red-500/10' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm">{stat.label}</p>
-                    <p className="text-3xl font-bold text-white mt-1">{stat.value.toLocaleString()}</p>
-                  </div>
-                  <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </div>
-            ))}
+          {/* Page Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">All Emails</h1>
+              <p className="text-gray-400 text-sm mt-1">Manage email subscribers across all sites</p>
+            </div>
           </div>
 
-          {/* Filters Section */}
+          {/* Filters Section - MOVED TO TOP */}
           <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5 space-y-5">
             {/* Sites Selection */}
             <div>
@@ -659,6 +645,28 @@ function EmailsPageContent() {
                 )}
               </button>
             </div>
+          </div>
+
+          {/* Stats Cards - After Filters */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: 'Total Emails', value: stats.total, icon: Mail, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: 'Active Subscribers', value: stats.active, icon: Users, color: 'text-green-400', bg: 'bg-green-500/10' },
+              { label: 'New This Week', value: stats.thisWeek, icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+              { label: 'Unsubscribed', value: stats.unsubscribed, icon: X, color: 'text-red-400', bg: 'bg-red-500/10' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-400 text-sm">{stat.label}</p>
+                    <p className="text-3xl font-bold text-white mt-1">{stat.value.toLocaleString()}</p>
+                  </div>
+                  <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
+                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Tabs & Email List */}

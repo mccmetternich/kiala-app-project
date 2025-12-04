@@ -229,6 +229,7 @@ export async function initDb() {
       featured BOOLEAN DEFAULT 0,
       trending BOOLEAN DEFAULT 0,
       hero BOOLEAN DEFAULT 0,
+      boosted BOOLEAN DEFAULT 0,
       published BOOLEAN DEFAULT 0,
       read_time INTEGER DEFAULT 5,
       views INTEGER DEFAULT 0,
@@ -246,6 +247,13 @@ export async function initDb() {
       UNIQUE(site_id, slug)
     )
   `);
+
+  // Add boosted column if it doesn't exist (for existing databases)
+  try {
+    await execute(`ALTER TABLE articles ADD COLUMN boosted BOOLEAN DEFAULT 0`);
+  } catch {
+    // Column already exists, ignore error
+  }
 
   // Pages table
   await execute(`

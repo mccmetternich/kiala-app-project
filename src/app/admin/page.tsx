@@ -11,7 +11,9 @@ import {
   Edit3,
   ExternalLink,
   Settings,
-  Clock
+  Clock,
+  Layers,
+  Zap
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import { formatDistanceToNow } from 'date-fns';
@@ -163,6 +165,13 @@ export default function AdminDashboard() {
             >
               <Plus className="w-4 h-4" />
               New Article
+            </Link>
+            <Link
+              href="/admin/pages/new"
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              New Page
             </Link>
             <Link
               href="/admin/sites/new"
