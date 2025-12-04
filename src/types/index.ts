@@ -150,7 +150,13 @@ export type WidgetType =
   | 'lead-magnet-form'
   | 'articles-header'
   | 'top-picks-grid'
-  | 'success-stories-grid';
+  | 'success-stories-grid'
+  // Interactive & engagement widgets
+  | 'poll'
+  | 'myth-buster'
+  | 'warning-box'
+  | 'dr-tip'
+  | 'checklist';
 
 // Widget Configurations
 export interface WidgetConfig {

@@ -30,7 +30,11 @@ import {
   Plus,
   X,
   Upload,
-  LayoutGrid
+  LayoutGrid,
+  AlertCircle,
+  AlertTriangle,
+  Lightbulb,
+  CheckSquare
 } from 'lucide-react';
 import { Widget, WidgetConfig, WidgetType } from '@/types';
 import Badge from '@/components/ui/Badge';
@@ -81,7 +85,14 @@ const widgetTypes: { type: WidgetType; name: string; icon: any; category: string
   { type: 'countdown-timer', name: 'Countdown Timer', icon: Clock, category: 'Urgency', description: 'Limited time offer countdown' },
 
   // Lead Gen Widgets
-  { type: 'email-capture', name: 'Email Capture', icon: Mail, category: 'Lead Gen', description: 'Newsletter signup with lead magnet' }
+  { type: 'email-capture', name: 'Email Capture', icon: Mail, category: 'Lead Gen', description: 'Newsletter signup with lead magnet' },
+
+  // Interactive & Engagement Widgets
+  { type: 'poll', name: 'Poll', icon: BarChart3, category: 'Content', description: 'Interactive community poll with results' },
+  { type: 'myth-buster', name: 'Myth Buster', icon: AlertCircle, category: 'Content', description: 'Myth vs. Reality comparison cards' },
+  { type: 'warning-box', name: 'Warning Box', icon: AlertTriangle, category: 'Content', description: 'Highlighted warning or cascade list' },
+  { type: 'dr-tip', name: "Dr's Tip", icon: Lightbulb, category: 'Content', description: 'Professional insight callout' },
+  { type: 'checklist', name: 'Checklist', icon: CheckSquare, category: 'Content', description: 'Interactive or assessment checklist' }
 ];
 
 const categoryColors: Record<string, string> = {
@@ -3929,6 +3940,47 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     'success-stories-grid': {
       showTestimonials: true,
       showBeforeAfter: true
+    },
+    'poll': {
+      question: 'What is your biggest health challenge?',
+      options: [
+        { id: 'energy', label: 'Low energy', votes: 0 },
+        { id: 'sleep', label: 'Poor sleep', votes: 0 },
+        { id: 'weight', label: 'Weight management', votes: 0 }
+      ],
+      totalVotes: 0,
+      showResults: false,
+      style: 'default'
+    },
+    'myth-buster': {
+      headline: 'Myth vs. Reality',
+      myths: [
+        { myth: 'Common misconception here', truth: 'The actual truth', icon: 'brain' }
+      ],
+      style: 'cards'
+    },
+    'warning-box': {
+      headline: 'Important Warning',
+      content: 'Pay attention to these factors:',
+      warnings: [
+        { text: 'Warning item 1', severity: 'high' },
+        { text: 'Warning item 2', severity: 'medium' }
+      ],
+      style: 'urgent'
+    },
+    'dr-tip': {
+      tip: 'Enter your professional insight here...',
+      name: 'Dr. Amy Heart',
+      style: 'highlighted'
+    },
+    'checklist': {
+      headline: 'Your Action Checklist',
+      subheading: 'Complete these steps',
+      items: [
+        { id: '1', text: 'First item', checked: false },
+        { id: '2', text: 'Second item', checked: false }
+      ],
+      style: 'interactive'
     }
   };
 

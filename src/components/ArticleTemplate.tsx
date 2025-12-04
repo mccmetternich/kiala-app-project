@@ -32,6 +32,11 @@ import IngredientListGrid from '@/widgets/IngredientListGrid';
 import UsVsThemComparison from '@/widgets/UsVsThemComparison';
 import DoctorAssessment from '@/widgets/DoctorAssessment';
 import DoctorClosingWord from '@/widgets/DoctorClosingWord';
+import Poll from '@/widgets/Poll';
+import MythBuster from '@/widgets/MythBuster';
+import WarningBox from '@/widgets/WarningBox';
+import DrTip from '@/widgets/DrTip';
+import Checklist from '@/widgets/Checklist';
 
 interface ArticleTemplateProps {
   page: Page;
@@ -734,6 +739,74 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             closingLine={widget.config.closingLine}
             signature={widget.config.signature}
             highlightParagraph={widget.config.highlightParagraph}
+          />
+        </div>
+      );
+
+    case 'poll':
+      return (
+        <div className="my-8">
+          <Poll
+            question={widget.config.question}
+            options={widget.config.options}
+            totalVotes={widget.config.totalVotes}
+            showResults={widget.config.showResults}
+            resultsMessage={widget.config.resultsMessage}
+            source={widget.config.source}
+            style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'myth-buster':
+      return (
+        <div className="my-8">
+          <MythBuster
+            headline={widget.config.headline}
+            subheading={widget.config.subheading}
+            myths={widget.config.myths}
+            style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'warning-box':
+      return (
+        <div className="my-8">
+          <WarningBox
+            headline={widget.config.headline || 'Warning'}
+            content={widget.config.content}
+            warnings={widget.config.warnings || []}
+            footer={widget.config.footer}
+            style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'dr-tip':
+      return (
+        <div className="my-8">
+          <DrTip
+            tip={widget.config.tip}
+            name={widget.config.name}
+            credentials={widget.config.credentials}
+            image={widget.config.image}
+            style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'checklist':
+      return (
+        <div className="my-8">
+          <Checklist
+            headline={widget.config.headline || 'Checklist'}
+            subheading={widget.config.subheading}
+            items={widget.config.items || []}
+            footer={widget.config.footer}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
+            style={widget.config.style as any}
           />
         </div>
       );
