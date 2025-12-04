@@ -401,17 +401,23 @@ export async function initDb() {
   `);
 
   // Widget clicks table (for CTA/widget conversion tracking)
+  // widget_id: unique identifier for this widget instance within an article (e.g., "shop-now-1", "cta-button-2")
+  // session_id: for tracking unique conversions (visitor only counted once per session)
+  // is_external: 1 = external URL (counts for conversion), 0 = anchor/internal (doesn't count)
   await execute(`
     CREATE TABLE IF NOT EXISTS widget_clicks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       site_id TEXT NOT NULL,
       article_id TEXT,
+      widget_id TEXT,
       widget_type TEXT NOT NULL,
       widget_name TEXT,
       click_type TEXT DEFAULT 'cta',
       destination_url TEXT,
+      is_external INTEGER DEFAULT 1,
       clicked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       ip_hash TEXT,
+      session_id TEXT,
       user_agent TEXT
     )
   `);
@@ -446,8 +452,11 @@ export async function initDb() {
     // Widget clicks indexes for conversion tracking
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_site ON widget_clicks(site_id)',
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_article ON widget_clicks(article_id)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_clicks_widget ON widget_clicks(widget_id)',
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_type ON widget_clicks(widget_type)',
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_date ON widget_clicks(clicked_at)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_clicks_external ON widget_clicks(is_external)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_clicks_session ON widget_clicks(session_id)',
   ];
 
   for (const idx of indexes) {
@@ -914,98 +923,115 @@ export class EnhancedQueries {
     },
 
     // Record a widget click
+    // widget_id: unique identifier for this widget instance (e.g., "shop-now-1")
+    // session_id: for tracking unique conversions
+    // is_external: true = external URL (counts for conversion), false = anchor/internal
     recordWidgetClick: async (data: {
       site_id: string;
       article_id?: string;
+      widget_id?: string;
       widget_type: string;
       widget_name?: string;
       click_type?: string;
       destination_url?: string;
+      is_external?: boolean;
       ip_hash?: string;
+      session_id?: string;
       user_agent?: string;
     }) => {
       return execute(
-        `INSERT INTO widget_clicks (site_id, article_id, widget_type, widget_name, click_type, destination_url, ip_hash, user_agent)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [data.site_id, data.article_id || null, data.widget_type, data.widget_name || null,
-         data.click_type || 'cta', data.destination_url || null, data.ip_hash || null, data.user_agent || null]
+        `INSERT INTO widget_clicks (site_id, article_id, widget_id, widget_type, widget_name, click_type, destination_url, is_external, ip_hash, session_id, user_agent)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [data.site_id, data.article_id || null, data.widget_id || null, data.widget_type, data.widget_name || null,
+         data.click_type || 'cta', data.destination_url || null, data.is_external !== false ? 1 : 0,
+         data.ip_hash || null, data.session_id || null, data.user_agent || null]
       );
     },
 
-    // Get total widget clicks for a site
+    // Get total EXTERNAL widget clicks for a site (only counts external URL clicks)
     getSiteWidgetClicks: async (siteId: string) => {
       const result = await queryOne(
-        'SELECT COUNT(*) as count FROM widget_clicks WHERE site_id = ?',
+        'SELECT COUNT(*) as count FROM widget_clicks WHERE site_id = ? AND is_external = 1',
         [siteId]
       );
       return result?.count || 0;
     },
 
-    // Get widget clicks by article
+    // Get EXTERNAL widget clicks by article
     getArticleWidgetClicks: async (articleId: string) => {
       const result = await queryOne(
-        'SELECT COUNT(*) as count FROM widget_clicks WHERE article_id = ?',
+        'SELECT COUNT(*) as count FROM widget_clicks WHERE article_id = ? AND is_external = 1',
         [articleId]
       );
       return result?.count || 0;
     },
 
-    // Get top performing widgets by clicks
+    // Get top performing widgets by EXTERNAL clicks (grouped by widget_id for uniqueness)
     getTopWidgets: async (siteId: string, limit: number = 10) => {
       return queryAll(
-        `SELECT widget_type, widget_name, COUNT(*) as clicks
+        `SELECT widget_type, widget_name, widget_id, article_id, COUNT(*) as clicks
          FROM widget_clicks
-         WHERE site_id = ?
-         GROUP BY widget_type, widget_name
+         WHERE site_id = ? AND is_external = 1
+         GROUP BY widget_type, COALESCE(widget_id, widget_name), article_id
          ORDER BY clicks DESC
          LIMIT ?`,
         [siteId, limit]
       );
     },
 
-    // Get top performing widgets globally
+    // Get top performing widgets globally (only external clicks)
     getTopWidgetsGlobal: async (limit: number = 10) => {
       return queryAll(
-        `SELECT widget_type, widget_name, site_id, COUNT(*) as clicks
+        `SELECT widget_type, widget_name, widget_id, site_id, article_id, COUNT(*) as clicks
          FROM widget_clicks
-         GROUP BY widget_type, widget_name, site_id
+         WHERE is_external = 1
+         GROUP BY widget_type, COALESCE(widget_id, widget_name), site_id, article_id
          ORDER BY clicks DESC
          LIMIT ?`,
         [limit]
       );
     },
 
-    // Get article analytics with views and clicks
+    // Get article analytics with unique views and external clicks
+    // Conversion = unique external clicks / unique views
     getArticleAnalytics: async (articleId: string) => {
-      const [views, clicks, widgetBreakdown] = await Promise.all([
-        queryOne('SELECT COUNT(*) as count FROM article_views WHERE article_id = ?', [articleId]),
-        queryOne('SELECT COUNT(*) as count FROM widget_clicks WHERE article_id = ?', [articleId]),
+      const [uniqueViews, uniqueClicks, widgetBreakdown] = await Promise.all([
+        // Count unique visitors (by ip_hash)
+        queryOne('SELECT COUNT(DISTINCT ip_hash) as count FROM article_views WHERE article_id = ?', [articleId]),
+        // Count unique external clicks (by session_id or ip_hash)
+        queryOne('SELECT COUNT(DISTINCT COALESCE(session_id, ip_hash)) as count FROM widget_clicks WHERE article_id = ? AND is_external = 1', [articleId]),
+        // Widget breakdown by widget_id for per-widget stats
         queryAll(
-          `SELECT widget_type, widget_name, COUNT(*) as clicks
+          `SELECT widget_type, widget_name, widget_id, COUNT(*) as clicks,
+                  COUNT(DISTINCT COALESCE(session_id, ip_hash)) as unique_clicks
            FROM widget_clicks
-           WHERE article_id = ?
-           GROUP BY widget_type, widget_name
+           WHERE article_id = ? AND is_external = 1
+           GROUP BY widget_type, COALESCE(widget_id, widget_name)
            ORDER BY clicks DESC`,
           [articleId]
         )
       ]);
+      const views = uniqueViews?.count || 0;
+      const clicks = uniqueClicks?.count || 0;
       return {
-        views: views?.count || 0,
-        clicks: clicks?.count || 0,
-        conversionRate: views?.count > 0 ? ((clicks?.count || 0) / views.count * 100).toFixed(2) : '0',
+        views,
+        clicks,
+        conversionRate: views > 0 ? ((clicks / views) * 100).toFixed(2) : '0',
         widgetBreakdown
       };
     },
 
-    // Get site-wide conversion metrics
+    // Get site-wide conversion metrics (unique visitors, external clicks only)
     getSiteConversionMetrics: async (siteId: string) => {
-      const [views, clicks, emails] = await Promise.all([
-        queryOne('SELECT COUNT(*) as count FROM article_views WHERE site_id = ?', [siteId]),
-        queryOne('SELECT COUNT(*) as count FROM widget_clicks WHERE site_id = ?', [siteId]),
+      const [uniqueViews, uniqueClicks, emails] = await Promise.all([
+        // Unique visitors across all articles
+        queryOne('SELECT COUNT(DISTINCT ip_hash) as count FROM article_views WHERE site_id = ?', [siteId]),
+        // Unique external click conversions
+        queryOne('SELECT COUNT(DISTINCT COALESCE(session_id, ip_hash)) as count FROM widget_clicks WHERE site_id = ? AND is_external = 1', [siteId]),
         queryOne('SELECT COUNT(*) as count FROM email_subscribers WHERE site_id = ?', [siteId])
       ]);
-      const totalViews = views?.count || 0;
-      const totalClicks = clicks?.count || 0;
+      const totalViews = uniqueViews?.count || 0;
+      const totalClicks = uniqueClicks?.count || 0;
       const totalEmails = emails?.count || 0;
       return {
         totalViews,
@@ -1016,23 +1042,24 @@ export class EnhancedQueries {
       };
     },
 
-    // Get articles with full analytics (views, clicks, conversion)
+    // Get articles with full analytics (unique views, external clicks, conversion)
     getArticlesWithAnalytics: async (siteId: string) => {
       return queryAll(
         `SELECT
            a.id, a.title, a.slug, a.published, a.boosted, a.created_at,
-           COALESCE(av.views, 0) as real_views,
-           COALESCE(wc.clicks, 0) as widget_clicks,
-           CASE WHEN COALESCE(av.views, 0) > 0
-             THEN ROUND(COALESCE(wc.clicks, 0) * 100.0 / av.views, 2)
+           COALESCE(av.unique_views, 0) as real_views,
+           COALESCE(wc.unique_clicks, 0) as widget_clicks,
+           CASE WHEN COALESCE(av.unique_views, 0) > 0
+             THEN ROUND(COALESCE(wc.unique_clicks, 0) * 100.0 / av.unique_views, 2)
              ELSE 0
            END as conversion_rate
          FROM articles a
          LEFT JOIN (
-           SELECT article_id, COUNT(*) as views FROM article_views GROUP BY article_id
+           SELECT article_id, COUNT(DISTINCT ip_hash) as unique_views FROM article_views GROUP BY article_id
          ) av ON av.article_id = a.id
          LEFT JOIN (
-           SELECT article_id, COUNT(*) as clicks FROM widget_clicks GROUP BY article_id
+           SELECT article_id, COUNT(DISTINCT COALESCE(session_id, ip_hash)) as unique_clicks
+           FROM widget_clicks WHERE is_external = 1 GROUP BY article_id
          ) wc ON wc.article_id = a.id
          WHERE a.site_id = ?
          ORDER BY real_views DESC`,
@@ -1040,12 +1067,12 @@ export class EnhancedQueries {
       );
     },
 
-    // Get clicks by date range
+    // Get external clicks by date range
     getClicksByDateRange: async (siteId: string, startDate: string, endDate: string) => {
       return queryAll(
         `SELECT DATE(clicked_at) as date, COUNT(*) as clicks
          FROM widget_clicks
-         WHERE site_id = ? AND clicked_at >= ? AND clicked_at <= ?
+         WHERE site_id = ? AND is_external = 1 AND clicked_at >= ? AND clicked_at <= ?
          GROUP BY DATE(clicked_at)
          ORDER BY date ASC`,
         [siteId, startDate, endDate]

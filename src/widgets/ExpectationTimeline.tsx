@@ -98,8 +98,19 @@ export default function ExpectationTimeline({
   target = '_self',
   showDisclaimer = true
 }: ExpectationTimelineProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
+
+  const handleCtaClick = () => {
+    if (isExternalUrl(ctaUrl)) {
+      trackExternalClick({
+        widget_type: 'expectation-timeline',
+        widget_id: `timeline-${headline?.substring(0, 20)}`,
+        widget_name: headline || ctaText || 'Expectation Timeline',
+        destination_url: ctaUrl
+      });
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden my-8 border border-gray-100">
@@ -235,6 +246,7 @@ export default function ExpectationTimeline({
             href={trackedCtaUrl}
             target={target}
             rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+            onClick={handleCtaClick}
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
           >
             {ctaText}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useTracking } from '@/contexts/TrackingContext';
+import { trackInitiateCheckout } from '@/lib/meta-pixel';
 
 interface TransformationCTAProps {
   title?: string;
@@ -11,6 +12,7 @@ interface TransformationCTAProps {
   afterImage?: string;
   ctaText?: string;
   ctaLink?: string;
+  widgetId?: string;
 }
 
 export default function TransformationCTA({
@@ -21,10 +23,27 @@ export default function TransformationCTA({
   beforeImage,
   afterImage,
   ctaText = 'Start Your Transformation',
-  ctaLink = '#'
+  ctaLink = '#',
+  widgetId
 }: TransformationCTAProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
   const trackedCtaLink = appendTracking(ctaLink);
+
+  const handleClick = () => {
+    if (isExternalUrl(ctaLink)) {
+      trackInitiateCheckout({
+        content_name: title || ctaText || 'Transformation CTA',
+        content_category: 'transformation_cta'
+      });
+
+      trackExternalClick({
+        widget_type: 'transformation-cta',
+        widget_id: widgetId || `transformation-cta-${title?.substring(0, 20)}`,
+        widget_name: title || ctaText || 'Transformation CTA',
+        destination_url: ctaLink
+      });
+    }
+  };
 
   return (
     <div className="bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-12 my-12 text-center">
@@ -50,6 +69,7 @@ export default function TransformationCTA({
 
       <a
         href={trackedCtaLink}
+        onClick={handleClick}
         className="inline-block bg-primary-600 text-white px-12 py-5 rounded-lg font-bold text-xl hover:bg-primary-700 transition-colors shadow-lg"
       >
         {ctaText}

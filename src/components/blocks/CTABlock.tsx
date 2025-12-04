@@ -10,7 +10,7 @@ interface CTABlockProps {
 
 export default function CTABlock({ block }: CTABlockProps) {
   const { settings } = block;
-  const { trackWidgetClick } = useTracking();
+  const { trackExternalClick, isExternalUrl } = useTracking();
 
   const getStyleClasses = () => {
     switch (settings.style) {
@@ -26,19 +26,24 @@ export default function CTABlock({ block }: CTABlockProps) {
   };
 
   const handleClick = () => {
-    // Fire InitiateCheckout event for CTA block clicks (Meta Pixel)
-    trackInitiateCheckout({
-      content_name: settings.ctaText || 'CTA Block',
-      content_category: 'cta_block'
-    });
+    const ctaLink = settings.ctaLink || '#';
 
-    // Track widget click internally for analytics
-    trackWidgetClick({
-      widget_type: 'cta-block',
-      widget_name: settings.title || settings.ctaText || 'CTA Block',
-      click_type: 'cta',
-      destination_url: settings.ctaLink
-    });
+    // Only track external URLs for conversion analytics
+    if (isExternalUrl(ctaLink)) {
+      // Fire InitiateCheckout event for CTA block clicks (Meta Pixel)
+      trackInitiateCheckout({
+        content_name: settings.ctaText || 'CTA Block',
+        content_category: 'cta_block'
+      });
+
+      // Track external click for conversion analytics
+      trackExternalClick({
+        widget_type: 'cta-block',
+        widget_id: block.id || `cta-block-${settings.title?.substring(0, 20)}`,
+        widget_name: settings.title || settings.ctaText || 'CTA Block',
+        destination_url: ctaLink
+      });
+    }
   };
 
   return (

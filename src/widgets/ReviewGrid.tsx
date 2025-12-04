@@ -65,8 +65,19 @@ export default function ReviewGrid({
   ctaUrl = '#',
   target = '_self'
 }: ReviewGridProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
+
+  const handleCtaClick = () => {
+    if (isExternalUrl(ctaUrl)) {
+      trackExternalClick({
+        widget_type: 'review-grid',
+        widget_id: `review-grid-${headline?.substring(0, 20)}`,
+        widget_name: headline || ctaText || 'Review Grid',
+        destination_url: ctaUrl
+      });
+    }
+  };
 
   return (
     <div className="my-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 md:p-10">
@@ -142,6 +153,7 @@ export default function ReviewGrid({
         <a
           href={trackedCtaUrl}
           target={target}
+          onClick={handleCtaClick}
           className="inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
         >
           {ctaText}

@@ -153,7 +153,7 @@ export default function ShopNowWidget({
   const [selectedOption, setSelectedOption] = useState(
     pricingOptions.find(opt => opt.popular)?.id || pricingOptions[1]?.id || pricingOptions[0].id
   );
-  const { appendTracking, trackWidgetClick } = useTracking();
+  const { appendTracking, trackExternalClick } = useTracking();
 
   // Touch swipe state for image gallery
   const touchStartX = useRef<number | null>(null);
@@ -514,11 +514,12 @@ export default function ShopNowWidget({
         num_items: currentOption.quantity
       });
 
-      // Track widget click internally for analytics
-      trackWidgetClick({
+      // Track external click for conversion analytics
+      // widget_id includes the selected package for unique tracking
+      trackExternalClick({
         widget_type: 'shop-now',
-        widget_name: productName,
-        click_type: 'checkout',
+        widget_id: `shop-now-${selectedOption}`,
+        widget_name: `${productName} - ${currentOption.label}`,
         destination_url: baseUrl
       });
 

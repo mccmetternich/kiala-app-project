@@ -33,10 +33,21 @@ export default function BeforeAfterComparison({
   ctaUrl = '#',
   target = '_self'
 }: BeforeAfterComparisonProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+
+  const handleCtaClick = () => {
+    if (isExternalUrl(ctaUrl)) {
+      trackExternalClick({
+        widget_type: 'before-after-comparison',
+        widget_id: `before-after-${name?.replace(/\s+/g, '-').toLowerCase()}`,
+        widget_name: `Before/After: ${name} - ${result}`,
+        destination_url: ctaUrl
+      });
+    }
+  };
 
   const handleSliderMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isDragging) return;
@@ -163,6 +174,7 @@ export default function BeforeAfterComparison({
                 href={trackedCtaUrl}
                 target={target}
                 rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+                onClick={handleCtaClick}
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
               >
                 {ctaText}

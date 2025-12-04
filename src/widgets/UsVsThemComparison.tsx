@@ -59,12 +59,23 @@ export default function UsVsThemComparison({
   ctaText = 'Try Kiala Greens Risk-Free →',
   ctaUrl = 'https://trygreens.com/dr-amy'
 }: UsVsThemComparisonProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
 
   // Use new props if set, otherwise fall back to legacy props
   const finalButtonText = buttonText || ctaText;
   const finalButtonUrl = buttonUrl || ctaUrl;
   const trackedCtaUrl = appendTracking(finalButtonUrl);
+
+  const handleClick = () => {
+    if (isExternalUrl(finalButtonUrl)) {
+      trackExternalClick({
+        widget_type: 'us-vs-them',
+        widget_id: `us-vs-them-${column1Title?.substring(0, 15)}`,
+        widget_name: `${column1Title} vs ${column2Title}`,
+        destination_url: finalButtonUrl
+      });
+    }
+  };
 
   return (
     <div className="my-12">
@@ -164,6 +175,7 @@ export default function UsVsThemComparison({
           href={trackedCtaUrl}
           target={target}
           rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+          onClick={handleClick}
           className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
         >
           {finalButtonText}

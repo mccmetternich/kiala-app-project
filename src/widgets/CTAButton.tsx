@@ -8,31 +8,36 @@ interface CTAButtonProps {
   buttonText?: string;
   target?: '_self' | '_blank';
   style?: 'primary' | 'secondary';
+  widgetId?: string; // Unique identifier for this widget instance
 }
 
 export default function CTAButton({
   buttonUrl = '#',
   buttonText = 'Take Action Now →',
   target = '_self',
-  style = 'primary'
+  style = 'primary',
+  widgetId
 }: CTAButtonProps) {
-  const { appendTracking, trackWidgetClick } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
   const trackedUrl = appendTracking(buttonUrl);
 
   const handleClick = () => {
-    // Fire InitiateCheckout event for CTA clicks (Meta Pixel)
-    trackInitiateCheckout({
-      content_name: buttonText || 'CTA Button',
-      content_category: 'cta_button'
-    });
+    // Only track and fire pixel for external URLs (not anchors or internal links)
+    if (isExternalUrl(buttonUrl)) {
+      // Fire InitiateCheckout event for CTA clicks (Meta Pixel)
+      trackInitiateCheckout({
+        content_name: buttonText || 'CTA Button',
+        content_category: 'cta_button'
+      });
 
-    // Track widget click internally for analytics
-    trackWidgetClick({
-      widget_type: 'cta-button',
-      widget_name: buttonText || 'CTA Button',
-      click_type: 'cta',
-      destination_url: buttonUrl
-    });
+      // Track external click for conversion analytics
+      trackExternalClick({
+        widget_type: 'cta-button',
+        widget_id: widgetId || `cta-button-${buttonText?.substring(0, 20)}`,
+        widget_name: buttonText || 'CTA Button',
+        destination_url: buttonUrl
+      });
+    }
   };
 
   return (

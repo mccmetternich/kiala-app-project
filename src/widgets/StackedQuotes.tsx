@@ -83,10 +83,21 @@ export default function StackedQuotes({
   siteId,
   showEmailCapture = false
 }: StackedQuotesProps) {
-  const { appendTracking } = useTracking();
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
   const trackedCtaUrl = appendTracking(ctaUrl);
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleCtaClick = () => {
+    if (isExternalUrl(ctaUrl)) {
+      trackExternalClick({
+        widget_type: 'stacked-quotes',
+        widget_id: `stacked-quotes-${headline?.substring(0, 20)}`,
+        widget_name: headline || ctaText || 'Stacked Quotes',
+        destination_url: ctaUrl
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,6 +330,7 @@ export default function StackedQuotes({
             <a
               href={trackedCtaUrl}
               target={target}
+              onClick={handleCtaClick}
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl mt-4 text-center"
             >
               {ctaText}
