@@ -87,6 +87,9 @@ export default function SiteDashboard() {
     ],
     defaultArticleNavMode: 'direct-response'
   });
+  const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [editingPageName, setEditingPageName] = useState('');
+  const [draggedPage, setDraggedPage] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -187,6 +190,89 @@ export default function SiteDashboard() {
       }
       return next;
     });
+  };
+
+  // Page management helpers
+  const startEditingPageName = (page: any) => {
+    setEditingPageId(page.id);
+    setEditingPageName(page.navLabel || page.title);
+  };
+
+  const savePageName = () => {
+    if (!editingPageId || !editingPageName.trim()) {
+      setEditingPageId(null);
+      return;
+    }
+    const updated = pageConfig.pages.map((p: any) =>
+      p.id === editingPageId ? { ...p, navLabel: editingPageName.trim(), title: editingPageName.trim() } : p
+    );
+    setPageConfig({ ...pageConfig, pages: updated });
+    setEditingPageId(null);
+    setEditingPageName('');
+  };
+
+  const togglePageVisibility = (pageId: string) => {
+    const updated = pageConfig.pages.map((p: any) => {
+      if (p.id === pageId) {
+        const newShowInNav = !p.showInNav;
+        return { ...p, showInNav: newShowInNav, enabled: newShowInNav ? true : p.enabled };
+      }
+      return p;
+    });
+    setPageConfig({ ...pageConfig, pages: updated });
+  };
+
+  const handleDragStart = (pageId: string) => {
+    setDraggedPage(pageId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedPage || draggedPage === targetId) return;
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedPage || draggedPage === targetId) {
+      setDraggedPage(null);
+      return;
+    }
+
+    const pages = [...pageConfig.pages];
+    const visiblePages = pages.filter((p: any) => p.enabled && p.showInNav).sort((a: any, b: any) => a.navOrder - b.navOrder);
+
+    const draggedIndex = visiblePages.findIndex((p: any) => p.id === draggedPage);
+    const targetIndex = visiblePages.findIndex((p: any) => p.id === targetId);
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedPage(null);
+      return;
+    }
+
+    // Reorder
+    const [removed] = visiblePages.splice(draggedIndex, 1);
+    visiblePages.splice(targetIndex, 0, removed);
+
+    // Update navOrder for all visible pages
+    visiblePages.forEach((page: any, index: number) => {
+      page.navOrder = index + 1;
+    });
+
+    // Merge back into full pages array
+    const updatedPages = pages.map((p: any) => {
+      const updated = visiblePages.find((vp: any) => vp.id === p.id);
+      return updated || p;
+    });
+
+    setPageConfig({ ...pageConfig, pages: updatedPages });
+    setDraggedPage(null);
+  };
+
+  const updatePageNavMode = (pageId: string, navMode: string) => {
+    const updated = pageConfig.pages.map((p: any) =>
+      p.id === pageId ? { ...p, navMode } : p
+    );
+    setPageConfig({ ...pageConfig, pages: updated });
   };
 
   // Export emails as CSV
@@ -301,10 +387,13 @@ export default function SiteDashboard() {
   const isLive = site.status === 'published';
 
   // All tabs - internal rendering
+  // Count visible pages (enabled + showInNav)
+  const visiblePageCount = pageConfig.pages?.filter((p: any) => p.enabled && p.showInNav)?.length || 0;
+
   const tabs = [
     { id: 'overview' as TabType, label: 'Overview', icon: LayoutDashboard },
     { id: 'articles' as TabType, label: 'Articles', icon: Edit3, count: metrics?.totalArticles },
-    { id: 'pages' as TabType, label: 'Pages', icon: FileText },
+    { id: 'pages' as TabType, label: 'Pages', icon: FileText, count: visiblePageCount },
     { id: 'emails' as TabType, label: 'Emails', icon: Users, count: metrics?.totalEmails },
     { id: 'analytics' as TabType, label: 'Analytics', icon: BarChart3 },
     { id: 'content-profile' as TabType, label: 'Content Profile', icon: BookOpen },
@@ -1274,115 +1363,205 @@ export default function SiteDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-white">Page Management</h2>
-                  <p className="text-gray-400 text-sm mt-1">Enable, disable, and configure pages for your site</p>
+                  <p className="text-gray-400 text-sm mt-1">{visiblePageCount} pages in navigation</p>
                 </div>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="btn-primary flex items-center gap-2"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
+                <div className="flex items-center gap-3">
+                  {saveSuccess && (
+                    <span className="text-green-400 text-sm flex items-center gap-1">
+                      <Check className="w-4 h-4" /> Saved
+                    </span>
+                  )}
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
               </div>
 
-              {/* Navigation Order */}
+              {/* Visible Pages - In Navigation */}
               <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
                 <div className="p-5 border-b border-gray-700">
-                  <h3 className="text-lg font-semibold text-white">Navigation Pages</h3>
-                  <p className="text-sm text-gray-400 mt-1">Pages that appear in your site navigation</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">Visible Pages</h3>
+                      <p className="text-sm text-gray-400 mt-1">Drag to reorder. These appear in your site navigation.</p>
+                    </div>
+                    <span className="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-sm font-medium">
+                      {visiblePageCount} visible
+                    </span>
+                  </div>
                 </div>
                 <div className="divide-y divide-gray-700/50">
                   {pageConfig.pages
-                    .filter((p: any) => p.enabled)
+                    .filter((p: any) => p.enabled && p.showInNav)
                     .sort((a: any, b: any) => a.navOrder - b.navOrder)
-                    .map((page: any) => (
-                      <div key={page.id} className="flex items-center gap-4 p-4 hover:bg-gray-750">
-                        <GripVertical className="w-5 h-5 text-gray-500 cursor-grab" />
-                        <div className="flex-1">
-                          <p className="font-medium text-white">{page.title}</p>
-                          <p className="text-sm text-gray-500">{page.slug}</p>
+                    .map((page: any, index: number) => (
+                      <div
+                        key={page.id}
+                        draggable
+                        onDragStart={() => handleDragStart(page.id)}
+                        onDragOver={(e) => handleDragOver(e, page.id)}
+                        onDrop={(e) => handleDrop(e, page.id)}
+                        onDragEnd={() => setDraggedPage(null)}
+                        className={`flex items-center gap-4 p-4 hover:bg-gray-750 transition-colors ${
+                          draggedPage === page.id ? 'opacity-50 bg-gray-750' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <GripVertical className="w-5 h-5 text-gray-500 cursor-grab hover:text-gray-300" />
+                          <span className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs text-gray-400 font-medium">
+                            {index + 1}
+                          </span>
                         </div>
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={page.showInNav}
-                            onChange={(e) => {
-                              const updated = pageConfig.pages.map((p: any) =>
-                                p.id === page.id ? { ...p, showInNav: e.target.checked } : p
-                              );
-                              setPageConfig({ ...pageConfig, pages: updated });
-                            }}
-                            className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-primary-500"
-                          />
-                          <span className="text-sm text-gray-300">Show in Nav</span>
-                        </label>
+
+                        {/* Editable name */}
+                        <div className="flex-1 min-w-0">
+                          {editingPageId === page.id ? (
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={editingPageName}
+                                onChange={(e) => setEditingPageName(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') savePageName();
+                                  if (e.key === 'Escape') setEditingPageId(null);
+                                }}
+                                autoFocus
+                                className="px-2 py-1 bg-gray-700 border border-gray-500 rounded text-white text-sm font-medium w-40"
+                              />
+                              <button onClick={savePageName} className="p-1 text-green-400 hover:text-green-300">
+                                <Check className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => setEditingPageId(null)} className="p-1 text-gray-400 hover:text-gray-300">
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <div
+                              onClick={() => startEditingPageName(page)}
+                              className="cursor-pointer group"
+                            >
+                              <p className="font-medium text-white group-hover:text-primary-400 transition-colors">
+                                {page.navLabel || page.title}
+                                <Edit3 className="w-3 h-3 inline ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </p>
+                              <p className="text-sm text-gray-500">{page.slug}</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Nav Mode Badge */}
                         <select
-                          value={page.navMode}
-                          onChange={(e) => {
-                            const updated = pageConfig.pages.map((p: any) =>
-                              p.id === page.id ? { ...p, navMode: e.target.value } : p
-                            );
-                            setPageConfig({ ...pageConfig, pages: updated });
-                          }}
-                          className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 text-sm"
+                          value={page.navMode || 'global'}
+                          onChange={(e) => updatePageNavMode(page.id, e.target.value)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer ${
+                            page.navMode === 'direct-response'
+                              ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+                              : page.navMode === 'minimal'
+                              ? 'bg-gray-500/10 border-gray-500/30 text-gray-400'
+                              : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                          }`}
                         >
-                          <option value="global">Global Nav</option>
-                          <option value="direct-response">Direct Response</option>
-                          <option value="minimal">Minimal</option>
+                          <option value="global">Full Nav</option>
+                          <option value="direct-response">No Nav Links</option>
+                          <option value="minimal">Logo Only</option>
                         </select>
-                      </div>
-                    ))}
-                </div>
-              </div>
 
-              {/* Disabled Pages */}
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-                <div className="p-5 border-b border-gray-700">
-                  <h3 className="text-lg font-semibold text-white">Available Pages</h3>
-                  <p className="text-sm text-gray-400 mt-1">Enable additional pages for your site</p>
-                </div>
-                <div className="divide-y divide-gray-700/50">
-                  {pageConfig.pages
-                    .filter((p: any) => !p.enabled)
-                    .map((page: any) => (
-                      <div key={page.id} className="flex items-center justify-between p-4 hover:bg-gray-750">
-                        <div>
-                          <p className="font-medium text-gray-400">{page.title}</p>
-                          <p className="text-sm text-gray-500">{page.slug}</p>
-                        </div>
+                        {/* Hide button */}
                         <button
-                          onClick={() => {
-                            const updated = pageConfig.pages.map((p: any) =>
-                              p.id === page.id ? { ...p, enabled: true, showInNav: true } : p
-                            );
-                            setPageConfig({ ...pageConfig, pages: updated });
-                          }}
-                          className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium"
+                          onClick={() => togglePageVisibility(page.id)}
+                          className="px-3 py-1.5 bg-gray-700 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg text-sm font-medium transition-colors"
                         >
-                          Enable
+                          Hide
                         </button>
+
+                        {/* Edit page button */}
+                        <Link
+                          href={`/admin/sites/${id}/pages/${page.id}/edit`}
+                          className="p-2 bg-gray-700 hover:bg-primary-500/20 text-gray-400 hover:text-primary-400 rounded-lg transition-colors"
+                          title="Edit page content"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </Link>
                       </div>
                     ))}
+
+                  {visiblePageCount === 0 && (
+                    <div className="p-8 text-center text-gray-500">
+                      <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>No visible pages. Show some pages from the hidden list below.</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Article Nav Mode */}
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Article Pages</h3>
-                <p className="text-sm text-gray-400 mb-4">Configure the default navigation mode for all article pages</p>
-                <select
-                  value={pageConfig.defaultArticleNavMode}
-                  onChange={(e) => setPageConfig({ ...pageConfig, defaultArticleNavMode: e.target.value })}
-                  className="px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-xl text-gray-200"
-                >
-                  <option value="global">Global Nav (full navigation)</option>
-                  <option value="direct-response">Direct Response (no links, social proof)</option>
-                  <option value="minimal">Minimal (logo only)</option>
-                </select>
-                <p className="text-xs text-gray-500 mt-2">
-                  Direct Response is recommended for conversion-focused articles
-                </p>
+              {/* Hidden Pages */}
+              {pageConfig.pages.filter((p: any) => !p.showInNav).length > 0 && (
+                <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                  <div className="p-5 border-b border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Hidden Pages</h3>
+                        <p className="text-sm text-gray-400 mt-1">Pages not shown in navigation. Click Show to add them.</p>
+                      </div>
+                      <span className="px-3 py-1 bg-gray-600/50 text-gray-400 rounded-full text-sm font-medium">
+                        {pageConfig.pages.filter((p: any) => !p.showInNav).length} hidden
+                      </span>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-gray-700/50">
+                    {pageConfig.pages
+                      .filter((p: any) => !p.showInNav)
+                      .map((page: any) => (
+                        <div key={page.id} className="flex items-center justify-between p-4 hover:bg-gray-750">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center">
+                              <FileText className="w-4 h-4 text-gray-500" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-400">{page.navLabel || page.title}</p>
+                              <p className="text-sm text-gray-500">{page.slug}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => togglePageVisibility(page.id)}
+                              className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors"
+                            >
+                              Show in Nav
+                            </button>
+                            <Link
+                              href={`/admin/sites/${id}/pages/${page.id}/edit`}
+                              className="p-2 bg-gray-700 hover:bg-primary-500/20 text-gray-400 hover:text-primary-400 rounded-lg transition-colors"
+                              title="Edit page content"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Info box about articles */}
+              <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-300 font-medium">About Article Pages</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Individual articles use "No Nav Links" mode by default for better conversion.
+                      You can change this per-article in the article editor, or set a different default in Settings → Advanced.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
