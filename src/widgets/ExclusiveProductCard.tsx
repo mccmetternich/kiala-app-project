@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Shield, Truck, BadgeCheck, Star, Award, Heart, Sparkles, CheckCircle, Clock, Quote } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ExclusiveProductCardProps {
   name?: string;
@@ -66,9 +66,6 @@ export default function ExclusiveProductCard({
   testimonialAvatar = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face",
   showTestimonial = true
 }: ExclusiveProductCardProps) {
-  const { appendTracking } = useTracking();
-  // ctaUrl is computed at ArticleTemplate level for anchor links
-  const trackedCtaUrl = appendTracking(ctaUrl);
   const savings = originalPrice - price;
 
   // Countdown timer state - 24 hours from now
@@ -247,16 +244,19 @@ export default function ExclusiveProductCard({
             </div>
 
             {/* CTA */}
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
               target={target}
+              widgetType="exclusive-product-card"
+              widgetName={name}
+              value={price}
               className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-5 rounded-xl text-base transition-all shadow-lg hover:shadow-xl text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />
                 {ctaText}
               </span>
-            </a>
+            </TrackedLink>
 
             {/* Trust Badges */}
             <div className="flex items-center justify-center gap-3 mt-3 text-xs text-gray-500">
@@ -414,16 +414,19 @@ export default function ExclusiveProductCard({
             </div>
 
             {/* CTA */}
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
               target={target}
+              widgetType="exclusive-product-card"
+              widgetName={name}
+              value={price}
               className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />
                 {ctaText}
               </span>
-            </a>
+            </TrackedLink>
 
             <div className="flex items-center justify-center gap-3 mt-3 text-xs text-gray-500">
               <span className="flex items-center gap-1">

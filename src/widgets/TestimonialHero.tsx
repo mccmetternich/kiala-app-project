@@ -1,7 +1,7 @@
 'use client';
 
 import { Shield, Gift, RotateCcw, CheckCircle } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Benefit {
   icon: 'shield' | 'gift' | 'rotate' | 'check';
@@ -46,9 +46,6 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
   target = '_self',
   benefits = defaultBenefits
 }: TestimonialHeroProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
-
   return (
     <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-purple-50 rounded-2xl overflow-hidden shadow-xl">
       <div className="grid md:grid-cols-2 gap-0">
@@ -76,13 +73,15 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
           </div>
 
           {/* CTA Button */}
-          <a
-            href={trackedCtaUrl}
+          <TrackedLink
+            href={ctaUrl}
             target={target}
+            widgetType="testimonial-hero"
+            widgetName={title}
             className="block w-full md:w-auto md:inline-block text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-6"
           >
             {ctaText}
-          </a>
+          </TrackedLink>
 
           {/* Benefit Icons */}
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">

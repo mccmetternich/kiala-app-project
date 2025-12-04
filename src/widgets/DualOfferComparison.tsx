@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, X, Star, Crown, Zap } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Offer {
   name: string;
@@ -106,8 +106,6 @@ export default function DualOfferComparison({
 }
 
 function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(offer.ctaUrl);
   const isHighlighted = offer.highlighted;
 
   return (
@@ -184,9 +182,13 @@ function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
           </div>
 
           {/* CTA */}
-          <a
-            href={trackedCtaUrl}
-            className={`w-full py-4 rounded-xl font-bold text-lg transition-all text-center ${
+          <TrackedLink
+            href={offer.ctaUrl}
+            widgetType="dual-offer-comparison"
+            widgetId={`dual-offer-${side}`}
+            widgetName={offer.name}
+            value={offer.price}
+            className={`block w-full py-4 rounded-xl font-bold text-lg transition-all text-center ${
               isHighlighted
                 ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
@@ -194,7 +196,7 @@ function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
           >
             {isHighlighted && <Zap className="w-5 h-5 inline mr-2" />}
             {offer.ctaText}
-          </a>
+          </TrackedLink>
         </div>
 
         {/* Popular ribbon for highlighted */}

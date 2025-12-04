@@ -1,6 +1,6 @@
 'use client';
 
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ProductShowcaseProps {
   title?: string;
@@ -23,9 +23,6 @@ export default function ProductShowcase({
   ctaLink = '#',
   target = '_self'
 }: ProductShowcaseProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaLink = appendTracking(ctaLink);
-
   return (
     <div className="bg-gradient-to-br from-primary-50 to-white rounded-2xl p-8 shadow-lg my-8">
       <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -52,13 +49,15 @@ export default function ProductShowcase({
               ))}
             </ul>
           )}
-          <a
-            href={trackedCtaLink}
+          <TrackedLink
+            href={ctaLink}
             target={target}
+            widgetType="product-showcase"
+            widgetName={title}
             className="inline-block bg-primary-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary-700 transition-colors"
           >
             {ctaText}
-          </a>
+          </TrackedLink>
         </div>
       </div>
     </div>

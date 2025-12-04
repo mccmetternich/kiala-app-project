@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Gift, Users, Clock, Shield, Star, TrendingUp, CheckCircle } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface SpecialOfferWidgetProps {
   headline?: string;
@@ -43,8 +43,6 @@ export default function SpecialOfferWidget({
   urgencyMessage = 'Only {spots} spots left at this price!',
   endDate
 }: SpecialOfferWidgetProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
   const [spotsRemaining, setSpotsRemaining] = useState(limitedSpots);
   const [recentRedemptions, setRecentRedemptions] = useState(redemptionCount);
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
@@ -162,13 +160,16 @@ export default function SpecialOfferWidget({
 
           {/* CTA Button */}
           <div className="text-center">
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
               target={target}
+              widgetType="special-offer"
+              widgetName={subheading}
+              value={salePrice}
               className="block w-full md:w-auto md:inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
             >
               {ctaText}
-            </a>
+            </TrackedLink>
 
             {/* Trust signals */}
             <div className="flex flex-wrap justify-center gap-4 mt-4 text-sm text-gray-500">

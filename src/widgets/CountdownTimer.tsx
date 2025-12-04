@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ArrowRight, ShieldCheck, Truck, Star } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface CountdownTimerProps {
   endDate?: string;
@@ -32,8 +32,6 @@ export default function CountdownTimer({
   ctaUrl = '#',
   benefits = ['Free Shipping', '60-Day Guarantee', '24/7 Support']
 }: CountdownTimerProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
@@ -138,13 +136,15 @@ export default function CountdownTimer({
             </div>
 
             {/* CTA Button */}
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
+              widgetType="countdown-timer"
+              widgetName={productName}
               className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl text-base mb-4"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </TrackedLink>
 
             {/* Trust Badges */}
             <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
