@@ -10,6 +10,7 @@ import SocialValidationTile from '@/widgets/SocialValidationTile';
 import NewsletterSignup from '@/widgets/NewsletterSignup';
 import { Site, WidgetConfig } from '@/types';
 import { clientAPI } from '@/lib/api';
+import { getCommunityCount } from '@/lib/format-community-count';
 
 // Fallback site data
 const fallbackSite: Site = {
@@ -169,7 +170,7 @@ export default function DynamicSiteHomepage() {
         <CredibilitySidebar
           doctor={transformedSite.brand}
           leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
-          communityCount={47284}
+          communityCount={getCommunityCount(transformedSite.settings)}
           showLeadMagnet={true}
           siteId={siteData?.id || siteId || undefined}
           audioTrackUrl={transformedSite.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}

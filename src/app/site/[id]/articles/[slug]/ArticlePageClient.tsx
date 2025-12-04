@@ -9,6 +9,7 @@ import { Site, Page, Widget } from '@/types';
 import { generateDefaultWidgetConfig, parseWidgetConfig } from '@/lib/article-widget-defaults';
 import { TrackingProvider } from '@/contexts/TrackingContext';
 import { trackViewContent } from '@/lib/meta-pixel';
+import { getCommunityCount } from '@/lib/format-community-count';
 
 // Fallback site data (same as other dynamic pages)
 const fallbackSite: Site = {
@@ -218,7 +219,7 @@ export default function ArticlePageClient() {
           <CredibilitySidebar
             doctor={transformedSite.brand}
             leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
-            communityCount={47284}
+            communityCount={getCommunityCount(transformedSite.settings)}
             showLeadMagnet={true}
             siteId={siteId}
             audioTrackUrl={transformedSite.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}

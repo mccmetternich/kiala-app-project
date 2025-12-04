@@ -7,6 +7,7 @@ import CredibilitySidebar from '@/components/CredibilitySidebar';
 import PageBuilder from '@/components/blocks/PageBuilder';
 import { Block } from '@/types/blocks';
 import { clientAPI } from '@/lib/api';
+import { getCommunityCount } from '@/lib/format-community-count';
 
 // Fallback site data
 const fallbackSiteData = {
@@ -295,10 +296,10 @@ export default function AboutBlocksPage() {
       site={transformedSite}
       showSidebar={true}
       sidebar={
-        <CredibilitySidebar 
+        <CredibilitySidebar
           doctor={doctor}
           leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
-          communityCount={47284}
+          communityCount={getCommunityCount(transformedSite.settings)}
         />
       }
     >

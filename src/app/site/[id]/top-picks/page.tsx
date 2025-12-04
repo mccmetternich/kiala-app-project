@@ -6,6 +6,7 @@ import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import { useSite } from '@/lib/useSite';
 import { Star, Clock, Users, Zap, Shield, TrendingUp, Heart } from 'lucide-react';
+import { getCommunityCount, formatCountShort, formatCountFull } from '@/lib/format-community-count';
 
 // Mock top picks data - this would come from admin in real implementation
 const topPicks = [
@@ -133,7 +134,7 @@ export default function TopPicksPage() {
         <CredibilitySidebar
           doctor={site.brand}
           leadMagnet={site.settings?.emailCapture?.leadMagnet}
-          communityCount={47284}
+          communityCount={getCommunityCount(site.settings)}
           showLeadMagnet={true}
           siteId={siteId}
           audioTrackUrl={site.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}
@@ -149,7 +150,7 @@ export default function TopPicksPage() {
               <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
               <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
               <div className="w-8 h-8 bg-primary-500 text-white rounded-full border-2 border-white flex items-center justify-center text-xs font-bold">
-                47k+
+                {formatCountShort(getCommunityCount(site.settings))}
               </div>
             </div>
             <span className="text-gray-600 font-medium">trusted by women worldwide</span>
@@ -164,7 +165,7 @@ export default function TopPicksPage() {
             {[1,2,3,4,5].map((star) => (
               <Star key={star} className="w-6 h-6 fill-current text-accent-400" />
             ))}
-            <span className="text-gray-600 font-semibold ml-2">4.8/5 from 47,284+ women</span>
+            <span className="text-gray-600 font-semibold ml-2">4.8/5 from {formatCountFull(getCommunityCount(site.settings))} women</span>
           </div>
 
           {/* Exclusive member banner */}

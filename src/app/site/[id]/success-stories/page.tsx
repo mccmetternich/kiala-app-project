@@ -7,6 +7,7 @@ import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import { clientAPI } from '@/lib/api';
 import { Star, ChevronLeft, ChevronRight, ArrowRight, Zap } from 'lucide-react';
+import { getCommunityCount, formatCountShort, formatCountFull } from '@/lib/format-community-count';
 
 function ImageCarousel({ images }: { images: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -243,7 +244,7 @@ export default function SuccessStoriesPage() {
         <CredibilitySidebar
           doctor={transformedSite.brand}
           leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
-          communityCount={47284}
+          communityCount={getCommunityCount(transformedSite.settings)}
           showLeadMagnet={true}
           siteId={siteId}
           audioTrackUrl={transformedSite.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}
@@ -259,7 +260,7 @@ export default function SuccessStoriesPage() {
               <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
               <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
               <div className="w-8 h-8 bg-primary-500 text-white rounded-full border-2 border-white flex items-center justify-center text-xs font-bold">
-                47k+
+                {formatCountShort(getCommunityCount(transformedSite.settings))}
               </div>
             </div>
             <span className="text-gray-600 font-medium">real transformations</span>
@@ -277,7 +278,7 @@ export default function SuccessStoriesPage() {
             {[1,2,3,4,5].map((star) => (
               <Star key={star} className="w-6 h-6 fill-current text-accent-400" />
             ))}
-            <span className="text-gray-600 font-semibold ml-2">4.9/5 from 47,284+ transformations</span>
+            <span className="text-gray-600 font-semibold ml-2">4.9/5 from {formatCountFull(getCommunityCount(transformedSite.settings))} transformations</span>
           </div>
         </div>
 
@@ -409,11 +410,11 @@ export default function SuccessStoriesPage() {
                 <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=40&h=40&fit=crop&crop=face" className="w-10 h-10 rounded-full border-2 border-white shadow-lg" alt="" />
                 <img src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=40&h=40&fit=crop&crop=face" className="w-10 h-10 rounded-full border-2 border-white shadow-lg" alt="" />
                 <div className="w-10 h-10 bg-accent-400 text-white rounded-full border-2 border-white flex items-center justify-center text-sm font-bold">
-                  47k+
+                  {formatCountShort(getCommunityCount(transformedSite.settings))}
                 </div>
               </div>
               <div className="text-white/90">
-                <div className="font-bold">Join 47,284+ people</div>
+                <div className="font-bold">Join {formatCountFull(getCommunityCount(transformedSite.settings))} people</div>
                 <div className="text-sm">who've already transformed their lives</div>
               </div>
             </div>

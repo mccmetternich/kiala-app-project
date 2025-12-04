@@ -6,6 +6,7 @@ import SiteLayout from '@/components/layout/SiteLayout';
 import { clientAPI } from '@/lib/api';
 import { Play, Pause, Gift, CheckCircle, Heart } from 'lucide-react';
 import { trackLead } from '@/lib/meta-pixel';
+import { formatCountShort, getCommunityCount } from '@/lib/format-community-count';
 
 // Mini audio player component for compact display
 function AudioPlayerMini({ audioUrl }: { audioUrl: string }) {
@@ -462,7 +463,7 @@ export default function AboutPage() {
                     )}
 
                     <p className="text-xs text-gray-500 mt-4 text-center">
-                      Join 47k+ women who have transformed their health. No spam, unsubscribe anytime.
+                      Join {formatCountShort(getCommunityCount(transformedSite.settings))} women who have transformed their health. No spam, unsubscribe anytime.
                     </p>
                   </>
                 )}

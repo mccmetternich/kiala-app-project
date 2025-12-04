@@ -6,6 +6,7 @@ import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import ArticleGrid from '@/widgets/ArticleGrid';
 import { Site } from '@/types';
+import { getCommunityCount, formatCountShort } from '@/lib/format-community-count';
 
 // Fallback site data (same as homepage)
 const fallbackSite: Site = {
@@ -140,7 +141,7 @@ export default function DynamicArticlesPage() {
         <CredibilitySidebar
           doctor={transformedSite.brand}
           leadMagnet={transformedSite.settings?.emailCapture?.leadMagnet}
-          communityCount={47284}
+          communityCount={getCommunityCount(transformedSite.settings)}
           showLeadMagnet={true}
           siteId={siteId}
           audioTrackUrl={transformedSite.settings?.audioUrl || "/audio/dr-amy-welcome.mp3"}
@@ -156,7 +157,7 @@ export default function DynamicArticlesPage() {
               <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
               <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
               <div className="w-8 h-8 bg-primary-500 text-white rounded-full border-2 border-white flex items-center justify-center text-xs font-bold">
-                47k+
+                {formatCountShort(getCommunityCount(transformedSite.settings))}
               </div>
             </div>
             <span className="text-gray-600 font-medium">readers worldwide</span>
