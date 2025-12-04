@@ -364,3 +364,113 @@ export interface PopupConfig {
   content: Widget;
   frequency: 'once' | 'session' | 'always';
 }
+
+// Content Profile / Editorial Guidelines
+// Used to maintain consistent voice and style across AI-generated content
+export interface ContentProfile {
+  // Purpose & Mission
+  mission: string;              // "This site helps women 40+ navigate hormonal health..."
+  uniqueValue: string;          // What makes this brand different
+
+  // Target Audience
+  audience: {
+    demographics: string;       // "Women 40-65"
+    painPoints: string[];       // ["Hormonal imbalance", "Weight gain", "Fatigue"]
+    goals: string[];            // ["Natural solutions", "More energy", "Feel younger"]
+    language: string;           // How they talk about their problems
+  };
+
+  // Writing Style
+  style: {
+    tone: string;               // "Warm, authoritative, empathetic"
+    voice: string;              // "Like a trusted friend who's also a doctor"
+    perspective: 'first' | 'third'; // "I recommend..." vs "Dr. Amy recommends..."
+    readingLevel: string;       // "8th grade, accessible"
+    personality: string[];      // ["Caring", "Science-backed", "No-nonsense"]
+  };
+
+  // Content Rules
+  rules: {
+    doAlways: string[];         // ["Cite research", "Include personal anecdotes", "Actionable takeaways"]
+    neverDo: string[];          // ["Fear-mongering", "Salesy language", "Medical claims without evidence"]
+    productMentions: string;    // "Organic integration, personal experience, not pushy"
+  };
+
+  // Voice Examples
+  examples: {
+    goodPhrases: string[];      // ["Here's what I tell my patients...", "The research is clear..."]
+    badPhrases: string[];       // ["You MUST buy this NOW!", "Doctors don't want you to know..."]
+  };
+
+  // Topics & Expertise
+  topics: {
+    primary: string[];          // ["Hormone health", "Menopause", "Perimenopause"]
+    secondary: string[];        // ["Sleep", "Stress", "Weight management"]
+    avoidTopics: string[];      // Topics to never cover
+  };
+
+  // Products & Affiliates
+  products: {
+    primary: string[];          // Main products to promote
+    howToMention: string;       // "Natural integration, personal experience"
+    disclosureText: string;     // Affiliate disclosure language
+  };
+}
+
+// Default empty content profile for new sites
+export const DEFAULT_CONTENT_PROFILE: ContentProfile = {
+  mission: '',
+  uniqueValue: '',
+  audience: {
+    demographics: '',
+    painPoints: [],
+    goals: [],
+    language: ''
+  },
+  style: {
+    tone: '',
+    voice: '',
+    perspective: 'first',
+    readingLevel: '8th grade',
+    personality: []
+  },
+  rules: {
+    doAlways: [],
+    neverDo: [],
+    productMentions: ''
+  },
+  examples: {
+    goodPhrases: [],
+    badPhrases: []
+  },
+  topics: {
+    primary: [],
+    secondary: [],
+    avoidTopics: []
+  },
+  products: {
+    primary: [],
+    howToMention: '',
+    disclosureText: ''
+  }
+};
+
+// Page Configuration for site page management
+export type NavMode = 'global' | 'direct-response' | 'minimal';
+
+export interface SitePageConfig {
+  id: string;
+  type: PageType | 'faq' | 'custom';
+  slug: string;
+  title: string;
+  navLabel: string;              // What shows in navigation
+  enabled: boolean;              // Is this page active?
+  showInNav: boolean;            // Should it appear in navigation?
+  navOrder: number;              // Position in navigation
+  navMode: NavMode;              // Header style to use
+  contentSource: 'template' | 'database' | 'hardcoded';
+  templateId?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  settings?: Record<string, any>;
+}

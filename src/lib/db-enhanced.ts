@@ -190,6 +190,7 @@ export async function initDb() {
       theme TEXT NOT NULL DEFAULT 'medical',
       settings TEXT NOT NULL DEFAULT '{}',
       brand_profile TEXT NOT NULL DEFAULT '{}',
+      content_profile TEXT NOT NULL DEFAULT '{}',
       status TEXT NOT NULL DEFAULT 'draft',
       created_by TEXT,
       published_at DATETIME,
@@ -198,6 +199,13 @@ export async function initDb() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Add content_profile column if it doesn't exist (for existing databases)
+  try {
+    await execute(`ALTER TABLE sites ADD COLUMN content_profile TEXT NOT NULL DEFAULT '{}'`);
+  } catch {
+    // Column already exists, ignore error
+  }
 
   // Articles table
   await execute(`
@@ -545,9 +553,14 @@ export class EnhancedQueries {
         ? data.brand_profile
         : JSON.stringify(data.brand_profile);
 
+      // Handle content_profile - only stringify if it's an object
+      const contentProfileStr = typeof data.content_profile === 'string'
+        ? data.content_profile
+        : JSON.stringify(data.content_profile || {});
+
       const result = await execute(`
         UPDATE sites SET name = ?, domain = ?, subdomain = ?, theme = ?,
-        settings = ?, brand_profile = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+        settings = ?, brand_profile = ?, content_profile = ?, status = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `, [
         data.name,
@@ -556,6 +569,7 @@ export class EnhancedQueries {
         data.theme,
         settingsStr,
         brandProfileStr,
+        contentProfileStr,
         data.status,
         id
       ]);

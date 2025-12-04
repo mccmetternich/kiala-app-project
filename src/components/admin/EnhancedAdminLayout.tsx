@@ -19,7 +19,8 @@ import {
   ExternalLink,
   Copy,
   Eye,
-  Building2
+  Building2,
+  BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -111,6 +112,8 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
           breadcrumbs.push({ label: 'Pages', current: true });
         } else if (segments[3] === 'analytics') {
           breadcrumbs.push({ label: 'Analytics', current: true });
+        } else if (segments[3] === 'content-profile') {
+          breadcrumbs.push({ label: 'Content Profile', current: true });
         }
       }
     } else if (segments[1] === 'sites' && segments[2] === 'new') {
@@ -151,16 +154,22 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
           icon: Users,
           description: 'Manage email subscribers'
         },
-        { 
-          name: 'Analytics', 
-          href: `/admin/sites/${currentSite.id}/analytics`, 
+        {
+          name: 'Analytics',
+          href: `/admin/sites/${currentSite.id}/analytics`,
           icon: BarChart3,
           description: 'Performance and traffic data',
           badge: currentSite.total_views ? `${Math.round(currentSite.total_views / 1000)}K` : undefined
         },
-        { 
-          name: 'Settings', 
-          href: `/admin/sites/${currentSite.id}/settings`, 
+        {
+          name: 'Content Profile',
+          href: `/admin/sites/${currentSite.id}/content-profile`,
+          icon: BookOpen,
+          description: 'Editorial guidelines and voice'
+        },
+        {
+          name: 'Settings',
+          href: `/admin/sites/${currentSite.id}/settings`,
           icon: Settings,
           description: 'Configuration and branding'
         }
