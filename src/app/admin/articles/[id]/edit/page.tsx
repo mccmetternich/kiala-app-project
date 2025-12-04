@@ -140,7 +140,7 @@ export default function EditArticle() {
   const articleId = params?.id as string;
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [activeTab, setActiveTab] = useState<TabType>('content');
+  const [activeTab, setActiveTab] = useState<TabType>('details');
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -410,17 +410,6 @@ export default function EditArticle() {
             {/* Center: Tabs */}
             <div className="hidden md:flex items-center gap-1 bg-gray-700/50 p-1 rounded-xl">
               <button
-                onClick={() => setActiveTab('content')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeTab === 'content'
-                    ? 'bg-gray-600 text-white shadow-sm'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Layers className="w-4 h-4" />
-                Content
-              </button>
-              <button
                 onClick={() => setActiveTab('details')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === 'details'
@@ -430,6 +419,17 @@ export default function EditArticle() {
               >
                 <Settings className="w-4 h-4" />
                 Details
+              </button>
+              <button
+                onClick={() => setActiveTab('content')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  activeTab === 'content'
+                    ? 'bg-gray-600 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                Content
               </button>
             </div>
 
@@ -482,17 +482,6 @@ export default function EditArticle() {
           {/* Mobile Tabs */}
           <div className="md:hidden flex items-center gap-2 pb-3 -mt-1">
             <button
-              onClick={() => setActiveTab('content')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeTab === 'content'
-                  ? 'bg-gray-700 text-white'
-                  : 'text-gray-400'
-              }`}
-            >
-              <Layers className="w-4 h-4" />
-              Content
-            </button>
-            <button
               onClick={() => setActiveTab('details')}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 activeTab === 'details'
@@ -502,6 +491,17 @@ export default function EditArticle() {
             >
               <Settings className="w-4 h-4" />
               Details
+            </button>
+            <button
+              onClick={() => setActiveTab('content')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'content'
+                  ? 'bg-gray-700 text-white'
+                  : 'text-gray-400'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              Content
             </button>
           </div>
         </div>
