@@ -2,11 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme CSS Variables - Default values (Dr. Amy's theme)
+ * These are overridden per-tenant by ThemeProvider component
+ * IMPORTANT: Do not remove these defaults - they ensure consistent rendering
+ */
+:root {
+  /* Primary - Pink/Magenta (Dr. Amy default) */
+  --color-primary-50: #fdf2f7;
+  --color-primary-100: #fce7f0;
+  --color-primary-200: #fbcfe1;
+  --color-primary-300: #f9a8cd;
+  --color-primary-400: #f472b1;
+  --color-primary-500: #ec4899;
+  --color-primary-600: #db2777;
+  --color-primary-700: #be185d;
+  --color-primary-800: #9d174d;
+  --color-primary-900: #831843;
+
+  /* Secondary - Purple */
+  --color-secondary-50: #faf5ff;
+  --color-secondary-100: #f3e8ff;
+  --color-secondary-200: #e9d5ff;
+  --color-secondary-300: #d8b4fe;
+  --color-secondary-400: #c084fc;
+  --color-secondary-500: #9333ea;
+  --color-secondary-600: #7c3aed;
+  --color-secondary-700: #6b21a8;
+  --color-secondary-800: #581c87;
+  --color-secondary-900: #4c1d95;
+
+  /* Accent - Red */
+  --color-accent-50: #fef2f2;
+  --color-accent-100: #fee2e2;
+  --color-accent-200: #fecaca;
+  --color-accent-300: #fca5a5;
+  --color-accent-400: #f87171;
+  --color-accent-500: #ef4444;
+  --color-accent-600: #dc2626;
+  --color-accent-700: #b91c1c;
+  --color-accent-800: #991b1b;
+  --color-accent-900: #7f1d1d;
+
+  /* Trust Colors */
+  --color-trust-blue: #1e40af;
+  --color-trust-green: #059669;
+  --color-trust-gold: #d97706;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply font-body text-gray-900 antialiased;
   }

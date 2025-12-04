@@ -4,6 +4,7 @@ import SiteFooter from './SiteFooter';
 import ArticleHeader from './ArticleHeader';
 import ArticleFooter from './ArticleFooter';
 import PopupProvider from '@/components/PopupProvider';
+import ThemeProvider from '@/components/ThemeProvider';
 import { Site } from '@/types';
 import { getCommunityCount } from '@/lib/format-community-count';
 
@@ -25,6 +26,7 @@ export default function SiteLayout({
   isArticle = false
 }: SiteLayoutProps) {
   return (
+    <ThemeProvider site={site}>
     <div className="min-h-screen bg-gray-50">
       {isArticle ? <ArticleHeader site={site} /> : <SiteHeader site={site} />}
 
@@ -80,5 +82,6 @@ export default function SiteLayout({
       
       {isArticle ? <ArticleFooter site={site} /> : <SiteFooter site={site} />}
     </div>
+    </ThemeProvider>
   );
 }
