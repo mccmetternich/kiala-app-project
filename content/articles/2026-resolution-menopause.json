@@ -13,14 +13,23 @@
       "enabled": true,
       "position": 1,
       "config": {
-        "content": "<p class=\"text-xl text-gray-700 leading-relaxed mb-4\">Every January, I watch the same thing happen.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Women in my practice walk in with their lists. Lose 20 pounds. Sleep better. Get my energy back. Feel like myself again.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">By February, most have quietly abandoned all of it.</p>"
+        "content": "<p class=\"text-xl text-gray-700 leading-relaxed mb-4\">Every January, I watch the same thing happen.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Women in my practice walk in with their lists. Lose 20 pounds. Sleep better. Get my energy back. Feel like myself again.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">By February, most have quietly abandoned all of it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I used to think they just needed better strategies. More accountability. A different approach.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I was wrong.</p>"
+      }
+    },
+    {
+      "id": "poll-setup",
+      "type": "text-block",
+      "enabled": true,
+      "position": 2,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Before I explain what I've learned, I want to ask you something. Be honest.</p>"
       }
     },
     {
       "id": "opening-poll",
       "type": "poll",
       "enabled": true,
-      "position": 2,
+      "position": 3,
       "config": {
         "question": "How many Januarys have you made the same resolution?",
         "options": [
@@ -35,19 +44,19 @@
       }
     },
     {
-      "id": "validation-text",
+      "id": "poll-reaction",
       "type": "text-block",
       "enabled": true,
-      "position": 3,
+      "position": 4,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you picked that last option, you're in good company. And no—this isn't about willpower. These are some of the most determined women I know.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">So why does a simple resolution collapse by Valentine's Day?</p>"
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you picked that last option, I need you to hear something.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>This isn't a willpower problem.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The women in my practice who've been fighting this battle for years? They're not weak. They're not lazy. They're some of the most determined, disciplined people I know.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">They've raised families. Built careers. Held everything together when it felt like the world was falling apart. These women don't lack motivation.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">So why does a simple resolution—eat better, move more, lose weight—collapse by Valentine's Day?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Look at the numbers.</p>"
       }
     },
     {
       "id": "resolution-stats",
       "type": "data-overview",
       "enabled": true,
-      "position": 4,
+      "position": 5,
       "config": {
         "headline": "The Resolution Reality",
         "subheading": "Why traditional goals fail after 45",
@@ -60,19 +69,19 @@
       }
     },
     {
-      "id": "quiz-intro",
+      "id": "stats-reaction",
       "type": "text-block",
       "enabled": true,
-      "position": 5,
+      "position": 6,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But here's what those statistics don't tell you: <strong>the problem isn't you.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Take this quick assessment to see what might actually be sabotaging your resolutions.</p>"
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">8%. That's it. And here's what bothers me about that statistic:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">We've been told the problem is <em>us</em>. Not enough discipline. Not enough commitment. Not trying hard enough.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But what if the problem was never us?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">What if we've been trying to build a house on a foundation that's already cracked?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Take this quick assessment. I want you to see something.</p>"
       }
     },
     {
       "id": "sabotage-quiz",
       "type": "quiz",
       "enabled": true,
-      "position": 6,
+      "position": 7,
       "config": {
         "headline": "What's Really Sabotaging Your Resolutions?",
         "subheading": "Check all that apply to you",
@@ -98,16 +107,25 @@
       "id": "quiz-reveal",
       "type": "text-block",
       "enabled": true,
-      "position": 7,
+      "position": 8,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you checked 3 or more, here's what's actually happening:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Menopause has fundamentally altered how you metabolize food, regulate energy, manage stress, and even how your brain processes motivation. At the center of all of it? <strong>Your gut.</strong></p>"
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you checked 3 or more boxes, here's what's actually happening inside your body:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Menopause has fundamentally altered how you metabolize food. How you regulate energy. How you manage stress. Even how your brain processes motivation and reward.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And at the center of all of it—controlling more than you'd ever imagine—is your gut.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Specifically, something called the <strong>estrobolome</strong>: the collection of gut bacteria that regulates estrogen in your body. When menopause disrupts this system, your willpower is fighting a battle it literally cannot win.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">You're not failing your resolutions. <strong>Your biology is sabotaging them before you even start.</strong></p>"
+      }
+    },
+    {
+      "id": "comparison-setup",
+      "type": "text-block",
+      "enabled": true,
+      "position": 9,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Two Ways to Approach 2026</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">This is the choice I put in front of every patient who walks into my office in January.</p>"
       }
     },
     {
       "id": "approach-comparison",
       "type": "comparison-table",
       "enabled": true,
-      "position": 8,
+      "position": 10,
       "config": {
         "headline": "Two Approaches to 2026",
         "leftColumn": {
@@ -138,10 +156,19 @@
       }
     },
     {
+      "id": "comparison-reaction",
+      "type": "text-block",
+      "enabled": true,
+      "position": 11,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The difference isn't motivation. It's not discipline. It's not wanting it badly enough.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">The difference is <em>where you start</em>.</p>"
+      }
+    },
+    {
       "id": "dr-tip-aha",
       "type": "dr-tip",
       "enabled": true,
-      "position": 9,
+      "position": 12,
       "config": {
         "tip": "You're not undisciplined. You're not lazy. You've been building resolutions on a broken foundation. Fix the foundation, and everything else becomes possible.",
         "name": "Dr. Amy Heart",
@@ -149,10 +176,19 @@
       }
     },
     {
+      "id": "timeline-setup",
+      "type": "text-block",
+      "enabled": true,
+      "position": 13,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me show you what's actually happening when a resolution fails. Not the story we tell ourselves—the real sequence.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">See if this sounds familiar.</p>"
+      }
+    },
+    {
       "id": "timeline-failure",
       "type": "timeline",
       "enabled": true,
-      "position": 10,
+      "position": 14,
       "config": {
         "headline": "The Resolution Failure Arc",
         "subheading": "Sound familiar?",
@@ -197,32 +233,41 @@
       }
     },
     {
+      "id": "timeline-reaction",
+      "type": "text-block",
+      "enabled": true,
+      "position": 15,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I've heard this story hundreds of times. The details change—gym memberships, meal plans, walking goals—but the arc is always the same.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And every single time, the woman sitting across from me thinks it's her fault.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">It's not. It was never her fault. <strong>The timeline was broken before she started.</strong></p>"
+      }
+    },
+    {
       "id": "breaking-cycle",
       "type": "text-block",
       "enabled": true,
-      "position": 11,
+      "position": 16,
       "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">What If You Just... Stopped?</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not stopped trying. Stopped fighting your biology.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">What if your only resolution was to fix the foundation first? One thing. One habit. Let your body cooperate instead of resist.</p>"
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">What If You Just... Stopped?</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not stopped trying. Stopped fighting your biology.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">What if your only resolution was to fix the foundation first?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">One thing. One habit. Let your body cooperate instead of resist.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I spent most of last year looking for the simplest way to give my patients that foundation. Something they'd actually stick with—because compliance matters more than perfection.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I wasn't looking at greens powders. I'd dismissed most of them years ago—proprietary blends, weak doses, sugar alcohols that irritate the very gut you're trying to support.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">But one formula kept crossing my desk. Colleagues mentioned it. Patients asked about it. And when I finally looked at the research behind Spectra®, I realized this wasn't like the others.</p>"
       }
     },
     {
       "id": "ingredients-grid",
       "type": "ingredient-list-grid",
       "enabled": true,
-      "position": 12,
+      "position": 17,
       "config": {
         "headline": "The Foundation Formula",
         "subheading": "What actually supports the gut-hormone connection",
         "ingredients": [
           {
             "name": "Spectra®",
-            "description": "The only antioxidant blend with published human clinical trials",
+            "description": "The only antioxidant blend with published human clinical trials—not just lab studies",
             "icon": "award",
             "highlight": true
           },
           {
             "name": "Organic Spirulina + Chlorella",
-            "description": "Supports beneficial gut bacteria diversity your estrobolome needs",
+            "description": "Supports beneficial gut bacteria diversity—the microbiome support your estrobolome needs",
             "icon": "leaf"
           },
           {
@@ -232,7 +277,7 @@
           },
           {
             "name": "No Sugar Alcohols",
-            "description": "Nothing that undermines the gut you're trying to support",
+            "description": "Nothing that undermines the gut you're trying to support—unlike most greens powders",
             "icon": "shield-check",
             "highlight": true
           }
@@ -242,10 +287,19 @@
       }
     },
     {
+      "id": "ingredients-reaction",
+      "type": "text-block",
+      "enabled": true,
+      "position": 18,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>One scoop. Once a day.</strong> That's the entire ask.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not a 47-step protocol. Not a complete lifestyle overhaul. Just one simple habit that supports everything else.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I asked my community if they'd be willing to make this their \"one resolution\" for 2024 and track their results. The response surprised me.</p>"
+      }
+    },
+    {
       "id": "community-poll-results",
       "type": "poll",
       "enabled": true,
-      "position": 13,
+      "position": 19,
       "config": {
         "question": "Community members who tried the 'foundation first' approach reported:",
         "options": [
@@ -261,19 +315,19 @@
       }
     },
     {
-      "id": "story-intro",
+      "id": "poll-results-reaction",
       "type": "text-block",
       "enabled": true,
-      "position": 14,
+      "position": 20,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Here's what that actually looks like in real life.</p>"
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last number is the one that matters. <strong>83% still consistent at 60 days.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Sticking with something through February. Through the excuses. Through the days when motivation disappears.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">That's when real change becomes possible. And it happened because they stopped fighting their biology and started supporting it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Here's what that actually looks like in real life.</p>"
       }
     },
     {
       "id": "before-after-christine",
       "type": "before-after-side-by-side",
       "enabled": true,
-      "position": 15,
+      "position": 21,
       "config": {
         "headline": "Christine Stopped Fighting",
         "name": "Christine",
@@ -298,10 +352,19 @@
       }
     },
     {
+      "id": "christine-reaction",
+      "type": "text-block",
+      "enabled": true,
+      "position": 22,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Christine's story captures exactly what I hoped would happen. She didn't white-knuckle her way through a resolution. She fixed the foundation, and better choices followed naturally.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>\"I actually wanted to move more.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">That's the difference. Not forcing yourself. Wanting to.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Now, I know what you might be thinking...</p>"
+      }
+    },
+    {
       "id": "faq-objections",
       "type": "accordion-faq",
       "enabled": true,
-      "position": 16,
+      "position": 23,
       "config": {
         "headline": "You Might Be Thinking...",
         "faqs": [
@@ -326,19 +389,19 @@
       }
     },
     {
-      "id": "barbara-intro",
+      "id": "faq-transition",
       "type": "text-block",
       "enabled": true,
-      "position": 17,
+      "position": 24,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">There's one story I want to share in full, because Barbara said something that stuck with me.</p>"
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I hear these objections every week. They're valid. They come from years of disappointment.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">But there's one story I want to share in full, because Barbara said something that stuck with me for weeks.</p>"
       }
     },
     {
       "id": "barbara-hero",
       "type": "testimonial-hero",
       "enabled": true,
-      "position": 18,
+      "position": 25,
       "config": {
         "headline": "\"For the First Time in Six Years, I Don't Feel Like I've Failed\"",
         "name": "Barbara",
@@ -353,10 +416,28 @@
       }
     },
     {
+      "id": "barbara-reaction",
+      "type": "text-block",
+      "enabled": true,
+      "position": 26,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>\"For the first time in six years, I don't feel like I've failed.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That's what this is really about. Not transformation. Not miracles. Just finally breaking the cycle of shame that comes with another abandoned resolution.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Barbara didn't need to lose 20 pounds to feel successful. She needed to stop feeling like a failure. And that happened because she finally started in the right place.</p>"
+      }
+    },
+    {
+      "id": "checklist-setup",
+      "type": "text-block",
+      "enabled": true,
+      "position": 27,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Your One Resolution for 2026</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">If you're ready to try something different this year, here's what I want you to do.</p>"
+      }
+    },
+    {
       "id": "checklist-resolution",
       "type": "checklist",
       "enabled": true,
-      "position": 19,
+      "position": 28,
       "config": {
         "headline": "Your One Resolution Checklist",
         "subheading": "Everything you need to make 2026 the year that's different",
@@ -373,10 +454,19 @@
       }
     },
     {
+      "id": "checklist-reaction",
+      "type": "text-block",
+      "enabled": true,
+      "position": 29,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That's it. No 47-step plan. No complete lifestyle overhaul. No gym membership that becomes a monument to guilt by March.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Just one thing that makes everything else possible.</p>"
+      }
+    },
+    {
       "id": "product-card",
       "type": "exclusive-product",
       "enabled": true,
-      "position": 20,
+      "position": 30,
       "config": {
         "name": "Kiala Nutrition Super Greens",
         "description": "The foundation formula that supports everything else. One scoop. Once a day. That's the entire ask.",
@@ -403,7 +493,7 @@
       "id": "shop-now-bundles",
       "type": "shop-now",
       "enabled": true,
-      "position": 21,
+      "position": 31,
       "config": {
         "name": "Super Greens",
         "description": "Commit to your foundation",
@@ -464,12 +554,21 @@
       }
     },
     {
+      "id": "final-thought",
+      "type": "text-block",
+      "enabled": true,
+      "position": 32,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I'm not going to promise this fixes everything. Menopause is complex. Your body is unique. And I've been in medicine long enough to know that nothing works for everyone.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But I've also watched too many women blame themselves for failed resolutions when the real problem was a broken foundation.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">You're not undisciplined. You're not lazy. You've just been building on sand.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\"><strong>2026 can be different.</strong> Not because of willpower. Because you finally start in the right place.</p>"
+      }
+    },
+    {
       "id": "dr-closing",
       "type": "doctor-closing-word",
       "enabled": true,
-      "position": 22,
+      "position": 33,
       "config": {
-        "message": "2026 doesn't have to be another year of the same cycle. Not because of willpower. Because you finally start in the right place.",
+        "message": "You deserve a year where the habits stick. Where your body cooperates. Where you stop fighting and start building. This could be that year.",
         "signoff": "Here's to a foundation that holds,",
         "name": "Dr. Amy Heart",
         "credentials": "Board-Certified Integrative Medicine",
@@ -480,7 +579,7 @@
       "id": "email-capture-final",
       "type": "email-capture",
       "enabled": true,
-      "position": 23,
+      "position": 34,
       "config": {
         "headline": "Join 50,000+ Women Making 2026 Different",
         "subheading": "Weekly support for building a foundation that actually holds",
@@ -492,7 +591,7 @@
       "id": "disclaimer",
       "type": "text-block",
       "enabled": true,
-      "position": 24,
+      "position": 35,
       "config": {
         "content": "<p class=\"text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200\"><em>This article is for informational purposes only and does not constitute medical advice. Always consult with your healthcare provider before starting any new supplement regimen. Individual results may vary.</em></p>"
       }
