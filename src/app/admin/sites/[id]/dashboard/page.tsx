@@ -710,7 +710,7 @@ export default function SiteDashboard() {
                   { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: true, onClick: () => setActiveTab('analytics') },
                   { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
                   { label: 'Total Pages', value: totalPageCount, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
-                  { label: 'Total Emails', value: subscriberStats?.active || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
+                  { label: 'Total Active Emails', value: subscriberStats?.active || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
                   { label: 'PDF Downloads', value: subscriberStats?.pdfDownloads || 0, icon: Download, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('emails') },
                 ].map((stat, i) => (
                   <div
@@ -2195,12 +2195,13 @@ export default function SiteDashboard() {
               {/* Stats */}
               <div className="grid grid-cols-5 gap-4">
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Total Emails</p>
-                  <p className="text-3xl font-bold text-white mt-1">{subscribers.length}</p>
+                  <p className="text-gray-400 text-sm">Total Active Emails</p>
+                  <p className="text-3xl font-bold text-green-400 mt-1">{activeSubscriberCount}</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-                  <p className="text-gray-400 text-sm">Active</p>
-                  <p className="text-3xl font-bold text-green-400 mt-1">{activeSubscriberCount}</p>
+                  <p className="text-gray-400 text-sm">Total Emails</p>
+                  <p className="text-3xl font-bold text-white mt-1">{subscribers.length}</p>
+                  <p className="text-xs text-gray-500 mt-1">incl. unsubscribed</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
                   <p className="text-gray-400 text-sm">PDF Downloads</p>
@@ -2766,7 +2767,7 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
           <p className="text-3xl font-bold text-yellow-400 mt-1">{analyticsData?.summary?.clickThroughRate || 0}%</p>
         </div>
         <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-          <p className="text-gray-400 text-sm">Email Signups</p>
+          <p className="text-gray-400 text-sm">Active Email Signups</p>
           <p className="text-3xl font-bold text-purple-400 mt-1">{(analyticsData?.summary?.totalEmails || metrics?.totalEmails || 0).toLocaleString()}</p>
         </div>
         <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
@@ -2866,7 +2867,7 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-blue-400">{article.widgetClicks || 0}</p>
-                    <p className="text-xs text-gray-500">clicks</p>
+                    <p className="text-xs text-gray-500">CTA clicks</p>
                   </div>
                   <div className="text-right min-w-[60px]">
                     <p className={`text-lg font-bold ${
@@ -2875,7 +2876,7 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                     }`}>
                       {article.conversionRate || 0}%
                     </p>
-                    <p className="text-xs text-gray-500">conv.</p>
+                    <p className="text-xs text-gray-500">CTR</p>
                   </div>
                 </div>
               </button>
@@ -2887,22 +2888,26 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                     {articleDetails[article.id] ? (
                       <div className="space-y-4">
                         {/* Performance Metrics */}
-                        <div className="grid grid-cols-4 gap-3">
+                        <div className="grid grid-cols-5 gap-3">
                           <div className="bg-gray-800 rounded-lg p-3 text-center">
                             <p className="text-2xl font-bold text-white">{articleDetails[article.id].analytics?.views || 0}</p>
-                            <p className="text-xs text-gray-400">Total Views</p>
+                            <p className="text-xs text-gray-400">Views</p>
                           </div>
                           <div className="bg-gray-800 rounded-lg p-3 text-center">
                             <p className="text-2xl font-bold text-blue-400">{articleDetails[article.id].analytics?.clicks || 0}</p>
-                            <p className="text-xs text-gray-400">Widget Clicks</p>
+                            <p className="text-xs text-gray-400">CTA Clicks</p>
+                          </div>
+                          <div className="bg-gray-800 rounded-lg p-3 text-center">
+                            <p className="text-2xl font-bold text-purple-400">{articleDetails[article.id].analytics?.conversionRate || 0}%</p>
+                            <p className="text-xs text-gray-400">CTR</p>
                           </div>
                           <div className="bg-gray-800 rounded-lg p-3 text-center">
                             <p className="text-2xl font-bold text-green-400">{articleDetails[article.id].analytics?.emailSignups || 0}</p>
                             <p className="text-xs text-gray-400">Email Signups</p>
                           </div>
                           <div className="bg-gray-800 rounded-lg p-3 text-center">
-                            <p className="text-2xl font-bold text-purple-400">{articleDetails[article.id].analytics?.conversionRate || 0}%</p>
-                            <p className="text-xs text-gray-400">Conversion</p>
+                            <p className="text-2xl font-bold text-orange-400">{article.pdfDownloads || 0}</p>
+                            <p className="text-xs text-gray-400">PDF Downloads</p>
                           </div>
                         </div>
 

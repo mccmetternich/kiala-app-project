@@ -37,6 +37,15 @@ export async function GET(
       }));
     }
 
+    // Get email signups per article
+    let emailSignupsPerArticle: any[] = [];
+    try {
+      emailSignupsPerArticle = await queries.analyticsQueries.getEmailSignupsPerArticle(siteId);
+    } catch (err) {
+      console.error('Error getting email signups per article:', err);
+    }
+    const emailSignupsMap = new Map(emailSignupsPerArticle.map((e: any) => [e.article_id, { signups: e.email_signups || 0, pdfDownloads: e.pdf_downloads || 0 }]));
+
     // Get top widgets for this site (with fallback)
     let topWidgets: any[] = [];
     try {
@@ -89,17 +98,22 @@ export async function GET(
           ? Math.min(articlesWithAnalytics.reduce((sum: number, a: any) => sum + parseFloat(a.conversion_rate || 0), 0) / articlesWithAnalytics.length, 100).toFixed(2)
           : '0'
       },
-      articles: articlesWithAnalytics.map((article: any) => ({
-        id: article.id,
-        title: article.title,
-        slug: article.slug,
-        published: article.published,
-        boosted: article.boosted,
-        realViews: article.real_views || 0,
-        widgetClicks: article.widget_clicks || 0,
-        conversionRate: Math.min(parseFloat(article.conversion_rate || 0), 100),
-        createdAt: article.created_at
-      })),
+      articles: articlesWithAnalytics.map((article: any) => {
+        const emailData = emailSignupsMap.get(article.id) || { signups: 0, pdfDownloads: 0 };
+        return {
+          id: article.id,
+          title: article.title,
+          slug: article.slug,
+          published: article.published,
+          boosted: article.boosted,
+          realViews: article.real_views || 0,
+          widgetClicks: article.widget_clicks || 0,
+          conversionRate: Math.min(parseFloat(article.conversion_rate || 0), 100),
+          emailSignups: emailData.signups,
+          pdfDownloads: emailData.pdfDownloads,
+          createdAt: article.created_at
+        };
+      }),
       topWidgets: topWidgets.map((widget: any) => ({
         type: widget.widget_type,
         name: widget.widget_name || widget.widget_type,

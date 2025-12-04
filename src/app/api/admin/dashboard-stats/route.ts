@@ -200,7 +200,10 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         .slice(0, 10);
 
       // Top widgets by clicks (global)
-      const topWidgetsGlobal = await queries.analyticsQueries.getTopWidgetsGlobal(10);
+      const topWidgetsGlobal = await queries.analyticsQueries.getTopWidgetsGlobal(20);
+
+      // Get total CTA clicks across all sites
+      const totalCtaClicks = await queries.analyticsQueries.getTotalWidgetClicks();
 
       const globalStats = {
         totalSites: allSites.length,
@@ -208,12 +211,15 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         totalArticles: publishedArticles.length,
         boostedArticles: boostedArticles.length,
         totalViews: totalRealViews,  // REAL views
+        totalCtaClicks,  // Total CTA clicks for click conversion calculation
         totalEmails: activeEmails.length, // Only active emails
+        totalEmailsIncludingUnsubscribed: allEmails.length, // For "Total Emails" display
         pdfDownloads: totalPdfDownloads,
         recentEmails: recentEmails.length,
         emailGrowth: `${emailGrowth}%`,
         articleGrowth: `${articleGrowth} this ${timeframe}`,
         avgConversionRate: totalRealViews > 0 ? Math.min((activeEmails.length / totalRealViews) * 100, 100).toFixed(1) : '0',
+        clickConversionRate: totalRealViews > 0 ? Math.min((totalCtaClicks / totalRealViews) * 100, 100).toFixed(1) : '0',
         sitePerformance,
         topArticlesGlobal: topArticlesWithRealViews.map((article: any) => {
           const site = allSites.find((s: { id: string; }) => s.id === article.site_id);
@@ -230,10 +236,16 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         }),
         topWidgetsGlobal: topWidgetsGlobal.map((widget: any) => {
           const site = allSites.find((s: { id: string; }) => s.id === widget.site_id);
+          // Calculate CTR for this widget if we have views data
+          const articleViews = widget.article_id ? (realViewsMap.get(widget.article_id) || 0) : 0;
+          const ctr = articleViews > 0 ? Math.min((widget.clicks / articleViews) * 100, 100).toFixed(1) : '0';
           return {
             type: widget.widget_type,
             name: widget.widget_name || widget.widget_type,
             clicks: widget.clicks,
+            ctr,
+            articleId: widget.article_id,
+            articleTitle: widget.article_title || 'Unknown',
             siteName: site?.name || 'Unknown',
             siteId: widget.site_id
           };

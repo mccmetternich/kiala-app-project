@@ -89,8 +89,11 @@ interface DashboardStats {
   totalArticles: number;
   boostedArticles: number;
   totalViews: number;
+  totalCtaClicks: number;
   totalEmails: number;
+  totalEmailsIncludingUnsubscribed: number;
   avgConversionRate: string;
+  clickConversionRate: string;
   sitePerformance: {
     siteName: string;
     siteId: string;
@@ -113,6 +116,9 @@ interface DashboardStats {
     type: string;
     name: string;
     clicks: number;
+    ctr: string;
+    articleId?: string;
+    articleTitle?: string;
     siteName: string;
     siteId: string;
   }[];
@@ -258,7 +264,7 @@ export default function GlobalAnalyticsPage() {
   const summaryStats = [
     {
       name: 'Total Views',
-      value: formatNumber(analytics?.summary.totalViews || dashboardStats?.totalViews || 0),
+      value: formatNumber(dashboardStats?.totalViews || analytics?.summary.totalViews || 0),
       subtext: 'Real page views',
       icon: Eye,
       color: 'text-blue-400',
@@ -266,9 +272,9 @@ export default function GlobalAnalyticsPage() {
       trend: null
     },
     {
-      name: 'Email Signups',
+      name: 'Total Active Emails',
       value: formatNumber(dashboardStats?.totalEmails || 0),
-      subtext: `${dashboardStats?.avgConversionRate || '0'}% conversion`,
+      subtext: `${dashboardStats?.totalEmailsIncludingUnsubscribed || 0} total (incl. unsub)`,
       icon: Users,
       color: 'text-green-400',
       bg: 'bg-green-900/30',
@@ -294,11 +300,19 @@ export default function GlobalAnalyticsPage() {
     },
   ];
 
-  const conversionRate = dashboardStats?.totalViews && dashboardStats?.totalEmails
-    ? ((dashboardStats.totalEmails / dashboardStats.totalViews) * 100).toFixed(2)
-    : '0';
+  // Calculate metrics - using API-provided values for consistency
+  const totalViews = dashboardStats?.totalViews || 0;
+  const totalEmails = dashboardStats?.totalEmails || 0;
+  const totalCtaClicks = dashboardStats?.totalCtaClicks || 0;
 
-  const avgViewsPerArticle = analytics?.articles.averageViews || 0;
+  // Use API-calculated rates for consistency
+  const clickConversionRate = dashboardStats?.clickConversionRate || '0';
+  const emailConversionRate = dashboardStats?.avgConversionRate || '0';
+
+  const avgViewsPerArticle = analytics?.articles.averageViews ||
+    (dashboardStats?.totalArticles && dashboardStats.totalArticles > 0
+      ? Math.round(totalViews / dashboardStats.totalArticles)
+      : 0);
 
   return (
     <EnhancedAdminLayout>
@@ -378,35 +392,34 @@ export default function GlobalAnalyticsPage() {
 
         {/* Key Metrics Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Click Conversion - first */}
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <MousePointerClick className="w-5 h-5 text-pink-400" />
+              <span className="text-sm font-medium text-gray-300">CTA Click Conversion</span>
+            </div>
+            <p className="text-4xl font-bold text-white">{clickConversionRate}%</p>
+            <p className="text-xs text-gray-500 mt-1">{formatNumber(totalCtaClicks)} CTA clicks / {formatNumber(totalViews)} unique views</p>
+          </div>
+
+          {/* Email Conversion - second */}
           <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
             <div className="flex items-center gap-3 mb-3">
               <Target className="w-5 h-5 text-emerald-400" />
-              <span className="text-sm font-medium text-gray-300">Conversion Rate</span>
+              <span className="text-sm font-medium text-gray-300">Email Conversion</span>
             </div>
-            <p className="text-4xl font-bold text-white">{conversionRate}%</p>
-            <p className="text-xs text-gray-500 mt-1">Views to email signups</p>
+            <p className="text-4xl font-bold text-white">{emailConversionRate}%</p>
+            <p className="text-xs text-gray-500 mt-1">{formatNumber(totalEmails)} active signups / {formatNumber(totalViews)} unique views</p>
           </div>
 
+          {/* Avg Views/Article - third */}
           <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
             <div className="flex items-center gap-3 mb-3">
               <Zap className="w-5 h-5 text-yellow-400" />
               <span className="text-sm font-medium text-gray-300">Avg Views/Article</span>
             </div>
             <p className="text-4xl font-bold text-white">{formatNumber(avgViewsPerArticle)}</p>
-            <p className="text-xs text-gray-500 mt-1">Across all published articles</p>
-          </div>
-
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <Activity className="w-5 h-5 text-cyan-400" />
-              <span className="text-sm font-medium text-gray-300">Click Conversion</span>
-            </div>
-            <p className="text-4xl font-bold text-white">
-              {dashboardStats?.topWidgetsGlobal?.length
-                ? `${dashboardStats.topWidgetsGlobal.reduce((sum, w) => sum + w.clicks, 0)}`
-                : '0'}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Total CTA clicks tracked</p>
+            <p className="text-xs text-gray-500 mt-1">Across {dashboardStats?.totalArticles || 0} published articles</p>
           </div>
         </div>
 
@@ -555,7 +568,7 @@ export default function GlobalAnalyticsPage() {
                 {(dashboardStats?.topWidgetsGlobal || []).map((widget, index) => (
                   <Link
                     key={index}
-                    href={`/admin/sites/${widget.siteId}/dashboard`}
+                    href={widget.articleId ? `/admin/articles/${widget.articleId}/edit` : `/admin/sites/${widget.siteId}/dashboard`}
                     className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
                   >
                     <div className="flex items-center gap-4 min-w-0">
@@ -572,14 +585,20 @@ export default function GlobalAnalyticsPage() {
                         <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
                           {widget.name}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {widget.type} • {widget.siteName}
+                        <p className="text-xs text-gray-500 truncate">
+                          {widget.type} • {widget.articleTitle || 'Unknown article'} • {widget.siteName}
                         </p>
                       </div>
                     </div>
-                    <div className="text-right flex-shrink-0 ml-4">
-                      <p className="text-lg font-bold text-pink-400">{widget.clicks}</p>
-                      <p className="text-xs text-gray-500">clicks</p>
+                    <div className="flex items-center gap-4 flex-shrink-0 ml-4">
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-pink-400">{widget.clicks}</p>
+                        <p className="text-xs text-gray-500">clicks</p>
+                      </div>
+                      <div className="text-right min-w-[50px]">
+                        <p className="text-sm font-semibold text-green-400">{widget.ctr}%</p>
+                        <p className="text-xs text-gray-500">CTR</p>
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -619,11 +638,11 @@ export default function GlobalAnalyticsPage() {
                       <div className="flex items-center gap-6 flex-shrink-0">
                         <div className="text-right">
                           <p className="text-lg font-bold text-green-400">{site.emailsCount || 0}</p>
-                          <p className="text-xs text-gray-500">signups</p>
+                          <p className="text-xs text-gray-500">active emails</p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-yellow-400">{site.conversionRate || '0'}%</p>
-                          <p className="text-xs text-gray-500">conv.</p>
+                          <p className="text-xs text-gray-500">email conv.</p>
                         </div>
                       </div>
                     </Link>

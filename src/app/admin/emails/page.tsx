@@ -470,15 +470,40 @@ function EmailsPageContent() {
   }, [allSubscribers, activeTab, searchTerm, datePreset, customStartDate, customEndDate, sortField, sortDirection, sites]);
 
   // Calculate stats from ALL data (not filtered by tab)
+  // "New" count adapts to the selected date filter
   const stats = useMemo(() => {
     const total = allSubscribers.length;
     const active = allSubscribers.filter(s => s.status === 'active').length;
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const thisWeek = allSubscribers.filter(s => new Date(s.created_at) >= weekAgo && s.status === 'active').length;
     const unsubscribed = allSubscribers.filter(s => s.status !== 'active').length;
-    return { total, active, thisWeek, unsubscribed };
-  }, [allSubscribers]);
+
+    // Calculate "new" based on selected date filter
+    const { startDate } = getDateRange();
+    let newInPeriod = 0;
+    if (startDate) {
+      newInPeriod = allSubscribers.filter(s =>
+        new Date(s.created_at) >= new Date(startDate) && s.status === 'active'
+      ).length;
+    } else {
+      // Default to last 7 days if "all" is selected
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      newInPeriod = allSubscribers.filter(s => new Date(s.created_at) >= weekAgo && s.status === 'active').length;
+    }
+
+    return { total, active, newInPeriod, unsubscribed };
+  }, [allSubscribers, datePreset, customStartDate, customEndDate]);
+
+  // Get label for "new" stat based on date preset
+  const getNewLabel = () => {
+    switch (datePreset) {
+      case 'today': return 'New Today';
+      case 'week': return 'New Last 7 Days';
+      case 'month': return 'New Last 30 Days';
+      case 'quarter': return 'New Last 90 Days';
+      case 'custom': return 'New in Range';
+      default: return 'New Last 7 Days';
+    }
+  };
 
   const datePresets = [
     { id: 'all' as DatePreset, label: 'All Time', icon: Globe },
@@ -649,24 +674,60 @@ function EmailsPageContent() {
 
           {/* Stats Cards - After Filters */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: 'Total Emails', value: stats.total, icon: Mail, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: 'Active Subscribers', value: stats.active, icon: Users, color: 'text-green-400', bg: 'bg-green-500/10' },
-              { label: 'New This Week', value: stats.thisWeek, icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-              { label: 'Unsubscribed', value: stats.unsubscribed, icon: X, color: 'text-red-400', bg: 'bg-red-500/10' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm">{stat.label}</p>
-                    <p className="text-3xl font-bold text-white mt-1">{stat.value.toLocaleString()}</p>
-                  </div>
-                  <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
+            {/* Total Active Emails - First */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Total Active Emails</p>
+                  <p className="text-3xl font-bold text-white mt-1">{stats.active.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">Unique active subscribers</p>
+                </div>
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-green-400" />
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* New - Adapts to filter */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">{getNewLabel()}</p>
+                  <p className="text-3xl font-bold text-white mt-1">{stats.newInPeriod.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">Active signups in period</p>
+                </div>
+                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-purple-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* Unsubscribed */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Unsubscribed</p>
+                  <p className="text-3xl font-bold text-white mt-1">{stats.unsubscribed.toLocaleString()}</p>
+                </div>
+                <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                  <X className="w-6 h-6 text-red-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* Total Emails - Last, with description */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Total Emails</p>
+                  <p className="text-3xl font-bold text-white mt-1">{stats.total.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">Active + unsubscribed</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-blue-400" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Tabs & Email List */}

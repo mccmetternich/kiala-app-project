@@ -871,6 +871,22 @@ export class EnhancedQueries {
       return result?.count || 0;
     },
 
+    // Get total views across ALL sites (global)
+    getTotalViews: async () => {
+      const result = await queryOne(
+        'SELECT COUNT(*) as count FROM article_views'
+      );
+      return result?.count || 0;
+    },
+
+    // Get total external widget clicks across ALL sites (global)
+    getTotalWidgetClicks: async () => {
+      const result = await queryOne(
+        'SELECT COUNT(*) as count FROM widget_clicks WHERE is_external = 1'
+      );
+      return result?.count || 0;
+    },
+
     // Get views by date range
     getViewsByDateRange: async (siteId: string, startDate: string, endDate: string) => {
       return queryAll(
@@ -928,7 +944,21 @@ export class EnhancedQueries {
     },
 
     // Get article views with real count
+    // If siteId is empty string, returns all articles (global view)
     getArticlesWithRealViews: async (siteId: string) => {
+      if (siteId === '') {
+        // Global query - all sites
+        return queryAll(
+          `SELECT a.*, COALESCE(av.real_views, 0) as real_views
+           FROM articles a
+           LEFT JOIN (
+             SELECT article_id, COUNT(*) as real_views
+             FROM article_views
+             GROUP BY article_id
+           ) av ON av.article_id = a.id
+           ORDER BY av.real_views DESC`
+        );
+      }
       return queryAll(
         `SELECT a.*, COALESCE(av.real_views, 0) as real_views
          FROM articles a
@@ -1001,12 +1031,15 @@ export class EnhancedQueries {
     },
 
     // Get top performing widgets globally (only external clicks)
+    // Includes article title for context
     getTopWidgetsGlobal: async (limit: number = 10) => {
       return queryAll(
-        `SELECT widget_type, widget_name, widget_id, site_id, article_id, COUNT(*) as clicks
-         FROM widget_clicks
-         WHERE is_external = 1
-         GROUP BY widget_type, COALESCE(widget_id, widget_name), site_id, article_id
+        `SELECT wc.widget_type, wc.widget_name, wc.widget_id, wc.site_id, wc.article_id,
+                COUNT(*) as clicks, a.title as article_title
+         FROM widget_clicks wc
+         LEFT JOIN articles a ON a.id = wc.article_id
+         WHERE wc.is_external = 1
+         GROUP BY wc.widget_type, COALESCE(wc.widget_id, wc.widget_name), wc.site_id, wc.article_id
          ORDER BY clicks DESC
          LIMIT ?`,
         [limit]
@@ -1098,6 +1131,27 @@ export class EnhancedQueries {
          GROUP BY DATE(clicked_at)
          ORDER BY date ASC`,
         [siteId, startDate, endDate]
+      );
+    },
+
+    // Get email signups per article for a site
+    // Matches emails by page_url containing the article slug
+    getEmailSignupsPerArticle: async (siteId: string) => {
+      return queryAll(
+        `SELECT
+           a.id as article_id,
+           a.slug,
+           COUNT(CASE WHEN es.status = 'active' THEN 1 END) as email_signups,
+           COUNT(CASE WHEN es.status = 'active' AND (
+             es.source IN ('hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide', 'lead_magnet_form')
+             OR es.tags LIKE '%lead_magnet%'
+           ) THEN 1 END) as pdf_downloads
+         FROM articles a
+         LEFT JOIN email_subscribers es ON es.site_id = a.site_id
+           AND (es.page_url LIKE '%/articles/' || a.slug || '%' OR es.page_url LIKE '%/articles/' || a.slug)
+         WHERE a.site_id = ?
+         GROUP BY a.id, a.slug`,
+        [siteId]
       );
     }
   };
