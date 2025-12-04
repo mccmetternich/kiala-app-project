@@ -427,9 +427,14 @@ export class EnhancedQueries {
         ? (typeof data.widget_config === 'string' ? data.widget_config : JSON.stringify(data.widget_config))
         : null;
 
+      // Handle tracking_config - stringify if it's an object
+      const trackingConfigStr = data.tracking_config
+        ? (typeof data.tracking_config === 'string' ? data.tracking_config : JSON.stringify(data.tracking_config))
+        : null;
+
       const result = await execute(`
-        INSERT INTO articles (id, site_id, title, excerpt, content, slug, category, image, featured, trending, hero, published, read_time, views, widget_config)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO articles (id, site_id, title, excerpt, content, slug, category, image, featured, trending, hero, published, read_time, views, widget_config, tracking_config, published_at, author_name, author_image, display_views, display_likes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         data.id,
         data.site_id,
@@ -445,7 +450,13 @@ export class EnhancedQueries {
         data.published ? 1 : 0,
         data.read_time || 5,
         data.views || 0,
-        widgetConfigStr
+        widgetConfigStr,
+        trackingConfigStr,
+        data.published_at || null,
+        data.author_name || null,
+        data.author_image || null,
+        data.display_views || 0,
+        data.display_likes || 0
       ]);
 
       // Invalidate cache
@@ -468,11 +479,27 @@ export class EnhancedQueries {
         ? (typeof data.widget_config === 'string' ? data.widget_config : JSON.stringify(data.widget_config))
         : null;
 
+      // Handle tracking_config - stringify if it's an object
+      const trackingConfigStr = data.tracking_config
+        ? (typeof data.tracking_config === 'string' ? data.tracking_config : JSON.stringify(data.tracking_config))
+        : null;
+
+      // Handle published_at - use provided date or auto-set on first publish
+      const publishedAtValue = data.published_at
+        ? data.published_at
+        : (data.published ? 'COALESCE(published_at, CURRENT_TIMESTAMP)' : null);
+
       const result = await execute(`
         UPDATE articles SET title = ?, excerpt = ?, content = ?, slug = ?, category = ?,
         image = ?, featured = ?, trending = ?, hero = ?, published = ?, read_time = ?,
-        widget_config = ?,
-        updated_at = CURRENT_TIMESTAMP, published_at = CASE WHEN ? = 1 THEN COALESCE(published_at, CURRENT_TIMESTAMP) ELSE published_at END
+        widget_config = ?, tracking_config = ?,
+        author_name = ?, author_image = ?, display_views = ?, display_likes = ?,
+        updated_at = CURRENT_TIMESTAMP,
+        published_at = CASE
+          WHEN ? IS NOT NULL THEN ?
+          WHEN ? = 1 THEN COALESCE(published_at, CURRENT_TIMESTAMP)
+          ELSE published_at
+        END
         WHERE id = ?
       `, [
         data.title,
@@ -487,6 +514,13 @@ export class EnhancedQueries {
         data.published ? 1 : 0,
         data.read_time || 5,
         widgetConfigStr,
+        trackingConfigStr,
+        data.author_name || null,
+        data.author_image || null,
+        data.display_views || 0,
+        data.display_likes || 0,
+        data.published_at || null,
+        data.published_at || null,
         data.published ? 1 : 0,
         id
       ]);

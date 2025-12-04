@@ -106,7 +106,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                   {brand?.name || 'Dr. Heart'}
                 </h1>
                 <p className="text-sm text-primary-600 font-medium">
-                  Your 40+ Wellness Authority
+                  {brand?.tagline || 'Your 40+ Wellness Authority'}
                 </p>
               </div>
             </div>
@@ -148,7 +148,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                       {brand?.name || 'Dr. Amy'}
                     </p>
                     <p className="text-white/70 text-xs leading-tight">
-                      Your 40+ Wellness Authority
+                      {brand?.tagline || 'Your 40+ Wellness Authority'}
                     </p>
                     <p className="text-white font-semibold text-xs leading-tight mt-1">
                       👋 Hi from {brand?.name || 'Dr. Amy'}
@@ -197,7 +197,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                         👋 Hi from {brand?.name || 'Dr. Amy'}
                       </p>
                       <p className="text-white/70 text-[10px] leading-tight truncate">
-                        Your 40+ Wellness Authority
+                        {brand?.tagline || 'Your 40+ Wellness Authority'}
                       </p>
                     </div>
                   </div>

@@ -63,6 +63,13 @@ interface Article {
   tracking_config?: string;
   created_at?: string;
   updated_at?: string;
+  published_at?: string;
+  // Author override fields
+  author_name?: string;
+  author_image?: string;
+  // Display override fields
+  display_views?: number;
+  display_likes?: number;
 }
 
 type TabType = 'content' | 'details';
@@ -156,8 +163,14 @@ export default function EditArticle() {
     trending: false,
     hero: false,
     published: false,
-    read_time: 5
+    read_time: 5,
+    published_at: '',
+    author_name: '',
+    author_image: '',
+    display_views: 0,
+    display_likes: 0
   });
+  const [showAuthorMediaLibrary, setShowAuthorMediaLibrary] = useState(false);
 
   useEffect(() => {
     if (articleId) {
@@ -196,7 +209,12 @@ export default function EditArticle() {
           trending: Boolean(data.article.trending),
           hero: Boolean(data.article.hero),
           published: Boolean(data.article.published),
-          read_time: data.article.read_time || 5
+          read_time: data.article.read_time || 5,
+          published_at: data.article.published_at || '',
+          author_name: data.article.author_name || '',
+          author_image: data.article.author_image || '',
+          display_views: data.article.display_views || 0,
+          display_likes: data.article.display_likes || 0
         });
 
         const storedWidgets = parseWidgetConfig(data.article.widget_config);
@@ -751,6 +769,23 @@ export default function EditArticle() {
                       max="60"
                     />
                   </div>
+
+                  {/* Publish Date */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Publish Date
+                      <span className="text-gray-500 font-normal ml-2">(when this article should appear as published)</span>
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ''}
+                      onChange={(e) => handleInputChange('published_at', e.target.value ? new Date(e.target.value).toISOString() : '')}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Leave empty to use the actual publish time. Set a past date for backdating articles.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Visibility Flags */}
@@ -796,6 +831,121 @@ export default function EditArticle() {
                       </div>
                     </label>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Author Override */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-primary-400" />
+                  Author Override
+                </h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  Override the default site author for this specific article
+                </p>
+              </div>
+              <div className="p-6">
+                <div className="flex items-start gap-6">
+                  {/* Author Image */}
+                  <div className="flex-shrink-0">
+                    {formData.author_image ? (
+                      <div className="relative group">
+                        <img
+                          src={formData.author_image}
+                          alt="Author"
+                          className="w-20 h-20 rounded-full object-cover border-2 border-gray-600"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('author_image', '')}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 bg-gray-700 border-2 border-dashed border-gray-600 rounded-full flex items-center justify-center">
+                        <ImageIcon className="w-8 h-8 text-gray-500" />
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setShowAuthorMediaLibrary(true)}
+                      className="mt-2 text-xs text-primary-400 hover:text-primary-300 transition-colors"
+                    >
+                      {formData.author_image ? 'Change' : 'Add Image'}
+                    </button>
+                  </div>
+
+                  {/* Author Name */}
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Author Name</label>
+                    <input
+                      type="text"
+                      value={formData.author_name}
+                      onChange={(e) => handleInputChange('author_name', e.target.value)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="Leave empty to use site default author"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      If set, this author will be shown instead of the site's default author.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Display Metrics */}
+            <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+              <div className="p-5 border-b border-gray-700 bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary-400" />
+                  Display Metrics
+                </h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  Override the displayed views and likes shown on the article page
+                </p>
+              </div>
+              <div className="p-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Display Views
+                      <span className="text-gray-500 font-normal ml-2">(shown publicly)</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.display_views || ''}
+                      onChange={(e) => handleInputChange('display_views', parseInt(e.target.value) || 0)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="0"
+                      min="0"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Actual views: {article.views.toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Display Likes
+                      <span className="text-gray-500 font-normal ml-2">(shown publicly)</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.display_likes || ''}
+                      onChange={(e) => handleInputChange('display_likes', parseInt(e.target.value) || 0)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="0"
+                      min="0"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+                  <p className="text-yellow-300 text-sm">
+                    <strong>Note:</strong> If display values are 0, actual tracked values will be shown. Set a positive number to override.
+                  </p>
                 </div>
               </div>
             </div>
@@ -859,7 +1009,7 @@ export default function EditArticle() {
         )}
       </div>
 
-      {/* Media Library Modal */}
+      {/* Media Library Modal - Hero Image */}
       {formData.site_id && (
         <MediaLibrary
           isOpen={showMediaLibrary}
@@ -867,6 +1017,19 @@ export default function EditArticle() {
           onSelect={(file) => {
             handleInputChange('image', file.url);
             setShowMediaLibrary(false);
+          }}
+          siteId={formData.site_id}
+        />
+      )}
+
+      {/* Media Library Modal - Author Image */}
+      {formData.site_id && (
+        <MediaLibrary
+          isOpen={showAuthorMediaLibrary}
+          onClose={() => setShowAuthorMediaLibrary(false)}
+          onSelect={(file) => {
+            handleInputChange('author_image', file.url);
+            setShowAuthorMediaLibrary(false);
           }}
           siteId={formData.site_id}
         />

@@ -14,7 +14,13 @@ import {
   TrendingUp,
   Globe,
   X,
-  RefreshCw
+  RefreshCw,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  RotateCcw,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import { formatDistanceToNow } from 'date-fns';
@@ -42,6 +48,9 @@ interface Site {
 }
 
 type DatePreset = 'all' | 'today' | 'week' | 'month' | 'quarter' | 'custom';
+type SortField = 'email' | 'name' | 'site' | 'created_at';
+type SortDirection = 'asc' | 'desc';
+type TabType = 'active' | 'unsubscribed';
 
 // Wrapper component to handle Suspense boundary for useSearchParams
 export default function EmailsPage() {
@@ -70,11 +79,20 @@ function EmailsPageContent() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
+  // Tab state - default to active subscribers
+  const [activeTab, setActiveTab] = useState<TabType>('active');
+
+  // Multi-select state
+  const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
+
+  // Sort state
+  const [sortField, setSortField] = useState<SortField>('created_at');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
   // Filter states
   const [datePreset, setDatePreset] = useState<DatePreset>('all');
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'unsubscribed'>('all');
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   useEffect(() => {
@@ -89,6 +107,11 @@ function EmailsPageContent() {
       setAllSubscribers([]);
     }
   }, [selectedSiteIds]);
+
+  // Clear selection when tab changes
+  useEffect(() => {
+    setSelectedEmails(new Set());
+  }, [activeTab]);
 
   const loadSites = async () => {
     try {
@@ -136,6 +159,7 @@ function EmailsPageContent() {
       combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       setAllSubscribers(combined);
+      setSelectedEmails(new Set()); // Clear selection on refresh
     } catch (error) {
       console.error('Error loading subscribers:', error);
     } finally {
@@ -161,6 +185,23 @@ function EmailsPageContent() {
 
   const deselectAllSites = () => {
     setSelectedSiteIds(new Set());
+  };
+
+  // Handle sorting
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection(field === 'created_at' ? 'desc' : 'asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return <ArrowUpDown className="w-4 h-4 opacity-50" />;
+    return sortDirection === 'asc'
+      ? <ArrowUp className="w-4 h-4 text-primary-400" />
+      : <ArrowDown className="w-4 h-4 text-primary-400" />;
   };
 
   // Calculate date range based on preset
@@ -202,16 +243,19 @@ function EmailsPageContent() {
   };
 
   const handleDownloadCSV = async () => {
-    if (filteredSubscribers.length === 0) {
-      return;
-    }
+    // Download selected if any, otherwise all filtered
+    const toDownload = selectedEmails.size > 0
+      ? filteredSubscribers.filter(s => selectedEmails.has(s.id))
+      : filteredSubscribers;
+
+    if (toDownload.length === 0) return;
 
     try {
       setIsDownloading(true);
 
       // Generate CSV from filtered subscribers
       const csvHeaders = ['Email', 'Name', 'Site', 'Source', 'Status', 'Signed Up'];
-      const csvRows = filteredSubscribers.map(sub => {
+      const csvRows = toDownload.map(sub => {
         const site = sites.find(s => s.id === sub.site_id);
         return [
           sub.email,
@@ -272,9 +316,97 @@ function EmailsPageContent() {
     }
   };
 
+  const handleResubscribe = async (subscriber: EmailSubscriber) => {
+    if (!confirm('Re-subscribe this email?')) return;
+
+    try {
+      const response = await fetch(`/api/subscribers/resubscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ siteId: subscriber.site_id, email: subscriber.email })
+      });
+
+      if (response.ok) {
+        loadAllSubscribers();
+      }
+    } catch (error) {
+      console.error('Error resubscribing:', error);
+    }
+  };
+
+  const handleBulkUnsubscribe = async () => {
+    if (selectedEmails.size === 0) return;
+    if (!confirm(`Unsubscribe ${selectedEmails.size} selected emails?`)) return;
+
+    try {
+      const subscribersToUnsubscribe = filteredSubscribers.filter(s => selectedEmails.has(s.id));
+
+      for (const subscriber of subscribersToUnsubscribe) {
+        await fetch(`/api/subscribers?siteId=${subscriber.site_id}&email=${encodeURIComponent(subscriber.email)}`, {
+          method: 'DELETE'
+        });
+      }
+
+      setSelectedEmails(new Set());
+      loadAllSubscribers();
+    } catch (error) {
+      console.error('Error bulk unsubscribing:', error);
+    }
+  };
+
+  const handleBulkResubscribe = async () => {
+    if (selectedEmails.size === 0) return;
+    if (!confirm(`Re-subscribe ${selectedEmails.size} selected emails?`)) return;
+
+    try {
+      const subscribersToResubscribe = filteredSubscribers.filter(s => selectedEmails.has(s.id));
+
+      for (const subscriber of subscribersToResubscribe) {
+        await fetch(`/api/subscribers/resubscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ siteId: subscriber.site_id, email: subscriber.email })
+        });
+      }
+
+      setSelectedEmails(new Set());
+      loadAllSubscribers();
+    } catch (error) {
+      console.error('Error bulk resubscribing:', error);
+    }
+  };
+
+  // Toggle email selection
+  const toggleEmailSelection = (id: string) => {
+    setSelectedEmails(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const selectAllEmails = () => {
+    setSelectedEmails(new Set(filteredSubscribers.map(s => s.id)));
+  };
+
+  const deselectAllEmails = () => {
+    setSelectedEmails(new Set());
+  };
+
   // Filter emails client-side for display
   const filteredSubscribers = useMemo(() => {
     let filtered = allSubscribers;
+
+    // Tab filter (active vs unsubscribed)
+    if (activeTab === 'active') {
+      filtered = filtered.filter(sub => sub.status === 'active');
+    } else {
+      filtered = filtered.filter(sub => sub.status !== 'active');
+    }
 
     // Search filter
     if (searchTerm) {
@@ -284,11 +416,6 @@ function EmailsPageContent() {
         sub.source.toLowerCase().includes(term) ||
         (sub.name && sub.name.toLowerCase().includes(term))
       );
-    }
-
-    // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(sub => sub.status === statusFilter);
     }
 
     // Date filter
@@ -308,19 +435,50 @@ function EmailsPageContent() {
       });
     }
 
-    return filtered;
-  }, [allSubscribers, searchTerm, statusFilter, datePreset, customStartDate, customEndDate]);
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aVal: string | number = '';
+      let bVal: string | number = '';
 
-  // Calculate stats from filtered data
+      switch (sortField) {
+        case 'email':
+          aVal = a.email.toLowerCase();
+          bVal = b.email.toLowerCase();
+          break;
+        case 'name':
+          aVal = (a.name || '').toLowerCase();
+          bVal = (b.name || '').toLowerCase();
+          break;
+        case 'site':
+          const siteA = sites.find(s => s.id === a.site_id);
+          const siteB = sites.find(s => s.id === b.site_id);
+          aVal = (siteA?.name || '').toLowerCase();
+          bVal = (siteB?.name || '').toLowerCase();
+          break;
+        case 'created_at':
+          aVal = new Date(a.created_at).getTime();
+          bVal = new Date(b.created_at).getTime();
+          break;
+      }
+
+      if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
+  }, [allSubscribers, activeTab, searchTerm, datePreset, customStartDate, customEndDate, sortField, sortDirection, sites]);
+
+  // Calculate stats from ALL data (not filtered by tab)
   const stats = useMemo(() => {
-    const total = filteredSubscribers.length;
-    const active = filteredSubscribers.filter(s => s.status === 'active').length;
+    const total = allSubscribers.length;
+    const active = allSubscribers.filter(s => s.status === 'active').length;
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    const thisWeek = filteredSubscribers.filter(s => new Date(s.created_at) >= weekAgo).length;
-    const unsubscribed = total - active;
+    const thisWeek = allSubscribers.filter(s => new Date(s.created_at) >= weekAgo && s.status === 'active').length;
+    const unsubscribed = allSubscribers.filter(s => s.status !== 'active').length;
     return { total, active, thisWeek, unsubscribed };
-  }, [filteredSubscribers]);
+  }, [allSubscribers]);
 
   const datePresets = [
     { id: 'all' as DatePreset, label: 'All Time', icon: Globe },
@@ -334,6 +492,28 @@ function EmailsPageContent() {
     <EnhancedAdminLayout>
       <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: 'Total Emails', value: stats.total, icon: Mail, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: 'Active Subscribers', value: stats.active, icon: Users, color: 'text-green-400', bg: 'bg-green-500/10' },
+              { label: 'New This Week', value: stats.thisWeek, icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+              { label: 'Unsubscribed', value: stats.unsubscribed, icon: X, color: 'text-red-400', bg: 'bg-red-500/10' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-400 text-sm">{stat.label}</p>
+                    <p className="text-3xl font-bold text-white mt-1">{stat.value.toLocaleString()}</p>
+                  </div>
+                  <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
+                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Filters Section */}
           <div className="bg-gray-800 rounded-2xl border border-gray-700 p-5 space-y-5">
@@ -438,30 +618,6 @@ function EmailsPageContent() {
               )}
             </div>
 
-            {/* Status Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">Status</label>
-              <div className="flex gap-2">
-                {[
-                  { id: 'all' as const, label: 'All' },
-                  { id: 'active' as const, label: 'Active Only' },
-                  { id: 'unsubscribed' as const, label: 'Unsubscribed Only' },
-                ].map((option) => (
-                  <button
-                    key={option.id}
-                    onClick={() => setStatusFilter(option.id)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                      statusFilter === option.id
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Download Button */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-700">
               <div className="flex items-center gap-4">
@@ -498,46 +654,87 @@ function EmailsPageContent() {
                 ) : (
                   <>
                     <Download className="w-5 h-5" />
-                    Download {filteredSubscribers.length.toLocaleString()} Emails
+                    Download {selectedEmails.size > 0 ? selectedEmails.size : filteredSubscribers.length} Emails
                   </>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: 'Total Subscribers', value: stats.total, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: 'Active', value: stats.active, icon: Check, color: 'text-green-400', bg: 'bg-green-500/10' },
-              { label: 'This Week', value: stats.thisWeek, icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-              { label: 'Unsubscribed', value: stats.unsubscribed, icon: X, color: 'text-red-400', bg: 'bg-red-500/10' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm">{stat.label}</p>
-                    <p className="text-3xl font-bold text-white mt-1">{stat.value.toLocaleString()}</p>
-                  </div>
-                  <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Search & Email List */}
+          {/* Tabs & Email List */}
           <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-            {/* Search Header */}
+            {/* Tabs */}
+            <div className="flex border-b border-gray-700">
+              <button
+                onClick={() => setActiveTab('active')}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-medium transition-all ${
+                  activeTab === 'active'
+                    ? 'bg-gray-750 text-white border-b-2 border-primary-500'
+                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-750'
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                Active Subscribers
+                <span className={`px-2 py-0.5 rounded-full text-xs ${
+                  activeTab === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-700 text-gray-400'
+                }`}>
+                  {stats.active}
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveTab('unsubscribed')}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-medium transition-all ${
+                  activeTab === 'unsubscribed'
+                    ? 'bg-gray-750 text-white border-b-2 border-primary-500'
+                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-750'
+                }`}
+              >
+                <X className="w-4 h-4" />
+                Unsubscribed
+                <span className={`px-2 py-0.5 rounded-full text-xs ${
+                  activeTab === 'unsubscribed' ? 'bg-red-500/20 text-red-400' : 'bg-gray-700 text-gray-400'
+                }`}>
+                  {stats.unsubscribed}
+                </span>
+              </button>
+            </div>
+
+            {/* Search & Bulk Actions Header */}
             <div className="p-5 border-b border-gray-700">
               <div className="flex items-center justify-between gap-4">
-                <h2 className="text-lg font-semibold text-white">
-                  All Subscribers
-                  <span className="text-sm font-normal text-gray-400 ml-2">
-                    ({filteredSubscribers.length.toLocaleString()})
-                  </span>
-                </h2>
+                <div className="flex items-center gap-4">
+                  {selectedEmails.size > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-primary-400 font-medium">
+                        {selectedEmails.size} selected
+                      </span>
+                      <button
+                        onClick={deselectAllEmails}
+                        className="text-xs text-gray-400 hover:text-gray-300"
+                      >
+                        Clear
+                      </button>
+                      <span className="text-gray-600">|</span>
+                      {activeTab === 'active' ? (
+                        <button
+                          onClick={handleBulkUnsubscribe}
+                          className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          Unsubscribe Selected
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleBulkResubscribe}
+                          className="flex items-center gap-1 text-xs text-green-400 hover:text-green-300"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          Re-subscribe Selected
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <div className="relative w-full max-w-xs">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                   <input
@@ -565,11 +762,15 @@ function EmailsPageContent() {
             ) : filteredSubscribers.length === 0 ? (
               <div className="p-12 text-center">
                 <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No subscribers found</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {activeTab === 'active' ? 'No active subscribers' : 'No unsubscribed emails'}
+                </h3>
                 <p className="text-gray-400">
-                  {searchTerm || statusFilter !== 'all' || datePreset !== 'all'
+                  {searchTerm || datePreset !== 'all'
                     ? 'Try adjusting your filters'
-                    : 'Subscribers will appear here when people sign up'}
+                    : activeTab === 'active'
+                      ? 'Active subscribers will appear here'
+                      : 'Unsubscribed emails will appear here'}
                 </p>
               </div>
             ) : (
@@ -577,22 +778,55 @@ function EmailsPageContent() {
                 <table className="w-full">
                   <thead className="bg-gray-850">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Subscriber
+                      <th className="px-4 py-4 text-left">
+                        <button
+                          onClick={() => {
+                            if (selectedEmails.size === filteredSubscribers.length) {
+                              deselectAllEmails();
+                            } else {
+                              selectAllEmails();
+                            }
+                          }}
+                          className="p-1 hover:bg-gray-700 rounded transition-colors"
+                        >
+                          {selectedEmails.size === filteredSubscribers.length && filteredSubscribers.length > 0 ? (
+                            <CheckSquare className="w-5 h-5 text-primary-400" />
+                          ) : (
+                            <Square className="w-5 h-5 text-gray-500" />
+                          )}
+                        </button>
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Site
+                      <th className="px-4 py-4 text-left">
+                        <button
+                          onClick={() => handleSort('email')}
+                          className="flex items-center gap-2 text-xs font-medium text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
+                        >
+                          Subscriber
+                          {getSortIcon('email')}
+                        </button>
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      <th className="px-4 py-4 text-left">
+                        <button
+                          onClick={() => handleSort('site')}
+                          className="flex items-center gap-2 text-xs font-medium text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
+                        >
+                          Site
+                          {getSortIcon('site')}
+                        </button>
+                      </th>
+                      <th className="px-4 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Source
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Status
+                      <th className="px-4 py-4 text-left">
+                        <button
+                          onClick={() => handleSort('created_at')}
+                          className="flex items-center gap-2 text-xs font-medium text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
+                        >
+                          Signed Up
+                          {getSortIcon('created_at')}
+                        </button>
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Signed Up
-                      </th>
-                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      <th className="px-4 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -600,9 +834,25 @@ function EmailsPageContent() {
                   <tbody className="divide-y divide-gray-700/50">
                     {filteredSubscribers.map((subscriber) => {
                       const site = sites.find(s => s.id === subscriber.site_id);
+                      const isSelected = selectedEmails.has(subscriber.id);
                       return (
-                        <tr key={subscriber.id} className="hover:bg-gray-750 transition-colors">
-                          <td className="px-6 py-4">
+                        <tr
+                          key={subscriber.id}
+                          className={`hover:bg-gray-750 transition-colors ${isSelected ? 'bg-primary-500/5' : ''}`}
+                        >
+                          <td className="px-4 py-4">
+                            <button
+                              onClick={() => toggleEmailSelection(subscriber.id)}
+                              className="p-1 hover:bg-gray-700 rounded transition-colors"
+                            >
+                              {isSelected ? (
+                                <CheckSquare className="w-5 h-5 text-primary-400" />
+                              ) : (
+                                <Square className="w-5 h-5 text-gray-500" />
+                              )}
+                            </button>
+                          </td>
+                          <td className="px-4 py-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center flex-shrink-0">
                                 <span className="text-sm font-medium text-gray-300">
@@ -617,29 +867,17 @@ function EmailsPageContent() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-4">
                             <span className="text-sm text-gray-300">
                               {site?.name || 'Unknown'}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-4">
                             <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-900/50 text-blue-300">
                               {subscriber.source}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${
-                              subscriber.status === 'active'
-                                ? 'bg-green-900/50 text-green-300'
-                                : 'bg-red-900/50 text-red-300'
-                            }`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${
-                                subscriber.status === 'active' ? 'bg-green-400' : 'bg-red-400'
-                              }`}></span>
-                              {subscriber.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-4">
                             <div className="text-sm text-gray-200">
                               {formatDistanceToNow(new Date(subscriber.created_at.endsWith('Z') ? subscriber.created_at : subscriber.created_at + 'Z'), { addSuffix: true })}
                             </div>
@@ -647,14 +885,22 @@ function EmailsPageContent() {
                               {new Date(subscriber.created_at.endsWith('Z') ? subscriber.created_at : subscriber.created_at + 'Z').toLocaleDateString()}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-right">
-                            {subscriber.status === 'active' && (
+                          <td className="px-4 py-4 text-right">
+                            {activeTab === 'active' ? (
                               <button
                                 onClick={() => handleUnsubscribe(subscriber)}
                                 className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all"
                                 title="Unsubscribe"
                               >
                                 <Trash2 className="w-4 h-4" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleResubscribe(subscriber)}
+                                className="p-2 text-gray-500 hover:text-green-400 hover:bg-gray-700 rounded-lg transition-all"
+                                title="Re-subscribe"
+                              >
+                                <RotateCcw className="w-4 h-4" />
                               </button>
                             )}
                           </td>
@@ -670,8 +916,8 @@ function EmailsPageContent() {
             {filteredSubscribers.length > 0 && (
               <div className="px-6 py-4 border-t border-gray-700 bg-gray-850">
                 <p className="text-sm text-gray-400">
-                  Showing <span className="text-white font-medium">{filteredSubscribers.length.toLocaleString()}</span> of{' '}
-                  <span className="text-white font-medium">{allSubscribers.length.toLocaleString()}</span> total subscribers
+                  Showing <span className="text-white font-medium">{filteredSubscribers.length.toLocaleString()}</span>{' '}
+                  {activeTab === 'active' ? 'active subscribers' : 'unsubscribed emails'}
                 </p>
               </div>
             )}

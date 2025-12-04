@@ -1,10 +1,28 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, Search, Filter, Copy, ExternalLink } from 'lucide-react';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Search,
+  Copy,
+  ExternalLink,
+  FileText,
+  TrendingUp,
+  Calendar,
+  BarChart3,
+  Filter,
+  Check,
+  Clock,
+  Star,
+  ChevronDown
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Article {
   id: string;
@@ -33,8 +51,9 @@ interface Site {
 export default function ArticlesAdmin() {
   const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
-  const [selectedSite, setSelectedSite] = useState<string>('');
+  const [selectedSite, setSelectedSite] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPublished, setFilterPublished] = useState<string>('all');
   const [loading, setLoading] = useState(true);
@@ -42,34 +61,30 @@ export default function ArticlesAdmin() {
 
   useEffect(() => {
     fetchSites();
+    fetchAllArticles();
   }, []);
 
   useEffect(() => {
-    if (selectedSite) {
-      fetchArticles();
-    }
-  }, [selectedSite, filterPublished]);
+    filterArticles();
+  }, [selectedSite, filterPublished, allArticles]);
 
   const fetchSites = async () => {
     try {
       const response = await fetch('/api/sites');
       const data = await response.json();
       setSites(data.sites || []);
-      if (data.sites?.length > 0) {
-        setSelectedSite(data.sites[0].id);
-      }
     } catch (error) {
       console.error('Error fetching sites:', error);
     }
   };
 
-  const fetchArticles = async () => {
+  const fetchAllArticles = async () => {
     try {
       setLoading(true);
-      const publishedParam = filterPublished !== 'all' ? `&published=${filterPublished}` : '';
-      const response = await fetch(`/api/articles?siteId=${selectedSite}${publishedParam}`);
+      // Fetch all articles across all sites
+      const response = await fetch('/api/articles?all=true');
       const data = await response.json();
-      setArticles(data.articles || []);
+      setAllArticles(data.articles || []);
     } catch (error) {
       console.error('Error fetching articles:', error);
     } finally {
@@ -77,12 +92,30 @@ export default function ArticlesAdmin() {
     }
   };
 
+  const filterArticles = () => {
+    let filtered = [...allArticles];
+
+    // Filter by site
+    if (selectedSite !== 'all') {
+      filtered = filtered.filter(a => a.site_id === selectedSite);
+    }
+
+    // Filter by status
+    if (filterPublished === 'true') {
+      filtered = filtered.filter(a => a.published);
+    } else if (filterPublished === 'false') {
+      filtered = filtered.filter(a => !a.published);
+    }
+
+    setArticles(filtered);
+  };
+
   const deleteArticle = async (id: string) => {
     if (!confirm('Are you sure you want to delete this article?')) return;
 
     try {
       await fetch(`/api/articles/${id}`, { method: 'DELETE' });
-      fetchArticles();
+      setAllArticles(prev => prev.filter(a => a.id !== id));
     } catch (error) {
       console.error('Error deleting article:', error);
     }
@@ -94,11 +127,9 @@ export default function ArticlesAdmin() {
     setDuplicating(article.id);
 
     try {
-      // Get the full article data
       const response = await fetch(`/api/articles/${article.id}`);
       const { article: fullArticle } = await response.json();
 
-      // Create duplicate with modified title and slug
       const newSlug = `${fullArticle.slug}-copy-${Date.now()}`;
       const duplicateData = {
         site_id: fullArticle.site_id,
@@ -111,7 +142,7 @@ export default function ArticlesAdmin() {
         featured: false,
         trending: false,
         hero: false,
-        published: false, // Always start as draft
+        published: false,
         read_time: fullArticle.read_time,
         widget_config: fullArticle.widget_config
       };
@@ -124,7 +155,6 @@ export default function ArticlesAdmin() {
 
       if (createResponse.ok) {
         const { article: newArticle } = await createResponse.json();
-        // Navigate to edit the new article
         router.push(`/admin/articles/${newArticle.id}/edit`);
       } else {
         alert('Failed to duplicate article');
@@ -142,331 +172,339 @@ export default function ArticlesAdmin() {
     article.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const selectedSiteData = sites.find(site => site.id === selectedSite);
+  // Calculate stats
+  const stats = {
+    total: allArticles.length,
+    published: allArticles.filter(a => a.published).length,
+    drafts: allArticles.filter(a => !a.published).length,
+    totalViews: allArticles.reduce((sum, a) => sum + (a.views || 0), 0),
+    featured: allArticles.filter(a => a.featured).length,
+    trending: allArticles.filter(a => a.trending).length,
+  };
 
-  // Format relative time
-  const formatRelativeTime = (dateStr: string) => {
-    const date = new Date(dateStr.endsWith('Z') ? dateStr : dateStr + 'Z');
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+  const getSiteName = (siteId: string) => {
+    const site = sites.find(s => s.id === siteId);
+    return site?.name || 'Unknown';
+  };
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const getSiteSubdomain = (siteId: string) => {
+    const site = sites.find(s => s.id === siteId);
+    return site?.subdomain || '';
   };
 
   return (
     <EnhancedAdminLayout>
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Articles</h1>
-            <p className="text-gray-400 text-sm">Manage content for your sites</p>
-          </div>
-          <Link
-            href="/admin/articles/new"
-            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm md:text-base"
-          >
-            <Plus className="w-4 h-4 md:w-5 md:h-5" />
-            New Article
-          </Link>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-gray-800 rounded-lg p-4 md:p-6 mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Site Selector */}
-            <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
-                Site
-              </label>
-              <select
-                value={selectedSite}
-                onChange={(e) => setSelectedSite(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              >
-                {sites.map(site => (
-                  <option key={site.id} value={site.id}>
-                    {site.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Search */}
-            <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
-                Search
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search articles..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-9 pr-3 py-2 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
+      <div className="min-h-screen bg-gray-900">
+        {/* Hero Header */}
+        <div className="bg-gradient-to-br from-gray-800 via-gray-800 to-gray-900 border-b border-gray-700">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-white">All Articles</h1>
+                <p className="text-gray-400 mt-1">Manage content across all your sites</p>
               </div>
-            </div>
-
-            {/* Status Filter */}
-            <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
-                Status
-              </label>
-              <select
-                value={filterPublished}
-                onChange={(e) => setFilterPublished(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="all">All</option>
-                <option value="true">Published</option>
-                <option value="false">Drafts</option>
-              </select>
-            </div>
-
-            {/* View Site Button */}
-            <div className="flex items-end">
-              {selectedSiteData && (
-                <a
-                  href={`/site/${selectedSiteData.subdomain}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  View Site
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Articles List */}
-        <div className="bg-gray-800 rounded-lg overflow-hidden">
-          {loading ? (
-            <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
-              <p className="text-gray-400 mt-2">Loading articles...</p>
-            </div>
-          ) : filteredArticles.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-gray-400 mb-2">No articles found.</p>
               <Link
                 href="/admin/articles/new"
-                className="text-primary-400 hover:text-primary-300 underline"
+                className="flex items-center justify-center gap-2 px-5 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-primary-600/20"
               >
-                Create your first article
+                <Plus className="w-5 h-5" />
+                New Article
               </Link>
             </div>
-          ) : (
-            <>
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-700">
-                  <thead className="bg-gray-900">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Article
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Views
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Updated
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-700">
-                    {filteredArticles.map((article) => (
-                      <tr
-                        key={article.id}
-                        className="hover:bg-gray-750 cursor-pointer transition-colors"
-                        onClick={() => router.push(`/admin/articles/${article.id}/edit`)}
-                      >
-                        <td className="px-4 py-4">
-                          <div className="max-w-md">
-                            <div className="text-sm font-medium text-white truncate">
-                              {article.title}
-                            </div>
-                            <div className="text-xs text-gray-500 truncate mt-0.5">
-                              {article.category || 'Uncategorized'}
-                            </div>
-                            <div className="flex flex-wrap gap-1 mt-1.5">
-                              {article.hero && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-900/50 text-purple-300">
-                                  Hero
-                                </span>
-                              )}
-                              {article.featured && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-900/50 text-yellow-300">
-                                  Featured
-                                </span>
-                              )}
-                              {article.trending && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-900/50 text-red-300">
-                                  Trending
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                            article.published
-                              ? 'bg-green-900/50 text-green-300'
-                              : 'bg-gray-700 text-gray-400'
-                          }`}>
-                            {article.published ? 'Published' : 'Draft'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-400">
-                          {article.views.toLocaleString()}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-400">
-                          {formatRelativeTime(article.updated_at)}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            {selectedSiteData && article.published && (
-                              <a
-                                href={`/site/${selectedSiteData.subdomain}/articles/${article.slug}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-white p-2 hover:bg-gray-700 rounded transition-colors"
-                                onClick={(e) => e.stopPropagation()}
-                                title="View article"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </a>
-                            )}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                duplicateArticle(article);
-                              }}
-                              disabled={duplicating === article.id}
-                              className="text-gray-400 hover:text-blue-400 p-2 hover:bg-gray-700 rounded transition-colors disabled:opacity-50"
-                              title="Duplicate article"
-                            >
-                              {duplicating === article.id ? (
-                                <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                              ) : (
-                                <Copy className="w-4 h-4" />
-                              )}
-                            </button>
-                            <Link
-                              href={`/admin/articles/${article.id}/edit`}
-                              className="text-gray-400 hover:text-primary-400 p-2 hover:bg-gray-700 rounded transition-colors"
-                              onClick={(e) => e.stopPropagation()}
-                              title="Edit article"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Link>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteArticle(article.id);
-                              }}
-                              className="text-gray-400 hover:text-red-400 p-2 hover:bg-gray-700 rounded transition-colors"
-                              title="Delete article"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-8">
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.total}</p>
+                    <p className="text-xs text-gray-400">Total Articles</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                    <Check className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.published}</p>
+                    <p className="text-xs text-gray-400">Published</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-yellow-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.drafts}</p>
+                    <p className="text-xs text-gray-400">Drafts</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                    <Eye className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.totalViews.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400">Total Views</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
+                    <Star className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.featured}</p>
+                    <p className="text-xs text-gray-400">Featured</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.trending}</p>
+                    <p className="text-xs text-gray-400">Trending</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="max-w-7xl mx-auto p-6">
+          {/* Filters */}
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 p-4 mb-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Search articles by title or category..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
               </div>
 
-              {/* Mobile Cards */}
-              <div className="md:hidden divide-y divide-gray-700">
+              {/* Site Filter */}
+              <div className="relative">
+                <select
+                  value={selectedSite}
+                  onChange={(e) => setSelectedSite(e.target.value)}
+                  className="appearance-none w-full md:w-48 px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 pr-10"
+                >
+                  <option value="all">All Sites</option>
+                  {sites.map(site => (
+                    <option key={site.id} value={site.id}>
+                      {site.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+
+              {/* Status Filter */}
+              <div className="relative">
+                <select
+                  value={filterPublished}
+                  onChange={(e) => setFilterPublished(e.target.value)}
+                  className="appearance-none w-full md:w-40 px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 pr-10"
+                >
+                  <option value="all">All Status</option>
+                  <option value="true">Published</option>
+                  <option value="false">Drafts</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Active Filters */}
+            {(selectedSite !== 'all' || filterPublished !== 'all' || searchTerm) && (
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-700">
+                <span className="text-sm text-gray-400">Active filters:</span>
+                {selectedSite !== 'all' && (
+                  <span className="px-3 py-1 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium flex items-center gap-1">
+                    {getSiteName(selectedSite)}
+                    <button onClick={() => setSelectedSite('all')} className="ml-1 hover:text-primary-300">×</button>
+                  </span>
+                )}
+                {filterPublished !== 'all' && (
+                  <span className="px-3 py-1 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium flex items-center gap-1">
+                    {filterPublished === 'true' ? 'Published' : 'Drafts'}
+                    <button onClick={() => setFilterPublished('all')} className="ml-1 hover:text-primary-300">×</button>
+                  </span>
+                )}
+                {searchTerm && (
+                  <span className="px-3 py-1 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium flex items-center gap-1">
+                    "{searchTerm}"
+                    <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-primary-300">×</button>
+                  </span>
+                )}
+                <button
+                  onClick={() => {
+                    setSelectedSite('all');
+                    setFilterPublished('all');
+                    setSearchTerm('');
+                  }}
+                  className="text-sm text-gray-500 hover:text-gray-300 ml-2"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Articles List */}
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+            {loading ? (
+              <div className="p-12 text-center">
+                <div className="w-10 h-10 border-3 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-400">Loading articles...</p>
+              </div>
+            ) : filteredArticles.length === 0 ? (
+              <div className="p-12 text-center">
+                <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">No articles found</h3>
+                <p className="text-gray-400 mb-6">
+                  {searchTerm ? 'Try adjusting your search or filters' : 'Create your first article to get started'}
+                </p>
+                <Link
+                  href="/admin/articles/new"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  Create Article
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-700/50">
                 {filteredArticles.map((article) => (
-                  <div
+                  <Link
                     key={article.id}
-                    className="p-4 hover:bg-gray-750 transition-colors"
-                    onClick={() => router.push(`/admin/articles/${article.id}/edit`)}
+                    href={`/admin/articles/${article.id}/edit`}
+                    className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-white truncate">
-                          {article.title}
-                        </h3>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {article.category || 'Uncategorized'} · {formatRelativeTime(article.updated_at)}
-                        </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                            article.published
-                              ? 'bg-green-900/50 text-green-300'
-                              : 'bg-gray-700 text-gray-400'
-                          }`}>
-                            {article.published ? 'Published' : 'Draft'}
-                          </span>
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                      {/* Status Icon */}
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                      }`}>
+                        <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                      </div>
+
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                            {article.title}
+                          </p>
+                          {!article.published && (
+                            <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
+                              Draft
+                            </span>
+                          )}
                           {article.hero && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-900/50 text-purple-300">
+                            <span className="px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full text-xs font-medium flex-shrink-0">
                               Hero
                             </span>
                           )}
-                          <span className="text-xs text-gray-500">
-                            {article.views.toLocaleString()} views
+                          {article.featured && (
+                            <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex-shrink-0">
+                              Featured
+                            </span>
+                          )}
+                          {article.trending && (
+                            <span className="px-2 py-0.5 bg-red-500/10 text-red-400 rounded-full text-xs font-medium flex-shrink-0">
+                              Trending
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                          <span className="px-2 py-0.5 bg-gray-700/50 rounded text-gray-400 text-xs">
+                            {getSiteName(article.site_id)}
                           </span>
+                          <span>{article.category || 'Uncategorized'}</span>
+                          <span>•</span>
+                          <span>{article.views?.toLocaleString() || 0} views</span>
+                          <span>•</span>
+                          <span>{formatDistanceToNow(new Date(article.updated_at), { addSuffix: true })}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            duplicateArticle(article);
-                          }}
-                          disabled={duplicating === article.id}
-                          className="text-gray-400 hover:text-blue-400 p-2 rounded transition-colors"
-                        >
-                          {duplicating === article.id ? (
-                            <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteArticle(article.id);
-                          }}
-                          className="text-gray-400 hover:text-red-400 p-2 rounded transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
                     </div>
-                  </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 flex-shrink-0 ml-4">
+                      {article.published && (
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.open(`/site/${getSiteSubdomain(article.site_id)}/articles/${article.slug}`, '_blank');
+                          }}
+                          className="p-2 text-gray-500 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
+                          title="View article"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </span>
+                      )}
+                      <span
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          duplicateArticle(article);
+                        }}
+                        className={`p-2 text-gray-500 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer ${duplicating === article.id ? 'opacity-50' : ''}`}
+                        title="Duplicate article"
+                      >
+                        {duplicating === article.id ? (
+                          <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </span>
+                      <span
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          deleteArticle(article.id);
+                        }}
+                        className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
+                        title="Delete article"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </span>
+                      <Edit className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors ml-2" />
+                    </div>
+                  </Link>
                 ))}
               </div>
-            </>
+            )}
+          </div>
+
+          {/* Results Count */}
+          {!loading && filteredArticles.length > 0 && (
+            <div className="mt-4 text-center text-sm text-gray-500">
+              Showing {filteredArticles.length} of {allArticles.length} article{allArticles.length !== 1 ? 's' : ''}
+            </div>
           )}
         </div>
-
-        {/* Article Count */}
-        {!loading && filteredArticles.length > 0 && (
-          <div className="mt-4 text-center text-sm text-gray-500">
-            Showing {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''}
-          </div>
-        )}
       </div>
     </EnhancedAdminLayout>
   );

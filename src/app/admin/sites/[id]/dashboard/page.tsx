@@ -321,7 +321,7 @@ export default function SiteDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Articles', value: metrics?.totalArticles || 0, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: false },
+                  { label: 'Total Articles', value: metrics?.totalArticles || 0, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('articles') },
                   { label: 'Published', value: metrics?.publishedArticles || 0, icon: Check, color: 'text-green-400', bg: 'bg-green-500/10', clickable: false },
                   { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: false },
                   { label: 'Email Signups', value: metrics?.totalEmails || 0, icon: Users, color: 'text-orange-400', bg: 'bg-orange-500/10', clickable: true, onClick: navigateToEmails },
