@@ -52,11 +52,22 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Load sites and current site context
+  // Load sites on mount
   useEffect(() => {
     loadSites();
-    detectCurrentSite();
-  }, [pathname]);
+  }, []);
+
+  // Detect current site when pathname or sites change
+  useEffect(() => {
+    const siteMatch = pathname.match(/\/admin\/sites\/([^\/]+)/);
+    if (siteMatch && sites.length > 0) {
+      const siteId = siteMatch[1];
+      const site = sites.find(s => s.id === siteId);
+      setCurrentSite(site || null);
+    } else if (!siteMatch) {
+      setCurrentSite(null);
+    }
+  }, [pathname, sites]);
 
   const loadSites = async () => {
     try {
@@ -67,17 +78,6 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
       }
     } catch (error) {
       console.error('Failed to load sites:', error);
-    }
-  };
-
-  const detectCurrentSite = () => {
-    const siteMatch = pathname.match(/\/admin\/sites\/([^\/]+)/);
-    if (siteMatch && sites.length > 0) {
-      const siteId = siteMatch[1];
-      const site = sites.find(s => s.id === siteId);
-      setCurrentSite(site || null);
-    } else {
-      setCurrentSite(null);
     }
   };
 
