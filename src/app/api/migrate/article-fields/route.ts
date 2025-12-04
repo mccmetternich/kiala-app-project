@@ -14,7 +14,7 @@ export async function GET() {
 
   for (const sql of columns) {
     try {
-      await db.execute(sql);
+      await db.execute({ sql, args: [] });
       results.push(`✅ ${sql.substring(26, 60)}`);
     } catch (error: any) {
       if (error.message?.includes('duplicate') || error.message?.includes('already exists')) {
