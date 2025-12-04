@@ -143,6 +143,8 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       const totalRealViews = Array.from(realViewsMap.values()).reduce((sum: number, v: any) => sum + v, 0);
 
       const publishedArticles = allArticles.filter((article: { published: boolean; }) => article.published);
+      const boostedArticles = allArticles.filter((article: any) => article.boosted);
+      const publishedSites = allSites.filter((site: any) => site.published || site.status === 'published');
 
       // Calculate growth rates
       const emailGrowth = previousEmails.length > 0
@@ -183,7 +185,9 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
 
       const globalStats = {
         totalSites: allSites.length,
+        activeSites: publishedSites.length,
         totalArticles: publishedArticles.length,
+        boostedArticles: boostedArticles.length,
         totalViews: totalRealViews,  // REAL views
         totalEmails: allEmails.length,
         recentEmails: recentEmails.length,

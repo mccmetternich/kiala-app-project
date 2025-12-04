@@ -85,9 +85,12 @@ interface AnalyticsData {
 
 interface DashboardStats {
   totalSites: number;
+  activeSites: number;
   totalArticles: number;
+  boostedArticles: number;
   totalViews: number;
   totalEmails: number;
+  avgConversionRate: string;
   sitePerformance: {
     siteName: string;
     siteId: string;
@@ -122,24 +125,49 @@ interface DashboardStats {
 
 type TimeRange = '24h' | '7d' | '30d' | '90d';
 
+interface Site {
+  id: string;
+  name: string;
+  subdomain: string;
+}
+
 export default function GlobalAnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
-  const [timeRange, setTimeRange] = useState<TimeRange>('7d');
+  const [timeRange, setTimeRange] = useState<TimeRange>('30d');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sites, setSites] = useState<Site[]>([]);
+  const [selectedSiteId, setSelectedSiteId] = useState<string>('all');
+
+  // Load sites list once on mount
+  useEffect(() => {
+    const loadSites = async () => {
+      try {
+        const res = await fetch('/api/sites');
+        if (res.ok) {
+          const data = await res.json();
+          setSites(data.sites || []);
+        }
+      } catch (err) {
+        console.error('Failed to load sites:', err);
+      }
+    };
+    loadSites();
+  }, []);
 
   useEffect(() => {
     loadAnalytics();
-  }, [timeRange]);
+  }, [timeRange, selectedSiteId]);
 
   const loadAnalytics = async () => {
     setLoading(true);
     setError(null);
     try {
+      const siteParam = selectedSiteId !== 'all' ? `&siteId=${selectedSiteId}` : '';
       const [analyticsRes, statsRes] = await Promise.all([
-        fetch(`/api/admin/analytics?timeRange=${timeRange}&details=true`),
-        fetch(`/api/admin/dashboard-stats?timeframe=${timeRange}`)
+        fetch(`/api/admin/analytics?timeRange=${timeRange}&details=true${siteParam}`),
+        fetch(`/api/admin/dashboard-stats?timeframe=${timeRange}${siteParam}`)
       ]);
 
       if (analyticsRes.ok) {
@@ -237,16 +265,16 @@ export default function GlobalAnalyticsPage() {
     {
       name: 'Email Signups',
       value: formatNumber(dashboardStats?.totalEmails || 0),
-      subtext: 'Total subscribers',
+      subtext: `${dashboardStats?.avgConversionRate || '0'}% conversion`,
       icon: Users,
       color: 'text-green-400',
       bg: 'bg-green-900/30',
       trend: null
     },
     {
-      name: 'Published Articles',
-      value: analytics?.articles.published || dashboardStats?.totalArticles || 0,
-      subtext: `${analytics?.articles.createdInTimeRange || 0} new this period`,
+      name: 'Boosted Articles',
+      value: dashboardStats?.boostedArticles || 0,
+      subtext: `${dashboardStats?.totalArticles || 0} total published`,
       icon: FileText,
       color: 'text-purple-400',
       bg: 'bg-purple-900/30',
@@ -254,8 +282,8 @@ export default function GlobalAnalyticsPage() {
     },
     {
       name: 'Active Sites',
-      value: analytics?.sites.published || dashboardStats?.totalSites || 0,
-      subtext: `${analytics?.sites.draft || 0} drafts`,
+      value: dashboardStats?.activeSites || analytics?.sites.published || 0,
+      subtext: `${dashboardStats?.totalSites || 0} total`,
       icon: Globe,
       color: 'text-orange-400',
       bg: 'bg-orange-900/30',
@@ -284,21 +312,38 @@ export default function GlobalAnalyticsPage() {
             </p>
           </div>
 
-          {/* Time Range Selector */}
-          <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-1">
-            {timeRangeOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => setTimeRange(option.value)}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  timeRange === option.value
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+          {/* Filters */}
+          <div className="flex items-center gap-4">
+            {/* Site Filter */}
+            <select
+              value={selectedSiteId}
+              onChange={(e) => setSelectedSiteId(e.target.value)}
+              className="bg-gray-800 border border-gray-700 text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="all">All Sites</option>
+              {sites.map((site) => (
+                <option key={site.id} value={site.id}>
+                  {site.name}
+                </option>
+              ))}
+            </select>
+
+            {/* Time Range Selector */}
+            <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-1">
+              {timeRangeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setTimeRange(option.value)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    timeRange === option.value
+                      ? 'bg-primary-600 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -351,10 +396,14 @@ export default function GlobalAnalyticsPage() {
           <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
             <div className="flex items-center gap-3 mb-3">
               <Activity className="w-5 h-5 text-cyan-400" />
-              <span className="text-sm font-medium text-gray-300">Content Created</span>
+              <span className="text-sm font-medium text-gray-300">Click Conversion</span>
             </div>
-            <p className="text-4xl font-bold text-white">{analytics?.articles.createdInTimeRange || 0}</p>
-            <p className="text-xs text-gray-500 mt-1">New articles this period</p>
+            <p className="text-4xl font-bold text-white">
+              {dashboardStats?.topWidgetsGlobal?.length
+                ? `${dashboardStats.topWidgetsGlobal.reduce((sum, w) => sum + w.clicks, 0)}`
+                : '0'}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Total CTA clicks tracked</p>
           </div>
         </div>
 

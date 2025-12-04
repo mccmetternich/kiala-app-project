@@ -709,8 +709,8 @@ export class EnhancedQueries {
         : null;
 
       const result = await execute(`
-        INSERT INTO articles (id, site_id, title, excerpt, content, slug, category, image, featured, trending, hero, published, read_time, views, widget_config, tracking_config, published_at, author_name, author_image, display_views, display_likes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO articles (id, site_id, title, excerpt, content, slug, category, image, featured, trending, hero, boosted, published, read_time, views, widget_config, tracking_config, published_at, author_name, author_image, display_views, display_likes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         data.id,
         data.site_id,
@@ -723,6 +723,7 @@ export class EnhancedQueries {
         data.featured ? 1 : 0,
         data.trending ? 1 : 0,
         data.hero ? 1 : 0,
+        data.boosted ? 1 : 0,
         data.published ? 1 : 0,
         data.read_time || 5,
         data.views || 0,
@@ -765,7 +766,7 @@ export class EnhancedQueries {
 
       const result = await execute(`
         UPDATE articles SET title = ?, excerpt = ?, content = ?, slug = ?, category = ?,
-        image = ?, featured = ?, trending = ?, hero = ?, published = ?, read_time = ?,
+        image = ?, featured = ?, trending = ?, hero = ?, boosted = ?, published = ?, read_time = ?,
         views = ?, widget_config = ?, tracking_config = ?,
         author_name = ?, author_image = ?, display_views = ?, display_likes = ?,
         updated_at = CURRENT_TIMESTAMP,
@@ -785,6 +786,7 @@ export class EnhancedQueries {
         data.featured ? 1 : 0,
         data.trending ? 1 : 0,
         data.hero ? 1 : 0,
+        data.boosted ? 1 : 0,
         data.published ? 1 : 0,
         data.read_time || 5,
         data.views !== undefined ? data.views : 0,
@@ -1234,6 +1236,11 @@ export class EnhancedQueries {
 
   // Email subscriber operations
   emailQueries = {
+    // Get all email subscribers across all sites (for global admin)
+    getAll: () => {
+      return queryAll('SELECT * FROM email_subscribers ORDER BY created_at DESC');
+    },
+
     getAllBySite: (siteId: string) => {
       return queryAll('SELECT * FROM email_subscribers WHERE site_id = ? ORDER BY created_at DESC', [siteId]);
     },
