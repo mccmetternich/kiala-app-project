@@ -1,3 +1,23 @@
+/**
+ * Enhanced Database Module
+ *
+ * Provides Turso/LibSQL database operations with:
+ * - Automatic connection management for serverless environments
+ * - Built-in caching with TTL support
+ * - Type-safe query helpers
+ * - Multi-tenant isolation support
+ *
+ * @module db-enhanced
+ *
+ * @example
+ * ```typescript
+ * import { createQueries } from '@/lib/db-enhanced';
+ *
+ * const queries = createQueries();
+ * const site = await queries.siteQueries.getBySubdomain('dr-amy');
+ * ```
+ */
+
 import { createClient, type Client } from '@libsql/client/web';
 import { cache, CacheTTL, withCache } from './cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,8 +39,14 @@ export type {
 
 export { toBool, parseJSON, parseTags } from '@/types/database';
 
-// Create a fresh client for each request in serverless environment
-// This avoids issues with private class members across invocations
+/**
+ * Creates a fresh Turso client for each request.
+ * In serverless environments, reusing clients across invocations can cause
+ * issues with private class members, so we create a new client per request.
+ *
+ * @throws {Error} If TURSO_DATABASE_URL or TURSO_AUTH_TOKEN env vars are missing
+ * @returns {Client} A new Turso/LibSQL client instance
+ */
 function getDb(): Client {
   const url = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
@@ -35,29 +61,88 @@ function getDb(): Client {
   });
 }
 
-// Create a proxy that creates fresh connections
+/**
+ * Database proxy that creates fresh connections per query.
+ * Use db.execute({ sql, args }) for all database operations.
+ */
 const db = {
   execute: (query: { sql: string; args?: any[] }) => getDb().execute(query),
 };
 
-// Helper to run a query and return all rows
+/**
+ * Executes a query and returns all matching rows.
+ *
+ * @param sql - SQL query string with ? placeholders
+ * @param args - Array of parameter values
+ * @returns Promise resolving to array of row objects
+ *
+ * @example
+ * const articles = await queryAll(
+ *   'SELECT * FROM articles WHERE site_id = ?',
+ *   [siteId]
+ * );
+ */
 async function queryAll(sql: string, args: any[] = []): Promise<any[]> {
   const result = await db.execute({ sql, args });
   return result.rows as any[];
 }
 
-// Helper to run a query and return first row
+/**
+ * Executes a query and returns the first matching row or null.
+ *
+ * @param sql - SQL query string with ? placeholders
+ * @param args - Array of parameter values
+ * @returns Promise resolving to row object or null
+ *
+ * @example
+ * const site = await queryOne(
+ *   'SELECT * FROM sites WHERE subdomain = ?',
+ *   ['dr-amy']
+ * );
+ */
 async function queryOne(sql: string, args: any[] = []): Promise<any> {
   const result = await db.execute({ sql, args });
   return result.rows[0] || null;
 }
 
-// Helper to run an insert/update/delete and return result info
+/**
+ * Executes an INSERT, UPDATE, or DELETE statement.
+ *
+ * @param sql - SQL statement with ? placeholders
+ * @param args - Array of parameter values
+ * @returns Promise resolving to execution result with rowsAffected
+ *
+ * @example
+ * await execute(
+ *   'UPDATE articles SET views = views + 1 WHERE id = ?',
+ *   [articleId]
+ * );
+ */
 async function execute(sql: string, args: any[] = []) {
   return db.execute({ sql, args });
 }
 
-// Initialize enhanced database schema
+/**
+ * Initializes the database schema with all required tables and indexes.
+ * Safe to call multiple times - uses CREATE TABLE IF NOT EXISTS.
+ *
+ * Tables created:
+ * - tenants: Multi-tenant organizations
+ * - users: User accounts with roles
+ * - sites: Website configurations
+ * - articles: Blog/content articles
+ * - pages: Static pages
+ * - media: Uploaded files (Cloudinary)
+ * - email_subscribers: Email list
+ * - activity_log: Audit trail
+ * - widget_definitions: Widget templates
+ * - widget_instances: Widget placements
+ * - blocks: Page builder blocks
+ *
+ * @example
+ * // Call via /api/admin/migrate endpoint
+ * await initDb();
+ */
 export async function initDb() {
   // Enable foreign keys
   await execute('PRAGMA foreign_keys = ON');
@@ -310,9 +395,42 @@ export async function initDb() {
   // Database initialized
 }
 
-// Enhanced query operations with caching and tenant isolation
+/**
+ * Enhanced query class providing cached, type-safe database operations.
+ *
+ * Includes query methods for:
+ * - Sites (getById, getByDomain, getBySubdomain, create, update, delete)
+ * - Articles (getAll, getPublished, getBySlug, create, update, delete)
+ * - Pages (getAllBySite, getBySlug, create, update, delete)
+ * - Media (getAllBySite, create, update, delete)
+ * - Email subscribers (getAllBySite, create, unsubscribe)
+ * - Activity logging
+ *
+ * @example
+ * ```typescript
+ * const queries = createQueries();
+ *
+ * // Get site by subdomain (cached)
+ * const site = await queries.siteQueries.getBySubdomain('dr-amy');
+ *
+ * // Get published articles (cached)
+ * const articles = await queries.articleQueries.getPublishedBySite(site.id);
+ *
+ * // Create subscriber (invalidates cache)
+ * await queries.emailQueries.create({
+ *   id: nanoid(),
+ *   siteId: site.id,
+ *   email: 'user@example.com',
+ *   source: 'popup'
+ * });
+ * ```
+ */
 export class EnhancedQueries {
   private tenantId?: string;
+
+  /**
+   * @param tenantId - Optional tenant ID for multi-tenant isolation
+   */
   constructor(tenantId?: string) {
     this.tenantId = tenantId;
   }
@@ -843,7 +961,23 @@ export class EnhancedQueries {
   };
 }
 
-// Create enhanced query instances
+/**
+ * Factory function to create an EnhancedQueries instance.
+ *
+ * @param tenantId - Optional tenant ID for multi-tenant isolation
+ * @returns EnhancedQueries instance with all query methods
+ *
+ * @example
+ * ```typescript
+ * // In an API route
+ * const queries = createQueries();
+ * const site = await queries.siteQueries.getBySubdomain('dr-amy');
+ *
+ * // With tenant isolation
+ * const queries = createQueries(tenantId);
+ * const users = await queries.userQueries.getAllByTenant();
+ * ```
+ */
 export const createQueries = (tenantId?: string) => new EnhancedQueries(tenantId);
 
 export default db;

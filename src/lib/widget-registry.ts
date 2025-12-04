@@ -1,45 +1,103 @@
 /**
- * Widget Registry - Manages widget definitions and instances
- * Updated to use LibSQL/Turso for serverless compatibility
+ * Widget Registry Module
+ *
+ * Manages widget definitions (templates) and instances (placements).
+ * Widgets are reusable UI components that can be placed on pages/articles.
+ *
+ * Key concepts:
+ * - **Widget Definition**: A template with HTML, CSS, JS, and admin fields
+ * - **Widget Instance**: A placement of a widget on a specific site/page
+ * - **Admin Fields**: Configuration options shown in the admin UI
+ *
+ * Built-in widgets:
+ * - `email-capture`: Email signup form with customizable messaging
+ * - `exit-intent-popup`: Popup shown when user moves to leave page
+ *
+ * @module widget-registry
+ *
+ * @example
+ * ```typescript
+ * import { widgetRegistry } from '@/lib/widget-registry';
+ *
+ * // Get all active widget definitions
+ * const widgets = await widgetRegistry.getWidgetDefinitions();
+ *
+ * // Create an instance on a site
+ * const instanceId = await widgetRegistry.createWidgetInstance(
+ *   siteId,
+ *   'email-capture',
+ *   pageId,
+ *   { title: 'Join Our Newsletter' }
+ * );
+ *
+ * // Render widget to HTML
+ * const html = await widgetRegistry.renderWidget(instanceId);
+ * ```
  */
 
 import db from './db-enhanced';
 
+/**
+ * Widget Definition - The template for a widget type.
+ * Stored in widget_definitions table.
+ */
 export interface WidgetDefinition {
+  /** Unique identifier (e.g., 'email-capture', 'exit-intent-popup') */
   id: string;
+  /** Display name shown in admin UI */
   name: string;
+  /** Description of what the widget does */
   description: string;
+  /** Widget category for organization */
   category: 'conversion' | 'content' | 'social' | 'media' | 'analytics';
+  /** Semantic version (e.g., '1.0.0') */
   version: string;
 
-  // Core configuration
-  template: string;           // HTML template with {{variable}} placeholders
-  styles?: string;           // CSS styles for the widget
-  script?: string;           // JavaScript for interactivity
+  /** HTML template with {{variable}} placeholders for settings */
+  template: string;
+  /** CSS styles scoped to the widget */
+  styles?: string;
+  /** JavaScript for interactivity (runs in browser) */
+  script?: string;
 
-  // Admin interface configuration
+  /** Configuration fields shown in admin UI */
   adminFields: WidgetField[];
 
-  // Behavior configuration
+  /** When to show the widget (page_load, scroll, exit_intent, etc.) */
   triggers?: WidgetTrigger[];
+  /** Third-party integrations (email capture, analytics, etc.) */
   integrations?: WidgetIntegration[];
 
-  // Metadata
+  /** Whether this widget is available for use */
   active: boolean;
-  global: boolean;          // Available to all sites vs site-specific
+  /** If true, available to all sites; if false, site-specific */
+  global: boolean;
   created_at: string;
   updated_at: string;
 }
 
+/**
+ * Widget Field - A configuration option for the admin UI.
+ * These fields appear in the widget settings panel.
+ */
 export interface WidgetField {
+  /** Field key used in template placeholders (e.g., 'title' -> {{title}}) */
   key: string;
+  /** Label shown in admin UI */
   label: string;
+  /** Input type for the field */
   type: 'text' | 'textarea' | 'number' | 'select' | 'checkbox' | 'color' | 'image' | 'url';
+  /** Whether the field must have a value */
   required: boolean;
+  /** Default value when creating new instance */
   defaultValue?: any;
+  /** Options for select type fields */
   options?: { value: string; label: string }[];
+  /** Placeholder text for input */
   placeholder?: string;
+  /** Help text shown below field */
   description?: string;
+  /** Validation rules */
   validation?: {
     min?: number;
     max?: number;
@@ -48,24 +106,46 @@ export interface WidgetField {
   };
 }
 
+/**
+ * Widget Trigger - When to display the widget.
+ */
 export interface WidgetTrigger {
+  /** Event that triggers the widget */
   event: 'page_load' | 'scroll' | 'time_delay' | 'exit_intent' | 'click';
-  condition?: string;       // JavaScript condition
-  delay?: number;           // Delay in milliseconds
+  /** JavaScript condition to evaluate */
+  condition?: string;
+  /** Delay in milliseconds before showing */
+  delay?: number;
 }
 
+/**
+ * Widget Integration - Third-party service integration.
+ */
 export interface WidgetIntegration {
+  /** Type of integration */
   type: 'email_capture' | 'analytics' | 'payment' | 'social_share';
+  /** Integration-specific configuration */
   config: Record<string, any>;
 }
 
+/**
+ * Widget Instance - A placed widget on a specific site/page.
+ * Stored in widget_instances table.
+ */
 export interface WidgetInstance {
+  /** Unique instance ID */
   id: string;
+  /** Reference to widget definition ID */
   widget_id: string;
+  /** Site this instance belongs to */
   site_id: string;
-  page_id?: string;         // null = site-wide
+  /** Page ID (null = site-wide, shows on all pages) */
+  page_id?: string;
+  /** Display order position */
   position: number;
+  /** Instance-specific settings (overrides definition defaults) */
   settings: Record<string, any>;
+  /** Whether this instance is active */
   active: boolean;
   created_at: string;
   updated_at: string;
@@ -302,7 +382,20 @@ export const widgetRegistry = {
 };
 
 /**
- * Initialize built-in widget definitions
+ * Registers the built-in widget definitions.
+ * Call this after database initialization to ensure widgets are available.
+ *
+ * Built-in widgets:
+ * - **email-capture**: Email signup form with customizable title, description,
+ *   button text, and styling. Submits to /api/emails endpoint.
+ * - **exit-intent-popup**: Modal shown when user moves mouse toward browser
+ *   chrome (about to leave). Captures emails with urgency messaging.
+ *
+ * @example
+ * ```typescript
+ * // Usually called from /api/admin/migrate or initialization
+ * await initializeBuiltInWidgets();
+ * ```
  */
 export async function initializeBuiltInWidgets() {
   // Email Capture Widget
