@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     // Protect this route
     // await requirePermission('update', 'tenant')(request);
 
-    initDb();
+    await initDb();
 
     return NextResponse.json({ success: true, message: 'Database migration completed successfully.' });
   } catch (error: any) {
