@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { siteId, title, slug, content, template = 'default', published = false } = body;
+    const { siteId, title, slug, content, template = 'default', widget_config, published = false } = body;
     const tenantId = request.headers.get('X-Tenant-Id') || undefined;
 
     if (!siteId || !title || !slug) {
@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
       slug,
       content: content || '',
       template,
+      widget_config: widget_config || null,
       published,
     };
     await queries.pageQueries.create(pageData);

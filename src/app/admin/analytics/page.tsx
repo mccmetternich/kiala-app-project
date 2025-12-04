@@ -125,6 +125,7 @@ interface DashboardStats {
 }
 
 type TimeRange = '24h' | '7d' | '30d' | '90d';
+type AnalyticsTab = 'boosted' | 'converting-articles' | 'widgets' | 'sites';
 
 interface Site {
   id: string;
@@ -140,6 +141,7 @@ export default function GlobalAnalyticsPage() {
   const [error, setError] = useState<string | null>(null);
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedSiteId, setSelectedSiteId] = useState<string>('all');
+  const [analyticsTab, setAnalyticsTab] = useState<AnalyticsTab>('boosted');
 
   // Load sites list once on mount
   useEffect(() => {
@@ -408,160 +410,233 @@ export default function GlobalAnalyticsPage() {
           </div>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Top Performing Articles */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-700 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
-                Top Articles by Real Views
-              </h3>
-            </div>
-            <div className="divide-y divide-gray-700/50">
-              {(analytics?.topContent?.articles || dashboardStats?.topArticlesGlobal || []).slice(0, 8).map((article: any, index: number) => (
-                <Link
-                  key={article.id || index}
-                  href={`/admin/articles/${article.id}/edit`}
-                  className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center text-sm font-bold text-gray-400">
-                      {index + 1}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
-                          {article.title}
-                        </p>
-                        {article.boosted && (
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300 flex-shrink-0">
-                            <Zap className="w-3 h-3" />
-                          </span>
+        {/* Multi-Tab Analytics Widget */}
+        <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+          {/* Tab Headers */}
+          <div className="flex border-b border-gray-700 overflow-x-auto">
+            <button
+              onClick={() => setAnalyticsTab('boosted')}
+              className={`flex items-center gap-2 px-5 py-4 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${
+                analyticsTab === 'boosted'
+                  ? 'text-yellow-400 border-yellow-400 bg-yellow-500/5'
+                  : 'text-gray-400 border-transparent hover:text-white hover:bg-gray-700/50'
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              Top Boosted Articles
+            </button>
+            <button
+              onClick={() => setAnalyticsTab('converting-articles')}
+              className={`flex items-center gap-2 px-5 py-4 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${
+                analyticsTab === 'converting-articles'
+                  ? 'text-green-400 border-green-400 bg-green-500/5'
+                  : 'text-gray-400 border-transparent hover:text-white hover:bg-gray-700/50'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Top Converting Articles
+            </button>
+            <button
+              onClick={() => setAnalyticsTab('widgets')}
+              className={`flex items-center gap-2 px-5 py-4 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${
+                analyticsTab === 'widgets'
+                  ? 'text-pink-400 border-pink-400 bg-pink-500/5'
+                  : 'text-gray-400 border-transparent hover:text-white hover:bg-gray-700/50'
+              }`}
+            >
+              <MousePointerClick className="w-4 h-4" />
+              Top Converting Widgets
+            </button>
+            <button
+              onClick={() => setAnalyticsTab('sites')}
+              className={`flex items-center gap-2 px-5 py-4 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${
+                analyticsTab === 'sites'
+                  ? 'text-blue-400 border-blue-400 bg-blue-500/5'
+                  : 'text-gray-400 border-transparent hover:text-white hover:bg-gray-700/50'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Top Sites by Signups
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          <div className="divide-y divide-gray-700/50">
+            {/* Top Boosted Articles Tab */}
+            {analyticsTab === 'boosted' && (
+              <>
+                {(dashboardStats?.topArticlesGlobal || [])
+                  .filter((a: any) => a.boosted)
+                  .slice(0, 10)
+                  .map((article: any, index: number) => (
+                    <Link
+                      key={article.id || index}
+                      href={`/admin/articles/${article.id}/edit`}
+                      className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-yellow-500/20">
+                          <Zap className="w-4 h-4 text-yellow-400" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1 mb-0.5">
+                            <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                          </div>
+                          <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
+                            {article.title}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {article.siteName || 'Unknown site'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-4">
+                        <p className="text-sm font-semibold text-white">{formatNumber(article.views || 0)}</p>
+                        <p className="text-xs text-gray-500">real views</p>
+                      </div>
+                    </Link>
+                  ))}
+                {(dashboardStats?.topArticlesGlobal || []).filter((a: any) => a.boosted).length === 0 && (
+                  <div className="p-8 text-center text-gray-500">
+                    No boosted articles yet. Boost articles to promote them and track their performance.
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Top Converting Articles Tab */}
+            {analyticsTab === 'converting-articles' && (
+              <>
+                {(dashboardStats?.topArticlesGlobal || [])
+                  .slice(0, 10)
+                  .map((article: any, index: number) => (
+                    <Link
+                      key={article.id || index}
+                      href={`/admin/articles/${article.id}/edit`}
+                      className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
+                          article.boosted ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'
+                        }`}>
+                          {article.boosted ? <Zap className="w-4 h-4" /> : index + 1}
+                        </div>
+                        <div className="min-w-0">
+                          {article.boosted && (
+                            <div className="flex items-center gap-1 mb-0.5">
+                              <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                            </div>
+                          )}
+                          <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
+                            {article.title}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {article.siteName || 'Unknown site'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-4">
+                        <p className="text-sm font-semibold text-white">{formatNumber(article.views || 0)}</p>
+                        <p className="text-xs text-gray-500">real views</p>
+                      </div>
+                    </Link>
+                  ))}
+                {(!dashboardStats?.topArticlesGlobal?.length) && (
+                  <div className="p-8 text-center text-gray-500">
+                    No article views recorded yet
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Top Converting Widgets Tab */}
+            {analyticsTab === 'widgets' && (
+              <>
+                {(dashboardStats?.topWidgetsGlobal || []).map((widget, index) => (
+                  <Link
+                    key={index}
+                    href={`/admin/sites/${widget.siteId}/dashboard`}
+                    className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
+                  >
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        index < 3 ? 'bg-gradient-to-br from-yellow-500 to-orange-600' : 'bg-gray-700'
+                      }`}>
+                        {index < 3 ? (
+                          <Award className="w-4 h-4 text-white" />
+                        ) : (
+                          <span className="text-sm font-bold text-gray-400">{index + 1}</span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500">
-                        {article.siteName || 'Unknown site'}
-                      </p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
+                          {widget.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {widget.type} • {widget.siteName}
+                        </p>
+                      </div>
                     </div>
+                    <div className="text-right flex-shrink-0 ml-4">
+                      <p className="text-lg font-bold text-pink-400">{widget.clicks}</p>
+                      <p className="text-xs text-gray-500">clicks</p>
+                    </div>
+                  </Link>
+                ))}
+                {(!dashboardStats?.topWidgetsGlobal?.length) && (
+                  <div className="p-8 text-center text-gray-500">
+                    No widget clicks recorded yet. Widget clicks are tracked when visitors interact with CTAs and Shop Now buttons.
                   </div>
-                  <div className="text-right flex-shrink-0 ml-4">
-                    <p className="text-sm font-semibold text-white">{formatNumber(article.views || article.realViews || 0)}</p>
-                    <p className="text-xs text-gray-500">real views</p>
-                  </div>
-                </Link>
-              ))}
-              {(!analytics?.topContent?.articles?.length && !dashboardStats?.topArticlesGlobal?.length) && (
-                <div className="p-8 text-center text-gray-500">
-                  No article views recorded yet
-                </div>
-              )}
-            </div>
-          </div>
+                )}
+              </>
+            )}
 
-          {/* Site Performance */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-700">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Globe className="w-5 h-5 text-blue-400" />
-                Site Performance
-              </h3>
-            </div>
-            <div className="divide-y divide-gray-700/50">
-              {(dashboardStats?.sitePerformance || analytics?.topContent?.sites || []).slice(0, 6).map((site: any, index: number) => (
-                <Link
-                  key={site.siteId || site.id || index}
-                  href={`/admin/sites/${site.siteId || site.id}/dashboard`}
-                  className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <Globe className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
-                        {site.siteName || site.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {site.articlesCount || site.articleCount || 0} articles
-                      </p>
-                    </div>
+            {/* Top Sites by Email Signups Tab */}
+            {analyticsTab === 'sites' && (
+              <>
+                {(dashboardStats?.sitePerformance || [])
+                  .sort((a: any, b: any) => (b.emailsCount || 0) - (a.emailsCount || 0))
+                  .slice(0, 10)
+                  .map((site: any, index: number) => (
+                    <Link
+                      key={site.siteId || index}
+                      href={`/admin/sites/${site.siteId}/dashboard`}
+                      className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
+                          <Globe className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
+                            {site.siteName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {site.articlesCount || 0} articles • {formatNumber(site.viewsCount || 0)} views
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-6 flex-shrink-0">
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-400">{site.emailsCount || 0}</p>
+                          <p className="text-xs text-gray-500">signups</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-semibold text-yellow-400">{site.conversionRate || '0'}%</p>
+                          <p className="text-xs text-gray-500">conv.</p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                {(!dashboardStats?.sitePerformance?.length) && (
+                  <div className="p-8 text-center text-gray-500">
+                    No sites created yet
                   </div>
-                  <div className="flex items-center gap-6 flex-shrink-0">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-white">{formatNumber(site.viewsCount || site.views || 0)}</p>
-                      <p className="text-xs text-gray-500">views</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-green-400">{site.emailsCount || 0}</p>
-                      <p className="text-xs text-gray-500">signups</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-yellow-400">{site.conversionRate || '0'}%</p>
-                      <p className="text-xs text-gray-500">conv.</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-              {(!dashboardStats?.sitePerformance?.length && !analytics?.topContent?.sites?.length) && (
-                <div className="p-8 text-center text-gray-500">
-                  No sites created yet
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Top Performing Widgets */}
-        {dashboardStats?.topWidgetsGlobal && dashboardStats.topWidgetsGlobal.length > 0 && (
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-700">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <MousePointerClick className="w-5 h-5 text-pink-400" />
-                Top 10 Widgets by Clicks
-              </h3>
-              <p className="text-xs text-gray-500 mt-1">CTAs and widgets driving the most conversions</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-700/50">
-              {dashboardStats.topWidgetsGlobal.map((widget, index) => (
-                <Link
-                  key={index}
-                  href={`/admin/sites/${widget.siteId}/dashboard`}
-                  className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-750 transition-colors group"
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      index < 3 ? 'bg-gradient-to-br from-yellow-500 to-orange-600' : 'bg-gray-700'
-                    }`}>
-                      {index < 3 ? (
-                        <Award className="w-4 h-4 text-white" />
-                      ) : (
-                        <span className="text-sm font-bold text-gray-400">{index + 1}</span>
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
-                        {widget.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {widget.type} • {widget.siteName}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right flex-shrink-0 ml-4">
-                    <p className="text-lg font-bold text-pink-400">{widget.clicks}</p>
-                    <p className="text-xs text-gray-500">clicks</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            {dashboardStats.topWidgetsGlobal.length === 0 && (
-              <div className="p-8 text-center text-gray-500">
-                No widget clicks recorded yet. Widget clicks are tracked when visitors interact with CTAs and Shop Now buttons.
-              </div>
+                )}
+              </>
             )}
           </div>
-        )}
+        </div>
 
         {/* Activity Timeline Chart */}
         {analytics?.activity && analytics.activity.length > 0 && (

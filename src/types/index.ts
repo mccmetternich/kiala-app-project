@@ -142,7 +142,15 @@ export type WidgetType =
   | 'ingredient-list-grid'
   | 'us-vs-them-comparison'
   | 'doctor-assessment'
-  | 'doctor-closing-word';
+  | 'doctor-closing-word'
+  // Page-specific widgets
+  | 'social-validation-tile'
+  | 'profile-hero'
+  | 'bio-section'
+  | 'lead-magnet-form'
+  | 'articles-header'
+  | 'top-picks-grid'
+  | 'success-stories-grid';
 
 // Widget Configurations
 export interface WidgetConfig {

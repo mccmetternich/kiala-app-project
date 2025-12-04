@@ -100,12 +100,15 @@ export async function GET(request: NextRequest) {
     }).length;
 
     // PDF download sources - these are email signups that came with a guide/PDF download
+    // Only count ACTIVE subscribers for PDF downloads
     const pdfDownloadSources = [
       'hormone_guide_widget', 'exit_intent_popup', 'community_popup',
       'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide',
-      'homepage_lead_magnet', 'about_lead_magnet', 'article_lead_magnet'
+      'homepage_lead_magnet', 'about_lead_magnet', 'article_lead_magnet',
+      'lead_magnet_form' // Added for the new PageWidgetRenderer lead magnet
     ];
-    const pdfDownloads = subscribers.filter(s =>
+    const activeSubscribers = subscribers.filter(s => s.status === 'active');
+    const pdfDownloads = activeSubscribers.filter(s =>
       pdfDownloadSources.some(src => s.source?.toLowerCase().includes(src.toLowerCase())) ||
       (s.tags && s.tags.includes('lead_magnet'))
     ).length;

@@ -264,6 +264,7 @@ export async function initDb() {
       slug TEXT NOT NULL,
       content TEXT,
       template TEXT DEFAULT 'default',
+      widget_config TEXT,
       published BOOLEAN DEFAULT 0,
       author_id TEXT,
       seo_title TEXT,
@@ -276,6 +277,13 @@ export async function initDb() {
       UNIQUE(site_id, slug)
     )
   `);
+
+  // Add widget_config column if it doesn't exist (for existing databases)
+  try {
+    await execute(`ALTER TABLE pages ADD COLUMN widget_config TEXT`);
+  } catch {
+    // Column already exists, ignore error
+  }
 
   // Activity log table
   await execute(`
@@ -1036,16 +1044,17 @@ export class EnhancedQueries {
 
     // Get site-wide conversion metrics (unique visitors, external clicks only)
     getSiteConversionMetrics: async (siteId: string) => {
-      const [uniqueViews, uniqueClicks, emails] = await Promise.all([
-        // Unique visitors across all articles
-        queryOne('SELECT COUNT(DISTINCT ip_hash) as count FROM article_views WHERE site_id = ?', [siteId]),
+      const [totalViewsResult, uniqueClicks, activeEmails] = await Promise.all([
+        // Total views (not unique) to match dashboard display
+        queryOne('SELECT COUNT(*) as count FROM article_views WHERE site_id = ?', [siteId]),
         // Unique external click conversions
         queryOne('SELECT COUNT(DISTINCT COALESCE(session_id, ip_hash)) as count FROM widget_clicks WHERE site_id = ? AND is_external = 1', [siteId]),
-        queryOne('SELECT COUNT(*) as count FROM email_subscribers WHERE site_id = ?', [siteId])
+        // Only count ACTIVE subscribers for email metrics
+        queryOne("SELECT COUNT(*) as count FROM email_subscribers WHERE site_id = ? AND status = 'active'", [siteId])
       ]);
-      const totalViews = uniqueViews?.count || 0;
+      const totalViews = totalViewsResult?.count || 0;
       const totalClicks = uniqueClicks?.count || 0;
-      const totalEmails = emails?.count || 0;
+      const totalEmails = activeEmails?.count || 0;
       return {
         totalViews,
         totalClicks,
@@ -1120,9 +1129,13 @@ export class EnhancedQueries {
     },
 
     create: async (data: any) => {
+      const widgetConfigStr = data.widget_config
+        ? (typeof data.widget_config === 'string' ? data.widget_config : JSON.stringify(data.widget_config))
+        : null;
+
       const result = await execute(`
-        INSERT INTO pages (id, site_id, title, slug, content, template, published)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO pages (id, site_id, title, slug, content, template, widget_config, published)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         data.id,
         data.site_id,
@@ -1130,6 +1143,7 @@ export class EnhancedQueries {
         data.slug,
         data.content,
         data.template || 'default',
+        widgetConfigStr,
         data.published ? 1 : 0
       ]);
 
@@ -1138,18 +1152,28 @@ export class EnhancedQueries {
     },
 
     update: async (id: string, data: any) => {
+      const widgetConfigStr = data.widget_config !== undefined
+        ? (typeof data.widget_config === 'string' ? data.widget_config : JSON.stringify(data.widget_config))
+        : undefined;
+
+      // Build dynamic update query based on what fields are provided
+      const updates: string[] = [];
+      const values: any[] = [];
+
+      if (data.title !== undefined) { updates.push('title = ?'); values.push(data.title); }
+      if (data.slug !== undefined) { updates.push('slug = ?'); values.push(data.slug); }
+      if (data.content !== undefined) { updates.push('content = ?'); values.push(data.content); }
+      if (data.template !== undefined) { updates.push('template = ?'); values.push(data.template); }
+      if (widgetConfigStr !== undefined) { updates.push('widget_config = ?'); values.push(widgetConfigStr); }
+      if (data.published !== undefined) { updates.push('published = ?'); values.push(data.published ? 1 : 0); }
+
+      updates.push('updated_at = CURRENT_TIMESTAMP');
+      values.push(id);
+
       const result = await execute(`
-        UPDATE pages SET title = ?, slug = ?, content = ?, template = ?,
-        published = ?, updated_at = CURRENT_TIMESTAMP
+        UPDATE pages SET ${updates.join(', ')}
         WHERE id = ?
-      `, [
-        data.title,
-        data.slug,
-        data.content,
-        data.template,
-        data.published ? 1 : 0,
-        id
-      ]);
+      `, values);
 
       await cache.invalidatePage(id);
       return result;

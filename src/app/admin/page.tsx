@@ -176,10 +176,10 @@ export default function AdminDashboard() {
   }
 
   const dashboardStats = stats ? [
-    { name: 'Sites', value: stats.totalSites, icon: Globe, color: 'text-blue-400', bg: 'bg-blue-900/30' },
-    { name: 'Boosted', value: stats.boostedArticles || 0, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-900/30' },
-    { name: 'Views', value: stats.totalViews >= 1000 ? `${(stats.totalViews / 1000).toFixed(1)}K` : stats.totalViews, icon: Eye, color: 'text-green-400', bg: 'bg-green-900/30' },
-    { name: 'Email Signups', value: stats.totalEmails, icon: Users, color: 'text-orange-400', bg: 'bg-orange-900/30' },
+    { name: 'Sites', value: stats.totalSites, icon: Globe, color: 'text-blue-400', bg: 'bg-blue-900/30', href: '/admin/sites' },
+    { name: 'Boosted', value: stats.boostedArticles || 0, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-900/30', href: '/admin/articles' },
+    { name: 'Views', value: stats.totalViews >= 1000 ? `${(stats.totalViews / 1000).toFixed(1)}K` : stats.totalViews, icon: Eye, color: 'text-green-400', bg: 'bg-green-900/30', href: '/admin/analytics' },
+    { name: 'Email Signups', value: stats.totalEmails, icon: Users, color: 'text-orange-400', bg: 'bg-orange-900/30', href: '/admin/emails' },
   ] : [];
 
   return (
@@ -210,7 +210,7 @@ export default function AdminDashboard() {
               href="/admin/sites/new"
               className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
             >
-              <Globe className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
               New Site
             </Link>
           </div>
@@ -220,17 +220,21 @@ export default function AdminDashboard() {
         {stats && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {dashboardStats.map((stat, index) => (
-              <div key={index} className="bg-gray-800 rounded-xl border border-gray-700 p-4">
+              <Link
+                key={index}
+                href={stat.href}
+                className="bg-gray-800 rounded-xl border border-gray-700 p-4 hover:border-primary-500/50 hover:bg-gray-750 transition-all group cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 ${stat.bg} rounded-lg flex items-center justify-center`}>
+                  <div className={`w-10 h-10 ${stat.bg} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
                     <stat.icon className={`w-5 h-5 ${stat.color}`} />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-white">{stat.value}</p>
-                    <p className="text-xs text-gray-400">{stat.name}</p>
+                    <p className="text-xs text-gray-400 group-hover:text-primary-400 transition-colors">{stat.name} →</p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
@@ -313,34 +317,49 @@ export default function AdminDashboard() {
                         )}
                       </Link>
 
-                      {/* Metrics - Pages, Boosted, Articles, Emails, Real Views */}
+                      {/* Metrics - Pages, Boosted, Articles, Emails, Real Views - All Clickable */}
                       <div className="px-5 py-3 bg-gray-850 border-b border-gray-700">
-                        <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-sm">
-                          <div className="flex items-center gap-1.5">
+                        <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-sm">
+                          <Link
+                            href={`/admin/sites/${site.id}/dashboard?tab=pages`}
+                            className="flex items-center gap-1.5 hover:text-indigo-400 transition-colors group/metric"
+                          >
                             <Layers className="w-4 h-4 text-indigo-400" />
-                            <span className="text-gray-300">{metrics.pageCount}</span>
-                            <span className="text-gray-500">pages</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-300 group-hover/metric:text-indigo-300">{metrics.pageCount}</span>
+                            <span className="text-gray-500 group-hover/metric:text-indigo-400">pages</span>
+                          </Link>
+                          <Link
+                            href={`/admin/sites/${site.id}/dashboard?tab=articles`}
+                            className="flex items-center gap-1.5 hover:text-yellow-400 transition-colors group/metric"
+                          >
                             <Zap className="w-4 h-4 text-yellow-400" />
-                            <span className="text-gray-300">{metrics.boostedCount}</span>
-                            <span className="text-gray-500">boosted</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-300 group-hover/metric:text-yellow-300">{metrics.boostedCount}</span>
+                            <span className="text-gray-500 group-hover/metric:text-yellow-400">boosted</span>
+                          </Link>
+                          <Link
+                            href={`/admin/sites/${site.id}/dashboard?tab=articles&subtab=all`}
+                            className="flex items-center gap-1.5 hover:text-blue-400 transition-colors group/metric"
+                          >
                             <FileText className="w-4 h-4 text-blue-400" />
-                            <span className="text-gray-300">{metrics.articleCount}</span>
-                            <span className="text-gray-500">articles</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-300 group-hover/metric:text-blue-300">{metrics.articleCount}</span>
+                            <span className="text-gray-500 group-hover/metric:text-blue-400">articles</span>
+                          </Link>
+                          <Link
+                            href={`/admin/sites/${site.id}/dashboard?tab=emails`}
+                            className="flex items-center gap-1.5 hover:text-green-400 transition-colors group/metric"
+                          >
                             <Users className="w-4 h-4 text-green-400" />
-                            <span className="text-gray-300">{metrics.emailCount}</span>
-                            <span className="text-gray-500">emails</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-300 group-hover/metric:text-green-300">{metrics.emailCount}</span>
+                            <span className="text-gray-500 group-hover/metric:text-green-400">emails</span>
+                          </Link>
+                          <Link
+                            href={`/admin/sites/${site.id}/dashboard?tab=analytics`}
+                            className="flex items-center gap-1.5 hover:text-purple-400 transition-colors group/metric"
+                          >
                             <Eye className="w-4 h-4 text-purple-400" />
-                            <span className="text-gray-300">{metrics.viewCount}</span>
-                            <span className="text-gray-500">real views</span>
-                          </div>
+                            <span className="text-gray-300 group-hover/metric:text-purple-300">{metrics.viewCount}</span>
+                            <span className="text-gray-500 group-hover/metric:text-purple-400">real views</span>
+                          </Link>
                         </div>
                       </div>
 
@@ -479,11 +498,20 @@ export default function AdminDashboard() {
                       >
                         <div className="flex items-center gap-4 min-w-0">
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                            article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                            article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
                           }`}>
-                            <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                            {article.boosted ? (
+                              <Zap className="w-5 h-5 text-yellow-400" />
+                            ) : (
+                              <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                            )}
                           </div>
                           <div className="min-w-0">
+                            {article.boosted && (
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                              </div>
+                            )}
                             <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
                               {article.title}
                             </p>
@@ -493,12 +521,6 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {article.boosted && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300">
-                              <Zap className="w-3 h-3" />
-                              Boosted
-                            </span>
-                          )}
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             article.published
                               ? 'bg-green-900/50 text-green-300'

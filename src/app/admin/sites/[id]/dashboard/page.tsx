@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   Globe,
@@ -63,6 +63,7 @@ type ArticlesSubTab = 'boosted' | 'all' | 'drafts';
 export default function SiteDashboard() {
   const { id } = useParams() as { id: string };
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [site, setSite] = useState<any>(null);
   const [articles, setArticles] = useState<any[]>([]);
@@ -108,17 +109,22 @@ export default function SiteDashboard() {
     ],
     defaultArticleNavMode: 'direct-response'
   });
+  const [dbPages, setDbPages] = useState<any[]>([]); // Actual pages from database with widget_config
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [editingPageName, setEditingPageName] = useState('');
   const [draggedPage, setDraggedPage] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     try {
-      const [siteResponse, articlesData, subscribersResponse] = await Promise.all([
+      const [siteResponse, articlesData, subscribersResponse, pagesData] = await Promise.all([
         fetch(`/api/sites/${id}`).then(res => res.json()),
         fetch(`/api/articles?siteId=${id}&published=false&includeRealViews=true`).then(res => res.json()).then(data => data.articles || []),
-        fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 }, subscribers: [] }))
+        fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 }, subscribers: [] })),
+        fetch(`/api/pages?siteId=${id}`).then(res => res.json()).catch(() => [])
       ]);
+
+      // Store database pages for widget counts
+      setDbPages(pagesData || []);
 
       if (siteResponse.site) {
         const siteData = siteResponse.site;
@@ -175,6 +181,19 @@ export default function SiteDashboard() {
   useEffect(() => {
     if (id) loadData();
   }, [id, loadData]);
+
+  // Handle URL query params for tab navigation
+  useEffect(() => {
+    const tabParam = searchParams.get('tab') as TabType | null;
+    const subtabParam = searchParams.get('subtab') as ArticlesSubTab | null;
+
+    if (tabParam && ['overview', 'articles', 'pages', 'emails', 'analytics', 'content-profile', 'settings'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+    if (subtabParam && tabParam === 'articles' && ['boosted', 'all', 'drafts'].includes(subtabParam)) {
+      setArticlesSubTab(subtabParam);
+    }
+  }, [searchParams]);
 
   // Separate function to reload subscribers only
   const loadSubscribers = async () => {
@@ -305,6 +324,22 @@ export default function SiteDashboard() {
       p.id === pageId ? { ...p, navMode } : p
     );
     setPageConfig({ ...pageConfig, pages: updated });
+  };
+
+  // Get widget count for a page by matching slug
+  const getPageWidgetCount = (pageSlug: string): number => {
+    const dbPage = dbPages.find((p: any) => p.slug === pageSlug);
+    if (!dbPage?.widget_config) return 0;
+
+    try {
+      const widgets = typeof dbPage.widget_config === 'string'
+        ? JSON.parse(dbPage.widget_config)
+        : dbPage.widget_config;
+
+      return Array.isArray(widgets) ? widgets.filter((w: any) => w.enabled).length : 0;
+    } catch {
+      return 0;
+    }
   };
 
   // Export emails as CSV
@@ -669,14 +704,14 @@ export default function SiteDashboard() {
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* Stats Cards - Reordered: Views, Emails, Downloads, Boosted, Pages */}
+              {/* Stats Cards - Order: Views, Boosted, Pages, Emails, PDF Downloads */}
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 {[
                   { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: true, onClick: () => setActiveTab('analytics') },
-                  { label: 'Total Emails', value: metrics?.totalEmails || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
-                  { label: 'PDF Downloads', value: subscriberStats?.pdfDownloads || 0, icon: Download, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('emails') },
                   { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
                   { label: 'Total Pages', value: totalPageCount, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
+                  { label: 'Total Emails', value: subscriberStats?.active || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
+                  { label: 'PDF Downloads', value: subscriberStats?.pdfDownloads || 0, icon: Download, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('emails') },
                 ].map((stat, i) => (
                   <div
                     key={i}
@@ -725,11 +760,20 @@ export default function SiteDashboard() {
                       >
                         <div className="flex items-center gap-4 min-w-0">
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                            article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                            article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
                           }`}>
-                            <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                            {article.boosted ? (
+                              <Zap className="w-5 h-5 text-yellow-400" />
+                            ) : (
+                              <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                            )}
                           </div>
                           <div className="min-w-0">
+                            {article.boosted && (
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                              </div>
+                            )}
                             <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
                               {article.title}
                             </p>
@@ -1831,6 +1875,20 @@ export default function SiteDashboard() {
                           )}
                         </div>
 
+                        {/* Widget Count Badge */}
+                        {(() => {
+                          const widgetCount = getPageWidgetCount(page.slug);
+                          return (
+                            <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
+                              widgetCount > 0
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-gray-700/50 text-gray-500 border border-gray-600'
+                            }`}>
+                              {widgetCount} widgets
+                            </span>
+                          );
+                        })()}
+
                         {/* Nav Mode Badge */}
                         <select
                           value={page.navMode || 'global'}
@@ -1910,6 +1968,19 @@ export default function SiteDashboard() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
+                            {/* Widget Count Badge */}
+                            {(() => {
+                              const widgetCount = getPageWidgetCount(page.slug);
+                              return (
+                                <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
+                                  widgetCount > 0
+                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                                    : 'bg-gray-700/50 text-gray-500 border border-gray-600'
+                                }`}>
+                                  {widgetCount} widgets
+                                </span>
+                              );
+                            })()}
                             <button
                               onClick={(e) => { e.stopPropagation(); togglePageVisibility(page.id); }}
                               className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors"
@@ -2770,14 +2841,16 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                     expandedArticle === article.id ? 'rotate-180' : ''
                   }`} />
                   <div className="min-w-0">
+                    {article.boosted && (
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <div className="w-4 h-4 bg-yellow-500/20 rounded flex items-center justify-center">
+                          <Zap className="w-3 h-3 text-yellow-400" />
+                        </div>
+                        <span className="text-xs font-semibold text-yellow-400 uppercase tracking-wide">Boosted</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <p className="text-white font-medium truncate">{article.title}</p>
-                      {article.boosted && (
-                        <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex items-center gap-1 flex-shrink-0">
-                          <Zap className="w-3 h-3" />
-                          Boosted
-                        </span>
-                      )}
                       {!article.published && (
                         <span className="px-2 py-0.5 bg-gray-600 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
                           Draft
@@ -2833,42 +2906,31 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                           </div>
                         </div>
 
-                        {/* Email Signups from this Article */}
-                        {articleDetails[article.id].analytics?.emails?.length > 0 && (
+                        {/* Email Signups Download Button */}
+                        {articleDetails[article.id].analytics?.emailSignups > 0 && (
                           <div className="border-t border-gray-600 pt-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <p className="text-sm font-medium text-gray-300">Recent Email Signups</p>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  // Export these emails
-                                  const emails = articleDetails[article.id].analytics.emails;
-                                  const csv = [
-                                    ['Email', 'Source', 'Date'],
-                                    ...emails.map((em: any) => [em.email, em.source || 'unknown', em.createdAt])
-                                  ].map((row: any[]) => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-                                  const blob = new Blob([csv], { type: 'text/csv' });
-                                  const url = URL.createObjectURL(blob);
-                                  const a = document.createElement('a');
-                                  a.href = url;
-                                  a.download = `${article.slug}-emails.csv`;
-                                  a.click();
-                                  URL.revokeObjectURL(url);
-                                }}
-                                className="text-xs text-primary-400 hover:text-primary-300"
-                              >
-                                <Download className="w-3 h-3 inline mr-1" />
-                                Download
-                              </button>
-                            </div>
-                            <div className="space-y-1 max-h-32 overflow-y-auto">
-                              {articleDetails[article.id].analytics.emails.map((em: any, i: number) => (
-                                <div key={i} className="flex items-center justify-between bg-gray-600/50 rounded px-2 py-1.5 text-xs">
-                                  <span className="text-gray-300 truncate">{em.email}</span>
-                                  <span className="text-gray-500 flex-shrink-0 ml-2">{em.source || 'website'}</span>
-                                </div>
-                              ))}
-                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Export these emails
+                                const emails = articleDetails[article.id].analytics.emails || [];
+                                const csv = [
+                                  ['Email', 'Source', 'Date'],
+                                  ...emails.map((em: any) => [em.email, em.source || 'unknown', em.createdAt])
+                                ].map((row: any[]) => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+                                const blob = new Blob([csv], { type: 'text/csv' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `${article.slug}-emails.csv`;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                              }}
+                              className="flex items-center gap-2 w-full px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm text-gray-200 transition-colors"
+                            >
+                              <Download className="w-4 h-4" />
+                              Download {articleDetails[article.id].analytics?.emailSignups || 0} Email Signups
+                            </button>
                           </div>
                         )}
 

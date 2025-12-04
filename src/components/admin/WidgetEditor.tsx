@@ -3893,6 +3893,42 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       closingLine: 'Here\'s to your health,',
       signature: '— Dr. Amy Heart',
       highlightParagraph: 1
+    },
+    // Page-specific widgets
+    'social-validation-tile': {
+      headline: 'Join Our Community',
+      showCommunityCount: true
+    },
+    'profile-hero': {
+      name: 'Dr. Amy',
+      tagline: 'Your trusted health advisor',
+      quote: "True wellness comes from understanding your body's unique needs.",
+      credentials: ['Board Certified', 'MS Nutrition', '15+ Years Experience'],
+      showAudioPlayer: true
+    },
+    'bio-section': {
+      headline: 'My Story',
+      bio: 'I am dedicated to helping women achieve optimal health through evidence-based approaches.',
+      showExtendedStory: true
+    },
+    'lead-magnet-form': {
+      headline: 'Get Your Free Guide',
+      subheading: 'Get instant access to my most popular health guide - absolutely free.',
+      buttonText: 'Get Instant Access',
+      showPdfDownload: true
+    },
+    'articles-header': {
+      headline: 'Health Articles',
+      subheading: 'Evidence-based insights for your wellness journey',
+      showCommunityCount: true
+    },
+    'top-picks-grid': {
+      showRatings: true,
+      showBadges: true
+    },
+    'success-stories-grid': {
+      showTestimonials: true,
+      showBeforeAfter: true
     }
   };
 

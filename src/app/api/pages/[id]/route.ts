@@ -31,7 +31,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, slug, content, template, published } = body;
+    const { title, slug, content, template, widget_config, published } = body;
     const tenantId = request.headers.get('X-Tenant-Id') || undefined;
     const queries = createQueries(tenantId);
 
@@ -39,18 +39,24 @@ export async function PUT(
       return NextResponse.json({ error: 'Title and slug are required' }, { status: 400 });
     }
 
-    const pageData = {
+    const pageData: any = {
       title,
       slug,
       content: content || '',
       template: template || 'default',
       published,
     };
+
+    // Only include widget_config if it was provided in the request
+    if (widget_config !== undefined) {
+      pageData.widget_config = widget_config;
+    }
+
     const result = await queries.pageQueries.update(id, pageData);
 
     // Note: The new 'update' method might not return 'changes'. You might need to check if the page exists first.
     // Assuming the update is successful if it doesn't throw.
-    
+
     // Fetch updated page
     const updatedPage = await queries.pageQueries.getById(id);
     return NextResponse.json(updatedPage);

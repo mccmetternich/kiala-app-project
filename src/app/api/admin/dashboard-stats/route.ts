@@ -66,17 +66,19 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
 
       // Get site-specific email signups (automatically filtered by site_id)
       const allSiteEmails: any[] = await queries.emailQueries.getAllBySite(siteId);
-      const recentSiteEmails = allSiteEmails.filter((email: { created_at: string | number | Date; }) =>
+      // Only count ACTIVE subscribers for metrics
+      const activeSiteEmails = allSiteEmails.filter((email: any) => email.status === 'active');
+      const recentSiteEmails = activeSiteEmails.filter((email: { created_at: string | number | Date; }) =>
         new Date(email.created_at) >= new Date(startDate)
       );
-      const previousSiteEmails = allSiteEmails.filter((email: { created_at: string | number | Date; }) =>
+      const previousSiteEmails = activeSiteEmails.filter((email: { created_at: string | number | Date; }) =>
         new Date(email.created_at) >= new Date(previousStartDate) &&
         new Date(email.created_at) < new Date(startDate)
       );
 
-      // PDF download sources
-      const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide'];
-      const sitePdfDownloads = allSiteEmails.filter((email: any) =>
+      // PDF download sources - only count ACTIVE subscribers
+      const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide', 'lead_magnet_form'];
+      const sitePdfDownloads = activeSiteEmails.filter((email: any) =>
         pdfDownloadSources.some(src => email.source?.toLowerCase().includes(src.toLowerCase())) ||
         (email.tags && JSON.stringify(email.tags).includes('lead_magnet'))
       ).length;
@@ -86,7 +88,7 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       const topArticlesWithRealViews = await queries.analyticsQueries.getTopArticles(siteId, 5);
 
       const totalSiteArticles = publishedSiteArticles.length;
-      const totalSiteEmails = allSiteEmails.length;
+      const totalSiteEmails = activeSiteEmails.length; // Only active emails
 
       // Calculate growth rates
       const emailGrowth = previousSiteEmails.length > 0
@@ -131,12 +133,14 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       const allSites: any[] = await queries.siteQueries.getAll();
       const allArticles: any[] = await queries.articleQueries.getAll();
       const allEmails: any[] = await (queries as any).emailQueries.getAll();
+      // Only count ACTIVE subscribers for metrics
+      const activeEmails = allEmails.filter((email: any) => email.status === 'active');
 
-      // Filter by timeframe
-      const recentEmails = allEmails.filter((email: { created_at: string | number | Date; }) =>
+      // Filter by timeframe - using active emails only
+      const recentEmails = activeEmails.filter((email: { created_at: string | number | Date; }) =>
         new Date(email.created_at) >= new Date(startDate)
       );
-      const previousEmails = allEmails.filter((email: { created_at: string | number | Date; }) =>
+      const previousEmails = activeEmails.filter((email: { created_at: string | number | Date; }) =>
         new Date(email.created_at) >= new Date(previousStartDate) &&
         new Date(email.created_at) < new Date(startDate)
       );
@@ -154,9 +158,9 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       const boostedArticles = allArticles.filter((article: any) => article.boosted);
       const publishedSites = allSites.filter((site: any) => site.published || site.status === 'published');
 
-      // PDF download sources (global)
-      const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide'];
-      const totalPdfDownloads = allEmails.filter((email: any) =>
+      // PDF download sources (global) - only count ACTIVE subscribers
+      const pdfDownloadSources = ['hormone_guide_widget', 'exit_intent_popup', 'community_popup', 'lead_magnet', 'guide_download', 'pdf_download', 'wellness_guide', 'lead_magnet_form'];
+      const totalPdfDownloads = activeEmails.filter((email: any) =>
         pdfDownloadSources.some(src => email.source?.toLowerCase().includes(src.toLowerCase())) ||
         (email.tags && JSON.stringify(email.tags).includes('lead_magnet'))
       ).length;
@@ -168,10 +172,10 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
 
       const articleGrowth = recentArticles.length > 0 ? `+${recentArticles.length}` : '0';
 
-      // Site performance breakdown with REAL views
+      // Site performance breakdown with REAL views - use active emails only
       const sitePerformancePromises = allSites.map(async (site: { name: string; id: string; }) => {
         const siteArticles = allArticles.filter((article: { site_id: string; }) => article.site_id === site.id);
-        const siteEmails = allEmails.filter((email: { site_id: string; }) => email.site_id === site.id);
+        const siteActiveEmails = activeEmails.filter((email: { site_id: string; }) => email.site_id === site.id);
         const realSiteViews = await queries.analyticsQueries.getSiteViews(site.id);
 
         return {
@@ -179,8 +183,8 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
           siteId: site.id,
           articlesCount: siteArticles.filter((article: { published: boolean; }) => article.published).length,
           viewsCount: realSiteViews,  // REAL views
-          emailsCount: siteEmails.length,
-          conversionRate: realSiteViews > 0 ? Math.min((siteEmails.length / realSiteViews) * 100, 100).toFixed(1) : '0'
+          emailsCount: siteActiveEmails.length, // Only active emails
+          conversionRate: realSiteViews > 0 ? Math.min((siteActiveEmails.length / realSiteViews) * 100, 100).toFixed(1) : '0'
         };
       });
       const sitePerformance = (await Promise.all(sitePerformancePromises))
@@ -204,12 +208,12 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         totalArticles: publishedArticles.length,
         boostedArticles: boostedArticles.length,
         totalViews: totalRealViews,  // REAL views
-        totalEmails: allEmails.length,
+        totalEmails: activeEmails.length, // Only active emails
         pdfDownloads: totalPdfDownloads,
         recentEmails: recentEmails.length,
         emailGrowth: `${emailGrowth}%`,
         articleGrowth: `${articleGrowth} this ${timeframe}`,
-        avgConversionRate: totalRealViews > 0 ? Math.min((allEmails.length / totalRealViews) * 100, 100).toFixed(1) : '0',
+        avgConversionRate: totalRealViews > 0 ? Math.min((activeEmails.length / totalRealViews) * 100, 100).toFixed(1) : '0',
         sitePerformance,
         topArticlesGlobal: topArticlesWithRealViews.map((article: any) => {
           const site = allSites.find((s: { id: string; }) => s.id === article.site_id);
