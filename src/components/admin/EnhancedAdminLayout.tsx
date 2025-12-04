@@ -62,6 +62,11 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
     const siteMatch = pathname.match(/\/admin\/sites\/([^\/]+)/);
     if (siteMatch && sites.length > 0) {
       const siteId = siteMatch[1];
+      // Exclude special routes like "new"
+      if (siteId === 'new') {
+        setCurrentSite(null);
+        return;
+      }
       const site = sites.find(s => s.id === siteId);
       setCurrentSite(site || null);
     } else if (!siteMatch) {
@@ -199,50 +204,9 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
     }
   };
 
+  // Quick actions removed from top bar - they belong on individual pages
   const getQuickActions = () => {
-    if (currentSite) {
-      return [
-        {
-          label: 'New Article',
-          href: `/admin/sites/${currentSite.id}/articles/new`,
-          icon: Plus,
-          className: 'bg-primary-600 hover:bg-primary-700 text-white',
-          description: 'Create new content'
-        },
-        {
-          label: 'View Live Site',
-          href: `/site/${currentSite.subdomain}`,
-          icon: ExternalLink,
-          target: '_blank',
-          className: 'bg-blue-600 hover:bg-blue-700 text-white',
-          description: 'Preview your site'
-        },
-        {
-          label: 'Email Export',
-          href: `/admin/sites/${currentSite.id}/emails`,
-          icon: Users,
-          className: 'bg-green-600 hover:bg-green-700 text-white',
-          description: 'Download subscribers'
-        },
-        {
-          label: 'Clone Site',
-          onClick: () => cloneSite(currentSite.id),
-          icon: Copy,
-          className: 'bg-purple-600 hover:bg-purple-700 text-white',
-          description: 'Duplicate this site'
-        },
-        {
-          label: 'Site Settings',
-          href: `/admin/sites/${currentSite.id}/settings`,
-          icon: Settings,
-          className: 'bg-gray-600 hover:bg-gray-700 text-white',
-          description: 'Configure site'
-        }
-      ];
-    } else {
-      // No quick actions on global dashboard - actions are in the page itself
-      return [];
-    }
+    return [];
   };
 
   const cloneSite = async (siteId: string) => {
