@@ -28,7 +28,9 @@ import {
   Palette,
   Shield,
   Check,
-  X
+  X,
+  BarChart3,
+  BookOpen
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import Badge from '@/components/ui/Badge';
@@ -212,10 +214,19 @@ export default function SiteDashboard() {
   const theme = settings.theme || {};
   const isLive = site.status === 'published';
 
-  const tabs = [
+  // Internal tabs (render content on this page)
+  const internalTabs = [
     { id: 'overview' as TabType, label: 'Overview', icon: LayoutDashboard },
     { id: 'articles' as TabType, label: 'Articles', icon: FileText, count: metrics?.totalArticles },
     { id: 'settings' as TabType, label: 'Settings', icon: Settings },
+  ];
+
+  // External tabs (link to separate pages)
+  const externalTabs = [
+    { label: 'Pages', icon: FileText, href: `/admin/sites/${id}/pages` },
+    { label: 'Emails', icon: Users, href: `/admin/sites/${id}/emails` },
+    { label: 'Analytics', icon: BarChart3, href: `/admin/sites/${id}/analytics` },
+    { label: 'Content Profile', icon: BookOpen, href: `/admin/sites/${id}/content-profile` },
   ];
 
   const settingsTabs = [
@@ -286,27 +297,43 @@ export default function SiteDashboard() {
             </div>
 
             {/* Tab Navigation - More Prominent */}
-            <div className="flex items-center gap-2 mt-8">
-              {tabs.map((tab) => (
+            <div className="flex items-center gap-2 mt-8 flex-wrap">
+              {/* Internal tabs */}
+              {internalTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex items-center gap-2.5 px-5 py-3 rounded-xl font-semibold text-sm transition-all ${
                     activeTab === tab.id
                       ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
                       : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                 >
-                  <tab.icon className="w-5 h-5" />
+                  <tab.icon className="w-4 h-4" />
                   {tab.label}
                   {tab.count !== undefined && (
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                       activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-600 text-gray-300'
                     }`}>
                       {tab.count}
                     </span>
                   )}
                 </button>
+              ))}
+
+              {/* Divider */}
+              <div className="w-px h-8 bg-gray-600 mx-2" />
+
+              {/* External tabs (links to other pages) */}
+              {externalTabs.map((tab) => (
+                <Link
+                  key={tab.label}
+                  href={tab.href}
+                  className="flex items-center gap-2.5 px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white"
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </Link>
               ))}
             </div>
           </div>
