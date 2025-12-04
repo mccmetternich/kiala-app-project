@@ -216,7 +216,7 @@ export class MemoryManager {
       // Force GC if available
       this.forceGC();
       
-      console.log('Memory cleanup performed');
+      // Memory cleanup performed
     }
   }
 }

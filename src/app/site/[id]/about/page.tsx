@@ -165,8 +165,8 @@ export default function AboutPage() {
                 setPageContent(pageData[0]);
               }
             }
-          } catch (error) {
-            console.log('No custom about page found, using default brand profile');
+          } catch {
+            // No custom about page found, using default brand profile
           }
 
           // Fetch recent articles
@@ -176,8 +176,8 @@ export default function AboutPage() {
               const articlesData = await articlesResponse.json();
               setRecentArticles((articlesData.articles || []).slice(0, 3));
             }
-          } catch (error) {
-            console.log('Error fetching recent articles:', error);
+          } catch {
+            // Failed to fetch recent articles
           }
         }
       } catch (error) {

@@ -2,6 +2,23 @@ import { createClient, type Client } from '@libsql/client/web';
 import { cache, CacheTTL, withCache } from './cache';
 import { v4 as uuidv4 } from 'uuid';
 
+// Re-export database types for convenience
+export type {
+  SiteRow,
+  ArticleRow,
+  PageRow,
+  MediaRow,
+  EmailSubscriberRow,
+  UserRow,
+  TenantRow,
+  ActivityLogRow,
+  WidgetDefinitionRow,
+  WidgetInstanceRow,
+  BlockRow,
+} from '@/types/database';
+
+export { toBool, parseJSON, parseTags } from '@/types/database';
+
 // Create a fresh client for each request in serverless environment
 // This avoids issues with private class members across invocations
 function getDb(): Client {
@@ -209,6 +226,58 @@ export async function initDb() {
     )
   `);
 
+  // Widget definitions table (from widget-registry)
+  await execute(`
+    CREATE TABLE IF NOT EXISTS widget_definitions (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      category TEXT NOT NULL,
+      version TEXT NOT NULL DEFAULT '1.0.0',
+      template TEXT NOT NULL,
+      styles TEXT,
+      script TEXT,
+      admin_fields TEXT NOT NULL,
+      triggers TEXT,
+      integrations TEXT,
+      active BOOLEAN DEFAULT 1,
+      global BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Widget instances table
+  await execute(`
+    CREATE TABLE IF NOT EXISTS widget_instances (
+      id TEXT PRIMARY KEY,
+      widget_id TEXT NOT NULL,
+      site_id TEXT NOT NULL,
+      page_id TEXT,
+      position INTEGER NOT NULL DEFAULT 0,
+      settings TEXT NOT NULL DEFAULT '{}',
+      active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (widget_id) REFERENCES widget_definitions(id)
+    )
+  `);
+
+  // Blocks table (for page builder)
+  await execute(`
+    CREATE TABLE IF NOT EXISTS blocks (
+      id TEXT PRIMARY KEY,
+      page_id TEXT NOT NULL,
+      site_id TEXT NOT NULL,
+      type TEXT NOT NULL,
+      position INTEGER NOT NULL,
+      visible BOOLEAN DEFAULT 1,
+      settings TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Create indexes for performance
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_sites_domain ON sites (domain)',
@@ -226,6 +295,12 @@ export async function initDb() {
     'CREATE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers (email)',
     'CREATE INDEX IF NOT EXISTS idx_media_site ON media (site_id)',
     'CREATE INDEX IF NOT EXISTS idx_media_file_type ON media (file_type)',
+    // Widget/block indexes
+    'CREATE INDEX IF NOT EXISTS idx_widget_instances_site ON widget_instances(site_id)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_instances_page ON widget_instances(page_id)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_definitions_category ON widget_definitions(category)',
+    'CREATE INDEX IF NOT EXISTS idx_blocks_page_site ON blocks(page_id, site_id)',
+    'CREATE INDEX IF NOT EXISTS idx_blocks_position ON blocks(position)',
   ];
 
   for (const idx of indexes) {

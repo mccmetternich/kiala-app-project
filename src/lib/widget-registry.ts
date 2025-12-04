@@ -86,56 +86,8 @@ async function queryAll(sql: string, args: any[] = []): Promise<any[]> {
   return result.rows as any[];
 }
 
-// Tables initialized flag
-let tablesInitialized = false;
-
-async function initTables() {
-  if (tablesInitialized) return;
-
-  // Widget definitions table
-  await execute(`
-    CREATE TABLE IF NOT EXISTS widget_definitions (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      description TEXT,
-      category TEXT NOT NULL,
-      version TEXT NOT NULL DEFAULT '1.0.0',
-      template TEXT NOT NULL,
-      styles TEXT,
-      script TEXT,
-      admin_fields TEXT NOT NULL,
-      triggers TEXT,
-      integrations TEXT,
-      active BOOLEAN DEFAULT 1,
-      global BOOLEAN DEFAULT 1,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  // Widget instances table
-  await execute(`
-    CREATE TABLE IF NOT EXISTS widget_instances (
-      id TEXT PRIMARY KEY,
-      widget_id TEXT NOT NULL,
-      site_id TEXT NOT NULL,
-      page_id TEXT,
-      position INTEGER NOT NULL DEFAULT 0,
-      settings TEXT NOT NULL DEFAULT '{}',
-      active BOOLEAN DEFAULT 1,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (widget_id) REFERENCES widget_definitions(id)
-    )
-  `);
-
-  // Create indexes
-  await execute(`CREATE INDEX IF NOT EXISTS idx_widget_instances_site ON widget_instances(site_id)`);
-  await execute(`CREATE INDEX IF NOT EXISTS idx_widget_instances_page ON widget_instances(page_id)`);
-  await execute(`CREATE INDEX IF NOT EXISTS idx_widget_definitions_category ON widget_definitions(category)`);
-
-  tablesInitialized = true;
-}
+// Note: Widget tables are now created in db-enhanced.ts initDb()
+// No lazy initialization needed - tables exist after migration
 
 // In-memory cache for widget definitions
 const widgetCache: Map<string, WidgetDefinition> = new Map();
@@ -147,7 +99,6 @@ export const widgetRegistry = {
    * Register a new widget definition
    */
   async registerWidget(definition: Omit<WidgetDefinition, 'created_at' | 'updated_at'>): Promise<void> {
-    await initTables();
 
     await execute(`
       INSERT OR REPLACE INTO widget_definitions (
@@ -179,7 +130,6 @@ export const widgetRegistry = {
    * Get all available widget definitions
    */
   async getWidgetDefinitions(category?: string): Promise<WidgetDefinition[]> {
-    await initTables();
 
     let query = 'SELECT * FROM widget_definitions WHERE active = 1';
     const params: any[] = [];
@@ -207,7 +157,6 @@ export const widgetRegistry = {
    * Get widget definition by ID with caching
    */
   async getWidgetDefinition(widgetId: string): Promise<WidgetDefinition | null> {
-    await initTables();
 
     const now = Date.now();
 
@@ -244,7 +193,6 @@ export const widgetRegistry = {
    * Create widget instance for a site
    */
   async createWidgetInstance(siteId: string, widgetId: string, pageId: string | null, settings: Record<string, any> = {}): Promise<string> {
-    await initTables();
 
     const instanceId = `instance-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -274,7 +222,6 @@ export const widgetRegistry = {
    * Get widget instances for a site/page
    */
   async getWidgetInstances(siteId: string, pageId?: string): Promise<WidgetInstance[]> {
-    await initTables();
 
     let query = 'SELECT * FROM widget_instances WHERE site_id = ? AND active = 1';
     const params: any[] = [siteId];
@@ -299,7 +246,6 @@ export const widgetRegistry = {
    * Render widget instance to HTML
    */
   async renderWidget(instanceId: string): Promise<string> {
-    await initTables();
 
     const instance = await queryOne(`
       SELECT wi.*, wd.template, wd.styles, wd.script
@@ -338,7 +284,6 @@ export const widgetRegistry = {
    * Update widget instance settings
    */
   async updateWidgetInstance(instanceId: string, settings: Record<string, any>): Promise<void> {
-    await initTables();
 
     await execute(`
       UPDATE widget_instances
@@ -351,7 +296,6 @@ export const widgetRegistry = {
    * Delete widget instance
    */
   async deleteWidgetInstance(instanceId: string): Promise<void> {
-    await initTables();
 
     await execute('DELETE FROM widget_instances WHERE id = ?', [instanceId]);
   }

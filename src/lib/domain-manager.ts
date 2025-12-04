@@ -174,7 +174,9 @@ export const domainManager = {
       WHERE id = ?
     `, [domainId]);
 
-    console.log(`🌐 Domain setup initiated for ${domainId}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🌐 Domain setup initiated for ${domainId}`);
+    }
   },
 
   /**
@@ -263,15 +265,19 @@ export const domainManager = {
     }
   },
 
-  async checkDNSRecords(domain: string, domainId: string): Promise<boolean> {
-    console.log(`🔍 Checking DNS records for ${domain}...`);
+  async checkDNSRecords(domain: string, _domainId: string): Promise<boolean> {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔍 Checking DNS records for ${domain}...`);
+    }
     await new Promise(resolve => setTimeout(resolve, 1000));
     const dnsVerified = Math.random() > 0.3;
 
-    if (dnsVerified) {
-      console.log(`✅ DNS verified for ${domain}`);
-    } else {
-      console.log(`❌ DNS verification failed for ${domain}`);
+    if (process.env.NODE_ENV === 'development') {
+      if (dnsVerified) {
+        console.log(`✅ DNS verified for ${domain}`);
+      } else {
+        console.log(`❌ DNS verification failed for ${domain}`);
+      }
     }
 
     return dnsVerified;
@@ -304,7 +310,9 @@ export const domainManager = {
         WHERE id = ?
       `, [certificateId, domainId]);
 
-      console.log(`✅ SSL certificate provisioned for ${domain.domain}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ SSL certificate provisioned for ${domain.domain}`);
+      }
     } catch (error) {
       await execute(`
         UPDATE domain_records
@@ -317,10 +325,14 @@ export const domainManager = {
   },
 
   async requestSSLCertificate(domain: string, provider: string): Promise<string> {
-    console.log(`🔐 Requesting SSL certificate for ${domain} via ${provider}...`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔐 Requesting SSL certificate for ${domain} via ${provider}...`);
+    }
     await new Promise(resolve => setTimeout(resolve, 2000));
     const certificateId = `cert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log(`✅ SSL certificate ${certificateId} issued for ${domain}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`✅ SSL certificate ${certificateId} issued for ${domain}`);
+    }
     return certificateId;
   },
 
@@ -359,7 +371,9 @@ export const domainManager = {
     await execute('DELETE FROM dns_challenges WHERE domain_id = ?', [domainId]);
     await execute('DELETE FROM domain_records WHERE id = ?', [domainId]);
 
-    console.log(`🗑️ Domain ${domain.domain} removed`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🗑️ Domain ${domain.domain} removed`);
+    }
   },
 
   /**

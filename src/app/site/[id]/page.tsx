@@ -94,24 +94,19 @@ export default function DynamicSiteHomepage() {
 
       try {
         // Fetch site data by subdomain (the ID in URL is actually the subdomain)
-        console.log('[Site Page] Fetching site data for subdomain:', siteId);
         const response = await fetch(`/api/sites?subdomain=${siteId}`);
-        console.log('[Site Page] Response status:', response.status);
 
         if (response.ok) {
           const data = await response.json();
-          console.log('[Site Page] Site data received:', data);
           const site = data.site;
           if (site) {
             setSiteData(site);
 
             // Fetch articles for this site using actual site ID
-            console.log('[Site Page] Fetching articles for site ID:', site.id);
             const articlesResponse = await fetch(`/api/articles?siteId=${site.id}&published=true`);
             if (articlesResponse.ok) {
               const articlesData = await articlesResponse.json();
               const siteArticles = articlesData.articles || [];
-              console.log('[Site Page] Articles received:', siteArticles.length);
               setArticles(siteArticles);
 
               // Find hero article (use hero flag, fallback to first article)
@@ -119,17 +114,13 @@ export default function DynamicSiteHomepage() {
               setHeroArticle(heroArt || siteArticles[0]);
             }
           } else {
-            console.warn('[Site Page] No site found, using fallback');
             setSiteData(fallbackSite);
           }
         } else {
           // Use fallback site
-          const errorText = await response.text();
-          console.error('[Site Page] API error:', response.status, errorText);
           setSiteData(fallbackSite);
         }
-      } catch (error) {
-        console.error('[Site Page] Error loading site data:', error);
+      } catch {
         setSiteData(fallbackSite);
       } finally {
         setLoading(false);

@@ -12,37 +12,11 @@ async function execute(sql: string, args: any[] = []) {
   return db.execute({ sql, args });
 }
 
-// Initialize blocks table on first use
-async function initBlocksTable() {
-  await execute(`
-    CREATE TABLE IF NOT EXISTS blocks (
-      id TEXT PRIMARY KEY,
-      page_id TEXT NOT NULL,
-      site_id TEXT NOT NULL,
-      type TEXT NOT NULL,
-      position INTEGER NOT NULL,
-      visible BOOLEAN DEFAULT 1,
-      settings TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  await execute(`CREATE INDEX IF NOT EXISTS idx_blocks_page_site ON blocks(page_id, site_id)`);
-  await execute(`CREATE INDEX IF NOT EXISTS idx_blocks_position ON blocks(position)`);
-}
-
-// Flag to track initialization
-let initialized = false;
+// Note: Blocks table is created in db-enhanced.ts initDb()
+// No lazy initialization needed
 
 export async function GET(request: NextRequest) {
   try {
-    // Initialize table if needed
-    if (!initialized) {
-      await initBlocksTable();
-      initialized = true;
-    }
-
     const { searchParams } = new URL(request.url);
     const pageId = searchParams.get('pageId');
     const siteId = searchParams.get('siteId');
@@ -79,12 +53,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Initialize table if needed
-    if (!initialized) {
-      await initBlocksTable();
-      initialized = true;
-    }
-
     const body = await request.json();
     const { pageId, siteId, blocks } = body;
 
@@ -128,12 +96,6 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    // Initialize table if needed
-    if (!initialized) {
-      await initBlocksTable();
-      initialized = true;
-    }
-
     const body = await request.json();
     const { block } = body;
 
@@ -177,12 +139,6 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    // Initialize table if needed
-    if (!initialized) {
-      await initBlocksTable();
-      initialized = true;
-    }
-
     const { searchParams } = new URL(request.url);
     const blockId = searchParams.get('blockId');
 
