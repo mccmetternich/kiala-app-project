@@ -422,6 +422,17 @@ export async function initDb() {
     )
   `);
 
+  // Add new columns to widget_clicks if they don't exist (migration for existing databases)
+  try {
+    await execute(`ALTER TABLE widget_clicks ADD COLUMN widget_id TEXT`);
+  } catch { /* Column already exists */ }
+  try {
+    await execute(`ALTER TABLE widget_clicks ADD COLUMN is_external INTEGER DEFAULT 1`);
+  } catch { /* Column already exists */ }
+  try {
+    await execute(`ALTER TABLE widget_clicks ADD COLUMN session_id TEXT`);
+  } catch { /* Column already exists */ }
+
   // Create indexes for performance
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_sites_domain ON sites (domain)',

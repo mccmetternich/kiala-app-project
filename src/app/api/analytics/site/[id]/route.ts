@@ -13,17 +13,37 @@ export async function GET(
 
     const queries = createQueries();
 
-    // Get site conversion metrics
-    const conversionMetrics = await queries.analyticsQueries.getSiteConversionMetrics(siteId);
+    // Get site conversion metrics (with fallback for missing columns)
+    let conversionMetrics = { totalViews: 0, totalClicks: 0, totalEmails: 0, clickThroughRate: '0', emailConversionRate: '0' };
+    try {
+      conversionMetrics = await queries.analyticsQueries.getSiteConversionMetrics(siteId);
+    } catch (err) {
+      console.error('Error getting conversion metrics:', err);
+    }
 
-    // Get articles with full analytics (views, clicks, conversion)
-    const articlesWithAnalytics = await queries.analyticsQueries.getArticlesWithAnalytics(siteId);
+    // Get articles with full analytics - fallback to basic article list if analytics query fails
+    let articlesWithAnalytics: any[] = [];
+    try {
+      articlesWithAnalytics = await queries.analyticsQueries.getArticlesWithAnalytics(siteId);
+    } catch (err) {
+      console.error('Error getting articles with analytics, falling back to basic list:', err);
+      // Fallback: get articles without widget click stats
+      const basicArticles = await queries.articleQueries.getAllBySite(siteId);
+      articlesWithAnalytics = basicArticles.map((a: any) => ({
+        ...a,
+        real_views: 0,
+        widget_clicks: 0,
+        conversion_rate: 0
+      }));
+    }
 
-    // Get top widgets for this site
-    const topWidgets = await queries.analyticsQueries.getTopWidgets(siteId, 10);
-
-    // Get email count for conversion rates
-    const emailCount = conversionMetrics.totalEmails;
+    // Get top widgets for this site (with fallback)
+    let topWidgets: any[] = [];
+    try {
+      topWidgets = await queries.analyticsQueries.getTopWidgets(siteId, 10);
+    } catch (err) {
+      console.error('Error getting top widgets:', err);
+    }
 
     // Calculate time-based metrics
     const daysMap: Record<string, number> = { '24h': 1, '7d': 7, '30d': 30, '90d': 90 };
@@ -31,20 +51,30 @@ export async function GET(
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get views by date for chart
+    // Get views by date for chart (with fallback)
     const endDate = new Date().toISOString();
-    const viewsByDate = await queries.analyticsQueries.getViewsByDateRange(
-      siteId,
-      startDate.toISOString(),
-      endDate
-    );
+    let viewsByDate: any[] = [];
+    try {
+      viewsByDate = await queries.analyticsQueries.getViewsByDateRange(
+        siteId,
+        startDate.toISOString(),
+        endDate
+      ) || [];
+    } catch (err) {
+      console.error('Error getting views by date:', err);
+    }
 
-    // Get clicks by date for chart
-    const clicksByDate = await queries.analyticsQueries.getClicksByDateRange(
-      siteId,
-      startDate.toISOString(),
-      endDate
-    );
+    // Get clicks by date for chart (with fallback)
+    let clicksByDate: any[] = [];
+    try {
+      clicksByDate = await queries.analyticsQueries.getClicksByDateRange(
+        siteId,
+        startDate.toISOString(),
+        endDate
+      ) || [];
+    } catch (err) {
+      console.error('Error getting clicks by date:', err);
+    }
 
     return NextResponse.json({
       siteId,
