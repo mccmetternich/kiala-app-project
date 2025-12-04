@@ -9,16 +9,12 @@ import {
   Settings,
   Users,
   BarChart3,
-  Globe,
   Menu,
   X,
   LogOut,
   Plus,
   Edit3,
   ChevronDown,
-  ExternalLink,
-  Copy,
-  Eye,
   Building2,
   BookOpen
 } from 'lucide-react';
@@ -101,7 +97,7 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
     if (segments.includes('sites') && segments.length > 2) {
       const siteId = segments[2];
       const site = sites.find(s => s.id === siteId);
-      
+
       if (site) {
         breadcrumbs.push({
           label: site.name,
@@ -130,101 +126,28 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
     return breadcrumbs;
   };
 
-  const getNavigation = () => {
-    if (currentSite) {
-      // Site-specific navigation - flat structure for compatibility
-      return [
-        { 
-          name: 'Dashboard', 
-          href: `/admin/sites/${currentSite.id}/dashboard`, 
-          icon: LayoutGrid,
-          description: 'Site overview and metrics'
-        },
-        { 
-          name: 'Articles', 
-          href: `/admin/sites/${currentSite.id}/articles`, 
-          icon: Edit3,
-          description: 'Manage and create articles',
-          badge: currentSite.article_count
-        },
-        { 
-          name: 'Pages', 
-          href: `/admin/sites/${currentSite.id}/pages`, 
-          icon: FileText,
-          description: 'Custom pages and templates'
-        },
-        { 
-          name: 'Email Signups', 
-          href: `/admin/sites/${currentSite.id}/emails`, 
-          icon: Users,
-          description: 'Manage email subscribers'
-        },
-        {
-          name: 'Analytics',
-          href: `/admin/sites/${currentSite.id}/analytics`,
-          icon: BarChart3,
-          description: 'Performance and traffic data',
-          badge: currentSite.total_views ? `${Math.round(currentSite.total_views / 1000)}K` : undefined
-        },
-        {
-          name: 'Content Profile',
-          href: `/admin/sites/${currentSite.id}/content-profile`,
-          icon: BookOpen,
-          description: 'Editorial guidelines and voice'
-        },
-        {
-          name: 'Settings',
-          href: `/admin/sites/${currentSite.id}/settings`,
-          icon: Settings,
-          description: 'Configuration and branding'
-        }
-      ];
-    } else {
-      // Global navigation - simplified (no separate Sites page - merged into Dashboard)
-      return [
-        {
-          name: 'Dashboard',
-          href: '/admin',
-          icon: LayoutGrid,
-          description: 'Sites, articles and metrics'
-        },
-        {
-          name: 'All Articles',
-          href: '/admin/articles',
-          icon: Edit3,
-          description: 'Articles across all sites'
-        },
-        {
-          name: 'Email Signups',
-          href: '/admin/emails',
-          icon: Users,
-          description: 'All email subscribers'
-        }
-      ];
+  // Global navigation - NEVER changes
+  const globalNavigation = [
+    {
+      name: 'Dashboard',
+      href: '/admin',
+      icon: LayoutGrid,
+      description: 'Sites, articles and metrics'
+    },
+    {
+      name: 'All Articles',
+      href: '/admin/articles',
+      icon: Edit3,
+      description: 'Articles across all sites'
+    },
+    {
+      name: 'Email Signups',
+      href: '/admin/emails',
+      icon: Users,
+      description: 'All email subscribers'
     }
-  };
+  ];
 
-  // Quick actions removed from top bar - they belong on individual pages
-  const getQuickActions = () => {
-    return [];
-  };
-
-  const cloneSite = async (siteId: string) => {
-    try {
-      const response = await fetch(`/api/sites/${siteId}/clone`, {
-        method: 'POST'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        router.push(`/admin/sites/${data.site.id}/settings`);
-      }
-    } catch (error) {
-      console.error('Failed to clone site:', error);
-    }
-  };
-
-  const navigation = getNavigation();
-  const quickActions = getQuickActions();
   const breadcrumbs = getBreadcrumbs();
 
   return (
@@ -234,8 +157,8 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-72 bg-gray-800 shadow-xl">
-            <SidebarContent 
-              navigation={navigation}
+            <SidebarContent
+              navigation={globalNavigation}
               currentSite={currentSite}
               sites={sites}
               onClose={() => setSidebarOpen(false)}
@@ -250,8 +173,8 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
-        <SidebarContent 
-          navigation={navigation}
+        <SidebarContent
+          navigation={globalNavigation}
           currentSite={currentSite}
           sites={sites}
           onSwitchSite={switchSite}
@@ -263,7 +186,7 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
 
       {/* Main content */}
       <div className="lg:pl-72">
-        {/* Enhanced top bar */}
+        {/* Top bar - breadcrumbs only */}
         <div className="sticky top-0 z-40 bg-gray-800/95 backdrop-blur border-b border-gray-700 shadow-lg">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-4">
@@ -302,47 +225,13 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
               </nav>
             </div>
 
+            {/* User menu */}
             <div className="flex items-center gap-3">
-              {/* Quick actions */}
-              <div className="hidden sm:flex items-center gap-2">
-                {quickActions.map((action, index) => (
-                  action.href ? (
-                    <Link
-                      key={index}
-                      href={action.href}
-                      target={action.target}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-                        action.className
-                      )}
-                    >
-                      <action.icon className="w-3.5 h-3.5" />
-                      {action.label}
-                    </Link>
-                  ) : (
-                    <button
-                      key={index}
-                      onClick={action.onClick}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-                        action.className
-                      )}
-                    >
-                      <action.icon className="w-3.5 h-3.5" />
-                      {action.label}
-                    </button>
-                  )
-                ))}
+              <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">A</span>
               </div>
-
-              {/* User menu */}
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">A</span>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="text-sm font-medium text-gray-200">Admin</div>
-                </div>
+              <div className="hidden sm:block">
+                <div className="text-sm font-medium text-gray-200">Admin</div>
               </div>
             </div>
           </div>
@@ -368,15 +257,15 @@ interface SidebarContentProps {
   pathname: string;
 }
 
-function SidebarContent({ 
-  navigation, 
-  currentSite, 
-  sites, 
-  onClose, 
-  onSwitchSite, 
-  showSiteSwitcher, 
+function SidebarContent({
+  navigation,
+  currentSite,
+  sites,
+  onClose,
+  onSwitchSite,
+  showSiteSwitcher,
   setShowSiteSwitcher,
-  pathname 
+  pathname
 }: SidebarContentProps) {
   return (
     <div className="flex h-full flex-col bg-gray-800 border-r border-gray-700">
@@ -450,9 +339,9 @@ function SidebarContent({
                   Global Dashboard
                 </div>
               </Link>
-              
+
               <div className="border-t border-gray-600 my-1"></div>
-              
+
               {sites.map((site) => (
                 <button
                   key={site.id}
@@ -483,9 +372,9 @@ function SidebarContent({
                   </div>
                 </button>
               ))}
-              
+
               <div className="border-t border-gray-600 my-1"></div>
-              
+
               <Link
                 href="/admin/sites/new"
                 className="flex items-center gap-3 p-3 hover:bg-gray-600 transition-colors text-primary-400"
@@ -499,7 +388,7 @@ function SidebarContent({
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation - Always global */}
       <nav className="flex-1 px-4 py-4 space-y-1">
         {navigation.map((item) => {
           // More precise active state detection
@@ -528,8 +417,8 @@ function SidebarContent({
               {item.badge && (
                 <span className={cn(
                   "inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium rounded-full",
-                  isActive 
-                    ? "bg-primary-800 text-primary-200" 
+                  isActive
+                    ? "bg-primary-800 text-primary-200"
                     : "bg-gray-600 text-gray-300"
                 )}>
                   {item.badge}
@@ -539,35 +428,6 @@ function SidebarContent({
           );
         })}
       </nav>
-
-      {/* Status indicator */}
-      {currentSite && (
-        <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg">
-            <div className="flex-shrink-0">
-              {currentSite.status === 'published' ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <Eye className="w-4 h-4 text-green-500" />
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <Edit3 className="w-4 h-4 text-yellow-500" />
-                </div>
-              )}
-            </div>
-            <div className="flex-1">
-              <div className="text-xs font-medium text-gray-300">
-                {currentSite.status === 'published' ? 'Live Site' : 'Draft Mode'}
-              </div>
-              <div className="text-xs text-gray-400">
-                {currentSite.article_count || 0} articles • {currentSite.total_views || 0} views
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* User section */}
       <div className="p-4 border-t border-gray-700">
@@ -579,3 +439,42 @@ function SidebarContent({
     </div>
   );
 }
+
+// Export site navigation items for use in site dashboard pages
+export const getSiteNavigation = (siteId: string) => [
+  {
+    name: 'Overview',
+    href: `/admin/sites/${siteId}/dashboard`,
+    icon: LayoutGrid,
+  },
+  {
+    name: 'Articles',
+    href: `/admin/sites/${siteId}/articles`,
+    icon: Edit3,
+  },
+  {
+    name: 'Pages',
+    href: `/admin/sites/${siteId}/pages`,
+    icon: FileText,
+  },
+  {
+    name: 'Email Signups',
+    href: `/admin/sites/${siteId}/emails`,
+    icon: Users,
+  },
+  {
+    name: 'Analytics',
+    href: `/admin/sites/${siteId}/analytics`,
+    icon: BarChart3,
+  },
+  {
+    name: 'Content Profile',
+    href: `/admin/sites/${siteId}/content-profile`,
+    icon: BookOpen,
+  },
+  {
+    name: 'Settings',
+    href: `/admin/sites/${siteId}/settings`,
+    icon: Settings,
+  }
+];
