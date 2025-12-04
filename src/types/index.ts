@@ -60,6 +60,8 @@ export interface SiteSettings {
   audioUrl?: string;
   aboutAudioUrl?: string;
   leadMagnetPdfUrl?: string;
+  // Community/Social Proof
+  communityCount?: number; // e.g., 47284 - displayed as "47k+" or "47,284+"
 }
 
 // Page Structure

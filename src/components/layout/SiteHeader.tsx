@@ -6,6 +6,7 @@ import { Menu, X, Bell, Play, Pause } from 'lucide-react';
 import { Site } from '@/types';
 import Badge from '../ui/Badge';
 import { useSiteUrl } from '@/hooks/useSiteUrl';
+import { formatCommunityCount } from '@/lib/format-community-count';
 
 interface SiteHeaderProps {
   site: Site;
@@ -41,6 +42,9 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
   const homeUrl = getSiteUrl('/');
 
   const brand = site.brand;
+
+  // Get formatted community count from settings
+  const communityCount = formatCommunityCount((site as any).settings);
 
   // Track scroll for collapsed header on mobile
   useEffect(() => {
@@ -87,7 +91,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                 <img src={WOMEN_AVATARS[1]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
                 <img src={WOMEN_AVATARS[2]} className="w-6 h-6 rounded-full border-2 border-primary-400" alt="" />
               </div>
-              <span className="font-medium">Join 47,284 women transforming their health!</span>
+              <span className="font-medium">Join {communityCount.full.replace('+', '')} women transforming their health!</span>
             </div>
             <Link href={getSiteUrl('/articles/foods-naturally-balance-hormones')} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -145,7 +149,7 @@ export default function SiteHeader({ site }: SiteHeaderProps) {
                   <img src={WOMEN_AVATARS[4]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
                   <img src={WOMEN_AVATARS[5]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
                 </div>
-                <span>47k+ members</span>
+                <span>{communityCount.short} members</span>
               </div>
               <a
                 href={getSiteUrl('/#newsletter')}

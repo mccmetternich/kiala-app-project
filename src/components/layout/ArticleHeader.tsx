@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Shield, Star, Award, Play, Pause } from 'lucide-react';
 import { Site } from '@/types';
+import { formatCommunityCount } from '@/lib/format-community-count';
 
 interface ArticleHeaderProps {
   site: Site;
@@ -63,6 +64,9 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
 
   const brand = site.brand;
 
+  // Get formatted community count from settings
+  const communityCount = formatCommunityCount((site as any).settings);
+
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       {/* Desktop: Original Validation Banner */}
@@ -72,7 +76,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <Shield className="w-4 h-4" />
             </div>
-            <span className="font-semibold">Trusted by 47,284+ women transforming their health</span>
+            <span className="font-semibold">Trusted by {communityCount.full} women transforming their health</span>
             <div className="flex items-center gap-1 ml-2">
               {[1,2,3,4,5].map(i => (
                 <Star key={i} className="w-4 h-4 fill-amber-300 text-amber-300" />
@@ -118,7 +122,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                 <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
                 <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-500 text-white rounded-full border-2 border-white flex items-center justify-center text-xs font-bold shadow-sm">
-                  47k+
+                  {communityCount.short}
                 </div>
               </div>
               <span className="text-gray-600 font-medium text-sm">active members</span>
@@ -239,7 +243,7 @@ export default function ArticleHeader({ site, audioTrackUrl }: ArticleHeaderProp
                 <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
               </div>
-              <span className="font-medium text-xs">47,284+ women trust {brand?.name || 'Dr. Amy'}</span>
+              <span className="font-medium text-xs">{communityCount.full} women trust {brand?.name || 'Dr. Amy'}</span>
               <div className="flex items-center gap-0.5">
                 {[1,2,3,4,5].map(i => (
                   <Star key={i} className="w-3 h-3 fill-amber-300 text-amber-300" />

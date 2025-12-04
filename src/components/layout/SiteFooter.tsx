@@ -5,12 +5,15 @@ import Link from 'next/link';
 import { Shield, Heart, Mail, Sparkles, CheckCircle, Users } from 'lucide-react';
 import { Site } from '@/types';
 import { trackLead } from '@/lib/meta-pixel';
+import { formatCommunityCount } from '@/lib/format-community-count';
 
 interface SiteFooterProps {
   site: Site;
 }
 
 export default function SiteFooter({ site }: SiteFooterProps) {
+  // Get formatted community count from settings
+  const communityCount = formatCommunityCount((site as any).settings);
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -111,7 +114,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
             )}
 
             <p className="text-xs text-primary-200 mt-3">
-              Join 47k+ women • No spam, unsubscribe anytime
+              Join {communityCount.short} women • No spam, unsubscribe anytime
             </p>
           </div>
         </div>
@@ -135,7 +138,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary-500" />
-                <span>47k+ community</span>
+                <span>{communityCount.short} community</span>
               </div>
             </div>
           </div>

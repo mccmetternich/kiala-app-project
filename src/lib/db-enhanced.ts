@@ -232,7 +232,7 @@ export async function initDb() {
     await execute(idx);
   }
 
-  console.log('✅ Enhanced database initialized successfully');
+  // Database initialized
 }
 
 // Enhanced query operations with caching and tenant isolation
@@ -460,10 +460,8 @@ export class EnhancedQueries {
       ]);
 
       // Invalidate cache
-      console.log(`📦 Cache: Invalidating after article create, site_id=${data.site_id}`);
       await cache.delPattern(`articles:*`);
       await cache.delPattern(`article:*`);
-      console.log(`📦 Cache: Completed cache invalidation for article create`);
 
       return result;
     },
@@ -526,14 +524,12 @@ export class EnhancedQueries {
       ]);
 
       // Invalidate cache
-      console.log(`📦 Cache: Invalidating article ${id}, site_id=${data.site_id}, slug=${data.slug}`);
       cache.delPattern(`articles:*`);
       cache.delPattern(`article:*`);
       if (data.slug && data.site_id) {
         cache.delPattern(`article:slug:${data.site_id}:${data.slug}`);
       }
       cache.invalidateArticle(id);
-      console.log(`📦 Cache: Completed cache invalidation for article ${id}`);
 
       return result;
     },

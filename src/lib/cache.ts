@@ -118,7 +118,6 @@ class CacheManager {
         this.memoryCache.delete(key);
       }
     }
-    console.log(`📦 Cache: Invalidated all cache for site ${siteId}`);
   }
 
   /**
@@ -132,7 +131,6 @@ class CacheManager {
         this.memoryCache.delete(key);
       }
     }
-    console.log(`📦 Cache: Invalidated pattern ${pattern}`);
   }
 
   /**
@@ -146,7 +144,6 @@ class CacheManager {
         this.memoryCache.delete(key);
       }
     }
-    console.log(`📦 Cache: Invalidated article ${articleId}`);
   }
 
   /**
@@ -160,7 +157,6 @@ class CacheManager {
         this.memoryCache.delete(key);
       }
     }
-    console.log(`📦 Cache: Invalidated page ${pageId}`);
   }
 }
 

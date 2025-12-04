@@ -5,6 +5,7 @@ import ArticleHeader from './ArticleHeader';
 import ArticleFooter from './ArticleFooter';
 import PopupProvider from '@/components/PopupProvider';
 import { Site } from '@/types';
+import { getCommunityCount } from '@/lib/format-community-count';
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -32,7 +33,7 @@ export default function SiteLayout({
           siteId={site.id}
           doctorName={site.brand?.name}
           communityName="Wellness Community"
-          memberCount={47284}
+          memberCount={getCommunityCount(site.settings)}
           communityBenefits={[
             "Weekly health tips & protocols",
             "Early access to new content",

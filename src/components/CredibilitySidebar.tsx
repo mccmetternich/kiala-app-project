@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Star, Download, Award, Shield, Play, Pause, Check } from 'lucide-react';
 import { BrandProfile, LeadMagnet } from '@/types';
 import { trackLead } from '@/lib/meta-pixel';
+import { formatCountShort, formatCountFull } from '@/lib/format-community-count';
 
 interface CredibilitySidebarProps {
   doctor: BrandProfile;
@@ -245,7 +246,7 @@ export default function CredibilitySidebar({
                 )}
 
                 <p className="text-primary-200 text-xs flex items-center justify-center gap-2">
-                  <span>✓</span> <span>47,284 women downloaded</span>
+                  <span>✓</span> <span>{formatCountFull(communityCount).replace('+', '')} women downloaded</span>
                 </p>
               </div>
             </div>
@@ -279,7 +280,7 @@ export default function CredibilitySidebar({
                   <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white" alt="" />
                   <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white" alt="" />
                   <div className="w-8 h-8 bg-white/30 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold">
-                    +47k
+                    +{formatCountShort(communityCount).replace('+', '')}
                   </div>
                 </div>
               </div>
@@ -339,7 +340,7 @@ export default function CredibilitySidebar({
             <div className="mt-3 pt-3 border-t border-gray-200">
               <div className="flex items-center justify-center gap-1 text-xs text-gray-700">
                 <Award className="w-3 h-3 text-accent-500" />
-                <span className="font-medium">Board Certified • 15+ Years Experience • 47k+ Patients Helped</span>
+                <span className="font-medium">Board Certified • 15+ Years Experience • {formatCountShort(communityCount)} Patients Helped</span>
               </div>
             </div>
           </div>

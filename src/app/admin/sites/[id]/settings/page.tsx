@@ -993,6 +993,28 @@ export default function SiteSettings() {
                   </div>
                 </div>
 
+                {/* Community/Social Proof */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-200 mb-4">Community & Social Proof</h3>
+                  <div className="space-y-4">
+                    <div className="max-w-md">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Community Member Count</label>
+                      <input
+                        type="number"
+                        value={settings.communityCount || 47284}
+                        onChange={(e) => updateSettingsField('communityCount', parseInt(e.target.value) || 0)}
+                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="47284"
+                        min="0"
+                      />
+                      <p className="text-xs text-gray-500 mt-2">
+                        This number is displayed across the site as social proof (e.g., "47k+ women", "47,284+ members").
+                        The number will be automatically formatted as needed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Email Integration */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-200 mb-4">Email Marketing</h3>

@@ -530,5 +530,4 @@ export async function initializeBuiltInWidgets() {
     global: true
   });
 
-  console.log('Built-in widgets initialized');
 }
