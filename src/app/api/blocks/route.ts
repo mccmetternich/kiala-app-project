@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db-enhanced';
+import { cache, CacheTTL, withCache } from '@/lib/cache';
 import { v4 as uuidv4 } from 'uuid';
 
 // Helper to execute queries
@@ -28,9 +29,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const blocks = await queryAll(
-      'SELECT * FROM blocks WHERE page_id = ? AND site_id = ? ORDER BY position ASC',
-      [pageId, siteId]
+    // Use caching for block queries
+    const blocks = await withCache(
+      `blocks:${siteId}:${pageId}`,
+      CacheTTL.PAGE_BLOCKS,
+      async () => queryAll(
+        'SELECT * FROM blocks WHERE page_id = ? AND site_id = ? ORDER BY position ASC',
+        [pageId, siteId]
+      )
     );
 
     // Parse settings JSON
@@ -66,22 +72,30 @@ export async function POST(request: NextRequest) {
     // Delete existing blocks for this page
     await execute('DELETE FROM blocks WHERE page_id = ? AND site_id = ?', [pageId, siteId]);
 
-    // Insert new blocks
-    for (const block of blocks) {
-      await execute(
-        `INSERT INTO blocks (id, page_id, site_id, type, position, visible, settings)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          block.id || uuidv4(),
-          pageId,
-          siteId,
-          block.type,
-          block.position,
-          block.visible ? 1 : 0,
-          JSON.stringify(block.settings)
-        ]
-      );
+    // Insert new blocks using batch insert for better performance
+    if (blocks.length > 0) {
+      const values = blocks.map((block: any) => [
+        block.id || uuidv4(),
+        pageId,
+        siteId,
+        block.type,
+        block.position,
+        block.visible ? 1 : 0,
+        JSON.stringify(block.settings)
+      ]);
+
+      // Insert blocks in parallel for better performance
+      await Promise.all(values.map(v =>
+        execute(
+          `INSERT INTO blocks (id, page_id, site_id, type, position, visible, settings)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          v
+        )
+      ));
     }
+
+    // Invalidate cache
+    await cache.delete(`blocks:${siteId}:${pageId}`);
 
     return NextResponse.json({ success: true });
 
@@ -126,6 +140,14 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Invalidate cache for this block's page
+    if (block.site_id && block.page_id) {
+      await cache.delete(`blocks:${block.site_id}:${block.page_id}`);
+    } else {
+      // Fallback: invalidate all block caches
+      await cache.delPattern('blocks:*');
+    }
+
     return NextResponse.json({ success: true });
 
   } catch (error) {
@@ -141,6 +163,8 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const blockId = searchParams.get('blockId');
+    const siteId = searchParams.get('siteId');
+    const pageId = searchParams.get('pageId');
 
     if (!blockId) {
       return NextResponse.json(
@@ -156,6 +180,13 @@ export async function DELETE(request: NextRequest) {
         { error: 'Block not found' },
         { status: 404 }
       );
+    }
+
+    // Invalidate cache
+    if (siteId && pageId) {
+      await cache.delete(`blocks:${siteId}:${pageId}`);
+    } else {
+      await cache.delPattern('blocks:*');
     }
 
     return NextResponse.json({ success: true });
