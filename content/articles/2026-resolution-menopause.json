@@ -78,29 +78,25 @@
       }
     },
     {
-      "id": "sabotage-quiz",
-      "type": "quiz",
+      "id": "sabotage-checker",
+      "type": "symptoms-checker",
       "enabled": true,
       "position": 7,
       "config": {
         "headline": "What's Really Sabotaging Your Resolutions?",
         "subheading": "Check all that apply to you",
-        "questions": [
-          { "id": "q1", "text": "You start strong but crash by week 2-3", "category": "energy" },
-          { "id": "q2", "text": "Cravings derail you even when you're 'motivated'", "category": "gut" },
-          { "id": "q3", "text": "You're too exhausted to exercise, even when you want to", "category": "energy" },
-          { "id": "q4", "text": "The same diet that worked at 35 does nothing now", "category": "hormones" },
-          { "id": "q5", "text": "You feel like your body is working against you", "category": "hormones" },
-          { "id": "q6", "text": "Bloating and digestive issues make healthy eating feel pointless", "category": "gut" }
+        "symptoms": [
+          { "id": "q1", "text": "You start strong but crash by week 2-3" },
+          { "id": "q2", "text": "Cravings derail you even when you're 'motivated'" },
+          { "id": "q3", "text": "You're too exhausted to exercise, even when you want to" },
+          { "id": "q4", "text": "The same diet that worked at 35 does nothing now" },
+          { "id": "q5", "text": "You feel like your body is working against you" },
+          { "id": "q6", "text": "Bloating and digestive issues make healthy eating feel pointless" }
         ],
-        "results": {
-          "low": "Your foundation may be mostly intact—small adjustments could help.",
-          "medium": "Several systems are out of sync. Traditional resolutions are fighting an uphill battle.",
-          "high": "Your gut-hormone axis is likely disrupted. No amount of willpower can override biology."
-        },
-        "thresholds": { "low": 2, "medium": 4 },
-        "ctaText": "See What's Actually Going On →",
-        "style": "checklist"
+        "minSymptoms": 3,
+        "conclusionHeadline": "Your gut-hormone axis may be compromised",
+        "conclusionText": "If you checked 3 or more, your biology may be working against your resolutions. Keep reading to understand why—and what to do about it.",
+        "showCta": false
       }
     },
     {
@@ -362,7 +358,7 @@
     },
     {
       "id": "faq-objections",
-      "type": "accordion-faq",
+      "type": "faq-accordion",
       "enabled": true,
       "position": 23,
       "config": {
