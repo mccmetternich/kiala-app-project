@@ -85,9 +85,13 @@ export async function GET(request: NextRequest) {
         queries.articleQueries.getAll()
       ]);
 
-      // Calculate total views across all articles
-      const totalViews = articles.reduce((sum: number, article: { views: number; }) => sum + (article.views || 0), 0);
-      
+      // Get REAL view counts from article_views table
+      const realViewCounts = await queries.analyticsQueries.getArticlesWithRealViews('');
+      const realViewsMap = new Map(realViewCounts.map((r: any) => [r.id, r.real_views || 0]));
+
+      // Calculate total REAL views
+      const totalRealViews = Array.from(realViewsMap.values()).reduce((sum: number, views: any) => sum + views, 0);
+
       // Sites analytics
       const siteAnalytics = {
         total: sites.length,
@@ -103,15 +107,15 @@ export async function GET(request: NextRequest) {
         }).length
       };
 
-      // Articles analytics
+      // Articles analytics - using REAL views
       const articleAnalytics = {
         total: articles.length,
         published: articles.filter((article: { published: boolean; }) => article.published).length,
         draft: articles.filter((article: { published: boolean; }) => !article.published).length,
         featured: articles.filter((article: { featured: boolean; }) => article.featured).length,
         trending: articles.filter((article: { trending: boolean; }) => article.trending).length,
-        totalViews,
-        averageViews: articles.length > 0 ? Math.round(totalViews / articles.length) : 0,
+        totalViews: totalRealViews,  // Real views from article_views table
+        averageViews: articles.length > 0 ? Math.round(totalRealViews / articles.length) : 0,
         byCategory: articles.reduce((acc: { [x: string]: number; }, article: { category: string | number; }) => {
           const category = article.category || 'uncategorized';
           acc[category] = (acc[category] || 0) + 1;
@@ -123,56 +127,80 @@ export async function GET(request: NextRequest) {
         }).length
       };
 
-      // Performance metrics (simulated - would come from monitoring in production)
+      // Get real activity timeline from article_views
+      const viewsByDate = await queries.analyticsQueries.getViewsByDateRange(
+        '',  // All sites
+        startDate.toISOString().split('T')[0],
+        endDate.toISOString().split('T')[0]
+      );
+      const viewsByDateMap = new Map(viewsByDate.map((v: any) => [v.date, v.views]));
+
+      // Performance metrics (placeholder until we add real monitoring)
       const performanceMetrics: PerformanceMetrics = {
-        averageResponseTime: Math.random() * 500 + 100, // 100-600ms
-        totalRequests: Math.floor(Math.random() * 10000) + 5000,
-        errorRate: Math.random() * 2, // 0-2%
-        cacheHitRate: Math.random() * 20 + 80 // 80-100%
+        averageResponseTime: 150,
+        totalRequests: totalRealViews,  // Use real view count as proxy
+        errorRate: 0.5,
+        cacheHitRate: 85
       };
 
-      // Activity timeline (simulated daily data)
+      // Activity timeline with real view data
       const activityTimeline: ActivityData[] = [];
-      for (let i = parseInt(timeRange.replace('d', '')) - 1; i >= 0; i--) {
+      const days = timeRange === '24h' ? 1 : parseInt(timeRange.replace('d', ''));
+      for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
-        
+        const dateStr = date.toISOString().split('T')[0];
+
+        // Count sites/articles created on this date
+        const sitesCreatedOnDate = sites.filter((s: any) =>
+          s.created_at && s.created_at.split('T')[0] === dateStr
+        ).length;
+        const articlesCreatedOnDate = articles.filter((a: any) =>
+          a.created_at && a.created_at.split(' ')[0] === dateStr
+        ).length;
+
         activityTimeline.push({
-          date: date.toISOString().split('T')[0],
-          sites_created: Math.floor(Math.random() * 5),
-          articles_created: Math.floor(Math.random() * 20),
-          total_views: Math.floor(Math.random() * 1000) + 500,
-          active_users: Math.floor(Math.random() * 50) + 20
+          date: dateStr,
+          sites_created: sitesCreatedOnDate,
+          articles_created: articlesCreatedOnDate,
+          total_views: viewsByDateMap.get(dateStr) || 0,  // Real views!
+          active_users: 0  // Would need session tracking for this
         });
       }
 
-      // Top performing content
+      // Top performing content - using REAL views
       const topArticles = articles
-        .sort((a: { views: number; }, b: { views: number; }) => (b.views || 0) - (a.views || 0))
+        .map((article: any) => ({
+          ...article,
+          realViews: realViewsMap.get(article.id) || 0
+        }))
+        .sort((a: any, b: any) => b.realViews - a.realViews)
         .slice(0, 10)
-        .map((article: { id: any; title: any; views: any; site_id: any; published: any; category: any; }) => ({
+        .map((article: any) => ({
           id: article.id,
           title: article.title,
-          views: article.views || 0,
+          views: article.realViews,  // Real views!
+          displayViews: article.views,  // Fake display views
           site_id: article.site_id,
           published: article.published,
           category: article.category
         }));
 
-      const topSites = sites
-        .map((site: { id: any; name: any; domain: any; subdomain: any; status: any; }) => {
-          const siteArticles = articles.filter((article: { site_id: any; }) => article.site_id === site.id);
-          const siteViews = siteArticles.reduce((sum: number, article: { views: number; }) => sum + (article.views || 0), 0);
-          return {
-            id: site.id,
-            name: site.name,
-            domain: site.domain,
-            subdomain: site.subdomain,
-            views: siteViews,
-            articleCount: siteArticles.length,
-            status: site.status
-          };
-        })
+      // Top sites by real views
+      const siteViewsPromises = sites.map(async (site: any) => {
+        const siteViews = await queries.analyticsQueries.getSiteViews(site.id);
+        const siteArticles = articles.filter((a: any) => a.site_id === site.id);
+        return {
+          id: site.id,
+          name: site.name,
+          domain: site.domain,
+          subdomain: site.subdomain,
+          views: siteViews,  // Real views!
+          articleCount: siteArticles.length,
+          status: site.status
+        };
+      });
+      const topSites = (await Promise.all(siteViewsPromises))
         .sort((a, b) => b.views - a.views)
         .slice(0, 10);
 

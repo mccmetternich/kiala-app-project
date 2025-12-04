@@ -167,6 +167,7 @@ export default function EditArticle() {
     published_at: '',
     author_name: '',
     author_image: '',
+    views: 0,  // Display views shown on front-end
     display_views: 0,
     display_likes: 0
   });
@@ -213,6 +214,7 @@ export default function EditArticle() {
           published_at: data.article.published_at || '',
           author_name: data.article.author_name || '',
           author_image: data.article.author_image || '',
+          views: data.article.views || 0,
           display_views: data.article.display_views || 0,
           display_likes: data.article.display_likes || 0
         });
@@ -905,7 +907,7 @@ export default function EditArticle() {
                   Display Metrics
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                  Override the displayed views and likes shown on the article page
+                  Set the view count and likes displayed publicly on the article page
                 </p>
               </div>
               <div className="p-6">
@@ -913,18 +915,18 @@ export default function EditArticle() {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Display Views
-                      <span className="text-gray-500 font-normal ml-2">(shown publicly)</span>
+                      <span className="text-gray-500 font-normal ml-2">(shown on article page)</span>
                     </label>
                     <input
                       type="number"
-                      value={formData.display_views || ''}
-                      onChange={(e) => handleInputChange('display_views', parseInt(e.target.value) || 0)}
+                      value={formData.views || ''}
+                      onChange={(e) => handleInputChange('views', parseInt(e.target.value) || 0)}
                       className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="0"
+                      placeholder="e.g., 2340000"
                       min="0"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Actual views: {article.views.toLocaleString()}
+                      This number appears on the public article page (e.g., "2.34M Views 🔥")
                     </p>
                   </div>
                   <div>
@@ -942,9 +944,9 @@ export default function EditArticle() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
-                  <p className="text-yellow-300 text-sm">
-                    <strong>Note:</strong> If display values are 0, actual tracked values will be shown. Set a positive number to override.
+                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                  <p className="text-blue-300 text-sm">
+                    <strong>Note:</strong> These are the vanity metrics shown to readers. Real traffic is tracked separately in the admin analytics.
                   </p>
                 </div>
               </div>

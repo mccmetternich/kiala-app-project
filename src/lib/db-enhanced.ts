@@ -363,6 +363,19 @@ export async function initDb() {
     )
   `);
 
+  // Article views table (for real traffic tracking - separate from display views)
+  await execute(`
+    CREATE TABLE IF NOT EXISTS article_views (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      article_id TEXT NOT NULL,
+      site_id TEXT NOT NULL,
+      viewed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      ip_hash TEXT,
+      user_agent TEXT,
+      referrer TEXT
+    )
+  `);
+
   // Create indexes for performance
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_sites_domain ON sites (domain)',
@@ -386,6 +399,10 @@ export async function initDb() {
     'CREATE INDEX IF NOT EXISTS idx_widget_definitions_category ON widget_definitions(category)',
     'CREATE INDEX IF NOT EXISTS idx_blocks_page_site ON blocks(page_id, site_id)',
     'CREATE INDEX IF NOT EXISTS idx_blocks_position ON blocks(position)',
+    // Article views indexes for analytics
+    'CREATE INDEX IF NOT EXISTS idx_article_views_article ON article_views(article_id)',
+    'CREATE INDEX IF NOT EXISTS idx_article_views_site ON article_views(site_id)',
+    'CREATE INDEX IF NOT EXISTS idx_article_views_date ON article_views(viewed_at)',
   ];
 
   for (const idx of indexes) {
@@ -683,7 +700,7 @@ export class EnhancedQueries {
       const result = await execute(`
         UPDATE articles SET title = ?, excerpt = ?, content = ?, slug = ?, category = ?,
         image = ?, featured = ?, trending = ?, hero = ?, published = ?, read_time = ?,
-        widget_config = ?, tracking_config = ?,
+        views = ?, widget_config = ?, tracking_config = ?,
         author_name = ?, author_image = ?, display_views = ?, display_likes = ?,
         updated_at = CURRENT_TIMESTAMP,
         published_at = CASE
@@ -704,6 +721,7 @@ export class EnhancedQueries {
         data.hero ? 1 : 0,
         data.published ? 1 : 0,
         data.read_time || 5,
+        data.views !== undefined ? data.views : 0,
         widgetConfigStr,
         trackingConfigStr,
         data.author_name || null,
@@ -743,6 +761,99 @@ export class EnhancedQueries {
       const result = await execute('DELETE FROM articles WHERE site_id = ?', [siteId]);
       await cache.delPattern(`articles:site:${siteId}:*`);
       return result;
+    }
+  };
+
+  // Analytics queries for real traffic data
+  analyticsQueries = {
+    // Get real view count for an article
+    getArticleViews: async (articleId: string) => {
+      const result = await queryOne(
+        'SELECT COUNT(*) as count FROM article_views WHERE article_id = ?',
+        [articleId]
+      );
+      return result?.count || 0;
+    },
+
+    // Get real view count for a site (all articles)
+    getSiteViews: async (siteId: string) => {
+      const result = await queryOne(
+        'SELECT COUNT(*) as count FROM article_views WHERE site_id = ?',
+        [siteId]
+      );
+      return result?.count || 0;
+    },
+
+    // Get views by date range
+    getViewsByDateRange: async (siteId: string, startDate: string, endDate: string) => {
+      return queryAll(
+        `SELECT DATE(viewed_at) as date, COUNT(*) as views
+         FROM article_views
+         WHERE site_id = ? AND viewed_at >= ? AND viewed_at <= ?
+         GROUP BY DATE(viewed_at)
+         ORDER BY date ASC`,
+        [siteId, startDate, endDate]
+      );
+    },
+
+    // Get top articles by real views
+    getTopArticles: async (siteId: string, limit: number = 10) => {
+      return queryAll(
+        `SELECT av.article_id, a.title, a.slug, COUNT(*) as real_views
+         FROM article_views av
+         JOIN articles a ON a.id = av.article_id
+         WHERE av.site_id = ?
+         GROUP BY av.article_id
+         ORDER BY real_views DESC
+         LIMIT ?`,
+        [siteId, limit]
+      );
+    },
+
+    // Get views for today
+    getTodayViews: async (siteId: string) => {
+      const result = await queryOne(
+        `SELECT COUNT(*) as count FROM article_views
+         WHERE site_id = ? AND DATE(viewed_at) = DATE('now')`,
+        [siteId]
+      );
+      return result?.count || 0;
+    },
+
+    // Get views for last 7 days
+    getWeeklyViews: async (siteId: string) => {
+      const result = await queryOne(
+        `SELECT COUNT(*) as count FROM article_views
+         WHERE site_id = ? AND viewed_at >= DATE('now', '-7 days')`,
+        [siteId]
+      );
+      return result?.count || 0;
+    },
+
+    // Get unique visitors (by IP hash)
+    getUniqueVisitors: async (siteId: string, days: number = 7) => {
+      const result = await queryOne(
+        `SELECT COUNT(DISTINCT ip_hash) as count FROM article_views
+         WHERE site_id = ? AND viewed_at >= DATE('now', '-' || ? || ' days')`,
+        [siteId, days]
+      );
+      return result?.count || 0;
+    },
+
+    // Get article views with real count
+    getArticlesWithRealViews: async (siteId: string) => {
+      return queryAll(
+        `SELECT a.*, COALESCE(av.real_views, 0) as real_views
+         FROM articles a
+         LEFT JOIN (
+           SELECT article_id, COUNT(*) as real_views
+           FROM article_views
+           GROUP BY article_id
+         ) av ON av.article_id = a.id
+         WHERE a.site_id = ?
+         ORDER BY a.created_at DESC`,
+        [siteId]
+      );
     }
   };
 

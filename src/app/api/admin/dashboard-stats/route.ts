@@ -63,42 +63,41 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       // Get site-specific articles (automatically filtered by site_id)
       const allSiteArticles: any[] = await queries.articleQueries.getAllBySite(siteId);
       const publishedSiteArticles = allSiteArticles.filter((article: { published: boolean; }) => article.published);
-      
+
       // Get site-specific email signups (automatically filtered by site_id)
       const allSiteEmails: any[] = await queries.emailQueries.getAllBySite(siteId);
-      const recentSiteEmails = allSiteEmails.filter((email: { created_at: string | number | Date; }) => 
+      const recentSiteEmails = allSiteEmails.filter((email: { created_at: string | number | Date; }) =>
         new Date(email.created_at) >= new Date(startDate)
       );
-      const previousSiteEmails = allSiteEmails.filter((email: { created_at: string | number | Date; }) => 
-        new Date(email.created_at) >= new Date(previousStartDate) && 
+      const previousSiteEmails = allSiteEmails.filter((email: { created_at: string | number | Date; }) =>
+        new Date(email.created_at) >= new Date(previousStartDate) &&
         new Date(email.created_at) < new Date(startDate)
       );
 
-      // Calculate site-specific totals
-      const totalSiteViews = allSiteArticles.reduce((sum: number, article: { views: number; }) => sum + (article.views || 0), 0);
+      // Get REAL views from article_views table
+      const realSiteViews = await queries.analyticsQueries.getSiteViews(siteId);
+      const topArticlesWithRealViews = await queries.analyticsQueries.getTopArticles(siteId, 5);
+
       const totalSiteArticles = publishedSiteArticles.length;
       const totalSiteEmails = allSiteEmails.length;
 
       // Calculate growth rates
-      const emailGrowth = previousSiteEmails.length > 0 
+      const emailGrowth = previousSiteEmails.length > 0
         ? ((recentSiteEmails.length - previousSiteEmails.length) / recentSiteEmails.length * 100).toFixed(1)
         : recentSiteEmails.length > 0 ? '+100' : '0';
 
       const siteStats = {
         totalArticles: totalSiteArticles,
-        totalViews: totalSiteViews,
+        totalViews: realSiteViews,  // REAL views from article_views table
         totalEmails: totalSiteEmails,
         recentEmails: recentSiteEmails.length,
         emailGrowth: `${emailGrowth}%`,
-        conversionRate: totalSiteViews > 0 ? ((totalSiteEmails / totalSiteViews) * 100).toFixed(1) : '0',
-        topArticles: allSiteArticles
-          .sort((a: { views: number; }, b: { views: number; }) => (b.views || 0) - (a.views || 0))
-          .slice(0, 5)
-          .map((article: { title: string; views: number; slug: string; }) => ({
-            title: article.title,
-            views: article.views || 0,
-            slug: article.slug
-          })),
+        conversionRate: realSiteViews > 0 ? ((totalSiteEmails / realSiteViews) * 100).toFixed(1) : '0',
+        topArticles: topArticlesWithRealViews.map((article: any) => ({
+          title: article.title,
+          views: article.real_views || 0,  // REAL views
+          slug: article.slug
+        })),
         recentActivity: [
           ...recentSiteEmails.slice(0, 3).map((email: { email: string; created_at: string; }) => ({
             type: 'email_signup',
@@ -126,68 +125,80 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
       const allEmails: any[] = await (queries as any).emailQueries.getAll();
 
       // Filter by timeframe
-      const recentEmails = allEmails.filter((email: { created_at: string | number | Date; }) => 
+      const recentEmails = allEmails.filter((email: { created_at: string | number | Date; }) =>
         new Date(email.created_at) >= new Date(startDate)
       );
-      const previousEmails = allEmails.filter((email: { created_at: string | number | Date; }) => 
-        new Date(email.created_at) >= new Date(previousStartDate) && 
+      const previousEmails = allEmails.filter((email: { created_at: string | number | Date; }) =>
+        new Date(email.created_at) >= new Date(previousStartDate) &&
         new Date(email.created_at) < new Date(startDate)
       );
 
-      const recentArticles = allArticles.filter((article: { created_at: string | number | Date; }) => 
+      const recentArticles = allArticles.filter((article: { created_at: string | number | Date; }) =>
         new Date(article.created_at) >= new Date(startDate)
       );
 
-      // Calculate aggregated totals
-      const totalViews = allArticles.reduce((sum: number, article: { views: number; }) => sum + (article.views || 0), 0);
+      // Get REAL view counts from article_views table
+      const articlesWithRealViews = await queries.analyticsQueries.getArticlesWithRealViews('');
+      const realViewsMap = new Map(articlesWithRealViews.map((a: any) => [a.id, a.real_views || 0]));
+      const totalRealViews = Array.from(realViewsMap.values()).reduce((sum: number, v: any) => sum + v, 0);
+
       const publishedArticles = allArticles.filter((article: { published: boolean; }) => article.published);
-      
+
       // Calculate growth rates
-      const emailGrowth = previousEmails.length > 0 
+      const emailGrowth = previousEmails.length > 0
         ? ((recentEmails.length - previousEmails.length) / previousEmails.length * 100).toFixed(1)
         : recentEmails.length > 0 ? '+100' : '0';
 
       const articleGrowth = recentArticles.length > 0 ? `+${recentArticles.length}` : '0';
 
-      // Site performance breakdown
-      const sitePerformance = allSites.map((site: { name: string; id: string; }) => {
+      // Site performance breakdown with REAL views
+      const sitePerformancePromises = allSites.map(async (site: { name: string; id: string; }) => {
         const siteArticles = allArticles.filter((article: { site_id: string; }) => article.site_id === site.id);
         const siteEmails = allEmails.filter((email: { site_id: string; }) => email.site_id === site.id);
-        const siteViews = siteArticles.reduce((sum: number, article: { views: number; }) => sum + (article.views || 0), 0);
-        
+        const realSiteViews = await queries.analyticsQueries.getSiteViews(site.id);
+
         return {
           siteName: site.name,
           siteId: site.id,
           articlesCount: siteArticles.filter((article: { published: boolean; }) => article.published).length,
-          viewsCount: siteViews,
+          viewsCount: realSiteViews,  // REAL views
           emailsCount: siteEmails.length,
-          conversionRate: siteViews > 0 ? ((siteEmails.length / siteViews) * 100).toFixed(1) : '0'
+          conversionRate: realSiteViews > 0 ? ((siteEmails.length / realSiteViews) * 100).toFixed(1) : '0'
         };
-      }).sort((a: { viewsCount: number; }, b: { viewsCount: number; }) => b.viewsCount - a.viewsCount);
+      });
+      const sitePerformance = (await Promise.all(sitePerformancePromises))
+        .sort((a: { viewsCount: number; }, b: { viewsCount: number; }) => b.viewsCount - a.viewsCount);
+
+      // Top articles by REAL views
+      const topArticlesWithRealViews = allArticles
+        .map((article: any) => ({
+          ...article,
+          realViews: realViewsMap.get(article.id) || 0
+        }))
+        .sort((a: any, b: any) => b.realViews - a.realViews)
+        .slice(0, 10);
 
       const globalStats = {
         totalSites: allSites.length,
         totalArticles: publishedArticles.length,
-        totalViews,
+        totalViews: totalRealViews,  // REAL views
         totalEmails: allEmails.length,
         recentEmails: recentEmails.length,
         emailGrowth: `${emailGrowth}%`,
         articleGrowth: `${articleGrowth} this ${timeframe}`,
-        avgConversionRate: totalViews > 0 ? ((allEmails.length / totalViews) * 100).toFixed(1) : '0',
+        avgConversionRate: totalRealViews > 0 ? ((allEmails.length / totalRealViews) * 100).toFixed(1) : '0',
         sitePerformance,
-        topArticlesGlobal: allArticles
-          .sort((a: { views: number; }, b: { views: number; }) => (b.views || 0) - (a.views || 0))
-          .slice(0, 10)
-          .map((article: { title: string; views: number; slug: string; site_id: string; }) => {
-            const site = allSites.find((s: { id: string; }) => s.id === article.site_id);
-            return {
-              title: article.title,
-              views: article.views || 0,
-              slug: article.slug,
-              siteName: site?.name || 'Unknown',
-              siteId: article.site_id
-            };
-          }),
+        topArticlesGlobal: topArticlesWithRealViews.map((article: any) => {
+          const site = allSites.find((s: { id: string; }) => s.id === article.site_id);
+          return {
+            title: article.title,
+            views: article.realViews,  // REAL views
+            displayViews: article.views,  // Fake display views
+            slug: article.slug,
+            siteName: site?.name || 'Unknown',
+            siteId: article.site_id
+          };
+        }),
         recentActivity: [
           ...recentEmails.slice(0, 5).map((email: { site_id: string; created_at: string; email: string; }) => {
             const site = allSites.find((s: { id: string; }) => s.id === email.site_id);
