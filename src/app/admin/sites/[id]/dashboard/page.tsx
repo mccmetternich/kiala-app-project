@@ -1407,21 +1407,17 @@ export default function SiteDashboard() {
                         onDragOver={(e) => handleDragOver(e, page.id)}
                         onDrop={(e) => handleDrop(e, page.id)}
                         onDragEnd={() => setDraggedPage(null)}
-                        className={`flex items-center gap-4 p-4 hover:bg-gray-750 transition-colors ${
+                        onClick={() => router.push(`/admin/sites/${id}/pages/${page.id}/edit`)}
+                        className={`flex items-center gap-4 p-4 hover:bg-gray-750 transition-colors cursor-pointer ${
                           draggedPage === page.id ? 'opacity-50 bg-gray-750' : ''
                         }`}
                       >
-                        <div className="flex items-center gap-3">
-                          <GripVertical className="w-5 h-5 text-gray-500 cursor-grab hover:text-gray-300" />
-                          <span className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs text-gray-400 font-medium">
-                            {index + 1}
-                          </span>
-                        </div>
+                        <GripVertical className="w-5 h-5 text-gray-500 cursor-grab hover:text-gray-300" />
 
-                        {/* Editable name */}
+                        {/* Page name and slug */}
                         <div className="flex-1 min-w-0">
                           {editingPageId === page.id ? (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                               <input
                                 type="text"
                                 value={editingPageName}
@@ -1441,13 +1437,9 @@ export default function SiteDashboard() {
                               </button>
                             </div>
                           ) : (
-                            <div
-                              onClick={() => startEditingPageName(page)}
-                              className="cursor-pointer group"
-                            >
+                            <div>
                               <p className="font-medium text-white group-hover:text-primary-400 transition-colors">
                                 {page.navLabel || page.title}
-                                <Edit3 className="w-3 h-3 inline ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </p>
                               <p className="text-sm text-gray-500">{page.slug}</p>
                             </div>
@@ -1458,6 +1450,7 @@ export default function SiteDashboard() {
                         <select
                           value={page.navMode || 'global'}
                           onChange={(e) => updatePageNavMode(page.id, e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
                           className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer ${
                             page.navMode === 'direct-response'
                               ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
@@ -1473,20 +1466,20 @@ export default function SiteDashboard() {
 
                         {/* Hide button */}
                         <button
-                          onClick={() => togglePageVisibility(page.id)}
+                          onClick={(e) => { e.stopPropagation(); togglePageVisibility(page.id); }}
                           className="px-3 py-1.5 bg-gray-700 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg text-sm font-medium transition-colors"
                         >
                           Hide
                         </button>
 
-                        {/* Edit page button */}
-                        <Link
-                          href={`/admin/sites/${id}/pages/${page.id}/edit`}
+                        {/* Rename button */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); startEditingPageName(page); }}
                           className="p-2 bg-gray-700 hover:bg-primary-500/20 text-gray-400 hover:text-primary-400 rounded-lg transition-colors"
-                          title="Edit page content"
+                          title="Rename page"
                         >
                           <Edit3 className="w-4 h-4" />
-                        </Link>
+                        </button>
                       </div>
                     ))}
 
@@ -1517,7 +1510,11 @@ export default function SiteDashboard() {
                     {pageConfig.pages
                       .filter((p: any) => !p.showInNav)
                       .map((page: any) => (
-                        <div key={page.id} className="flex items-center justify-between p-4 hover:bg-gray-750">
+                        <div
+                          key={page.id}
+                          onClick={() => router.push(`/admin/sites/${id}/pages/${page.id}/edit`)}
+                          className="flex items-center justify-between p-4 hover:bg-gray-750 cursor-pointer"
+                        >
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center">
                               <FileText className="w-4 h-4 text-gray-500" />
@@ -1529,18 +1526,18 @@ export default function SiteDashboard() {
                           </div>
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => togglePageVisibility(page.id)}
+                              onClick={(e) => { e.stopPropagation(); togglePageVisibility(page.id); }}
                               className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors"
                             >
                               Show in Nav
                             </button>
-                            <Link
-                              href={`/admin/sites/${id}/pages/${page.id}/edit`}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); startEditingPageName(page); }}
                               className="p-2 bg-gray-700 hover:bg-primary-500/20 text-gray-400 hover:text-primary-400 rounded-lg transition-colors"
-                              title="Edit page content"
+                              title="Rename page"
                             >
                               <Edit3 className="w-4 h-4" />
-                            </Link>
+                            </button>
                           </div>
                         </div>
                       ))}

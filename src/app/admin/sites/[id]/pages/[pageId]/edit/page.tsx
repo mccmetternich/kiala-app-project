@@ -94,6 +94,15 @@ const categoryColors: Record<string, { bg: string; text: string }> = {
   'Conversion': { bg: 'bg-green-500/10', text: 'text-green-400' },
 };
 
+// Default pages fallback (same as dashboard)
+const DEFAULT_PAGES = [
+  { id: 'home', type: 'homepage', slug: '/', title: 'Home', navLabel: 'Home', enabled: true, showInNav: true, navOrder: 1, navMode: 'global' },
+  { id: 'articles', type: 'articles', slug: '/articles', title: 'Articles', navLabel: 'Articles', enabled: true, showInNav: true, navOrder: 2, navMode: 'global' },
+  { id: 'about', type: 'about', slug: '/about', title: 'About', navLabel: 'About', enabled: true, showInNav: true, navOrder: 3, navMode: 'global' },
+  { id: 'top-picks', type: 'top-picks', slug: '/top-picks', title: 'Top Picks', navLabel: 'Top Picks', enabled: false, showInNav: false, navOrder: 4, navMode: 'global' },
+  { id: 'success-stories', type: 'success-stories', slug: '/success-stories', title: 'Success Stories', navLabel: 'Success Stories', enabled: false, showInNav: false, navOrder: 5, navMode: 'global' },
+];
+
 export default function EditPage() {
   const router = useRouter();
   const params = useParams();
@@ -129,10 +138,15 @@ export default function EditPage() {
         }
 
         setSite(siteData);
-        setPageConfig(siteData.page_config || { pages: [] });
+
+        // Use saved page_config or fallback to defaults
+        const savedPages = siteData.page_config?.pages;
+        const pages = (savedPages && savedPages.length > 0) ? savedPages : DEFAULT_PAGES;
+        const config = { ...siteData.page_config, pages };
+        setPageConfig(config);
 
         // Find the current page
-        const page = siteData.page_config?.pages?.find((p: any) => p.id === pageId);
+        const page = pages.find((p: any) => p.id === pageId);
         if (page) {
           setCurrentPage(page);
           setWidgets(page.widgets || []);
