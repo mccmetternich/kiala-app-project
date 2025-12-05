@@ -135,7 +135,7 @@ export default function EmailCapture({
         <h3 className="text-xl font-bold text-gray-900 mb-2">{headline}</h3>
         <p className="text-gray-600 mb-6">{subheading}</p>
 
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3">
+        <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-3">
           {showNameField && (
             <input
               type="text"
@@ -146,7 +146,7 @@ export default function EmailCapture({
               disabled={status === 'loading'}
             />
           )}
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="email"
               value={email}
@@ -159,7 +159,7 @@ export default function EmailCapture({
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="btn-primary py-3 px-6 disabled:opacity-50"
+              className="btn-primary py-3 px-8 disabled:opacity-50 whitespace-nowrap"
             >
               {status === 'loading' ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

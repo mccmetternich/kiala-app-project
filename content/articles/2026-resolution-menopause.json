@@ -168,7 +168,8 @@
       "config": {
         "tip": "You're not undisciplined. You're not lazy. You've been building resolutions on a broken foundation. Fix the foundation, and everything else becomes possible.",
         "name": "Dr. Amy Heart",
-        "style": "highlighted"
+        "credentials": "MD, PhD - Women's Health",
+        "style": "featured"
       }
     },
     {
@@ -178,6 +179,25 @@
       "position": 13,
       "config": {
         "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me show you what's actually happening when a resolution fails. Not the story we tell ourselves—the real sequence.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">See if this sounds familiar.</p>"
+      }
+    },
+    {
+      "id": "failure-cascade-warning",
+      "type": "warning-box",
+      "enabled": true,
+      "position": 13.5,
+      "config": {
+        "headline": "Why Resolutions Fail After 45",
+        "content": "Each stage makes the next one inevitable:",
+        "warnings": [
+          { "text": "Gut-hormone axis is already compromised", "severity": "low" },
+          { "text": "Energy reserves deplete faster than they replenish", "severity": "low" },
+          { "text": "Cravings spike from unstable blood sugar", "severity": "medium" },
+          { "text": "Willpower exhausts—you're fighting biology", "severity": "medium" },
+          { "text": "The quiet quit happens—guilt and shame follow", "severity": "high" }
+        ],
+        "footer": "The cycle repeats every January. Until you address the foundation.",
+        "style": "cascade"
       }
     },
     {
@@ -436,7 +456,7 @@
       "position": 28,
       "config": {
         "headline": "Your One Resolution Checklist",
-        "subheading": "Everything you need to make 2026 the year that's different",
+        "subheading": "Check each commitment you're ready to make",
         "items": [
           { "id": "c1", "text": "Stop blaming yourself for past failures", "checked": false },
           { "id": "c2", "text": "Accept that menopause changed the rules", "checked": false },
@@ -444,6 +464,10 @@
           { "id": "c4", "text": "Give it 60 days before judging", "checked": false },
           { "id": "c5", "text": "Let other healthy habits follow naturally", "checked": false }
         ],
+        "alertThreshold": 3,
+        "alertHeadline": "You're ready for a different kind of year.",
+        "alertMessage": "With 3+ commitments checked, you're already approaching this differently than before. That's the first step.",
+        "showCta": true,
         "ctaText": "Start Your Foundation →",
         "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=2026_resolution",
         "style": "interactive"
@@ -483,70 +507,6 @@
         "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=2026_resolution",
         "shippingBadgeText": "Free Shipping",
         "guaranteeBadgeText": "45-Day Guarantee"
-      }
-    },
-    {
-      "id": "shop-now-bundles",
-      "type": "shop-now",
-      "enabled": true,
-      "position": 31,
-      "config": {
-        "name": "Super Greens",
-        "description": "Commit to your foundation",
-        "images": [
-          { "url": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541", "alt": "Kiala Super Greens" }
-        ],
-        "rating": 4.8,
-        "reviewCount": 12847,
-        "pricingOptions": [
-          {
-            "id": "single",
-            "label": "1-Month",
-            "quantity": 1,
-            "price": 54.99,
-            "originalPrice": 69.99,
-            "perUnit": 54.99,
-            "savings": "Save $15",
-            "gifts": [
-              { "name": "Free Shipping", "value": "$8.99" }
-            ]
-          },
-          {
-            "id": "double",
-            "label": "2-Month",
-            "quantity": 2,
-            "price": 99.99,
-            "originalPrice": 139.98,
-            "perUnit": 49.99,
-            "savings": "Save $40",
-            "popular": true,
-            "gifts": [
-              { "name": "Free Shipping", "value": "$8.99" },
-              { "name": "Free Recipe Guide", "value": "$19.99" }
-            ]
-          },
-          {
-            "id": "triple",
-            "label": "3-Month",
-            "quantity": 3,
-            "price": 134.99,
-            "originalPrice": 209.97,
-            "perUnit": 44.99,
-            "savings": "Save $75",
-            "badges": ["Best for Commitment"],
-            "gifts": [
-              { "name": "Free Shipping", "value": "$8.99" },
-              { "name": "Free Recipe Guide", "value": "$19.99" },
-              { "name": "Free Frother", "value": "$14.99" }
-            ]
-          }
-        ],
-        "benefits": [
-          "One habit that supports everything else",
-          "45-day money-back guarantee"
-        ],
-        "buttonText": "Start Your Foundation",
-        "buttonUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=2026_resolution"
       }
     },
     {

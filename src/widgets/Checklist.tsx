@@ -46,7 +46,6 @@ export default function Checklist({
   );
   const [isShaking, setIsShaking] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [justHitThreshold, setJustHitThreshold] = useState(false);
 
   const toggleItem = (id: string) => {
     if (style !== 'interactive' && style !== 'assessment') return;
@@ -69,7 +68,6 @@ export default function Checklist({
   useEffect(() => {
     if (isOverThreshold && !showAlert) {
       setShowAlert(true);
-      setJustHitThreshold(true);
       setIsShaking(true);
       // Stop shaking after animation
       const timer = setTimeout(() => setIsShaking(false), 600);
@@ -133,22 +131,20 @@ export default function Checklist({
           <div className="mt-5">
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-white/90 font-medium">
-                {checkedCount} of {alertThreshold} needed for alert
+                {checkedCount} of {totalItems} selected
               </span>
               <span className={`font-bold px-3 py-1 rounded-full ${
                 isOverThreshold
                   ? 'bg-red-100 text-red-700'
                   : 'bg-white/20 text-white'
               }`}>
-                {isOverThreshold ? '🚨 ALERT!' : `${checkedCount}/${alertThreshold}`}
+                {Math.round((checkedCount / totalItems) * 100)}%
               </span>
             </div>
             <div className="h-3 bg-white/30 rounded-full overflow-hidden shadow-inner">
               <div
-                className={`h-full transition-all duration-500 bg-gradient-to-r ${getProgressColor()} ${
-                  isOverThreshold ? 'animate-pulse' : ''
-                }`}
-                style={{ width: `${Math.min((checkedCount / alertThreshold) * 100, 100)}%` }}
+                className={`h-full transition-all duration-500 bg-gradient-to-r ${getProgressColor()}`}
+                style={{ width: `${(checkedCount / totalItems) * 100}%` }}
               />
             </div>
           </div>
@@ -213,12 +209,10 @@ export default function Checklist({
 
         {/* Alert Box - appears when threshold is hit */}
         {showAlert && (
-          <div className={`mt-6 rounded-2xl overflow-hidden shadow-xl border-2 border-rose-300 ${
-            justHitThreshold ? 'animate-pulse' : ''
-          }`}>
+          <div className="mt-6 rounded-2xl overflow-hidden shadow-xl border-2 border-rose-300">
             <div className="bg-gradient-to-r from-rose-500 via-red-500 to-orange-500 px-5 py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/20 rounded-full animate-bounce">
+                <div className="p-2 bg-white/20 rounded-full">
                   <AlertTriangle className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-white">{alertHeadline}</h4>
@@ -230,7 +224,7 @@ export default function Checklist({
               </p>
               <div className="flex items-center gap-2 text-rose-700 font-semibold">
                 <Sparkles className="w-5 h-5" />
-                <span>You've selected {checkedCount} signs — that's {checkedCount > alertThreshold ? 'even more than' : 'exactly'} the threshold!</span>
+                <span>You've selected {checkedCount} of {totalItems} signs.</span>
               </div>
 
               {/* CTA in alert */}

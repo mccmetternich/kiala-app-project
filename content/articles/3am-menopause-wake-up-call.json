@@ -48,7 +48,44 @@
       "enabled": true,
       "position": 4,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last statistic haunts me. Because it means every night you're not sleeping, you're not just tired—you're literally aging faster.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And the cruel irony? Most women blame themselves. They think they're not \"managing stress well enough\" or they \"just need better sleep hygiene.\" They buy blackout curtains and stop drinking coffee after noon and still wake up at 3AM staring at the ceiling.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">It's not your fault. There's something else going on—something most doctors never mention because they weren't trained to look for it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me show you what's actually happening inside your body.</p>"
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last statistic haunts me. Because it means every night you're not sleeping, you're not just tired—you're literally aging faster.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And the cruel irony? Most women blame themselves. They think they're not \"managing stress well enough\" or they \"just need better sleep hygiene.\" They buy blackout curtains and stop drinking coffee after noon and still wake up at 3AM staring at the ceiling.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">It's not your fault. There's something else going on—something most doctors never mention because they weren't trained to look for it.</p>"
+      }
+    },
+    {
+      "id": "sleep-myths",
+      "type": "myth-buster",
+      "enabled": true,
+      "position": 4.5,
+      "config": {
+        "headline": "What You've Been Told vs. What's Actually True",
+        "subheading": "The sleep advice that's failing menopausal women",
+        "myths": [
+          {
+            "myth": "You just need better 'sleep hygiene'",
+            "truth": "Sleep hygiene helps, but it can't fix a hormone-gut axis that's misfiring every night at 3AM",
+            "icon": "brain"
+          },
+          {
+            "myth": "Melatonin supplements will solve it",
+            "truth": "Your body makes melatonin in your gut—adding more won't fix a disrupted production system",
+            "icon": "zap"
+          },
+          {
+            "myth": "This is just part of aging—accept it",
+            "truth": "Sleep disruption during menopause is a symptom of a disrupted system, not an inevitable fate",
+            "icon": "heart"
+          }
+        ],
+        "style": "cards"
+      }
+    },
+    {
+      "id": "cascade-intro",
+      "type": "text-block",
+      "enabled": true,
+      "position": 4.7,
+      "config": {
+        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me show you what's actually happening inside your body.</p>"
       }
     },
     {
@@ -104,14 +141,14 @@
     },
     {
       "id": "dr-assessment",
-      "type": "doctor-assessment",
+      "type": "dr-tip",
       "enabled": true,
       "position": 7,
       "config": {
-        "quote": "When Patricia came back 6 weeks later looking five years younger, I assumed she'd found a good dermatologist. She told me it was a greens powder her daughter found on TikTok. I almost dismissed it entirely. Then I saw her sleep journal. Then I ran her labs. That's when I started paying attention.",
+        "tip": "When Patricia came back 6 weeks later looking five years younger, I assumed she'd found a good dermatologist. She told me it was a greens powder her daughter found on TikTok. I almost dismissed it entirely. Then I saw her sleep journal. Then I ran her labs. That's when I started paying attention.",
         "name": "Dr. Amy Heart",
         "credentials": "Board-Certified Integrative Medicine",
-        "image": ""
+        "style": "featured"
       }
     },
     {
@@ -424,71 +461,6 @@
         "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=3am_wakeup",
         "shippingBadgeText": "Free Shipping",
         "guaranteeBadgeText": "45-Day Guarantee"
-      }
-    },
-    {
-      "id": "shop-now-bundles",
-      "type": "shop-now",
-      "enabled": true,
-      "position": 26,
-      "config": {
-        "name": "Super Greens",
-        "description": "Choose your bundle size",
-        "images": [
-          { "url": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541", "alt": "Kiala Super Greens" }
-        ],
-        "rating": 4.8,
-        "reviewCount": 12847,
-        "pricingOptions": [
-          {
-            "id": "single",
-            "label": "1-Month Supply",
-            "quantity": 1,
-            "price": 54.99,
-            "originalPrice": 69.99,
-            "perUnit": 54.99,
-            "savings": "Save $15",
-            "gifts": [
-              { "name": "Free Shipping", "value": "$8.99" }
-            ]
-          },
-          {
-            "id": "double",
-            "label": "2-Month Supply",
-            "quantity": 2,
-            "price": 99.99,
-            "originalPrice": 139.98,
-            "perUnit": 49.99,
-            "savings": "Save $40",
-            "popular": true,
-            "gifts": [
-              { "name": "Free Shipping", "value": "$8.99" },
-              { "name": "Free Recipe Guide", "value": "$19.99" }
-            ]
-          },
-          {
-            "id": "triple",
-            "label": "3-Month Supply",
-            "quantity": 3,
-            "price": 134.99,
-            "originalPrice": 209.97,
-            "perUnit": 44.99,
-            "savings": "Save $75",
-            "gifts": [
-              { "name": "Free Shipping", "value": "$8.99" },
-              { "name": "Free Recipe Guide", "value": "$19.99" },
-              { "name": "Free Frother", "value": "$14.99" }
-            ]
-          }
-        ],
-        "benefits": [
-          "Clinically-studied Spectra® blend",
-          "45-day money-back guarantee",
-          "Free shipping on all orders",
-          "NSF certified quality"
-        ],
-        "buttonText": "Add to Cart",
-        "buttonUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=3am_wakeup"
       }
     },
     {
