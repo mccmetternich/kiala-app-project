@@ -622,10 +622,24 @@ export default function EditArticle() {
                     <p className="text-sm text-gray-400 mt-1">Min Read</p>
                   </div>
                   <div className="bg-gray-700/50 rounded-xl p-4 text-center">
-                    <p className={`text-3xl font-bold ${formData.published ? 'text-green-400' : 'text-gray-400'}`}>
-                      {formData.published ? 'Live' : 'Draft'}
-                    </p>
-                    <p className="text-sm text-gray-400 mt-1">Status</p>
+                    <div className="flex flex-col items-center gap-2">
+                      <button
+                        onClick={() => handleInputChange('published', !formData.published)}
+                        className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                          formData.published ? 'bg-green-500' : 'bg-gray-600'
+                        }`}
+                        title={formData.published ? 'Click to unpublish' : 'Click to publish'}
+                      >
+                        <span
+                          className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-md ${
+                            formData.published ? 'translate-x-8' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                      <p className={`text-sm font-medium ${formData.published ? 'text-green-400' : 'text-gray-400'}`}>
+                        {formData.published ? 'Live' : 'Draft'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -14,7 +14,8 @@ import {
   ChevronDown,
   Zap,
   Edit3,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -59,6 +60,30 @@ export default function ArticlesAdmin() {
   const [activeTab, setActiveTab] = useState<ArticlesTab>('boosted');
   const [loading, setLoading] = useState(true);
   const [duplicating, setDuplicating] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  const togglePublished = async (e: React.MouseEvent, articleId: string, currentPublished: boolean) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setTogglingId(articleId);
+    try {
+      const response = await fetch(`/api/articles/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !currentPublished })
+      });
+
+      if (response.ok) {
+        setAllArticles(prev => prev.map(a =>
+          a.id === articleId ? { ...a, published: !currentPublished } : a
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   useEffect(() => {
     fetchSites();
@@ -373,11 +398,19 @@ export default function ArticlesAdmin() {
                     className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
                   >
                     <div className="flex items-center gap-4 min-w-0 flex-1">
-                      {/* Status Icon */}
+                      {/* Status Icon - Thunderbolt for boosted, FileText for normal */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                        article.boosted
+                          ? 'bg-yellow-500/20 ring-2 ring-yellow-500/30'
+                          : article.published
+                            ? 'bg-green-500/10'
+                            : 'bg-gray-700'
                       }`}>
-                        <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                        {article.boosted ? (
+                          <Zap className="w-5 h-5 text-yellow-400" />
+                        ) : (
+                          <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                        )}
                       </div>
 
                       {/* Content */}
@@ -387,14 +420,9 @@ export default function ArticlesAdmin() {
                             {article.title}
                           </p>
                           {article.boosted && (
-                            <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex-shrink-0 flex items-center gap-1">
+                            <span className="px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 rounded-full text-xs font-bold flex-shrink-0 flex items-center gap-1 border border-yellow-500/30 shadow-lg shadow-yellow-500/10">
                               <Zap className="w-3 h-3" />
-                              Boosted
-                            </span>
-                          )}
-                          {!article.published && (
-                            <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
-                              Draft
+                              BOOSTED
                             </span>
                           )}
                           {article.hero && (
@@ -420,7 +448,36 @@ export default function ArticlesAdmin() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-1 flex-shrink-0 ml-4">
+                    <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                      {/* Publish Toggle */}
+                      <div className="flex items-center gap-2 mr-2">
+                        <span className={`text-xs font-medium ${article.published ? 'text-green-400' : 'text-gray-500'}`}>
+                          {article.published ? 'Live' : 'Draft'}
+                        </span>
+                        <button
+                          onClick={(e) => togglePublished(e, article.id, article.published)}
+                          disabled={togglingId === article.id}
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-gray-800 ${
+                            article.published ? 'bg-green-500' : 'bg-gray-600'
+                          } ${togglingId === article.id ? 'opacity-50 cursor-wait' : ''}`}
+                          title={article.published ? 'Click to unpublish' : 'Click to publish'}
+                        >
+                          {togglingId === article.id ? (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                              <Loader2 className="w-3 h-3 text-white animate-spin" />
+                            </span>
+                          ) : (
+                            <span
+                              className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                                article.published ? 'translate-x-5' : 'translate-x-1'
+                              }`}
+                            />
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="w-px h-5 bg-gray-700" />
+
                       {article.published && (
                         <span
                           onClick={(e) => {
@@ -460,7 +517,7 @@ export default function ArticlesAdmin() {
                       >
                         <Trash2 className="w-4 h-4" />
                       </span>
-                      <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors ml-2" />
+                      <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors ml-1" />
                     </div>
                   </Link>
                 ))}
