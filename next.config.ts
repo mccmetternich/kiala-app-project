@@ -2,6 +2,21 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  async redirects() {
+    return [
+      {
+        source: '/admin/:path*',
+        has: [
+          {
+            type: 'host',
+            value: '(?!kiala-app-project.vercel.app).*',
+          },
+        ],
+        destination: 'https://kiala-app-project.vercel.app/admin/:path*',
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
