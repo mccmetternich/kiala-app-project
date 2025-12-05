@@ -624,6 +624,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             ingredients={widget.config.ingredients}
             columns={widget.config.columns}
             style={widget.config.style as 'default' | 'simple'}
+            additionalCount={widget.config.additionalCount}
+            additionalText={widget.config.additionalText}
+            showAdditional={widget.config.showAdditional}
           />
         </div>
       );

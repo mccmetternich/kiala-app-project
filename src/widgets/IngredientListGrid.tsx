@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Plus } from 'lucide-react';
 
 interface Ingredient {
   name: string;
@@ -14,6 +14,10 @@ interface IngredientListGridProps {
   ingredients?: Ingredient[];
   columns?: 2 | 3 | 4;
   style?: 'default' | 'simple';  // simple = no banner, just cards
+  // New: Additional ingredients callout
+  additionalCount?: number;
+  additionalText?: string;
+  showAdditional?: boolean;
 }
 
 const defaultIngredients: Ingredient[] = [
@@ -54,7 +58,10 @@ export default function IngredientListGrid({
   bannerText = '✨ 6 Clinically-Backed Superfoods in Every Scoop',
   ingredients = defaultIngredients,
   columns = 2,
-  style = 'default'
+  style = 'default',
+  additionalCount = 20,
+  additionalText = 'hormone-supporting, gut-healing superfoods in every scoop',
+  showAdditional = true
 }: IngredientListGridProps) {
   const gridCols = {
     2: 'md:grid-cols-2',
@@ -95,6 +102,20 @@ export default function IngredientListGrid({
             </div>
           ))}
         </div>
+
+        {/* Additional Ingredients Callout - Simple Style */}
+        {showAdditional && additionalCount > 0 && (
+          <div className="mt-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+            <div className="flex items-center justify-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-full">
+                <Plus className="w-5 h-5 text-purple-600" />
+              </div>
+              <p className="text-purple-800 font-medium">
+                <span className="text-2xl font-bold text-purple-700">+{additionalCount}</span> {additionalText}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -157,6 +178,24 @@ export default function IngredientListGrid({
             </div>
           ))}
         </div>
+
+        {/* Additional Ingredients Callout */}
+        {showAdditional && additionalCount > 0 && (
+          <div className="mt-8 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-2xl p-6 border border-purple-200">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+              <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg">
+                <Plus className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <p className="text-lg md:text-xl text-purple-900">
+                  <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">+{additionalCount}</span>
+                  <span className="font-semibold ml-2">more</span>
+                </p>
+                <p className="text-purple-700 font-medium">{additionalText}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1971,6 +1971,48 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </div>
             ))}
           </div>
+
+          {/* Additional Ingredients Callout */}
+          <div className="border-t pt-4 mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Additional Ingredients Callout</label>
+
+            <div className="mb-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={widget.config.showAdditional !== false}
+                  onChange={(e) => onUpdate({ showAdditional: e.target.checked })}
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <span className="text-sm text-gray-700">Show "+X more" callout</span>
+              </label>
+            </div>
+
+            {widget.config.showAdditional !== false && (
+              <div className="space-y-3 bg-purple-50 p-3 rounded-lg">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Additional Count</label>
+                  <input
+                    type="number"
+                    value={widget.config.additionalCount || 20}
+                    onChange={(e) => onUpdate({ additionalCount: parseInt(e.target.value) || 0 })}
+                    placeholder="20"
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Additional Text</label>
+                  <input
+                    type="text"
+                    value={widget.config.additionalText || 'hormone-supporting, gut-healing superfoods in every scoop'}
+                    onChange={(e) => onUpdate({ additionalText: e.target.value })}
+                    placeholder="hormone-supporting, gut-healing superfoods in every scoop"
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -4421,7 +4463,10 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
         { name: 'Chlorella', description: 'Powerful detoxifier that helps remove toxins and supports cellular health', image: '' },
         { name: 'Green Tea Extract', description: 'Metabolism booster with antioxidants that support healthy weight management', image: '' },
         { name: 'Turmeric', description: 'Anti-inflammatory powerhouse that supports joint health and digestion', image: '' }
-      ]
+      ],
+      showAdditional: true,
+      additionalCount: 20,
+      additionalText: 'hormone-supporting, gut-healing superfoods in every scoop'
     },
     'opening-hook': {
       headline: 'The Shocking Truth',
