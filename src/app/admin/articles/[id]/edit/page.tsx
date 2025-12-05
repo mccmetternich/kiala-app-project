@@ -437,7 +437,7 @@ export default function EditArticle() {
             <div className="flex items-center gap-2">
               {selectedSite && (
                 <a
-                  href={`/site/${selectedSite.subdomain}/articles/${formData.slug}`}
+                  href={`/preview/${selectedSite.subdomain}/articles/${formData.slug}?token=${articleId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-all text-sm"
