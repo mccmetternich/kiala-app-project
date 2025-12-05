@@ -206,6 +206,33 @@ export default function SiteDashboard() {
     }
   };
 
+  // Toggle article published status
+  const togglePublished = async (articleId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/articles/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !currentStatus })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setArticles(prev => prev.map(a =>
+          a.id === articleId ? { ...a, published: !currentStatus } : a
+        ));
+        // Update metrics
+        setMetrics((prev: { totalArticles: number; publishedArticles: number; totalViews: number; totalEmails: number }) => ({
+          ...prev,
+          publishedArticles: !currentStatus
+            ? prev.publishedArticles + 1
+            : prev.publishedArticles - 1
+        }));
+      }
+    } catch (error) {
+      console.error('Error toggling article status:', error);
+    }
+  };
+
   // Settings handlers
   const handleSave = async () => {
     setIsSaving(true);
@@ -992,12 +1019,41 @@ export default function SiteDashboard() {
                     }
 
                     return displayArticles.map((article) => (
-                      <Link
+                      <div
                         key={article.id}
-                        href={`/admin/articles/${article.id}/edit`}
-                        className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
+                        className="flex items-center p-4 hover:bg-gray-750 transition-all group"
                       >
-                        <div className="flex items-center gap-4 min-w-0 flex-1">
+                        {/* Publish Toggle */}
+                        <div className="flex flex-col items-center gap-1 flex-shrink-0 mr-4">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              togglePublished(article.id, article.published);
+                            }}
+                            className={`relative w-10 h-5 rounded-full transition-all duration-200 ${
+                              article.published
+                                ? 'bg-green-500'
+                                : 'bg-gray-600'
+                            }`}
+                            title={article.published ? 'Click to unpublish' : 'Click to publish'}
+                          >
+                            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-200 ${
+                              article.published ? 'left-5' : 'left-0.5'
+                            }`} />
+                          </button>
+                          <span className={`text-[10px] font-medium uppercase tracking-wider ${
+                            article.published ? 'text-green-400' : 'text-gray-500'
+                          }`}>
+                            {article.published ? 'Live' : 'Draft'}
+                          </span>
+                        </div>
+
+                        {/* Article Content - Clickable */}
+                        <Link
+                          href={`/admin/articles/${article.id}/edit`}
+                          className="flex items-center gap-4 min-w-0 flex-1"
+                        >
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
                             article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
                           }`}>
@@ -1008,27 +1064,23 @@ export default function SiteDashboard() {
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
-                                {article.title}
-                              </p>
-                              {article.boosted && (
-                                <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium flex-shrink-0 flex items-center gap-1">
-                                  <Zap className="w-3 h-3" />
-                                  Boosted
-                                </span>
-                              )}
-                              {!article.published && (
-                                <span className="px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full text-xs font-medium flex-shrink-0">
-                                  Draft
-                                </span>
-                              )}
-                            </div>
+                            {/* Boosted badge ABOVE title */}
+                            {article.boosted && (
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <Zap className="w-3 h-3 text-yellow-400" />
+                                <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                              </div>
+                            )}
+                            <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                              {article.title}
+                            </p>
                             <p className="text-gray-500 text-sm">
                               {article.realViews || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
                             </p>
                           </div>
-                        </div>
+                        </Link>
+
+                        {/* Actions */}
                         <div className="flex items-center gap-2 flex-shrink-0 ml-4">
                           <span
                             onClick={(e) => {
@@ -1040,9 +1092,11 @@ export default function SiteDashboard() {
                           >
                             <ExternalLink className="w-4 h-4" />
                           </span>
-                          <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
+                          <Link href={`/admin/articles/${article.id}/edit`}>
+                            <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
+                          </Link>
                         </div>
-                      </Link>
+                      </div>
                     ));
                   })()}
                 </div>
