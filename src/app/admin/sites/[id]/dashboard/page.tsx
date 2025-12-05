@@ -169,7 +169,7 @@ export default function SiteDashboard() {
         totalArticles: articlesData?.length || 0,
         publishedArticles: articlesData?.filter((a: any) => a.published)?.length || 0,
         totalViews: articlesData?.reduce((sum: number, a: any) => sum + (a.realViews || 0), 0) || 0,
-        totalEmails: subscribersResponse?.stats?.total || 0
+        totalEmails: subscribersResponse?.stats?.active || 0  // Only count active emails
       });
     } catch (error) {
       console.error('Error loading data:', error);
@@ -2034,7 +2034,7 @@ export default function SiteDashboard() {
                     }`}
                   >
                     <Users className="w-4 h-4" />
-                    Active Subscribers
+                    Active Emails
                     <span className={`px-2 py-0.5 rounded-full text-xs ${
                       emailsSubTab === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-700 text-gray-400'
                     }`}>
@@ -2101,7 +2101,7 @@ export default function SiteDashboard() {
                   <label className="block text-sm font-medium text-gray-300 mb-3">Source Type</label>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { id: 'all' as const, label: 'All Signups', icon: Users },
+                      { id: 'all' as const, label: 'All Sources', icon: Users },
                       { id: 'pdf_downloads' as const, label: 'PDF Downloads', icon: Download },
                       { id: 'other' as const, label: 'Other', icon: Mail },
                     ].map((option) => (
