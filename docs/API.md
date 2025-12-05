@@ -28,6 +28,11 @@ All endpoints return JSON with consistent structure:
 #### GET /api/sites
 Get all sites.
 
+**Query Params:**
+- `subdomain` (optional): Lookup by subdomain
+- `domain` (optional): Lookup by custom domain
+- `publishedOnly` (optional): If `true`, only returns sites with `status: 'published'`. Used by public pages to hide draft sites.
+
 **Response:**
 ```json
 {
@@ -46,11 +51,37 @@ Get all sites.
 }
 ```
 
+#### GET /api/sites/bulk
+Get all sites with metrics in a single optimized request.
+
+**Query Params:**
+- `includeMetrics` (optional): If `true`, includes article counts, view counts, and email counts per site
+
+**Response:**
+```json
+{
+  "sites": [
+    {
+      "id": "string",
+      "name": "string",
+      "subdomain": "string",
+      "metrics": {
+        "totalArticles": number,
+        "publishedArticles": number,
+        "totalViews": number,
+        "activeEmails": number
+      }
+    }
+  ]
+}
+```
+
 #### GET /api/sites/[id]
 Get a single site by ID.
 
 **Query Params:**
 - `subdomain` (optional): Lookup by subdomain instead of ID
+- `publishedOnly` (optional): If `true`, returns `null` for unpublished sites
 
 **Response:**
 ```json
@@ -59,6 +90,7 @@ Get a single site by ID.
     "id": "string",
     "name": "string",
     "subdomain": "string",
+    "status": "draft | published",
     "settings": { ... },
     "brand_profile": { ... }
   }
@@ -84,6 +116,30 @@ Update a site.
 
 #### DELETE /api/sites/[id]
 Delete a site and all associated data.
+
+---
+
+### Public Article (Optimized)
+
+#### GET /api/public/article
+Fetches site and article data in a single request (eliminates waterfall loading).
+
+**Query Params:**
+- `subdomain` (required): Site subdomain
+- `slug` (required): Article slug
+
+**Response:**
+```json
+{
+  "site": { ... } | null,  // null if site not found or unpublished
+  "article": { ... } | null  // null if article not found or unpublished
+}
+```
+
+**Notes:**
+- Returns `site: null` if site doesn't exist or `status !== 'published'`
+- Returns `article: null` if article doesn't exist or `published !== true`
+- Used by article pages to reduce API calls from 2 to 1
 
 ---
 
@@ -362,8 +418,22 @@ Currently no rate limiting is implemented. Consider adding for production.
 ## Caching
 
 The API uses in-memory caching with the following TTLs:
-- Site data: 5 minutes
-- Article content: 2 minutes
-- Page blocks: 5 minutes
+- Site data: 1 minute
+- Article content: 30 seconds
+- Dashboard stats: 1 minute
+- Page blocks: 1 minute
+- Email stats: 5 minutes
+- Brand profile: 5 minutes
+- Widget config: 30 seconds
 
-Cache is automatically invalidated on writes.
+### Cache Invalidation
+
+Cache is automatically invalidated using targeted methods:
+
+- `invalidateArticleUpdate(siteId, articleId, slug)` - When an article is created/updated/deleted
+- `invalidateSiteSettings(siteId, subdomain)` - When site settings change
+- `invalidateEmailSignup(siteId)` - When a new email signup occurs
+- `invalidateAnalytics()` - When dashboard stats need refresh
+- `invalidateSite(siteId)` - Full site cache wipe (use sparingly)
+
+This targeted approach prevents cache storms and improves performance.

@@ -90,13 +90,52 @@ This supports:
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## Site Publish Status
+
+Sites have a `status` field that controls public visibility:
+- `published` - Site is publicly accessible
+- `draft` - Site returns 404 on all public pages
+
+### How It Works
+
+All public pages pass `publishedOnly=true` to the API:
+
+```typescript
+// In public page components
+const site = await clientAPI.getSiteBySubdomain(subdomain, true);
+
+// API checks status
+if (publishedOnly && site.status !== 'published') {
+  return NextResponse.json({ site: null });
+}
+```
+
+### Two-Level Protection
+
+1. **Site Level**: Draft sites return 404 for ALL pages/articles
+2. **Page/Article Level**: Individual items have their own `published` flag
+
+A page is only visible if:
+- Site `status === 'published'` AND
+- Page/Article `published === true`
+
+### Tenant Isolation
+
+Setting Site A to draft:
+- ✅ Site A returns 404 on all public pages
+- ✅ Site B remains completely unaffected
+- ✅ Each site is independently controlled
+
+---
+
 ## Use Cases
 
 ### Public Site Visitor
 1. Visits `dr-amy.kiala-app-project.vercel.app`
-2. Site is resolved by subdomain (no tenant context needed)
-3. Articles are fetched by `site_id`
-4. Email signup goes to site's subscriber list
+2. API checks if site status is `published`
+3. If published, site is resolved and articles fetched
+4. If draft, 404 page is shown
+5. Email signup goes to site's subscriber list
 
 ### Admin User
 1. Logs in with email/password
