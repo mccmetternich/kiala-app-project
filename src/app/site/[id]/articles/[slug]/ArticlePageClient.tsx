@@ -91,8 +91,8 @@ export default function ArticlePageClient() {
           if (site) {
             setSiteData(site);
 
-            // Fetch specific article using actual site ID
-            const articleResponse = await fetch(`/api/articles?siteId=${site.id}&slug=${slug}`);
+            // Fetch specific article using actual site ID (published=true for public pages)
+            const articleResponse = await fetch(`/api/articles?siteId=${site.id}&slug=${slug}&published=true`);
             if (articleResponse.ok) {
               const articleData = await articleResponse.json();
               // API returns { article } for single article fetch by slug

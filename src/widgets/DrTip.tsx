@@ -77,7 +77,7 @@ export default function DrTip({
           </div>
 
           {/* Tip content */}
-          <p className="text-xl md:text-2xl text-gray-800 leading-relaxed font-medium mb-6">
+          <p className="text-base md:text-lg lg:text-xl text-gray-800 leading-relaxed font-medium mb-6">
             "{tip}"
           </p>
 
@@ -160,7 +160,7 @@ export default function DrTip({
                   <Quote className="w-10 h-10" />
                 </div>
 
-                <p className="text-xl md:text-2xl text-gray-800 leading-relaxed font-medium mb-6">
+                <p className="text-base md:text-lg lg:text-xl text-gray-800 leading-relaxed font-medium mb-6">
                   "{tip}"
                 </p>
 

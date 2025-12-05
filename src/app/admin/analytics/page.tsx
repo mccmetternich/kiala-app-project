@@ -529,10 +529,14 @@ export default function GlobalAnalyticsPage() {
                       className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
                     >
                       <div className="flex items-center gap-4 min-w-0">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
-                          article.boosted ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                          article.boosted ? 'bg-yellow-500/20' : 'bg-green-500/10'
                         }`}>
-                          {article.boosted ? <Zap className="w-4 h-4" /> : index + 1}
+                          {article.boosted ? (
+                            <Zap className="w-4 h-4 text-yellow-400" />
+                          ) : (
+                            <FileText className="w-4 h-4 text-green-400" />
+                          )}
                         </div>
                         <div className="min-w-0">
                           {article.boosted && (

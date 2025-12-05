@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertTriangle, AlertCircle, XCircle, Info, ChevronDown, ArrowRight, Sparkles } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
@@ -35,6 +35,14 @@ export default function WarningBox({
   const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const getSeverityStyles = (severity: string = 'medium', isHovered: boolean) => {
     const baseStyles = {
@@ -90,13 +98,13 @@ export default function WarningBox({
 
         {/* Pyramid cascade of warnings */}
         <div className={`bg-white shadow-xl border-2 border-t-0 border-rose-200 rounded-b-2xl overflow-hidden transition-all duration-500 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="p-6">
-            {/* Pyramid layout - each row gets progressively wider */}
+          <div className="p-4 md:p-6">
+            {/* Pyramid layout - full width on mobile, progressive on desktop */}
             <div className="space-y-3">
               {warnings.map((warning, idx) => {
                 const isHovered = hoveredIndex === idx;
                 const styles = getSeverityStyles(warning.severity, isHovered);
-                // Calculate progressive width for pyramid effect
+                // Calculate progressive width for pyramid effect (desktop only)
                 const minWidth = 70; // Start at 70%
                 const widthStep = (100 - minWidth) / Math.max(warnings.length - 1, 1);
                 const width = minWidth + (widthStep * idx);
@@ -111,40 +119,41 @@ export default function WarningBox({
                       onMouseEnter={() => setHoveredIndex(idx)}
                       onMouseLeave={() => setHoveredIndex(null)}
                       className={`
-                        relative p-4 md:p-5 rounded-xl border-2
+                        relative p-4 rounded-xl border-2
                         ${styles.bg} ${styles.border}
                         transition-all duration-300 ease-out cursor-pointer
                         ${isHovered ? 'shadow-xl scale-[1.02] z-10' : 'shadow-md'}
                         ${styles.pulse}
+                        w-full md:w-auto
                       `}
-                      style={{ width: `${width}%` }}
+                      style={{ width: isMobile ? '100%' : `${width}%` }}
                     >
-                      {/* Connecting line to next item */}
+                      {/* Connecting line to next item - desktop only */}
                       {idx < warnings.length - 1 && (
-                        <div className="absolute left-1/2 -bottom-4 transform -translate-x-1/2 h-4 w-0.5 bg-gradient-to-b from-gray-300 to-transparent opacity-50" />
+                        <div className="absolute left-1/2 -bottom-4 transform -translate-x-1/2 h-4 w-0.5 bg-gradient-to-b from-gray-300 to-transparent opacity-50 hidden md:block" />
                       )}
 
-                      <div className="flex items-start gap-4">
-                        <div className={`flex-shrink-0 p-2 rounded-full ${isHovered ? 'bg-white shadow-md' : 'bg-white/70'} transition-all duration-300`}>
+                      <div className="flex items-start gap-3 md:gap-4">
+                        <div className={`flex-shrink-0 p-1.5 md:p-2 rounded-full ${isHovered ? 'bg-white shadow-md' : 'bg-white/70'} transition-all duration-300`}>
                           {styles.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-semibold text-base md:text-lg leading-relaxed ${styles.text} transition-all duration-300`}>
+                          <p className={`font-semibold text-sm md:text-base lg:text-lg leading-relaxed ${styles.text} transition-all duration-300`}>
                             {warning.text}
                           </p>
                           {isHovered && warning.severity === 'high' && (
-                            <p className="text-sm text-red-700 mt-2 font-medium animate-fade-in">
+                            <p className="text-xs md:text-sm text-red-700 mt-2 font-medium animate-fade-in">
                               ⚠️ Critical warning - requires immediate attention
                             </p>
                           )}
                         </div>
-                        {/* Level indicator */}
-                        <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                        {/* Level indicator - smaller on mobile */}
+                        <div className={`flex-shrink-0 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider ${
                           warning.severity === 'high' ? 'bg-red-200 text-red-800' :
                           warning.severity === 'low' ? 'bg-amber-200 text-amber-800' :
                           'bg-orange-200 text-orange-800'
                         }`}>
-                          Level {idx + 1}
+                          {idx + 1}
                         </div>
                       </div>
                     </div>

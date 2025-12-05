@@ -33,6 +33,12 @@ export async function GET(request: NextRequest) {
     // If slug is provided, fetch single article by slug
     if (slug) {
       const article = await queries.articleQueries.getBySlug(siteId, slug);
+
+      // For public-facing requests (published=true), only return if article is published
+      if (published === 'true' && article && !article.published) {
+        return NextResponse.json({ article: null });
+      }
+
       return NextResponse.json({ article });
     }
 

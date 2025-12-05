@@ -114,7 +114,7 @@
       "enabled": true,
       "position": 9,
       "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Two Ways to Approach 2026</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">This is the choice I put in front of every patient who walks into my office in January.</p>"
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Two Paths Forward</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Every woman who sits in my office faces the same fork in the road. Here's what each path looks like:</p>"
       }
     },
     {
@@ -123,30 +123,30 @@
       "enabled": true,
       "position": 10,
       "config": {
-        "headline": "Two Approaches to 2026",
+        "headline": "Your Two Choices for 2026",
         "leftColumn": {
-          "header": "The Willpower Approach",
-          "subheader": "What you've been trying",
+          "header": "Try Harder (Again)",
+          "subheader": "The path you've walked before",
           "items": [
-            { "text": "Set ambitious goals", "icon": "x-circle", "negative": true },
-            { "text": "Use discipline to push through", "icon": "x-circle", "negative": true },
-            { "text": "Fight cravings with mental toughness", "icon": "x-circle", "negative": true },
-            { "text": "Exercise despite exhaustion", "icon": "x-circle", "negative": true },
-            { "text": "Blame yourself when it fails", "icon": "x-circle", "negative": true }
+            { "text": "Set ambitious goals again this January", "icon": "x-circle", "negative": true },
+            { "text": "Push through the exhaustion with willpower", "icon": "x-circle", "negative": true },
+            { "text": "Fight your cravings every single day", "icon": "x-circle", "negative": true },
+            { "text": "Force yourself to exercise even when depleted", "icon": "x-circle", "negative": true },
+            { "text": "Blame yourself again when it doesn't stick", "icon": "x-circle", "negative": true }
           ],
-          "result": "92% failure rate by March"
+          "result": "Same cycle, same result by March"
         },
         "rightColumn": {
-          "header": "The Foundation Approach",
-          "subheader": "What actually works",
+          "header": "Fix the Foundation First",
+          "subheader": "A different starting point",
           "items": [
-            { "text": "Fix the gut-hormone axis first", "icon": "check-circle", "positive": true },
-            { "text": "Let energy return naturally", "icon": "check-circle", "positive": true },
-            { "text": "Cravings diminish on their own", "icon": "check-circle", "positive": true },
-            { "text": "Movement becomes appealing", "icon": "check-circle", "positive": true },
-            { "text": "Habits stick because biology cooperates", "icon": "check-circle", "positive": true }
+            { "text": "Support your gut-hormone axis before setting goals", "icon": "check-circle", "positive": true },
+            { "text": "Wait for energy to return before pushing harder", "icon": "check-circle", "positive": true },
+            { "text": "Let cravings naturally diminish as your gut heals", "icon": "check-circle", "positive": true },
+            { "text": "Add movement when your body actually wants it", "icon": "check-circle", "positive": true },
+            { "text": "Build habits on a foundation that holds", "icon": "check-circle", "positive": true }
           ],
-          "result": "83% still consistent at 60 days"
+          "result": "83% still on track after 60 days"
         },
         "style": "contrast"
       }

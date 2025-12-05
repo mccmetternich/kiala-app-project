@@ -395,89 +395,84 @@ export default function ArticlesAdmin() {
                   <Link
                     key={article.id}
                     href={`/admin/articles/${article.id}/edit`}
-                    className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
+                    className="flex items-center gap-4 p-4 hover:bg-gray-750 transition-all group"
                   >
-                    <div className="flex items-center gap-4 min-w-0 flex-1">
-                      {/* Status Icon - Thunderbolt for boosted, FileText for normal */}
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        article.boosted
-                          ? 'bg-yellow-500/20 ring-2 ring-yellow-500/30'
-                          : article.published
-                            ? 'bg-green-500/10'
-                            : 'bg-gray-700'
-                      }`}>
-                        {article.boosted ? (
-                          <Zap className="w-5 h-5 text-yellow-400" />
+                    {/* Publish Toggle - LEFT SIDE */}
+                    <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                      <button
+                        onClick={(e) => togglePublished(e, article.id, article.published)}
+                        disabled={togglingId === article.id}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-gray-800 ${
+                          article.published ? 'bg-green-500' : 'bg-gray-600'
+                        } ${togglingId === article.id ? 'opacity-50 cursor-wait' : ''}`}
+                        title={article.published ? 'Click to unpublish' : 'Click to publish'}
+                      >
+                        {togglingId === article.id ? (
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            <Loader2 className="w-4 h-4 text-white animate-spin" />
+                          </span>
                         ) : (
-                          <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              article.published ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        )}
+                      </button>
+                      <span className={`text-xs font-medium ${article.published ? 'text-green-400' : 'text-gray-500'}`}>
+                        {article.published ? 'Live' : 'Draft'}
+                      </span>
+                    </div>
+
+                    {/* Status Icon - Thunderbolt for boosted, FileText for normal */}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      article.boosted
+                        ? 'bg-yellow-500/20 ring-2 ring-yellow-500/30'
+                        : article.published
+                          ? 'bg-green-500/10'
+                          : 'bg-gray-700'
+                    }`}>
+                      {article.boosted ? (
+                        <Zap className="w-5 h-5 text-yellow-400" />
+                      ) : (
+                        <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="min-w-0 flex-1">
+                      {article.boosted && (
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                          {article.title}
+                        </p>
+                        {article.hero && (
+                          <span className="px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full text-xs font-medium flex-shrink-0">
+                            Hero
+                          </span>
                         )}
                       </div>
-
-                      {/* Content */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                          <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
-                            {article.title}
-                          </p>
-                          {article.boosted && (
-                            <span className="px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 rounded-full text-xs font-bold flex-shrink-0 flex items-center gap-1 border border-yellow-500/30 shadow-lg shadow-yellow-500/10">
-                              <Zap className="w-3 h-3" />
-                              BOOSTED
-                            </span>
-                          )}
-                          {article.hero && (
-                            <span className="px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full text-xs font-medium flex-shrink-0">
-                              Hero
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <span className="px-2 py-0.5 bg-gray-700/50 rounded text-gray-400 text-xs">
-                            {getSiteName(article.site_id)}
-                          </span>
-                          <span>{article.category || 'Uncategorized'}</span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
-                            {(article.realViews ?? 0).toLocaleString()} real
-                          </span>
-                          <span>•</span>
-                          <span>{formatDistanceToNow(new Date(article.updated_at), { addSuffix: true })}</span>
-                        </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <span className="px-2 py-0.5 bg-gray-700/50 rounded text-gray-400 text-xs">
+                          {getSiteName(article.site_id)}
+                        </span>
+                        <span>{article.category || 'Uncategorized'}</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Eye className="w-3 h-3" />
+                          {(article.realViews ?? 0).toLocaleString()} real
+                        </span>
+                        <span>•</span>
+                        <span>{formatDistanceToNow(new Date(article.updated_at), { addSuffix: true })}</span>
                       </div>
                     </div>
 
-                    {/* Actions */}
+                    {/* Actions - RIGHT SIDE */}
                     <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                      {/* Publish Toggle */}
-                      <div className="flex items-center gap-2 mr-2">
-                        <span className={`text-xs font-medium ${article.published ? 'text-green-400' : 'text-gray-500'}`}>
-                          {article.published ? 'Live' : 'Draft'}
-                        </span>
-                        <button
-                          onClick={(e) => togglePublished(e, article.id, article.published)}
-                          disabled={togglingId === article.id}
-                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-gray-800 ${
-                            article.published ? 'bg-green-500' : 'bg-gray-600'
-                          } ${togglingId === article.id ? 'opacity-50 cursor-wait' : ''}`}
-                          title={article.published ? 'Click to unpublish' : 'Click to publish'}
-                        >
-                          {togglingId === article.id ? (
-                            <span className="absolute inset-0 flex items-center justify-center">
-                              <Loader2 className="w-3 h-3 text-white animate-spin" />
-                            </span>
-                          ) : (
-                            <span
-                              className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                                article.published ? 'translate-x-5' : 'translate-x-1'
-                              }`}
-                            />
-                          )}
-                        </button>
-                      </div>
-
-                      <div className="w-px h-5 bg-gray-700" />
-
                       {article.published && (
                         <span
                           onClick={(e) => {

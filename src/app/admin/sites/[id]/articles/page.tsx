@@ -13,7 +13,8 @@ import {
   Star,
   TrendingUp,
   Zap,
-  Loader2
+  Loader2,
+  FileText
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import Badge from '@/components/ui/Badge';
@@ -180,69 +181,48 @@ export default function SiteArticlesPage() {
         </div>
 
         {/* Articles List */}
-        <div className="space-y-4">
-          {filteredArticles.map((article) => (
-            <div key={article.id} className="bg-gray-800 rounded-xl border border-gray-700 p-6 hover:shadow-lg transition-all">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <h3 className="text-xl font-semibold text-gray-200">{article.title}</h3>
-
-                    <div className="flex items-center gap-2">
-                      {article.boosted && (
-                        <Badge variant="limited" size="sm">
-                          <Zap className="w-3 h-3 mr-1" />
-                          Boosted
-                        </Badge>
-                      )}
-                      {article.hero && (
-                        <Badge variant="clinical" size="sm">
-                          ⭐ Hero
-                        </Badge>
-                      )}
-                      {article.featured && (
-                        <Badge variant="trust" size="sm">
-                          <Star className="w-3 h-3 mr-1" />
-                          Featured
-                        </Badge>
-                      )}
-                      {article.trending && (
-                        <Badge variant="limited" size="sm">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Trending
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {article.excerpt && (
-                    <p className="text-gray-400 mb-4 line-clamp-2">{article.excerpt}</p>
-                  )}
-
-                  <div className="flex items-center gap-6 text-sm text-gray-400">
-                    <span className="capitalize">{article.category || 'Article'}</span>
-                    <span>{article.read_time || 5} min read</span>
-                    <span>{article.realViews || 0} views</span>
-                    <span>
-                      {article.published
-                        ? `Published ${formatDistanceToNow(new Date(article.published_at || article.created_at), { addSuffix: true })}`
-                        : `Created ${formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}`
-                      }
-                    </span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-3 ml-6">
+        <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+          {filteredArticles.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Edit3 className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-200 mb-2">
+                {searchQuery || statusFilter !== 'all' ? 'No articles found' : 'No articles yet'}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {searchQuery || statusFilter !== 'all'
+                  ? 'Try adjusting your search or filters'
+                  : 'Create your first article to start building content for this site'
+                }
+              </p>
+              <Link
+                href={`/admin/articles/new?siteId=${id}`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Create Article
+              </Link>
+            </div>
+          ) : (
+          <div className="divide-y divide-gray-700/50">
+            {filteredArticles.map((article) => (
+              <Link
+                key={article.id}
+                href={`/admin/articles/${article.id}/edit`}
+                className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
+              >
+                <div className="flex items-center gap-4 min-w-0 flex-1">
                   {/* Publish Toggle */}
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-medium ${article.published ? 'text-green-400' : 'text-gray-500'}`}>
-                      {article.published ? 'Live' : 'Draft'}
-                    </span>
+                  <div className="flex flex-col items-center gap-1 flex-shrink-0">
                     <button
-                      onClick={() => togglePublished(article.id, article.published)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        togglePublished(article.id, article.published);
+                      }}
                       disabled={togglingId === article.id}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-gray-800 ${
                         article.published ? 'bg-green-500' : 'bg-gray-600'
                       } ${togglingId === article.id ? 'opacity-50 cursor-wait' : ''}`}
                       title={article.published ? 'Click to unpublish' : 'Click to publish'}
@@ -259,62 +239,60 @@ export default function SiteArticlesPage() {
                         />
                       )}
                     </button>
+                    <span className={`text-xs font-medium ${article.published ? 'text-green-400' : 'text-gray-500'}`}>
+                      {article.published ? 'Live' : 'Draft'}
+                    </span>
                   </div>
 
-                  <div className="w-px h-6 bg-gray-700" />
+                  {/* Status Icon */}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
+                  }`}>
+                    {article.boosted ? (
+                      <Zap className="w-5 h-5 text-yellow-400" />
+                    ) : (
+                      <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                    )}
+                  </div>
 
-                  <Link
-                    href={`/admin/articles/${article.id}/edit`}
-                    className="p-2 text-gray-400 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-colors"
-                    title="Edit article"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </Link>
+                  {/* Content */}
+                  <div className="min-w-0 flex-1">
+                    {article.boosted && (
+                      <div className="flex items-center gap-1 mb-0.5">
+                        <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                      </div>
+                    )}
+                    <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                      {article.title}
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      {article.realViews || 0} views • {article.category || 'Article'} • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
 
+                {/* Actions */}
+                <div className="flex items-center gap-2 flex-shrink-0 ml-4">
                   {article.published && (
-                    <Link
-                      href={`/site/${site?.subdomain || id}/articles/${article.slug}`}
-                      target="_blank"
-                      className="p-2 text-gray-400 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-colors"
+                    <span
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.open(`/site/${site?.subdomain || id}/articles/${article.slug}`, '_blank');
+                      }}
+                      className="p-2 text-gray-500 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
                       title="View article"
                     >
                       <Eye className="w-4 h-4" />
-                    </Link>
+                    </span>
                   )}
-
-                  <button className="p-2 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
+                  <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {filteredArticles.length === 0 && !loading && (
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Edit3 className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-200 mb-2">
-              {searchQuery || statusFilter !== 'all' ? 'No articles found' : 'No articles yet'}
-            </h3>
-            <p className="text-gray-400 mb-6">
-              {searchQuery || statusFilter !== 'all' 
-                ? 'Try adjusting your search or filters'
-                : 'Create your first article to start building content for this site'
-              }
-            </p>
-            <Link 
-              href={`/admin/articles/new?siteId=${id}`}
-              className="btn-primary inline-flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Create Article
-            </Link>
+              </Link>
+            ))}
           </div>
-        )}
+          )}
+        </div>
       </div>
     </EnhancedAdminLayout>
   );
