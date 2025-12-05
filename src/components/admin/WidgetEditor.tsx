@@ -92,7 +92,8 @@ const widgetTypes: { type: WidgetType; name: string; icon: any; category: string
   { type: 'myth-buster', name: 'Myth Buster', icon: AlertCircle, category: 'Content', description: 'Myth vs. Reality comparison cards' },
   { type: 'warning-box', name: 'Warning Box', icon: AlertTriangle, category: 'Content', description: 'Highlighted warning or cascade list' },
   { type: 'dr-tip', name: "Dr's Tip", icon: Lightbulb, category: 'Content', description: 'Professional insight callout' },
-  { type: 'checklist', name: 'Checklist', icon: CheckSquare, category: 'Content', description: 'Interactive or assessment checklist' }
+  { type: 'checklist', name: 'Checklist', icon: CheckSquare, category: 'Content', description: 'Interactive or assessment checklist' },
+  { type: 'two-approaches', name: 'Two Approaches', icon: Columns, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' }
 ];
 
 const categoryColors: Record<string, string> = {
@@ -3395,6 +3396,469 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextField('Button URL', 'buttonUrl', '/checkout')}
         </div>
       )}
+
+      {widget.type === 'poll' && (
+        <div className="space-y-4">
+          {renderTextField('Question', 'question', 'What is your biggest health challenge?')}
+
+          {/* Poll Options Editor */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Poll Options</label>
+            <div className="space-y-3">
+              {(widget.config.options || []).map((option: any, idx: number) => (
+                <div key={option.id || idx} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <div className="flex gap-3 items-start">
+                    <span className="text-gray-500 font-medium text-sm pt-2">{idx + 1}.</span>
+                    <div className="flex-1 space-y-2">
+                      <input
+                        type="text"
+                        value={option.label}
+                        onChange={(e) => {
+                          const updated = [...(widget.config.options || [])];
+                          updated[idx] = { ...updated[idx], label: e.target.value };
+                          onUpdate({ options: updated });
+                        }}
+                        placeholder="Option label"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                      />
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <label className="block text-xs text-gray-500 mb-1">Votes</label>
+                          <input
+                            type="number"
+                            value={option.votes}
+                            onChange={(e) => {
+                              const updated = [...(widget.config.options || [])];
+                              updated[idx] = { ...updated[idx], votes: parseInt(e.target.value) || 0 };
+                              onUpdate({ options: updated });
+                            }}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-xs text-gray-500 mb-1">% (optional)</label>
+                          <input
+                            type="number"
+                            value={option.percentage || ''}
+                            onChange={(e) => {
+                              const updated = [...(widget.config.options || [])];
+                              updated[idx] = { ...updated[idx], percentage: e.target.value ? parseInt(e.target.value) : undefined };
+                              onUpdate({ options: updated });
+                            }}
+                            placeholder="Auto"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = (widget.config.options || []).filter((_: any, i: number) => i !== idx);
+                        onUpdate({ options: updated });
+                      }}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = [...(widget.config.options || [])];
+                  updated.push({
+                    id: `option-${Date.now()}`,
+                    label: 'New option',
+                    votes: 0
+                  });
+                  onUpdate({ options: updated });
+                }}
+                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="w-4 h-4" /> Add Option
+              </button>
+            </div>
+          </div>
+
+          {renderTextField('Total Votes', 'totalVotes', '12447')}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Results Message</label>
+            <textarea
+              value={widget.config.resultsMessage || ''}
+              onChange={(e) => onUpdate({ resultsMessage: e.target.value })}
+              placeholder="You're not alone! {winner_percentage}% chose the same answer."
+              rows={3}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Variables: {'{winner_percentage}'}, {'{winner_label}'}, {'{total_votes}'}
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Style</label>
+            <select
+              value={widget.config.style || 'default'}
+              onChange={(e) => onUpdate({ style: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+            >
+              <option value="default">Default</option>
+              <option value="highlighted">Highlighted (purple gradient)</option>
+              <option value="results-only">Results Only (no voting)</option>
+            </select>
+          </div>
+
+          {renderTextField('Source', 'source', 'Dr. Amy Heart Community Survey, 2024')}
+
+          {/* CTA Section */}
+          <div className="border-t pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show CTA Button after voting
+            </label>
+            {widget.config.showCta && (
+              <div className="space-y-3 pl-6">
+                {renderTextField('CTA Text', 'ctaText', 'See The Solution →')}
+                {renderTextField('CTA URL', 'ctaUrl', '#')}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {widget.type === 'community-survey-results' && (
+        <div className="space-y-4">
+          {renderTextField('Headline', 'headline', 'Community Survey Results')}
+          {renderTextField('Subheading', 'subheading', 'Based on feedback from verified community members')}
+
+          {/* Results Editor */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Survey Results</label>
+            <div className="space-y-3">
+              {(widget.config.results || []).map((result: any, idx: number) => (
+                <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <div className="flex gap-3 items-start">
+                    <div className="flex-1 space-y-2">
+                      <input
+                        type="text"
+                        value={result.label}
+                        onChange={(e) => {
+                          const updated = [...(widget.config.results || [])];
+                          updated[idx] = { ...updated[idx], label: e.target.value };
+                          onUpdate({ results: updated });
+                        }}
+                        placeholder="Result label"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                      />
+                      <div className="flex gap-2 items-center">
+                        <div className="flex-1">
+                          <input
+                            type="number"
+                            value={result.percentage}
+                            onChange={(e) => {
+                              const updated = [...(widget.config.results || [])];
+                              updated[idx] = { ...updated[idx], percentage: parseInt(e.target.value) || 0 };
+                              onUpdate({ results: updated });
+                            }}
+                            placeholder="78"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                          />
+                        </div>
+                        <span className="text-gray-500">%</span>
+                        <label className="flex items-center gap-1 text-xs text-gray-600">
+                          <input
+                            type="checkbox"
+                            checked={result.highlighted || false}
+                            onChange={(e) => {
+                              const updated = [...(widget.config.results || [])];
+                              updated[idx] = { ...updated[idx], highlighted: e.target.checked };
+                              onUpdate({ results: updated });
+                            }}
+                            className="rounded border-gray-300"
+                          />
+                          Highlight
+                        </label>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = (widget.config.results || []).filter((_: any, i: number) => i !== idx);
+                        onUpdate({ results: updated });
+                      }}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = [...(widget.config.results || [])];
+                  updated.push({ label: 'New result', percentage: 50, highlighted: false });
+                  onUpdate({ results: updated });
+                }}
+                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="w-4 h-4" /> Add Result
+              </button>
+            </div>
+          </div>
+
+          {renderTextField('Total Respondents', 'totalRespondents', '10,000+')}
+          {renderTextField('Source', 'source', 'Dr. Amy Heart Community Challenge, 2024')}
+          {renderTextAreaField('Highlight Text', 'highlightText', 'Compare that 83% to the 8% who succeed with traditional New Year resolutions.', 2)}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Style</label>
+            <select
+              value={widget.config.style || 'default'}
+              onChange={(e) => onUpdate({ style: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+            >
+              <option value="default">Default (list view)</option>
+              <option value="compact">Compact (grid)</option>
+              <option value="featured">Featured (gradient header)</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {widget.type === 'product-reveal' && (
+        <div className="space-y-4">
+          {renderTextField('Headline', 'headline', 'After Months of Research, I Found It')}
+          {renderTextField('Subheadline', 'subheadline', 'The one formula I can confidently recommend')}
+          {renderTextField('Badge', 'badge', "Doctor's #1 Pick")}
+          {renderTextField('Product Name', 'productName', 'Product Name')}
+          {renderTextAreaField('Product Description', 'productDescription', 'A clinically-backed formula...', 3)}
+          {renderImageField('Product Image', 'productImage')}
+          {renderTextAreaField('Doctor Quote', 'doctorQuote', "In 15 years of practice, I've never endorsed a specific supplement—until now.", 3)}
+
+          <div className="grid grid-cols-2 gap-3">
+            {renderTextField('Rating', 'rating', '4.8')}
+            {renderTextField('Review Count', 'reviewCount', '10,000+')}
+          </div>
+
+          {/* Key Benefits */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Key Benefits</label>
+            <div className="space-y-2">
+              {(widget.config.keyBenefits || []).map((benefit: string, idx: number) => (
+                <div key={idx} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={benefit}
+                    onChange={(e) => {
+                      const updated = [...(widget.config.keyBenefits || [])];
+                      updated[idx] = e.target.value;
+                      onUpdate({ keyBenefits: updated });
+                    }}
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = (widget.config.keyBenefits || []).filter((_: any, i: number) => i !== idx);
+                      onUpdate({ keyBenefits: updated });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = [...(widget.config.keyBenefits || []), 'New benefit'];
+                  onUpdate({ keyBenefits: updated });
+                }}
+                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="w-4 h-4" /> Add Benefit
+              </button>
+            </div>
+          </div>
+
+          {renderTextField('CTA Text', 'ctaText', 'Learn More →')}
+          {renderTextField('CTA URL', 'ctaUrl', '#')}
+        </div>
+      )}
+
+      {widget.type === 'two-approaches' && (
+        <div className="space-y-6">
+          {renderTextField('Headline', 'headline', 'Two Paths Forward')}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Style</label>
+            <select
+              value={widget.config.style || 'contrast'}
+              onChange={(e) => onUpdate({ style: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+            >
+              <option value="contrast">Contrast (red vs green)</option>
+              <option value="gradient">Gradient (gray vs brand)</option>
+              <option value="default">Default (minimal)</option>
+            </select>
+          </div>
+
+          {/* Left Column */}
+          <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+            <h4 className="font-semibold text-red-900 mb-3">Left Column (The "Wrong" Way)</h4>
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={widget.config.leftColumn?.header || ''}
+                onChange={(e) => onUpdate({
+                  leftColumn: { ...widget.config.leftColumn, header: e.target.value }
+                })}
+                placeholder="Header (e.g., The Old Way)"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              />
+              <input
+                type="text"
+                value={widget.config.leftColumn?.subheader || ''}
+                onChange={(e) => onUpdate({
+                  leftColumn: { ...widget.config.leftColumn, subheader: e.target.value }
+                })}
+                placeholder="Subheader"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              />
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-600">Items</label>
+                {(widget.config.leftColumn?.items || []).map((item: any, idx: number) => (
+                  <div key={idx} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={item.text}
+                      onChange={(e) => {
+                        const items = [...(widget.config.leftColumn?.items || [])];
+                        items[idx] = { ...items[idx], text: e.target.value };
+                        onUpdate({ leftColumn: { ...widget.config.leftColumn, items } });
+                      }}
+                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const items = (widget.config.leftColumn?.items || []).filter((_: any, i: number) => i !== idx);
+                        onUpdate({ leftColumn: { ...widget.config.leftColumn, items } });
+                      }}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const items = [...(widget.config.leftColumn?.items || []), { text: 'New item', negative: true }];
+                    onUpdate({ leftColumn: { ...widget.config.leftColumn, items } });
+                  }}
+                  className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium"
+                >
+                  <Plus className="w-4 h-4" /> Add Item
+                </button>
+              </div>
+
+              <input
+                type="text"
+                value={widget.config.leftColumn?.result || ''}
+                onChange={(e) => onUpdate({
+                  leftColumn: { ...widget.config.leftColumn, result: e.target.value }
+                })}
+                placeholder="Result (e.g., 92% fail by March)"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              />
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+            <h4 className="font-semibold text-emerald-900 mb-3">Right Column (The "Right" Way)</h4>
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={widget.config.rightColumn?.header || ''}
+                onChange={(e) => onUpdate({
+                  rightColumn: { ...widget.config.rightColumn, header: e.target.value }
+                })}
+                placeholder="Header (e.g., The New Way)"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              />
+              <input
+                type="text"
+                value={widget.config.rightColumn?.subheader || ''}
+                onChange={(e) => onUpdate({
+                  rightColumn: { ...widget.config.rightColumn, subheader: e.target.value }
+                })}
+                placeholder="Subheader"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              />
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-600">Items</label>
+                {(widget.config.rightColumn?.items || []).map((item: any, idx: number) => (
+                  <div key={idx} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={item.text}
+                      onChange={(e) => {
+                        const items = [...(widget.config.rightColumn?.items || [])];
+                        items[idx] = { ...items[idx], text: e.target.value };
+                        onUpdate({ rightColumn: { ...widget.config.rightColumn, items } });
+                      }}
+                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const items = (widget.config.rightColumn?.items || []).filter((_: any, i: number) => i !== idx);
+                        onUpdate({ rightColumn: { ...widget.config.rightColumn, items } });
+                      }}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const items = [...(widget.config.rightColumn?.items || []), { text: 'New item', positive: true }];
+                    onUpdate({ rightColumn: { ...widget.config.rightColumn, items } });
+                  }}
+                  className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                >
+                  <Plus className="w-4 h-4" /> Add Item
+                </button>
+              </div>
+
+              <input
+                type="text"
+                value={widget.config.rightColumn?.result || ''}
+                onChange={(e) => onUpdate({
+                  rightColumn: { ...widget.config.rightColumn, result: e.target.value }
+                })}
+                placeholder="Result (e.g., 83% still going at 60 days)"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -4047,6 +4511,32 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       source: 'Community Survey, 2024',
       highlightText: 'The results speak for themselves.',
       style: 'featured'
+    },
+    'two-approaches': {
+      headline: 'Two Paths Forward',
+      leftColumn: {
+        header: 'The Old Way',
+        subheader: "What hasn't worked",
+        items: [
+          { text: 'Set ambitious goals', negative: true },
+          { text: 'Rely on willpower alone', negative: true },
+          { text: 'Force yourself to stick with it', negative: true },
+          { text: 'Feel guilty when you fail', negative: true }
+        ],
+        result: 'Result: Same cycle repeats'
+      },
+      rightColumn: {
+        header: 'The New Way',
+        subheader: 'What actually works',
+        items: [
+          { text: 'Fix the foundation first', positive: true },
+          { text: 'Support your biology', positive: true },
+          { text: 'Let habits become easier', positive: true },
+          { text: 'Build momentum naturally', positive: true }
+        ],
+        result: 'Result: Lasting change'
+      },
+      style: 'contrast'
     }
   };
 

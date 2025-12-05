@@ -83,6 +83,18 @@ export default function Poll({
     (getPercentage(current) > getPercentage(prev)) ? current : prev
   );
 
+  // Process resultsMessage with dynamic variables
+  const processedResultsMessage = resultsMessage?.replace(
+    /\{winner_percentage\}/g,
+    String(getPercentage(winningOption))
+  ).replace(
+    /\{winner_label\}/g,
+    winningOption.label
+  ).replace(
+    /\{total_votes\}/g,
+    totalVotes.toLocaleString()
+  );
+
   const isResultsOnly = style === 'results-only';
   const isHighlighted = style === 'highlighted';
 
@@ -215,7 +227,7 @@ export default function Poll({
           </div>
 
           {/* Results message */}
-          {hasVoted && resultsMessage && (
+          {hasVoted && processedResultsMessage && (
             <div className={`mt-6 p-5 rounded-xl border-2 ${
               isHighlighted
                 ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200'
@@ -228,7 +240,7 @@ export default function Poll({
                 <p className={`text-base font-medium ${
                   isHighlighted ? 'text-purple-800' : 'text-amber-800'
                 }`}>
-                  {resultsMessage}
+                  {processedResultsMessage}
                 </p>
               </div>
             </div>

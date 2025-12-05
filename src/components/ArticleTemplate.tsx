@@ -39,6 +39,7 @@ import DrTip from '@/widgets/DrTip';
 import Checklist from '@/widgets/Checklist';
 import ProductReveal from '@/widgets/ProductReveal';
 import CommunitySurveyResults from '@/widgets/CommunitySurveyResults';
+import TwoApproaches from '@/widgets/TwoApproaches';
 
 interface ArticleTemplateProps {
   page: Page;
@@ -866,6 +867,18 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             totalRespondents={widget.config.totalRespondents}
             source={widget.config.source}
             highlightText={widget.config.highlightText}
+            style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'two-approaches':
+      return (
+        <div className="my-8">
+          <TwoApproaches
+            headline={widget.config.headline}
+            leftColumn={widget.config.leftColumn}
+            rightColumn={widget.config.rightColumn}
             style={widget.config.style as any}
           />
         </div>

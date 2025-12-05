@@ -159,7 +159,8 @@ export type WidgetType =
   | 'checklist'
   // Product reveal & survey widgets
   | 'product-reveal'
-  | 'community-survey-results';
+  | 'community-survey-results'
+  | 'two-approaches';
 
 // Widget Configurations
 export interface WidgetConfig {
