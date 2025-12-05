@@ -1,6 +1,8 @@
 'use client';
 
-import { AlertTriangle, AlertCircle, XCircle, Info } from 'lucide-react';
+import { useState } from 'react';
+import { AlertTriangle, AlertCircle, XCircle, Info, ChevronDown, ArrowRight, Sparkles } from 'lucide-react';
+import { useTracking } from '@/contexts/TrackingContext';
 
 interface Warning {
   text: string;
@@ -12,7 +14,11 @@ interface WarningBoxProps {
   content?: string;
   warnings: Warning[];
   footer?: string;
-  style?: 'default' | 'urgent' | 'info';
+  style?: 'default' | 'urgent' | 'info' | 'cascade';
+  // CTA options
+  ctaText?: string;
+  ctaUrl?: string;
+  showCta?: boolean;
 }
 
 export default function WarningBox({
@@ -21,92 +27,261 @@ export default function WarningBox({
   warnings,
   footer,
   style = 'default',
+  ctaText,
+  ctaUrl,
+  showCta = false,
 }: WarningBoxProps) {
-  const getSeverityStyles = (severity: string = 'medium') => {
-    switch (severity) {
-      case 'high':
-        return {
-          bg: 'bg-red-50',
-          border: 'border-red-200',
-          icon: <XCircle className="w-4 h-4 text-red-500" />,
-          text: 'text-red-800',
-        };
-      case 'low':
-        return {
-          bg: 'bg-amber-50',
-          border: 'border-amber-200',
-          icon: <Info className="w-4 h-4 text-amber-500" />,
-          text: 'text-amber-800',
-        };
-      default:
-        return {
-          bg: 'bg-orange-50',
-          border: 'border-orange-200',
-          icon: <AlertCircle className="w-4 h-4 text-orange-500" />,
-          text: 'text-orange-800',
-        };
-    }
+  const { appendTracking } = useTracking();
+  const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [expanded, setExpanded] = useState(true);
+
+  const getSeverityStyles = (severity: string = 'medium', isHovered: boolean) => {
+    const baseStyles = {
+      high: {
+        bg: isHovered ? 'bg-gradient-to-r from-red-100 to-rose-100' : 'bg-gradient-to-r from-red-50 to-rose-50',
+        border: 'border-red-300',
+        icon: <XCircle className="w-5 h-5 text-red-600" />,
+        text: 'text-red-900',
+        pulse: 'animate-pulse',
+      },
+      medium: {
+        bg: isHovered ? 'bg-gradient-to-r from-orange-100 to-amber-100' : 'bg-gradient-to-r from-orange-50 to-amber-50',
+        border: 'border-orange-300',
+        icon: <AlertCircle className="w-5 h-5 text-orange-600" />,
+        text: 'text-orange-900',
+        pulse: '',
+      },
+      low: {
+        bg: isHovered ? 'bg-gradient-to-r from-amber-100 to-yellow-100' : 'bg-gradient-to-r from-amber-50 to-yellow-50',
+        border: 'border-amber-300',
+        icon: <Info className="w-5 h-5 text-amber-600" />,
+        text: 'text-amber-900',
+        pulse: '',
+      },
+    };
+    return baseStyles[severity as keyof typeof baseStyles] || baseStyles.medium;
   };
 
+  // Cascade/Pyramid style - builds visually with impact
+  if (style === 'cascade') {
+    return (
+      <div className="my-8">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-rose-500 via-red-500 to-orange-500 rounded-t-2xl px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl backdrop-blur animate-pulse">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-white">{headline}</h3>
+                {content && <p className="text-rose-100 mt-1">{content}</p>}
+              </div>
+            </div>
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            >
+              <ChevronDown className={`w-5 h-5 text-white transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Pyramid cascade of warnings */}
+        <div className={`bg-white shadow-xl border-2 border-t-0 border-rose-200 rounded-b-2xl overflow-hidden transition-all duration-500 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="p-6">
+            {/* Pyramid layout - each row gets progressively wider */}
+            <div className="space-y-3">
+              {warnings.map((warning, idx) => {
+                const isHovered = hoveredIndex === idx;
+                const styles = getSeverityStyles(warning.severity, isHovered);
+                // Calculate progressive width for pyramid effect
+                const minWidth = 70; // Start at 70%
+                const widthStep = (100 - minWidth) / Math.max(warnings.length - 1, 1);
+                const width = minWidth + (widthStep * idx);
+
+                return (
+                  <div
+                    key={idx}
+                    className="flex justify-center"
+                    style={{ animationDelay: `${idx * 100}ms` }}
+                  >
+                    <div
+                      onMouseEnter={() => setHoveredIndex(idx)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                      className={`
+                        relative p-4 md:p-5 rounded-xl border-2
+                        ${styles.bg} ${styles.border}
+                        transition-all duration-300 ease-out cursor-pointer
+                        ${isHovered ? 'shadow-xl scale-[1.02] z-10' : 'shadow-md'}
+                        ${styles.pulse}
+                      `}
+                      style={{ width: `${width}%` }}
+                    >
+                      {/* Connecting line to next item */}
+                      {idx < warnings.length - 1 && (
+                        <div className="absolute left-1/2 -bottom-4 transform -translate-x-1/2 h-4 w-0.5 bg-gradient-to-b from-gray-300 to-transparent opacity-50" />
+                      )}
+
+                      <div className="flex items-start gap-4">
+                        <div className={`flex-shrink-0 p-2 rounded-full ${isHovered ? 'bg-white shadow-md' : 'bg-white/70'} transition-all duration-300`}>
+                          {styles.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-semibold text-base md:text-lg leading-relaxed ${styles.text} transition-all duration-300`}>
+                            {warning.text}
+                          </p>
+                          {isHovered && warning.severity === 'high' && (
+                            <p className="text-sm text-red-700 mt-2 font-medium animate-fade-in">
+                              ⚠️ Critical warning - requires immediate attention
+                            </p>
+                          )}
+                        </div>
+                        {/* Level indicator */}
+                        <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                          warning.severity === 'high' ? 'bg-red-200 text-red-800' :
+                          warning.severity === 'low' ? 'bg-amber-200 text-amber-800' :
+                          'bg-orange-200 text-orange-800'
+                        }`}>
+                          Level {idx + 1}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Alert footer when cascade builds */}
+            {footer && (
+              <div className="mt-8 bg-gradient-to-r from-rose-100 via-red-100 to-orange-100 rounded-xl p-5 border-2 border-rose-300">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-rose-500 rounded-full">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <p className="text-lg font-bold text-rose-900">{footer}</p>
+                </div>
+              </div>
+            )}
+
+            {/* CTA */}
+            {showCta && ctaText && ctaUrl && (
+              <div className="mt-6">
+                <a
+                  href={trackedCtaUrl}
+                  className="block w-full text-center bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    {ctaText}
+                    <ArrowRight className="w-5 h-5" />
+                  </span>
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Container styles for other variants
   const containerStyles = {
-    default: 'bg-amber-50 border-amber-300',
-    urgent: 'bg-gradient-to-br from-red-50 to-orange-50 border-red-300',
-    info: 'bg-blue-50 border-blue-300',
+    default: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300',
+    urgent: 'bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 border-red-300',
+    info: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300',
   };
 
   const headerStyles = {
+    default: 'from-amber-500 to-yellow-500',
+    urgent: 'from-red-500 to-rose-500',
+    info: 'from-blue-500 to-indigo-500',
+  };
+
+  const headerTextStyles = {
     default: 'text-amber-900',
     urgent: 'text-red-900',
     info: 'text-blue-900',
   };
 
-  const iconStyles = {
+  const iconBgStyles = {
     default: 'bg-amber-100 text-amber-600',
     urgent: 'bg-red-100 text-red-600',
     info: 'bg-blue-100 text-blue-600',
   };
 
+  // Default/Urgent/Info styles - enhanced
   return (
-    <div className={`rounded-2xl border-2 ${containerStyles[style]} overflow-hidden`}>
-      {/* Header */}
-      <div className="px-6 py-4 border-b border-inherit">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-full ${iconStyles[style]}`}>
-            <AlertTriangle className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className={`text-lg font-bold ${headerStyles[style]}`}>{headline}</h3>
-            {content && <p className="text-sm text-gray-600 mt-0.5">{content}</p>}
+    <div className="my-8">
+      <div className={`rounded-2xl border-2 shadow-xl overflow-hidden ${containerStyles[style]}`}>
+        {/* Header */}
+        <div className={`bg-gradient-to-r ${headerStyles[style]} px-6 py-5`}>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
+              <AlertTriangle className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">{headline}</h3>
+              {content && <p className="text-white/80 text-sm mt-0.5">{content}</p>}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Warnings List */}
-      <div className="p-6">
-        <div className="space-y-3">
-          {warnings.map((warning, idx) => {
-            const styles = getSeverityStyles(warning.severity);
-            return (
-              <div
-                key={idx}
-                className={`flex items-start gap-3 p-3 rounded-xl ${styles.bg} border ${styles.border}`}
-              >
-                <div className="flex-shrink-0 mt-0.5">{styles.icon}</div>
-                <p className={`text-sm font-medium ${styles.text}`}>{warning.text}</p>
+        {/* Warnings List */}
+        <div className="p-6">
+          <div className="space-y-3">
+            {warnings.map((warning, idx) => {
+              const isHovered = hoveredIndex === idx;
+              const styles = getSeverityStyles(warning.severity, isHovered);
+              return (
+                <div
+                  key={idx}
+                  onMouseEnter={() => setHoveredIndex(idx)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  className={`
+                    flex items-start gap-4 p-4 rounded-xl border-2
+                    ${styles.bg} ${styles.border}
+                    transition-all duration-300
+                    ${isHovered ? 'shadow-lg scale-[1.01]' : 'shadow-sm'}
+                    cursor-pointer
+                  `}
+                >
+                  <div className={`flex-shrink-0 p-1.5 rounded-full transition-all duration-300 ${isHovered ? 'bg-white shadow-md' : 'bg-white/70'}`}>
+                    {styles.icon}
+                  </div>
+                  <p className={`text-base font-medium leading-relaxed ${styles.text}`}>{warning.text}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          {footer && (
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-200">
+                <div className="p-1.5 bg-emerald-100 rounded-full">
+                  <CheckCircleIcon className="w-5 h-5 text-emerald-600" />
+                </div>
+                <p className="text-base font-semibold text-emerald-800">{footer}</p>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          )}
 
-        {/* Footer */}
-        {footer && (
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <p className="text-sm text-gray-700 font-medium flex items-center gap-2">
-              <CheckCircleIcon className="w-4 h-4 text-green-500" />
-              {footer}
-            </p>
-          </div>
-        )}
+          {/* CTA */}
+          {showCta && ctaText && ctaUrl && (
+            <div className="mt-6">
+              <a
+                href={trackedCtaUrl}
+                className={`block w-full text-center bg-gradient-to-r ${headerStyles[style]} hover:opacity-90 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  {ctaText}
+                  <ArrowRight className="w-5 h-5" />
+                </span>
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -123,18 +123,18 @@
       "position": 10,
       "config": {
         "headline": "The Menopause Cascade",
-        "content": "When gut health deteriorates during menopause, here's what follows:",
+        "content": "When gut health deteriorates during menopause, each level builds on the last:",
         "warnings": [
-          { "text": "Estrogen metabolism becomes erratic", "severity": "high" },
-          { "text": "Inflammation increases throughout the body", "severity": "high" },
+          { "text": "Estrogen metabolism becomes erratic", "severity": "low" },
+          { "text": "Inflammation increases throughout the body", "severity": "low" },
           { "text": "Neurotransmitter production drops (hello, brain fog)", "severity": "medium" },
           { "text": "Sleep regulation breaks down", "severity": "medium" },
           { "text": "Energy becomes unpredictable", "severity": "medium" },
           { "text": "Temperature control fails (hot flashes)", "severity": "high" },
-          { "text": "Mood becomes unstable", "severity": "medium" }
+          { "text": "Mood becomes unstable—the cascade is complete", "severity": "high" }
         ],
         "footer": "All of these connect back to gut-hormone disruption. Address the root, address them all.",
-        "style": "urgent"
+        "style": "cascade"
       }
     },
     {
@@ -154,7 +154,8 @@
       "config": {
         "tip": "When patients describe these 'mortifying moments,' they always think something went wrong in that moment. But by the time you're standing in front of the microphone—or the boardroom, or the family dinner—the cascade has been building for weeks, sometimes months. The moment didn't break you. It just revealed what was already broken.",
         "name": "Dr. Amy Heart",
-        "style": "highlighted"
+        "credentials": "MD, PhD - Women's Hormone Health",
+        "style": "featured"
       }
     },
     {
@@ -291,7 +292,7 @@
       "position": 19,
       "config": {
         "headline": "Signs Your Foundation Needs Support",
-        "subheading": "How many of these are you experiencing?",
+        "subheading": "Tap each sign you're currently experiencing",
         "items": [
           { "id": "s1", "text": "Brain fog or word-finding difficulties", "checked": false },
           { "id": "s2", "text": "Hot flashes or night sweats", "checked": false },
@@ -301,7 +302,12 @@
           { "id": "s6", "text": "Bloating or digestive unpredictability", "checked": false },
           { "id": "s7", "text": "Anxiety about public situations you used to handle fine", "checked": false }
         ],
-        "footer": "3 or more? Your gut-hormone axis may be compromised.",
+        "alertThreshold": 3,
+        "alertHeadline": "Your foundation needs support.",
+        "alertMessage": "With 3 or more of these signs, your gut-hormone axis is likely compromised. The good news? This is exactly what Linda experienced—and it can be addressed.",
+        "showCta": true,
+        "ctaText": "See What Helped Linda →",
+        "ctaUrl": "#product-card",
         "style": "assessment"
       }
     },
@@ -343,7 +349,7 @@
     },
     {
       "id": "faq-objections",
-      "type": "accordion-faq",
+      "type": "faq-accordion",
       "enabled": true,
       "position": 23,
       "config": {

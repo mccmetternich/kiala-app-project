@@ -754,6 +754,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             resultsMessage={widget.config.resultsMessage}
             source={widget.config.source}
             style={widget.config.style as any}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
           />
         </div>
       );
@@ -766,6 +769,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             subheading={widget.config.subheading}
             myths={widget.config.myths}
             style={widget.config.style as any}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
           />
         </div>
       );
@@ -779,19 +785,27 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             warnings={widget.config.warnings || []}
             footer={widget.config.footer}
             style={widget.config.style as any}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
           />
         </div>
       );
 
     case 'dr-tip':
+      // Use site's brand profile image if no image is configured
+      const drTipImage = widget.config.image || site?.brand?.authorImage || site?.brand?.profileImage;
       return (
         <div className="my-8">
           <DrTip
             tip={widget.config.tip}
-            name={widget.config.name}
+            name={widget.config.name || site?.brand?.name}
             credentials={widget.config.credentials}
-            image={widget.config.image}
+            image={drTipImage}
             style={widget.config.style as any}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
           />
         </div>
       );
@@ -804,6 +818,10 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             subheading={widget.config.subheading}
             items={widget.config.items || []}
             footer={widget.config.footer}
+            alertThreshold={widget.config.alertThreshold}
+            alertHeadline={widget.config.alertHeadline}
+            alertMessage={widget.config.alertMessage}
+            showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
             ctaUrl={widget.config.ctaUrl}
             style={widget.config.style as any}

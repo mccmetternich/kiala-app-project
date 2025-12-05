@@ -3944,43 +3944,71 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     'poll': {
       question: 'What is your biggest health challenge?',
       options: [
-        { id: 'energy', label: 'Low energy', votes: 0 },
-        { id: 'sleep', label: 'Poor sleep', votes: 0 },
-        { id: 'weight', label: 'Weight management', votes: 0 }
+        { id: 'energy', label: 'Low energy', votes: 2847 },
+        { id: 'sleep', label: 'Poor sleep', votes: 1923 },
+        { id: 'weight', label: 'Weight management', votes: 3156 },
+        { id: 'hormones', label: 'Hormonal imbalance', votes: 4521 }
       ],
-      totalVotes: 0,
+      totalVotes: 12447,
       showResults: false,
-      style: 'default'
+      resultsMessage: "You're not alone! Thousands of women share your experience.",
+      style: 'default',
+      showCta: false,
+      ctaText: 'See The Solution →',
+      ctaUrl: '#'
     },
     'myth-buster': {
       headline: 'Myth vs. Reality',
+      subheading: 'What you\'ve been told vs what\'s actually true',
       myths: [
-        { myth: 'Common misconception here', truth: 'The actual truth', icon: 'brain' }
+        { myth: 'Common misconception here', truth: 'The actual truth', icon: 'brain' },
+        { myth: 'Another myth people believe', truth: 'The reality is different', icon: 'heart' }
       ],
-      style: 'cards'
+      style: 'cards',
+      showCta: false,
+      ctaText: 'Learn The Truth →',
+      ctaUrl: '#'
     },
     'warning-box': {
-      headline: 'Important Warning',
-      content: 'Pay attention to these factors:',
+      headline: 'The Cascade Nobody Warned You About',
+      content: 'These signs build on each other:',
       warnings: [
-        { text: 'Warning item 1', severity: 'high' },
-        { text: 'Warning item 2', severity: 'medium' }
+        { text: 'Warning item 1', severity: 'low' },
+        { text: 'Warning item 2', severity: 'medium' },
+        { text: 'Warning item 3', severity: 'high' }
       ],
-      style: 'urgent'
+      footer: 'The good news? This cascade can be reversed.',
+      style: 'cascade',
+      showCta: false,
+      ctaText: 'Break The Cycle →',
+      ctaUrl: '#'
     },
     'dr-tip': {
       tip: 'Enter your professional insight here...',
       name: 'Dr. Amy Heart',
-      style: 'highlighted'
+      credentials: 'MD, PhD - Hormone Specialist',
+      style: 'highlighted',
+      showCta: false,
+      ctaText: 'Get My Protocol →',
+      ctaUrl: '#'
     },
     'checklist': {
-      headline: 'Your Action Checklist',
-      subheading: 'Complete these steps',
+      headline: 'Signs Your Foundation Needs Support',
+      subheading: 'Check all that apply to you',
       items: [
-        { id: '1', text: 'First item', checked: false },
-        { id: '2', text: 'Second item', checked: false }
+        { id: '1', text: 'First sign to check', checked: false },
+        { id: '2', text: 'Second sign to check', checked: false },
+        { id: '3', text: 'Third sign to check', checked: false },
+        { id: '4', text: 'Fourth sign to check', checked: false },
+        { id: '5', text: 'Fifth sign to check', checked: false }
       ],
-      style: 'interactive'
+      alertThreshold: 3,
+      alertHeadline: "⚠️ You've hit the threshold!",
+      alertMessage: "With this many signs, it's time to take action. The good news? There's a solution.",
+      style: 'assessment',
+      showCta: true,
+      ctaText: 'See The Solution →',
+      ctaUrl: '#'
     }
   };
 
