@@ -3641,7 +3641,54 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextField('Badge', 'badge', "Doctor's #1 Pick")}
           {renderTextField('Product Name', 'productName', 'Product Name')}
           {renderTextAreaField('Product Description', 'productDescription', 'A clinically-backed formula...', 3)}
-          {renderImageField('Product Image', 'productImage')}
+
+          {/* Product Images - Carousel */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Product Images (for carousel)</label>
+            <div className="space-y-2">
+              {(widget.config.productImages || [widget.config.productImage] || []).filter(Boolean).map((img: string, idx: number) => (
+                <div key={idx} className="flex gap-2 items-center">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    {img && <img src={img} alt="" className="w-full h-full object-cover" />}
+                  </div>
+                  <input
+                    type="text"
+                    value={img}
+                    onChange={(e) => {
+                      const images = [...(widget.config.productImages || [widget.config.productImage] || [])].filter(Boolean);
+                      images[idx] = e.target.value;
+                      onUpdate({ productImages: images, productImage: images[0] });
+                    }}
+                    placeholder="Image URL"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const images = (widget.config.productImages || [widget.config.productImage] || []).filter(Boolean).filter((_: any, i: number) => i !== idx);
+                      onUpdate({ productImages: images, productImage: images[0] || '' });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const images = [...(widget.config.productImages || [widget.config.productImage] || [])].filter(Boolean);
+                  images.push('');
+                  onUpdate({ productImages: images });
+                }}
+                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="w-4 h-4" /> Add Image
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">Add multiple images to show a thumbnail carousel below the main image</p>
+          </div>
+
           {renderTextAreaField('Doctor Quote', 'doctorQuote', "In 15 years of practice, I've never endorsed a specific supplement—until now.", 3)}
 
           <div className="grid grid-cols-2 gap-3">
@@ -3690,8 +3737,79 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             </div>
           </div>
 
+          {/* Social Proof Stats */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Social Proof Stats</label>
+            <div className="space-y-2">
+              {(widget.config.socialProofStats || []).map((stat: any, idx: number) => (
+                <div key={idx} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={stat.value}
+                    onChange={(e) => {
+                      const updated = [...(widget.config.socialProofStats || [])];
+                      updated[idx] = { ...updated[idx], value: e.target.value };
+                      onUpdate({ socialProofStats: updated });
+                    }}
+                    placeholder="83%"
+                    className="w-20 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <input
+                    type="text"
+                    value={stat.label}
+                    onChange={(e) => {
+                      const updated = [...(widget.config.socialProofStats || [])];
+                      updated[idx] = { ...updated[idx], label: e.target.value };
+                      onUpdate({ socialProofStats: updated });
+                    }}
+                    placeholder="still taking after 60 days"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = (widget.config.socialProofStats || []).filter((_: any, i: number) => i !== idx);
+                      onUpdate({ socialProofStats: updated });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = [...(widget.config.socialProofStats || []), { value: '', label: '' }];
+                  onUpdate({ socialProofStats: updated });
+                }}
+                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="w-4 h-4" /> Add Stat
+              </button>
+            </div>
+          </div>
+
           {renderTextField('CTA Text', 'ctaText', 'Learn More →')}
           {renderTextField('CTA URL', 'ctaUrl', '#')}
+
+          {/* Community Exclusive */}
+          <div className="border-t pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.communityExclusive !== false}
+                onChange={(e) => onUpdate({ communityExclusive: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show "Community Exclusive" badge
+            </label>
+            {widget.config.communityExclusive !== false && (
+              <div className="pl-6">
+                {renderTextField('Exclusive Text', 'communityExclusiveText', 'Exclusive to our community members')}
+              </div>
+            )}
+          </div>
         </div>
       )}
 

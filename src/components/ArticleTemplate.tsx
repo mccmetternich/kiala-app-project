@@ -842,6 +842,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             productName={widget.config.productName}
             productDescription={widget.config.productDescription}
             productImage={widget.config.productImage}
+            productImages={widget.config.productImages as string[]}
             doctorName={widget.config.doctorName || site?.brand?.name}
             doctorImage={widget.config.doctorImage || site?.brand?.authorImage || site?.brand?.profileImage}
             doctorQuote={widget.config.doctorQuote}
@@ -853,6 +854,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             ctaUrl={widget.config.ctaUrl}
             target={widget.config.target as '_self' | '_blank'}
             badge={widget.config.badge}
+            communityExclusive={widget.config.communityExclusive !== false}
+            communityExclusiveText={widget.config.communityExclusiveText}
           />
         </div>
       );
