@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createQueries, initDb, queryAll } from '@/lib/db-enhanced';
+import { createQueries } from '@/lib/db-enhanced';
 import { validateAndSanitize } from '@/lib/validation';
 import { requirePermission, getSecurityHeaders, checkRateLimit } from '@/lib/auth';
 import { z } from 'zod';
+import { createClient } from '@libsql/client/web';
+
+// Helper to run raw SQL queries for bulk metrics
+async function runQuery(sql: string): Promise<any[]> {
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+  if (!url || !authToken) {
+    throw new Error('Missing database credentials');
+  }
+  const db = createClient({ url, authToken });
+  const result = await db.execute({ sql, args: [] });
+  return result.rows as any[];
+}
 
 // GET - Fetch all sites with metrics in a single optimized query
 export async function GET(request: NextRequest) {
@@ -19,34 +32,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ sites });
     }
 
-    // Get article counts and email counts in bulk using single queries
-    const db = await initDb();
-
-    // Get article counts per site in one query
-    const articleCounts = await queryAll(
-      `SELECT site_id, COUNT(*) as count FROM articles GROUP BY site_id`
-    );
-
-    // Get published article counts per site
-    const publishedArticleCounts = await queryAll(
-      `SELECT site_id, COUNT(*) as count FROM articles WHERE published = 1 GROUP BY site_id`
-    );
-
-    // Get real view counts per site (sum of article views)
-    const viewCounts = await queryAll(
-      `SELECT a.site_id, COUNT(av.id) as count
-       FROM articles a
-       LEFT JOIN article_views av ON av.article_id = a.id
-       GROUP BY a.site_id`
-    );
-
-    // Get active email counts per site
-    const emailCounts = await queryAll(
-      `SELECT site_id, COUNT(*) as count
-       FROM subscribers
-       WHERE unsubscribed = 0
-       GROUP BY site_id`
-    );
+    // Get article counts and email counts in bulk using single queries - run in parallel
+    const [articleCounts, publishedArticleCounts, viewCounts, emailCounts] = await Promise.all([
+      runQuery(`SELECT site_id, COUNT(*) as count FROM articles GROUP BY site_id`),
+      runQuery(`SELECT site_id, COUNT(*) as count FROM articles WHERE published = 1 GROUP BY site_id`),
+      runQuery(`SELECT a.site_id, COUNT(av.id) as count
+                FROM articles a
+                LEFT JOIN article_views av ON av.article_id = a.id
+                GROUP BY a.site_id`),
+      runQuery(`SELECT site_id, COUNT(*) as count
+                FROM email_subscribers
+                WHERE status = 'active'
+                GROUP BY site_id`)
+    ]);
 
     // Create lookup maps
     const articleCountMap: Record<string, number> = {};

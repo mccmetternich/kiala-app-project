@@ -55,17 +55,22 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
     if (siteId) {
       // SITE-SPECIFIC METRICS - Using secure tenant isolation
       const queries = createQueries(siteId);
-      const site = await queries.siteQueries.getById(siteId);
+
+      // Fetch all site-specific data in parallel
+      const [site, allSiteArticles, allSiteEmails, realSiteViews, topArticlesWithRealViews] = await Promise.all([
+        queries.siteQueries.getById(siteId),
+        queries.articleQueries.getAllBySite(siteId),
+        queries.emailQueries.getAllBySite(siteId),
+        queries.analyticsQueries.getSiteViews(siteId),
+        queries.analyticsQueries.getTopArticles(siteId, 5)
+      ]);
+
       if (!site) {
         throw new Error('Site not found');
       }
 
-      // Get site-specific articles (automatically filtered by site_id)
-      const allSiteArticles: any[] = await queries.articleQueries.getAllBySite(siteId);
       const publishedSiteArticles = allSiteArticles.filter((article: { published: boolean; }) => article.published);
 
-      // Get site-specific email signups (automatically filtered by site_id)
-      const allSiteEmails: any[] = await queries.emailQueries.getAllBySite(siteId);
       // Only count ACTIVE subscribers for metrics
       const activeSiteEmails = allSiteEmails.filter((email: any) => email.status === 'active');
       const recentSiteEmails = activeSiteEmails.filter((email: { created_at: string | number | Date; }) =>
@@ -82,10 +87,6 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         pdfDownloadSources.some(src => email.source?.toLowerCase().includes(src.toLowerCase())) ||
         (email.tags && JSON.stringify(email.tags).includes('lead_magnet'))
       ).length;
-
-      // Get REAL views from article_views table
-      const realSiteViews = await queries.analyticsQueries.getSiteViews(siteId);
-      const topArticlesWithRealViews = await queries.analyticsQueries.getTopArticles(siteId, 5);
 
       const totalSiteArticles = publishedSiteArticles.length;
       const totalSiteEmails = activeSiteEmails.length; // Only active emails
@@ -129,10 +130,19 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
 
     } else {
       // GLOBAL ADMIN METRICS (aggregated across all sites)
+      // Run all independent queries in parallel for better performance
       const queries = createQueries();
-      const allSites: any[] = await queries.siteQueries.getAll();
-      const allArticles: any[] = await queries.articleQueries.getAll();
-      const allEmails: any[] = await (queries as any).emailQueries.getAll();
+
+      // Phase 1: Fetch all base data in parallel
+      const [allSites, allArticles, allEmails, articlesWithRealViews, topWidgetsGlobal, totalCtaClicks] = await Promise.all([
+        queries.siteQueries.getAll(),
+        queries.articleQueries.getAll(),
+        (queries as any).emailQueries.getAll(),
+        queries.analyticsQueries.getArticlesWithRealViews(''),
+        queries.analyticsQueries.getTopWidgetsGlobal(20),
+        queries.analyticsQueries.getTotalWidgetClicks()
+      ]);
+
       // Only count ACTIVE subscribers for metrics
       const activeEmails = allEmails.filter((email: any) => email.status === 'active');
 
@@ -149,8 +159,7 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         new Date(article.created_at) >= new Date(startDate)
       );
 
-      // Get REAL view counts from article_views table
-      const articlesWithRealViews = await queries.analyticsQueries.getArticlesWithRealViews('');
+      // Build views map from already-fetched data
       const realViewsMap = new Map(articlesWithRealViews.map((a: any) => [a.id, a.real_views || 0]));
       const totalRealViews = Array.from(realViewsMap.values()).reduce((sum: number, v: any) => sum + v, 0);
 
@@ -172,11 +181,18 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
 
       const articleGrowth = recentArticles.length > 0 ? `+${recentArticles.length}` : '0';
 
-      // Site performance breakdown with REAL views - use active emails only
-      const sitePerformancePromises = allSites.map(async (site: { name: string; id: string; }) => {
+      // Phase 2: Get site views in parallel (now that we have allSites)
+      const siteViewsPromises = allSites.map((site: { id: string; }) =>
+        queries.analyticsQueries.getSiteViews(site.id)
+      );
+      const siteViewsResults = await Promise.all(siteViewsPromises);
+      const siteViewsMap = new Map(allSites.map((site: { id: string; }, i: number) => [site.id, siteViewsResults[i]]));
+
+      // Site performance breakdown with REAL views - use active emails only (no more N+1)
+      const sitePerformance = allSites.map((site: { name: string; id: string; }) => {
         const siteArticles = allArticles.filter((article: { site_id: string; }) => article.site_id === site.id);
         const siteActiveEmails = activeEmails.filter((email: { site_id: string; }) => email.site_id === site.id);
-        const realSiteViews = await queries.analyticsQueries.getSiteViews(site.id);
+        const realSiteViews = siteViewsMap.get(site.id) || 0;
 
         return {
           siteName: site.name,
@@ -186,9 +202,7 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
           emailsCount: siteActiveEmails.length, // Only active emails
           conversionRate: realSiteViews > 0 ? Math.min((siteActiveEmails.length / realSiteViews) * 100, 100).toFixed(1) : '0'
         };
-      });
-      const sitePerformance = (await Promise.all(sitePerformancePromises))
-        .sort((a: { viewsCount: number; }, b: { viewsCount: number; }) => b.viewsCount - a.viewsCount);
+      }).sort((a: { viewsCount: number; }, b: { viewsCount: number; }) => b.viewsCount - a.viewsCount);
 
       // Top articles by REAL views
       const topArticlesWithRealViews = allArticles
@@ -198,12 +212,6 @@ async function generateDashboardStats(siteId: string | null, timeframe: string) 
         }))
         .sort((a: any, b: any) => b.realViews - a.realViews)
         .slice(0, 10);
-
-      // Top widgets by clicks (global)
-      const topWidgetsGlobal = await queries.analyticsQueries.getTopWidgetsGlobal(20);
-
-      // Get total CTA clicks across all sites
-      const totalCtaClicks = await queries.analyticsQueries.getTotalWidgetClicks();
 
       const globalStats = {
         totalSites: allSites.length,

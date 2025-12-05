@@ -79,14 +79,17 @@ export async function GET(request: NextRequest) {
     const data = await withCache(cacheKey, CacheTTL.DASHBOARD_STATS, async () => {
       const queries = createQueries();
 
-      // Get basic metrics
-      const [sites, articles]: [any[], any[]] = await Promise.all([
+      // Get basic metrics - all in parallel
+      const [sites, articles, realViewCounts, viewsByDate]: [any[], any[], any[], any[]] = await Promise.all([
         queries.siteQueries.getAll(),
-        queries.articleQueries.getAll()
+        queries.articleQueries.getAll(),
+        queries.analyticsQueries.getArticlesWithRealViews(''),
+        queries.analyticsQueries.getViewsByDateRange(
+          '',  // All sites
+          startDate.toISOString().split('T')[0],
+          endDate.toISOString().split('T')[0]
+        )
       ]);
-
-      // Get REAL view counts from article_views table
-      const realViewCounts = await queries.analyticsQueries.getArticlesWithRealViews('');
       const realViewsMap = new Map(realViewCounts.map((r: any) => [r.id, r.real_views || 0]));
 
       // Calculate total REAL views
@@ -127,12 +130,7 @@ export async function GET(request: NextRequest) {
         }).length
       };
 
-      // Get real activity timeline from article_views
-      const viewsByDate = await queries.analyticsQueries.getViewsByDateRange(
-        '',  // All sites
-        startDate.toISOString().split('T')[0],
-        endDate.toISOString().split('T')[0]
-      );
+      // Views by date map was already fetched in the initial parallel query
       const viewsByDateMap = new Map(viewsByDate.map((v: any) => [v.date, v.views]));
 
       // Performance metrics (placeholder until we add real monitoring)
@@ -186,21 +184,24 @@ export async function GET(request: NextRequest) {
           category: article.category
         }));
 
-      // Top sites by real views
-      const siteViewsPromises = sites.map(async (site: any) => {
-        const siteViews = await queries.analyticsQueries.getSiteViews(site.id);
-        const siteArticles = articles.filter((a: any) => a.site_id === site.id);
-        return {
-          id: site.id,
-          name: site.name,
-          domain: site.domain,
-          subdomain: site.subdomain,
-          views: siteViews,  // Real views!
-          articleCount: siteArticles.length,
-          status: site.status
-        };
-      });
-      const topSites = (await Promise.all(siteViewsPromises))
+      // Top sites by real views - fetch all site views in parallel
+      const siteViewsPromises = sites.map((site: any) => queries.analyticsQueries.getSiteViews(site.id));
+      const siteViewsResults = await Promise.all(siteViewsPromises);
+      const siteViewsMap = new Map(sites.map((site: any, i: number) => [site.id, siteViewsResults[i]]));
+
+      const topSites = sites
+        .map((site: any) => {
+          const siteArticles = articles.filter((a: any) => a.site_id === site.id);
+          return {
+            id: site.id,
+            name: site.name,
+            domain: site.domain,
+            subdomain: site.subdomain,
+            views: siteViewsMap.get(site.id) || 0,  // Real views!
+            articleCount: siteArticles.length,
+            status: site.status
+          };
+        })
         .sort((a, b) => b.views - a.views)
         .slice(0, 10);
 

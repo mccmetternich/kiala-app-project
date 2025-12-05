@@ -83,36 +83,29 @@ export default function ArticlePageClient() {
       if (!siteId || !slug) return;
 
       try {
-        // Fetch site data by subdomain (publishedOnly=true for public pages)
-        const siteResponse = await fetch(`/api/sites?subdomain=${siteId}&publishedOnly=true`);
-        if (siteResponse.ok) {
-          const siteResult = await siteResponse.json();
-          const site = siteResult.site;
-          if (site) {
-            setSiteData(site);
+        // Use combined endpoint to fetch site + article in a single request (eliminates waterfall)
+        const response = await fetch(`/api/public/article?subdomain=${siteId}&slug=${slug}`);
+        if (response.ok) {
+          const data = await response.json();
 
-            // Fetch specific article using actual site ID (published=true for public pages)
-            const articleResponse = await fetch(`/api/articles?siteId=${site.id}&slug=${slug}&published=true`);
-            if (articleResponse.ok) {
-              const articleData = await articleResponse.json();
-              // API returns { article } for single article fetch by slug
-              const fetchedArticle = articleData.article || (articleData.articles && articleData.articles[0]);
-              if (fetchedArticle) {
-                setArticle(fetchedArticle);
+          if (data.site) {
+            setSiteData(data.site);
 
-                // Increment view count
-                fetch(`/api/articles/${fetchedArticle.id}/view`, {
-                  method: 'POST'
-                }).catch(console.error);
+            if (data.article) {
+              setArticle(data.article);
 
-                // Fire Meta Pixel ViewContent event
-                trackViewContent({
-                  content_name: fetchedArticle.title,
-                  content_type: 'article',
-                  content_ids: [fetchedArticle.id],
-                  content_category: fetchedArticle.category || 'Health'
-                });
-              }
+              // Increment view count (fire-and-forget)
+              fetch(`/api/articles/${data.article.id}/view`, {
+                method: 'POST'
+              }).catch(console.error);
+
+              // Fire Meta Pixel ViewContent event
+              trackViewContent({
+                content_name: data.article.title,
+                content_type: 'article',
+                content_ids: [data.article.id],
+                content_category: data.article.category || 'Health'
+              });
             }
           } else {
             // Site not found or not published
