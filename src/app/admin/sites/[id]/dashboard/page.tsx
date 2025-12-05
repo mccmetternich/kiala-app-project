@@ -780,37 +780,66 @@ export default function SiteDashboard() {
                   </div>
                   <div className="divide-y divide-gray-700/50">
                     {articles.slice(0, 5).map((article) => (
-                      <Link
+                      <div
                         key={article.id}
-                        href={`/admin/articles/${article.id}/edit`}
-                        className="flex items-center justify-between p-4 hover:bg-gray-750 transition-all group"
+                        className="flex items-center p-4 hover:bg-gray-750 transition-all group"
                       >
-                        <div className="flex items-center gap-4 min-w-0">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        {/* Publish Toggle */}
+                        <div className="flex flex-col items-center gap-1 flex-shrink-0 mr-3">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              togglePublished(article.id, article.published);
+                            }}
+                            className={`relative w-9 h-5 rounded-full transition-all duration-200 ${
+                              article.published ? 'bg-green-500' : 'bg-gray-600'
+                            }`}
+                            title={article.published ? 'Click to unpublish' : 'Click to publish'}
+                          >
+                            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-200 ${
+                              article.published ? 'left-4' : 'left-0.5'
+                            }`} />
+                          </button>
+                          <span className={`text-[9px] font-medium uppercase tracking-wider ${
+                            article.published ? 'text-green-400' : 'text-gray-500'
+                          }`}>
+                            {article.published ? 'Live' : 'Draft'}
+                          </span>
+                        </div>
+
+                        {/* Article Content - Clickable */}
+                        <Link
+                          href={`/admin/articles/${article.id}/edit`}
+                          className="flex items-center gap-3 min-w-0 flex-1"
+                        >
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
                             article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
                           }`}>
                             {article.boosted ? (
-                              <Zap className="w-5 h-5 text-yellow-400" />
+                              <Zap className="w-4 h-4 text-yellow-400" />
                             ) : (
-                              <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                              <FileText className={`w-4 h-4 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
                             )}
                           </div>
                           <div className="min-w-0">
-                            {article.boosted && (
+                            {article.boosted === true && (
                               <div className="flex items-center gap-1 mb-0.5">
-                                <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                                <span className="text-[9px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
                               </div>
                             )}
-                            <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
+                            <p className="text-white text-sm font-medium truncate group-hover:text-primary-400 transition-colors">
                               {article.title}
                             </p>
-                            <p className="text-gray-500 text-sm">
-                              {article.realViews || 0} views • Updated {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
+                            <p className="text-gray-500 text-xs">
+                              {article.realViews || 0} views • {formatDistanceToNow(new Date(article.updated_at || article.created_at), { addSuffix: true })}
                             </p>
                           </div>
-                        </div>
-                        <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors flex-shrink-0" />
-                      </Link>
+                        </Link>
+                        <Link href={`/admin/articles/${article.id}/edit`} className="flex-shrink-0 ml-2">
+                          <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
+                        </Link>
+                      </div>
                     ))}
                     {articles.length === 0 && (
                       <div className="p-8 text-center">
@@ -1065,7 +1094,7 @@ export default function SiteDashboard() {
                           </div>
                           <div className="min-w-0 flex-1">
                             {/* Boosted badge ABOVE title */}
-                            {article.boosted && (
+                            {article.boosted === true && (
                               <div className="flex items-center gap-1 mb-0.5">
                                 <Zap className="w-3 h-3 text-yellow-400" />
                                 <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
@@ -2896,7 +2925,7 @@ function AnalyticsTab({ siteId, articles, metrics, settings, onNavigateToSetting
                     expandedArticle === article.id ? 'rotate-180' : ''
                   }`} />
                   <div className="min-w-0">
-                    {article.boosted && (
+                    {article.boosted === true && (
                       <div className="flex items-center gap-1.5 mb-1">
                         <div className="w-4 h-4 bg-yellow-500/20 rounded flex items-center justify-center">
                           <Zap className="w-3 h-3 text-yellow-400" />

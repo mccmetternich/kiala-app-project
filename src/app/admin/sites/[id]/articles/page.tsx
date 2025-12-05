@@ -257,7 +257,7 @@ export default function SiteArticlesPage() {
 
                   {/* Content */}
                   <div className="min-w-0 flex-1">
-                    {article.boosted && (
+                    {article.boosted === true && (
                       <div className="flex items-center gap-1 mb-0.5">
                         <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
                       </div>

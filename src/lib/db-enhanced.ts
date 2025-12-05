@@ -763,25 +763,29 @@ export class EnhancedQueries {
     },
 
     update: async (id: string, data: any) => {
+      // Fetch existing article to support partial updates
+      const existing = await queryOne('SELECT * FROM articles WHERE id = ?', [id]);
+      if (!existing) {
+        throw new Error('Article not found');
+      }
+
+      // Merge existing data with updates (data takes precedence)
+      const merged = { ...existing, ...data };
+
       // If this article is being set as hero, unset hero on all other articles for this site
-      if (data.hero && data.site_id) {
-        await execute('UPDATE articles SET hero = 0 WHERE site_id = ? AND id != ?', [data.site_id, id]);
+      if (merged.hero && merged.site_id) {
+        await execute('UPDATE articles SET hero = 0 WHERE site_id = ? AND id != ?', [merged.site_id, id]);
       }
 
       // Handle widget_config - stringify if it's an object
-      const widgetConfigStr = data.widget_config
-        ? (typeof data.widget_config === 'string' ? data.widget_config : JSON.stringify(data.widget_config))
+      const widgetConfigStr = merged.widget_config
+        ? (typeof merged.widget_config === 'string' ? merged.widget_config : JSON.stringify(merged.widget_config))
         : null;
 
       // Handle tracking_config - stringify if it's an object
-      const trackingConfigStr = data.tracking_config
-        ? (typeof data.tracking_config === 'string' ? data.tracking_config : JSON.stringify(data.tracking_config))
+      const trackingConfigStr = merged.tracking_config
+        ? (typeof merged.tracking_config === 'string' ? merged.tracking_config : JSON.stringify(merged.tracking_config))
         : null;
-
-      // Handle published_at - use provided date or auto-set on first publish
-      const publishedAtValue = data.published_at
-        ? data.published_at
-        : (data.published ? 'COALESCE(published_at, CURRENT_TIMESTAMP)' : null);
 
       const result = await execute(`
         UPDATE articles SET title = ?, excerpt = ?, content = ?, slug = ?, category = ?,
@@ -796,36 +800,36 @@ export class EnhancedQueries {
         END
         WHERE id = ?
       `, [
-        data.title,
-        data.excerpt || null,
-        data.content || null,
-        data.slug,
-        data.category || null,
-        data.image || null,
-        data.featured ? 1 : 0,
-        data.trending ? 1 : 0,
-        data.hero ? 1 : 0,
-        data.boosted ? 1 : 0,
-        data.published ? 1 : 0,
-        data.read_time || 5,
-        data.views !== undefined ? data.views : 0,
+        merged.title,
+        merged.excerpt || null,
+        merged.content || null,
+        merged.slug,
+        merged.category || null,
+        merged.image || null,
+        merged.featured ? 1 : 0,
+        merged.trending ? 1 : 0,
+        merged.hero ? 1 : 0,
+        merged.boosted ? 1 : 0,
+        merged.published ? 1 : 0,
+        merged.read_time || 5,
+        merged.views !== undefined ? merged.views : 0,
         widgetConfigStr,
         trackingConfigStr,
-        data.author_name || null,
-        data.author_image || null,
-        data.display_views || 0,
-        data.display_likes || 0,
+        merged.author_name || null,
+        merged.author_image || null,
+        merged.display_views || 0,
+        merged.display_likes || 0,
+        data.published_at || null,  // Only use explicitly passed published_at
         data.published_at || null,
-        data.published_at || null,
-        data.published ? 1 : 0,
+        merged.published ? 1 : 0,
         id
       ]);
 
       // Invalidate cache
       cache.delPattern(`articles:*`);
       cache.delPattern(`article:*`);
-      if (data.slug && data.site_id) {
-        cache.delPattern(`article:slug:${data.site_id}:${data.slug}`);
+      if (merged.slug && merged.site_id) {
+        cache.delPattern(`article:slug:${merged.site_id}:${merged.slug}`);
       }
       cache.invalidateArticle(id);
 

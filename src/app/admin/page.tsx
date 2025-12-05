@@ -67,6 +67,25 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Toggle article published status
+  const togglePublished = async (articleId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/articles/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !currentStatus })
+      });
+
+      if (response.ok) {
+        setRecentArticles(prev => prev.map(a =>
+          a.id === articleId ? { ...a, published: !currentStatus } : a
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling article status:', error);
+    }
+  };
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -491,25 +510,52 @@ export default function AdminDashboard() {
                   {recentArticles.map((article) => {
                     const site = sites.find(s => s.id === article.site_id);
                     return (
-                      <Link
+                      <div
                         key={article.id}
-                        href={`/admin/articles/${article.id}/edit`}
-                        className="flex items-center justify-between p-4 hover:bg-gray-750 transition-colors group"
+                        className="flex items-center p-4 hover:bg-gray-750 transition-colors group"
                       >
-                        <div className="flex items-center gap-4 min-w-0">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        {/* Publish Toggle */}
+                        <div className="flex flex-col items-center gap-1 flex-shrink-0 mr-3">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              togglePublished(article.id, article.published);
+                            }}
+                            className={`relative w-9 h-5 rounded-full transition-all duration-200 ${
+                              article.published ? 'bg-green-500' : 'bg-gray-600'
+                            }`}
+                            title={article.published ? 'Click to unpublish' : 'Click to publish'}
+                          >
+                            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-200 ${
+                              article.published ? 'left-4' : 'left-0.5'
+                            }`} />
+                          </button>
+                          <span className={`text-[9px] font-medium uppercase tracking-wider ${
+                            article.published ? 'text-green-400' : 'text-gray-500'
+                          }`}>
+                            {article.published ? 'Live' : 'Draft'}
+                          </span>
+                        </div>
+
+                        {/* Article Content - Clickable */}
+                        <Link
+                          href={`/admin/articles/${article.id}/edit`}
+                          className="flex items-center gap-3 min-w-0 flex-1"
+                        >
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
                             article.boosted ? 'bg-yellow-500/10' : article.published ? 'bg-green-500/10' : 'bg-gray-700'
                           }`}>
                             {article.boosted ? (
-                              <Zap className="w-5 h-5 text-yellow-400" />
+                              <Zap className="w-4 h-4 text-yellow-400" />
                             ) : (
-                              <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
+                              <FileText className={`w-4 h-4 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
                             )}
                           </div>
                           <div className="min-w-0">
-                            {article.boosted && (
+                            {article.boosted === true && (
                               <div className="flex items-center gap-1 mb-0.5">
-                                <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
+                                <span className="text-[9px] font-bold text-yellow-400 uppercase tracking-wider">Boosted</span>
                               </div>
                             )}
                             <p className="text-sm font-medium text-white truncate group-hover:text-primary-400 transition-colors">
@@ -519,18 +565,11 @@ export default function AdminDashboard() {
                               {site?.name || 'Unknown site'} • {formatRelativeTime(article.updated_at)}
                             </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                            article.published
-                              ? 'bg-green-900/50 text-green-300'
-                              : 'bg-gray-700 text-gray-400'
-                          }`}>
-                            {article.published ? 'Published' : 'Draft'}
-                          </span>
+                        </Link>
+                        <Link href={`/admin/articles/${article.id}/edit`} className="flex-shrink-0 ml-2">
                           <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors" />
-                        </div>
-                      </Link>
+                        </Link>
+                      </div>
                     );
                   })}
                 </div>
