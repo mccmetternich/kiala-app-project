@@ -156,7 +156,10 @@ export type WidgetType =
   | 'myth-buster'
   | 'warning-box'
   | 'dr-tip'
-  | 'checklist';
+  | 'checklist'
+  // Product reveal & survey widgets
+  | 'product-reveal'
+  | 'community-survey-results';
 
 // Widget Configurations
 export interface WidgetConfig {

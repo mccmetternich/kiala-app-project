@@ -51,7 +51,7 @@ export default function WarningBox({
         border: 'border-red-300',
         icon: <XCircle className="w-5 h-5 text-red-600" />,
         text: 'text-red-900',
-        pulse: 'animate-pulse',
+        pulse: '', // Removed pulsing animation
       },
       medium: {
         bg: isHovered ? 'bg-gradient-to-r from-orange-100 to-amber-100' : 'bg-gradient-to-r from-orange-50 to-amber-50',
@@ -112,7 +112,7 @@ export default function WarningBox({
                 return (
                   <div
                     key={idx}
-                    className="flex justify-center"
+                    className="flex justify-start"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
                     <div
@@ -128,14 +128,22 @@ export default function WarningBox({
                       `}
                       style={{ width: isMobile ? '100%' : `${width}%` }}
                     >
-                      {/* Connecting line to next item - desktop only */}
+                      {/* Connecting arrow to next item */}
                       {idx < warnings.length - 1 && (
-                        <div className="absolute left-1/2 -bottom-4 transform -translate-x-1/2 h-4 w-0.5 bg-gradient-to-b from-gray-300 to-transparent opacity-50 hidden md:block" />
+                        <div className="absolute left-6 md:left-8 -bottom-3 transform flex flex-col items-center z-20">
+                          <div className="w-0.5 h-3 bg-gradient-to-b from-gray-400 to-gray-300" />
+                          <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-300" />
+                        </div>
                       )}
 
                       <div className="flex items-start gap-3 md:gap-4">
-                        <div className={`flex-shrink-0 p-1.5 md:p-2 rounded-full ${isHovered ? 'bg-white shadow-md' : 'bg-white/70'} transition-all duration-300`}>
-                          {styles.icon}
+                        {/* Level indicator - on the left */}
+                        <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm md:text-base font-bold ${
+                          warning.severity === 'high' ? 'bg-red-200 text-red-800' :
+                          warning.severity === 'low' ? 'bg-amber-200 text-amber-800' :
+                          'bg-orange-200 text-orange-800'
+                        }`}>
+                          {idx + 1}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={`font-semibold text-sm md:text-base lg:text-lg leading-relaxed ${styles.text} transition-all duration-300`}>
@@ -146,14 +154,6 @@ export default function WarningBox({
                               ⚠️ Critical warning - requires immediate attention
                             </p>
                           )}
-                        </div>
-                        {/* Level indicator - smaller on mobile */}
-                        <div className={`flex-shrink-0 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider ${
-                          warning.severity === 'high' ? 'bg-red-200 text-red-800' :
-                          warning.severity === 'low' ? 'bg-amber-200 text-amber-800' :
-                          'bg-orange-200 text-orange-800'
-                        }`}>
-                          {idx + 1}
                         </div>
                       </div>
                     </div>

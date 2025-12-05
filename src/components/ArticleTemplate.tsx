@@ -37,6 +37,8 @@ import MythBuster from '@/widgets/MythBuster';
 import WarningBox from '@/widgets/WarningBox';
 import DrTip from '@/widgets/DrTip';
 import Checklist from '@/widgets/Checklist';
+import ProductReveal from '@/widgets/ProductReveal';
+import CommunitySurveyResults from '@/widgets/CommunitySurveyResults';
 
 interface ArticleTemplateProps {
   page: Page;
@@ -757,6 +759,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
             ctaUrl={widget.config.ctaUrl}
+            pollId={widget.id}
           />
         </div>
       );
@@ -824,6 +827,45 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
             ctaUrl={widget.config.ctaUrl}
+            style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'product-reveal':
+      return (
+        <div className="my-8">
+          <ProductReveal
+            headline={widget.config.headline}
+            subheadline={widget.config.subheadline}
+            productName={widget.config.productName}
+            productDescription={widget.config.productDescription}
+            productImage={widget.config.productImage}
+            doctorName={widget.config.doctorName || site?.brand?.name}
+            doctorImage={widget.config.doctorImage || site?.brand?.authorImage || site?.brand?.profileImage}
+            doctorQuote={widget.config.doctorQuote}
+            rating={typeof widget.config.rating === 'number' ? widget.config.rating : parseFloat(widget.config.rating as string) || undefined}
+            reviewCount={widget.config.reviewCount}
+            keyBenefits={widget.config.keyBenefits as string[]}
+            socialProofStats={widget.config.socialProofStats as any}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
+            target={widget.config.target as '_self' | '_blank'}
+            badge={widget.config.badge}
+          />
+        </div>
+      );
+
+    case 'community-survey-results':
+      return (
+        <div className="my-8">
+          <CommunitySurveyResults
+            headline={widget.config.headline}
+            subheading={widget.config.subheading}
+            results={widget.config.results}
+            totalRespondents={widget.config.totalRespondents}
+            source={widget.config.source}
+            highlightText={widget.config.highlightText}
             style={widget.config.style as any}
           />
         </div>

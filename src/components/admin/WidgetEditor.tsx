@@ -4009,6 +4009,44 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       showCta: true,
       ctaText: 'See The Solution →',
       ctaUrl: '#'
+    },
+    'product-reveal': {
+      headline: 'After Months of Research, I Found It',
+      subheadline: 'The one formula I can confidently recommend',
+      productName: 'Product Name',
+      productDescription: 'A clinically-backed formula designed specifically for women over 40.',
+      productImage: 'https://via.placeholder.com/400x400',
+      doctorQuote: "In 15 years of practice, I've never endorsed a specific supplement—until now.",
+      rating: 4.8,
+      reviewCount: '10,000+',
+      keyBenefits: [
+        'Key benefit one',
+        'Key benefit two',
+        'Key benefit three',
+        'Key benefit four'
+      ],
+      socialProofStats: [
+        { value: '83%', label: 'success rate' },
+        { value: '10K+', label: 'community members' },
+        { value: '4.8', label: 'average rating' }
+      ],
+      ctaText: 'Learn More →',
+      ctaUrl: '#',
+      badge: "Doctor's #1 Pick"
+    },
+    'community-survey-results': {
+      headline: 'Community Survey Results',
+      subheading: 'Based on feedback from verified community members',
+      results: [
+        { label: 'Reported positive results by week 3', percentage: 78 },
+        { label: 'Said habits became easier', percentage: 71 },
+        { label: 'Still using after 60 days', percentage: 83, highlighted: true },
+        { label: 'Would recommend to a friend', percentage: 91 }
+      ],
+      totalRespondents: '1,000+',
+      source: 'Community Survey, 2024',
+      highlightText: 'The results speak for themselves.',
+      style: 'featured'
     }
   };
 

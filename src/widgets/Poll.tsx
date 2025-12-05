@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle, Users, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
 import { useTracking } from '@/contexts/TrackingContext';
 
@@ -15,7 +15,7 @@ interface PollProps {
   question: string;
   options: PollOption[];
   totalVotes: number;
-  showResults?: boolean;
+  showResults?: boolean;  // Only used for 'results-only' style - regular polls always start unanswered
   resultsMessage?: string;
   source?: string;
   style?: 'default' | 'highlighted' | 'results-only';
@@ -23,6 +23,8 @@ interface PollProps {
   ctaText?: string;
   ctaUrl?: string;
   showCta?: boolean;
+  // Poll ID for localStorage persistence (optional)
+  pollId?: string;
 }
 
 export default function Poll({
@@ -36,17 +38,39 @@ export default function Poll({
   ctaText,
   ctaUrl,
   showCta = false,
+  pollId,
 }: PollProps) {
   const { appendTracking } = useTracking();
   const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [hasVoted, setHasVoted] = useState(showResults || style === 'results-only');
+  // Only results-only style shows results immediately. Regular polls always start as unanswered.
+  const [hasVoted, setHasVoted] = useState(style === 'results-only');
+  const [isClient, setIsClient] = useState(false);
+
+  // Check localStorage on client mount to see if user already voted
+  useEffect(() => {
+    setIsClient(true);
+    if (pollId && style !== 'results-only') {
+      const votedPolls = JSON.parse(localStorage.getItem('votedPolls') || '{}');
+      if (votedPolls[pollId]) {
+        setSelectedOption(votedPolls[pollId]);
+        setHasVoted(true);
+      }
+    }
+  }, [pollId, style]);
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
   const handleVote = (optionId: string) => {
     if (hasVoted) return;
     setSelectedOption(optionId);
     setHasVoted(true);
+
+    // Save to localStorage if pollId is provided
+    if (pollId) {
+      const votedPolls = JSON.parse(localStorage.getItem('votedPolls') || '{}');
+      votedPolls[pollId] = optionId;
+      localStorage.setItem('votedPolls', JSON.stringify(votedPolls));
+    }
   };
 
   const getPercentage = (option: PollOption) => {
