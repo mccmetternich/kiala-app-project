@@ -30,9 +30,12 @@ interface Article {
   published_at?: string;
 }
 
-export async function getSiteBySubdomain(subdomain: string): Promise<Site | null> {
+export async function getSiteBySubdomain(subdomain: string, publishedOnly = false): Promise<Site | null> {
   try {
-    const response = await fetch(`/api/sites?subdomain=${subdomain}`);
+    const url = publishedOnly
+      ? `/api/sites?subdomain=${subdomain}&publishedOnly=true`
+      : `/api/sites?subdomain=${subdomain}`;
+    const response = await fetch(url);
     if (!response.ok) return null;
     const data = await response.json();
     return data.site || null;
@@ -68,8 +71,11 @@ export async function getArticleBySlug(siteId: string, slug: string): Promise<Ar
 
 // Client-side versions for use in components
 export const clientAPI = {
-  async getSiteBySubdomain(subdomain: string) {
-    const response = await fetch(`/api/sites?subdomain=${subdomain}`);
+  async getSiteBySubdomain(subdomain: string, publishedOnly = false) {
+    const url = publishedOnly
+      ? `/api/sites?subdomain=${subdomain}&publishedOnly=true`
+      : `/api/sites?subdomain=${subdomain}`;
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch site');
     const data = await response.json();
     return data.site;

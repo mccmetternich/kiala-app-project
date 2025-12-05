@@ -107,7 +107,8 @@ const topPicks = [
 export default function TopPicksPage() {
   const params = useParams();
   const siteId = params?.id as string;
-  const { site, loading: siteLoading } = useSite(siteId);
+  // publishedOnly=true for public pages
+  const { site, loading: siteLoading, notFound } = useSite(siteId, true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -121,6 +122,31 @@ export default function TopPicksPage() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading top picks...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Site not found or not published - show 404
+  if (notFound || !site) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">Site Not Available</h1>
+          <p className="text-gray-600 mb-6">
+            This site is currently unavailable. It may be temporarily offline or no longer exists.
+          </p>
+          <a
+            href="/"
+            className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+          >
+            Go Home
+          </a>
         </div>
       </div>
     );

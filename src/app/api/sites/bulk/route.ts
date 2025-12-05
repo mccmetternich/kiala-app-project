@@ -1,8 +1,95 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createQueries } from '@/lib/db-enhanced';
+import { createQueries, initDb, queryAll } from '@/lib/db-enhanced';
 import { validateAndSanitize } from '@/lib/validation';
 import { requirePermission, getSecurityHeaders, checkRateLimit } from '@/lib/auth';
 import { z } from 'zod';
+
+// GET - Fetch all sites with metrics in a single optimized query
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const includeMetrics = searchParams.get('includeMetrics') === 'true';
+    const tenantId = request.headers.get('X-Tenant-Id') || undefined;
+    const queries = createQueries(tenantId);
+
+    // Get all sites
+    const sites = await queries.siteQueries.getAll();
+
+    if (!includeMetrics) {
+      return NextResponse.json({ sites });
+    }
+
+    // Get article counts and email counts in bulk using single queries
+    const db = await initDb();
+
+    // Get article counts per site in one query
+    const articleCounts = await queryAll(
+      `SELECT site_id, COUNT(*) as count FROM articles GROUP BY site_id`
+    );
+
+    // Get published article counts per site
+    const publishedArticleCounts = await queryAll(
+      `SELECT site_id, COUNT(*) as count FROM articles WHERE published = 1 GROUP BY site_id`
+    );
+
+    // Get real view counts per site (sum of article views)
+    const viewCounts = await queryAll(
+      `SELECT a.site_id, COUNT(av.id) as count
+       FROM articles a
+       LEFT JOIN article_views av ON av.article_id = a.id
+       GROUP BY a.site_id`
+    );
+
+    // Get active email counts per site
+    const emailCounts = await queryAll(
+      `SELECT site_id, COUNT(*) as count
+       FROM subscribers
+       WHERE unsubscribed = 0
+       GROUP BY site_id`
+    );
+
+    // Create lookup maps
+    const articleCountMap: Record<string, number> = {};
+    const publishedArticleCountMap: Record<string, number> = {};
+    const viewCountMap: Record<string, number> = {};
+    const emailCountMap: Record<string, number> = {};
+
+    articleCounts.forEach((row: any) => {
+      articleCountMap[row.site_id] = row.count;
+    });
+
+    publishedArticleCounts.forEach((row: any) => {
+      publishedArticleCountMap[row.site_id] = row.count;
+    });
+
+    viewCounts.forEach((row: any) => {
+      viewCountMap[row.site_id] = row.count;
+    });
+
+    emailCounts.forEach((row: any) => {
+      emailCountMap[row.site_id] = row.count;
+    });
+
+    // Merge metrics into sites
+    const sitesWithMetrics = sites.map((site: any) => ({
+      ...site,
+      metrics: {
+        totalArticles: articleCountMap[site.id] || 0,
+        publishedArticles: publishedArticleCountMap[site.id] || 0,
+        totalViews: viewCountMap[site.id] || 0,
+        activeEmails: emailCountMap[site.id] || 0
+      }
+    }));
+
+    return NextResponse.json({ sites: sitesWithMetrics });
+  } catch (error: any) {
+    console.error('Error fetching sites with metrics:', error);
+    return NextResponse.json({
+      error: 'Failed to fetch sites',
+      details: error?.message || String(error)
+    }, { status: 500 });
+  }
+}
 
 const bulkDeleteSchema = z.object({
   siteIds: z.array(z.string().uuid()).min(1, 'At least one site ID is required').max(50, 'Cannot delete more than 50 sites at once'),

@@ -70,10 +70,11 @@ export const fallbackSite: Site = {
   updatedAt: new Date()
 };
 
-export function useSite(siteId: string) {
+export function useSite(siteId: string, publishedOnly = false) {
   const [siteData, setSiteData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     async function loadSite() {
@@ -84,23 +85,28 @@ export function useSite(siteId: string) {
       }
 
       try {
-        // Try fetching by subdomain first
-        const response = await fetch(`/api/sites?subdomain=${siteId}`);
+        // Try fetching by subdomain - use publishedOnly for public pages
+        const url = publishedOnly
+          ? `/api/sites?subdomain=${siteId}&publishedOnly=true`
+          : `/api/sites?subdomain=${siteId}`;
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           if (data.site) {
             setSiteData(data.site);
           } else {
-            console.warn('Site not found, using fallback');
-            setSiteData(fallbackSite);
+            // Site not found or not published
+            setNotFound(true);
+            setSiteData(null);
           }
         } else {
-          console.warn('Site not found, using fallback');
-          setSiteData(fallbackSite);
+          setNotFound(true);
+          setSiteData(null);
         }
       } catch (err) {
         console.error('Error loading site:', err);
-        setSiteData(fallbackSite);
+        setNotFound(true);
+        setSiteData(null);
         setError('Failed to load site');
       } finally {
         setLoading(false);
@@ -108,7 +114,7 @@ export function useSite(siteId: string) {
     }
 
     loadSite();
-  }, [siteId]);
+  }, [siteId, publishedOnly]);
 
   // Transform database site data to match the Site interface
   const transformedSite = siteData ? {
@@ -123,7 +129,7 @@ export function useSite(siteId: string) {
     page_config: typeof siteData.page_config === 'string'
       ? JSON.parse(siteData.page_config || '{}')
       : siteData.page_config || {}
-  } : fallbackSite;
+  } : null;
 
-  return { site: transformedSite, loading, error };
+  return { site: transformedSite, loading, error, notFound };
 }

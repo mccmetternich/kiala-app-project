@@ -33,23 +33,19 @@ export default function SitesPage() {
   useEffect(() => {
     async function loadSites() {
       try {
-        const sitesData = await clientAPI.getAllSites();
+        // Use bulk endpoint to get sites with metrics in a single request
+        const response = await fetch('/api/sites/bulk?includeMetrics=true');
+        if (!response.ok) throw new Error('Failed to fetch sites');
+        const data = await response.json();
+        const sitesData = data.sites || [];
+
         setSites(sitesData);
 
-        // Get article counts for each site
-        const articlePromises = sitesData.map(async (site: any) => {
-          try {
-            const response = await fetch(`/api/articles?siteId=${site.id}`);
-            const data = await response.json();
-            return { siteId: site.id, articleCount: data.articles?.length || 0 };
-          } catch {
-            return { siteId: site.id, articleCount: 0 };
+        // Build metrics map from the response (already included)
+        const metricsMap = sitesData.reduce((acc: any, site: any) => {
+          if (site.metrics) {
+            acc[site.id] = site.metrics;
           }
-        });
-
-        const articleResults = await Promise.all(articlePromises);
-        const metricsMap = articleResults.reduce((acc: any, result) => {
-          acc[result.siteId] = { totalArticles: result.articleCount };
           return acc;
         }, {});
 

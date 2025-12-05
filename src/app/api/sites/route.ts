@@ -7,21 +7,34 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const subdomain = searchParams.get('subdomain');
     const domain = searchParams.get('domain');
+    const publishedOnly = searchParams.get('publishedOnly') === 'true';
     const tenantId = request.headers.get('X-Tenant-Id') || undefined;
     const queries = createQueries(tenantId);
-    
+
     if (subdomain) {
       // Fetch site by subdomain
       const site = await queries.siteQueries.getBySubdomain(subdomain);
+
+      // For public requests, only return published sites
+      if (publishedOnly && site && site.status !== 'published') {
+        return NextResponse.json({ site: null });
+      }
+
       return NextResponse.json({ site });
     }
-    
+
     if (domain) {
       // Fetch site by custom domain
       const site = await queries.siteQueries.getByDomain(domain);
+
+      // For public requests, only return published sites
+      if (publishedOnly && site && site.status !== 'published') {
+        return NextResponse.json({ site: null });
+      }
+
       return NextResponse.json({ site });
     }
-    
+
     // Fetch all sites
     const sites = await queries.siteQueries.getAll();
     return NextResponse.json({ sites });
