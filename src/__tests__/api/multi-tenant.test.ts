@@ -167,7 +167,7 @@ describe('Multi-Tenant Isolation', () => {
     it('should handle missing X-Tenant-Id header gracefully', async () => {
       const mockRequest = {
         headers: {
-          get: () => null,
+          get: (_key: string) => null,
         },
       };
 
