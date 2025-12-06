@@ -85,7 +85,6 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   { type: 'stacked-quotes', name: 'Stacked Testimonials', icon: Quote, category: 'Social Proof', description: 'A series of large text based testimonials' },
   { type: 'before-after-comparison', name: 'Before & After Slider', icon: ArrowLeftRight, category: 'Social Proof', description: 'An interactive slider of before & after with story and CTA' },
   { type: 'before-after-side-by-side', name: 'Before & After Static', icon: Columns, category: 'Social Proof', description: 'Two side by side images for before & after with quote and CTA' },
-  { type: 'rating-stars', name: 'Rating Display', icon: Star, category: 'Social Proof', description: 'Star ratings and reviews' },
   { type: 'review-grid', name: 'Review Tiles', icon: Star, category: 'Social Proof', description: '4x tiles with avatars, stars, review quotes in a grid' },
   { type: 'press-logos', name: 'Press Logos', icon: Award, category: 'Social Proof', description: 'A grid of press logos with quotes' },
   { type: 'scrolling-thumbnails', name: 'Scrolling Photowall', icon: ImageIcon, category: 'Social Proof', description: 'A large, animated photo wall of thumbnails that scrolls' },
