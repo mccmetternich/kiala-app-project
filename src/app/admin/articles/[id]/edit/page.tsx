@@ -98,7 +98,7 @@ export default function EditArticle() {
     passthrough_fbclid: true
   });
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>('Content');
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Content', 'Social Proof', 'Commerce']));
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -365,7 +365,7 @@ export default function EditArticle() {
                 }`}
               >
                 <Settings className="w-4 h-4" />
-                Details
+                Article Details
               </button>
               <button
                 onClick={() => setActiveTab('content')}
@@ -376,7 +376,7 @@ export default function EditArticle() {
                 }`}
               >
                 <Layers className="w-4 h-4" />
-                Content
+                Edit Content
               </button>
             </div>
 
@@ -437,7 +437,7 @@ export default function EditArticle() {
               }`}
             >
               <Settings className="w-4 h-4" />
-              Details
+              Article Details
             </button>
             <button
               onClick={() => setActiveTab('content')}
@@ -448,7 +448,7 @@ export default function EditArticle() {
               }`}
             >
               <Layers className="w-4 h-4" />
-              Content
+              Edit Content
             </button>
           </div>
         </div>
@@ -460,7 +460,7 @@ export default function EditArticle() {
         {activeTab === 'content' && (
           <div className="flex">
             {/* Widget Editor - 2/3 */}
-            <div ref={contentRef} className="flex-1 min-w-0 p-4 md:p-6 lg:pr-[340px]">
+            <div ref={contentRef} className="flex-1 min-w-0 p-4 md:p-6 lg:pr-[400px]">
               <div className="max-w-4xl mx-auto">
                 {/* Widget Editor */}
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -475,54 +475,71 @@ export default function EditArticle() {
             </div>
 
             {/* Widget Library - Floating Sidebar */}
-            <div className="hidden lg:block fixed right-0 top-16 bottom-0 w-[320px] bg-gray-800 border-l border-gray-700 overflow-hidden">
+            <div className="hidden lg:block fixed right-0 top-16 bottom-0 w-[380px] bg-gradient-to-b from-gray-800 to-gray-900 border-l border-gray-700 overflow-hidden shadow-2xl">
               <div className="h-full flex flex-col">
                 {/* Library Header */}
-                <div className="p-4 border-b border-gray-700">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Plus className="w-5 h-5 text-primary-400" />
+                <div className="p-5 border-b border-gray-700/50 bg-gray-800/80 backdrop-blur-sm">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
+                      <Plus className="w-4 h-4 text-white" />
+                    </div>
                     Widget Library
                   </h3>
-                  <p className="text-xs text-gray-400 mt-1">Click to add widgets to your article</p>
+                  <p className="text-sm text-gray-400 mt-2">Click to add or drag widgets into your article</p>
                 </div>
 
                 {/* Categories */}
-                <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
                   {Object.entries(widgetsByCategory).map(([category, categoryWidgets]) => {
                     const colors = categoryColors[category] || categoryColors['Content'];
-                    const isExpanded = expandedCategory === category;
+                    const isExpanded = expandedCategories.has(category);
+
+                    const toggleCategory = () => {
+                      const newSet = new Set(expandedCategories);
+                      if (isExpanded) {
+                        newSet.delete(category);
+                      } else {
+                        newSet.add(category);
+                      }
+                      setExpandedCategories(newSet);
+                    };
 
                     return (
-                      <div key={category} className={`rounded-xl border ${colors.border} overflow-hidden`}>
+                      <div key={category} className={`rounded-xl border ${colors.border} overflow-hidden bg-gray-800/50`}>
                         {/* Category Header */}
                         <button
-                          onClick={() => setExpandedCategory(isExpanded ? null : category)}
-                          className={`w-full flex items-center justify-between p-3 ${colors.bg} transition-all`}
+                          onClick={toggleCategory}
+                          className={`w-full flex items-center justify-between p-3.5 ${colors.bg} hover:brightness-110 transition-all`}
                         >
-                          <span className={`text-sm font-medium ${colors.text}`}>{category}</span>
+                          <span className={`text-sm font-semibold ${colors.text}`}>{category}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-500">{categoryWidgets.length}</span>
-                            <ChevronRight className={`w-4 h-4 ${colors.text} transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                            <span className="text-xs text-gray-500 bg-gray-700/50 px-2 py-0.5 rounded-full">{categoryWidgets.length}</span>
+                            <ChevronRight className={`w-4 h-4 ${colors.text} transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
                           </div>
                         </button>
 
                         {/* Widgets in Category */}
                         {isExpanded && (
-                          <div className="p-2 bg-gray-850 space-y-1">
+                          <div className="p-2 space-y-1.5">
                             {categoryWidgets.map((widget) => (
-                              <button
+                              <div
                                 key={widget.type}
+                                draggable
+                                onDragStart={(e) => {
+                                  e.dataTransfer.setData('widgetType', widget.type);
+                                  e.dataTransfer.effectAllowed = 'copy';
+                                }}
                                 onClick={() => addWidget(widget.type as WidgetType)}
-                                className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all group text-left"
+                                className="w-full flex items-start gap-3 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-500 transition-all group text-left cursor-grab active:cursor-grabbing hover:shadow-lg"
                               >
-                                <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0`}>
-                                  <Plus className={`w-4 h-4 ${colors.text} group-hover:scale-110 transition-transform`} />
+                                <div className={`w-9 h-9 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                                  <Plus className={`w-4 h-4 ${colors.text}`} />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-medium text-white truncate">{widget.name}</p>
-                                  <p className="text-xs text-gray-500 truncate">{widget.description}</p>
+                                  <p className="text-sm font-medium text-white group-hover:text-primary-300 transition-colors">{widget.name}</p>
+                                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{widget.description}</p>
                                 </div>
-                              </button>
+                              </div>
                             ))}
                           </div>
                         )}
@@ -532,10 +549,14 @@ export default function EditArticle() {
                 </div>
 
                 {/* Stats Footer */}
-                <div className="p-4 border-t border-gray-700 bg-gray-850">
+                <div className="p-4 border-t border-gray-700/50 bg-gray-900/80 backdrop-blur-sm">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">Active Widgets</span>
-                    <span className="text-white font-medium">{widgets.filter(w => w.enabled).length} / {widgets.length}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-bold">{widgets.filter(w => w.enabled).length}</span>
+                      <span className="text-gray-500">/</span>
+                      <span className="text-gray-400">{widgets.length}</span>
+                    </div>
                   </div>
                 </div>
               </div>

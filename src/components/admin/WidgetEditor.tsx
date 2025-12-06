@@ -395,70 +395,10 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
   }
 
   return (
-    <div className="space-y-4">
-      {/* Widget Palette Toggle */}
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Page Content</h3>
-        <button
-          onClick={() => setShowWidgetPalette(!showWidgetPalette)}
-          className="btn-primary text-sm"
-        >
-          + Add Widget
-        </button>
-      </div>
-
-      {/* Widget Palette - Draggable */}
-      {showWidgetPalette && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="font-semibold text-gray-900">Widget Library</h4>
-            <p className="text-sm text-gray-500">Click to add or drag to position</p>
-          </div>
-
-          {/* Group by category */}
-          {['Content', 'Social Proof', 'Commerce', 'Lead Gen'].map(category => (
-            <div key={category} className="mb-6">
-              <h5 className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
-                <span className={`px-2 py-0.5 rounded text-xs ${categoryColors[category]}`}>{category}</span>
-              </h5>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
-                {widgetTypes.filter(w => w.category === category).map((widgetType) => (
-                  <button
-                    key={widgetType.type}
-                    onClick={() => addWidget(widgetType.type as WidgetType)}
-                    draggable
-                    onDragStart={(e) => handlePaletteDragStart(e, widgetType.type as WidgetType)}
-                    className="p-3 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all text-left group cursor-grab active:cursor-grabbing"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 bg-gray-100 group-hover:bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <widgetType.icon className="w-3.5 h-3.5 text-gray-600 group-hover:text-primary-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h5 className="font-medium text-gray-900 text-sm truncate">{widgetType.name}</h5>
-                        <p className="text-xs text-gray-500 truncate">{widgetType.description}</p>
-                      </div>
-                      <GripVertical className="w-4 h-4 text-gray-300 group-hover:text-gray-400" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={() => setShowWidgetPalette(false)}
-              className="text-gray-500 hover:text-gray-700 text-sm"
-            >
-              Close Library
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="p-6">
 
       {/* Widget List */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {widgets
           .sort((a, b) => a.position - b.position)
           .map((widget, index) => (
@@ -479,7 +419,7 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
             >
               {/* Drop indicator */}
               {dragOverIndex === index && (
-                <div className="h-1 bg-primary-500 rounded-full mb-2 animate-pulse" />
+                <div className="h-1.5 bg-gradient-to-r from-primary-500 to-purple-500 rounded-full mb-3 animate-pulse shadow-lg shadow-primary-500/30" />
               )}
 
               <WidgetItem
@@ -506,8 +446,10 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
         {/* Drop zone at end */}
         {widgets.length > 0 && (
           <div
-            className={`h-16 border-2 border-dashed rounded-lg flex items-center justify-center transition-colors ${
-              dragOverIndex === widgets.length ? 'border-primary-400 bg-primary-50' : 'border-gray-200'
+            className={`h-20 border-2 border-dashed rounded-xl flex items-center justify-center transition-all ${
+              dragOverIndex === widgets.length
+                ? 'border-primary-400 bg-gradient-to-r from-primary-50 to-purple-50 shadow-inner'
+                : 'border-gray-200 hover:border-gray-300'
             }`}
             onDragOver={(e) => {
               e.preventDefault();
@@ -522,14 +464,20 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
               }
             }}
           >
-            <span className="text-sm text-gray-400">Drop widget here</span>
+            <span className={`text-sm ${dragOverIndex === widgets.length ? 'text-primary-600 font-medium' : 'text-gray-400'}`}>
+              {dragOverIndex === widgets.length ? 'Release to add widget here' : 'Drag widget here to add to end'}
+            </span>
           </div>
         )}
       </div>
 
       {widgets.length === 0 && (
         <div
-          className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center"
+          className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all ${
+            dragOverIndex === 0
+              ? 'border-primary-400 bg-gradient-to-br from-primary-50 to-purple-50'
+              : 'border-gray-300 bg-gray-50'
+          }`}
           onDragOver={(e) => {
             e.preventDefault();
             setDragOverIndex(0);
@@ -541,15 +489,13 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
             }
           }}
         >
-          <Type className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h4 className="font-semibold text-gray-900 mb-2">No content yet</h4>
-          <p className="text-gray-600 mb-4">Add your first widget or drag from the library above</p>
-          <button
-            onClick={() => setShowWidgetPalette(true)}
-            className="btn-primary"
-          >
-            Open Widget Library
-          </button>
+          <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Type className="w-8 h-8 text-primary-600" />
+          </div>
+          <h4 className="font-semibold text-gray-900 mb-2 text-lg">Start Building Your Article</h4>
+          <p className="text-gray-500 mb-4 max-w-sm mx-auto">
+            Drag widgets from the library on the right, or click the + button to add content
+          </p>
         </div>
       )}
     </div>
@@ -595,81 +541,88 @@ function WidgetItem({
 
   return (
     <div
-      className={`bg-white border rounded-lg transition-all ${
-        isSelected ? 'border-primary-300 ring-2 ring-primary-100' : 'border-gray-200'
-      } ${isDragging ? 'opacity-50' : ''}`}
-      draggable
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
+      className={`bg-white border rounded-xl transition-all shadow-sm hover:shadow-md ${
+        isSelected ? 'border-primary-400 ring-2 ring-primary-100 shadow-lg' : 'border-gray-200'
+      } ${isDragging ? 'opacity-50 scale-[0.98]' : ''}`}
     >
+      {/* Header area - only this is draggable */}
       <div
-        className="p-4 cursor-pointer"
+        className={`p-4 cursor-pointer rounded-t-xl ${isSelected ? 'bg-gradient-to-r from-primary-50 to-purple-50' : 'hover:bg-gray-50'}`}
         onClick={onSelect}
+        draggable
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Drag handle */}
-            <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
+            <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100">
               <GripVertical className="w-5 h-5" />
             </div>
 
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${widget.enabled ? 'bg-primary-100' : 'bg-gray-100'}`}>
-              {widgetType && <widgetType.icon className={`w-4 h-4 ${widget.enabled ? 'text-primary-600' : 'text-gray-400'}`} />}
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${widget.enabled ? 'bg-gradient-to-br from-primary-100 to-purple-100' : 'bg-gray-100'}`}>
+              {widgetType && <widgetType.icon className={`w-5 h-5 ${widget.enabled ? 'text-primary-600' : 'text-gray-400'}`} />}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className={`font-medium ${widget.enabled ? 'text-gray-900' : 'text-gray-500'}`}>
+                <h4 className={`font-semibold ${widget.enabled ? 'text-gray-900' : 'text-gray-500'}`}>
                   {/* Show custom label for text-blocks if set, otherwise show widget type name */}
                   {widget.type === 'text-block' && widget.config.label
                     ? widget.config.label
                     : (widgetType?.name || widget.type)}
                 </h4>
                 {widget.type === 'text-block' && widget.config.label && (
-                  <span className="text-xs text-gray-400">(Text Block)</span>
+                  <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Text Block</span>
                 )}
                 {!widget.enabled && (
                   <Badge variant="default" size="sm">Disabled</Badge>
                 )}
               </div>
-              <p className="text-sm text-gray-600 truncate max-w-md">
+              <p className="text-sm text-gray-500 truncate max-w-md mt-0.5">
                 {widget.config.headline ||
                   (widget.config.content
                     ? widget.config.content.replace(/<[^>]*>/g, '').substring(0, 60) + (widget.config.content.replace(/<[^>]*>/g, '').length > 60 ? '...' : '')
-                    : 'No content set')}
+                    : 'Click to configure')}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <button
               onClick={(e) => { e.stopPropagation(); onMove('up'); }}
               disabled={!canMoveUp}
-              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50"
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-30 transition-colors"
+              title="Move up"
             >
-              ↑
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onMove('down'); }}
               disabled={!canMoveDown}
-              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50"
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-30 transition-colors"
+              title="Move down"
             >
-              ↓
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </button>
+            <div className="w-px h-6 bg-gray-200 mx-1" />
             <button
               onClick={(e) => { e.stopPropagation(); onToggleEnabled(); }}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className={`p-2 rounded-lg transition-colors ${widget.enabled ? 'text-gray-400 hover:text-gray-600 hover:bg-gray-100' : 'text-amber-500 hover:text-amber-600 hover:bg-amber-50'}`}
+              title={widget.enabled ? 'Disable widget' : 'Enable widget'}
             >
               {widget.enabled ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Duplicate widget"
             >
               <Copy className="w-4 h-4" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onDelete(); }}
-              className="p-1 text-gray-400 hover:text-red-600"
+              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              title="Delete widget"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -677,6 +630,7 @@ function WidgetItem({
         </div>
       </div>
 
+      {/* Expanded config panel - NOT draggable */}
       {isSelected && (
         <WidgetConfigPanel
           widget={widget}
