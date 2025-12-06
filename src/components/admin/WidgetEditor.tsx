@@ -4075,6 +4075,163 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         </div>
       )}
 
+      {/* Checklist Widget */}
+      {widget.type === 'checklist' && (
+        <div className="space-y-4">
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 mb-4">
+            <p className="text-sm text-rose-800">
+              <strong>Interactive Checklist:</strong> Users can check items. When threshold is hit, an alert appears with optional CTA.
+            </p>
+          </div>
+
+          {renderTextField('Headline', 'headline', 'Signs Your Foundation Needs Support')}
+          {renderTextField('Subheading', 'subheading', 'Check all that apply to you')}
+
+          {renderSelectField('Style', 'style', [
+            { value: 'assessment', label: 'Assessment (with alert threshold)' },
+            { value: 'interactive', label: 'Interactive (checkable, no alert)' },
+            { value: 'default', label: 'Static (non-interactive)' }
+          ])}
+
+          {/* Checklist Items Editor */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <div className="flex justify-between items-center mb-3">
+              <label className="block text-sm font-semibold text-gray-800">Checklist Items</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const items = [...(widget.config.items || [])];
+                  items.push({ id: `item-${Date.now()}`, text: 'New item', checked: false });
+                  onUpdate({ items });
+                }}
+                className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium"
+              >
+                <Plus className="w-3 h-3" /> Add Item
+              </button>
+            </div>
+            <div className="space-y-2">
+              {(widget.config.items || []).map((item: any, idx: number) => (
+                <div key={item.id || idx} className="flex gap-2 items-center bg-gray-50 p-2 rounded-lg">
+                  <span className="text-gray-400 text-sm w-6">{idx + 1}.</span>
+                  <input
+                    type="text"
+                    value={item.text}
+                    onChange={(e) => {
+                      const items = [...(widget.config.items || [])];
+                      items[idx] = { ...items[idx], text: e.target.value };
+                      onUpdate({ items });
+                    }}
+                    placeholder="Checklist item text"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const items = (widget.config.items || []).filter((_: any, i: number) => i !== idx);
+                      onUpdate({ items });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              {(widget.config.items || []).length === 0 && (
+                <p className="text-xs text-gray-500 italic p-2">No items yet. Add checklist items above.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Alert Settings - only for assessment style */}
+          {widget.config.style === 'assessment' && (
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <label className="block text-sm font-semibold text-gray-800 mb-3">Alert Settings</label>
+              <div className="bg-amber-50 rounded-lg p-4 border border-amber-200 space-y-3">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Alert Threshold (items checked)</label>
+                  <input
+                    type="number"
+                    value={widget.config.alertThreshold || 3}
+                    onChange={(e) => onUpdate({ alertThreshold: parseInt(e.target.value) || 3 })}
+                    min={1}
+                    max={widget.config.items?.length || 10}
+                    className="w-24 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Alert appears when user checks this many items</p>
+                </div>
+                {renderTextField('Alert Headline', 'alertHeadline', "⚠️ You've hit the threshold!")}
+                {renderTextAreaField('Alert Message', 'alertMessage', "With this many signs, it's time to take action.", 2)}
+              </div>
+            </div>
+          )}
+
+          {renderTextAreaField('Footer Text (optional)', 'footer', 'Optional footer message...', 2)}
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show CTA Button {widget.config.style === 'assessment' ? '(appears in alert)' : ''}
+            </label>
+            {widget.config.showCta && (
+              <div className="space-y-3 pl-6">
+                {renderTextField('CTA Text', 'ctaText', 'See The Solution →')}
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+                  <select
+                    value={widget.config.ctaType || 'external'}
+                    onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="external">Link to URL</option>
+                    <option value="anchor">Jump to Widget on Page</option>
+                  </select>
+                </div>
+
+                {widget.config.ctaType !== 'anchor' && (
+                  <>
+                    {renderTextField('CTA URL', 'ctaUrl', 'https://kialanutrition.com')}
+                    {renderSelectField('Open in', 'target', [
+                      { value: '_self', label: 'Same tab' },
+                      { value: '_blank', label: 'New tab' }
+                    ])}
+                  </>
+                )}
+
+                {widget.config.ctaType === 'anchor' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                    <select
+                      value={widget.config.anchorWidgetId || ''}
+                      onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">Select a widget...</option>
+                      {allWidgets
+                        .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                        .sort((a: Widget, b: Widget) => a.position - b.position)
+                        .map((w: Widget) => (
+                          <option key={w.id} value={w.id}>
+                            {getWidgetDisplayName(w)} (Position {w.position + 1})
+                          </option>
+                        ))
+                      }
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {widget.type === 'two-approaches' && (
         <div className="space-y-6">
           {renderTextField('Headline', 'headline', 'Two Paths Forward')}
