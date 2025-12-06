@@ -4610,7 +4610,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           </div>
 
           {renderTextField('Headline', 'headline', 'Important Notice')}
-          {renderTextField('Subheading (optional)', 'content', 'Supporting text...')}
+          {renderTextField('Subtitle (optional)', 'content', 'Supporting subtitle...')}
 
           {renderSelectField('Style', 'style', [
             { value: 'default', label: 'Default (Amber)' },
@@ -4618,6 +4618,9 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             { value: 'info', label: 'Info (Blue)' },
             { value: 'cascade', label: 'Cascade (Pyramid warnings)' }
           ])}
+
+          {/* Body Copy */}
+          {renderTextAreaField('Body Copy (optional)', 'body', 'Add your main body text here...', 4)}
 
           {/* Warning Items Editor */}
           <div className="border-t border-gray-200 pt-4 mt-4">
@@ -4680,7 +4683,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             </div>
           </div>
 
-          {renderTextField('Footer Text (optional)', 'footer', 'Call to action message...')}
+          {renderTextField('Callout Text (optional)', 'footer', 'Additional callout message...')}
 
           {/* CTA Section */}
           <div className="border-t border-gray-200 pt-4 mt-4">
@@ -5565,6 +5568,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     'warning-box': {
       headline: 'The Cascade Nobody Warned You About',
       content: 'These signs build on each other:',
+      body: '',
       warnings: [
         { text: 'Warning item 1', severity: 'low' },
         { text: 'Warning item 2', severity: 'medium' },

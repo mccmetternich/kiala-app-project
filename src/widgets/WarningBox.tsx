@@ -11,9 +11,10 @@ interface Warning {
 
 interface WarningBoxProps {
   headline: string;
-  content?: string;
+  content?: string;  // Subtitle under headline
+  body?: string;     // Main body text
   warnings: Warning[];
-  footer?: string;
+  footer?: string;   // Mini callout at the bottom
   style?: 'default' | 'urgent' | 'info' | 'cascade';
   // CTA options
   ctaText?: string;
@@ -24,6 +25,7 @@ interface WarningBoxProps {
 export default function WarningBox({
   headline,
   content,
+  body,
   warnings,
   footer,
   style = 'default',
@@ -71,8 +73,43 @@ export default function WarningBox({
     return baseStyles[severity as keyof typeof baseStyles] || baseStyles.medium;
   };
 
+  // Footer styles based on widget style
+  const getFooterStyles = () => {
+    switch (style) {
+      case 'urgent':
+        return {
+          bg: 'bg-gradient-to-r from-red-100 via-rose-100 to-red-50',
+          border: 'border-red-300',
+          iconBg: 'bg-red-500',
+          text: 'text-red-900',
+        };
+      case 'info':
+        return {
+          bg: 'bg-gradient-to-r from-blue-100 via-indigo-100 to-blue-50',
+          border: 'border-blue-300',
+          iconBg: 'bg-blue-500',
+          text: 'text-blue-900',
+        };
+      case 'cascade':
+        return {
+          bg: 'bg-gradient-to-r from-rose-100 via-red-100 to-orange-100',
+          border: 'border-rose-300',
+          iconBg: 'bg-rose-500',
+          text: 'text-rose-900',
+        };
+      default: // amber/default
+        return {
+          bg: 'bg-gradient-to-r from-amber-100 via-yellow-100 to-amber-50',
+          border: 'border-amber-300',
+          iconBg: 'bg-amber-500',
+          text: 'text-amber-900',
+        };
+    }
+  };
+
   // Cascade/Pyramid style - builds visually with impact
   if (style === 'cascade') {
+    const footerStyles = getFooterStyles();
     return (
       <div className="my-8">
         {/* Header */}
@@ -96,9 +133,16 @@ export default function WarningBox({
           </div>
         </div>
 
-        {/* Pyramid cascade of warnings */}
+        {/* Content Area */}
         <div className={`bg-white shadow-xl border-2 border-t-0 border-rose-200 rounded-b-2xl overflow-hidden transition-all duration-500 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="p-4 md:p-6">
+            {/* Body text */}
+            {body && (
+              <div className="mb-6 text-gray-700 leading-relaxed">
+                <p>{body}</p>
+              </div>
+            )}
+
             {/* Pyramid layout - full width on mobile, progressive on desktop */}
             <div className="space-y-3">
               {warnings.map((warning, idx) => {
@@ -162,14 +206,14 @@ export default function WarningBox({
               })}
             </div>
 
-            {/* Alert footer when cascade builds */}
+            {/* Footer callout - styled to match widget */}
             {footer && (
-              <div className="mt-8 bg-gradient-to-r from-rose-100 via-red-100 to-orange-100 rounded-xl p-5 border-2 border-rose-300">
+              <div className={`mt-8 ${footerStyles.bg} rounded-xl p-5 border-2 ${footerStyles.border}`}>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-rose-500 rounded-full">
-                    <Sparkles className="w-5 h-5 text-white" />
+                  <div className={`p-2 ${footerStyles.iconBg} rounded-full`}>
+                    <AlertTriangle className="w-5 h-5 text-white" />
                   </div>
-                  <p className="text-lg font-bold text-rose-900">{footer}</p>
+                  <p className={`text-lg font-bold ${footerStyles.text}`}>{footer}</p>
                 </div>
               </div>
             )}
@@ -196,35 +240,31 @@ export default function WarningBox({
 
   // Container styles for other variants
   const containerStyles = {
-    default: 'bg-gradient-to-br from-rose-50 to-pink-50 border-rose-300',
+    default: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300',
     urgent: 'bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 border-red-300',
     info: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300',
   };
 
   const headerStyles = {
-    default: 'from-rose-500 to-pink-500',
+    default: 'from-amber-500 to-yellow-500',
     urgent: 'from-red-500 to-rose-500',
     info: 'from-blue-500 to-indigo-500',
   };
 
-  const headerTextStyles = {
-    default: 'text-rose-900',
-    urgent: 'text-red-900',
-    info: 'text-blue-900',
-  };
-
   const iconBgStyles = {
-    default: 'bg-rose-100 text-rose-600',
+    default: 'bg-amber-100 text-amber-600',
     urgent: 'bg-red-100 text-red-600',
     info: 'bg-blue-100 text-blue-600',
   };
 
+  const footerStyles = getFooterStyles();
+
   // Default/Urgent/Info styles - enhanced
   return (
     <div className="my-8">
-      <div className={`rounded-2xl border-2 shadow-xl overflow-hidden ${containerStyles[style]}`}>
+      <div className={`rounded-2xl border-2 shadow-xl overflow-hidden ${containerStyles[style as keyof typeof containerStyles] || containerStyles.default}`}>
         {/* Header */}
-        <div className={`bg-gradient-to-r ${headerStyles[style]} px-6 py-5`}>
+        <div className={`bg-gradient-to-r ${headerStyles[style as keyof typeof headerStyles] || headerStyles.default} px-6 py-5`}>
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
               <AlertTriangle className="w-6 h-6 text-white" />
@@ -236,8 +276,16 @@ export default function WarningBox({
           </div>
         </div>
 
-        {/* Warnings List */}
+        {/* Content */}
         <div className="p-6">
+          {/* Body text */}
+          {body && (
+            <div className="mb-6 text-gray-700 leading-relaxed">
+              <p>{body}</p>
+            </div>
+          )}
+
+          {/* Warnings List */}
           <div className="space-y-3">
             {warnings.map((warning, idx) => {
               const isHovered = hoveredIndex === idx;
@@ -264,14 +312,14 @@ export default function WarningBox({
             })}
           </div>
 
-          {/* Footer */}
+          {/* Footer - styled to match widget with warning symbol */}
           {footer && (
             <div className="mt-6 pt-4 border-t border-gray-200">
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-200">
-                <div className="p-1.5 bg-emerald-100 rounded-full">
-                  <CheckCircleIcon className="w-5 h-5 text-emerald-600" />
+              <div className={`flex items-center gap-3 p-4 ${footerStyles.bg} rounded-xl border ${footerStyles.border}`}>
+                <div className={`p-1.5 ${footerStyles.iconBg} rounded-full`}>
+                  <AlertTriangle className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-base font-semibold text-emerald-800">{footer}</p>
+                <p className={`text-base font-semibold ${footerStyles.text}`}>{footer}</p>
               </div>
             </div>
           )}
@@ -281,7 +329,7 @@ export default function WarningBox({
             <div className="mt-6">
               <a
                 href={trackedCtaUrl}
-                className={`block w-full text-center bg-gradient-to-r ${headerStyles[style]} hover:opacity-90 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
+                className={`block w-full text-center bg-gradient-to-r ${headerStyles[style as keyof typeof headerStyles] || headerStyles.default} hover:opacity-90 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
               >
                 <span className="flex items-center justify-center gap-2">
                   {ctaText}
@@ -293,13 +341,5 @@ export default function WarningBox({
         </div>
       </div>
     </div>
-  );
-}
-
-function CheckCircleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
   );
 }

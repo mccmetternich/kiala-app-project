@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createQueries } from '@/lib/db-enhanced';
+import db from '@/lib/db-enhanced';
 import { nanoid } from 'nanoid';
 
-const queries = createQueries();
+// Helper functions for raw SQL queries
+async function queryAll(sql: string, args: any[] = []): Promise<any[]> {
+  const result = await db.execute({ sql, args });
+  return result.rows as any[];
+}
+
+async function queryOne(sql: string, args: any[] = []): Promise<any> {
+  const result = await db.execute({ sql, args });
+  return result.rows[0] || null;
+}
+
+async function execute(sql: string, args: any[] = []) {
+  return db.execute({ sql, args });
+}
 
 /**
  * GET /api/admin/widget-settings
@@ -20,7 +33,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const settings = await queries.queryAll(
+    const settings = await queryAll(
       'SELECT * FROM site_widget_settings WHERE site_id = ? ORDER BY sort_order ASC',
       [siteId]
     );
@@ -63,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if setting exists
-    const existing = await queries.queryOne(
+    const existing = await queryOne(
       'SELECT id FROM site_widget_settings WHERE site_id = ? AND widget_type = ?',
       [siteId, widgetType]
     );
@@ -92,14 +105,14 @@ export async function POST(request: NextRequest) {
       updates.push('updated_at = CURRENT_TIMESTAMP');
       values.push(existing.id);
 
-      await queries.execute(
+      await execute(
         `UPDATE site_widget_settings SET ${updates.join(', ')} WHERE id = ?`,
         values
       );
     } else {
       // Create new setting
       const id = nanoid();
-      await queries.execute(
+      await execute(
         `INSERT INTO site_widget_settings (id, site_id, widget_type, category_id, sort_order, hidden, custom_name)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [id, siteId, widgetType, categoryId || null, sortOrder || 0, hidden ? 1 : 0, customName || null]
@@ -137,13 +150,13 @@ export async function PATCH(request: NextRequest) {
       const { widgetType, categoryId, sortOrder } = update;
 
       // Check if setting exists
-      const existing = await queries.queryOne(
+      const existing = await queryOne(
         'SELECT id FROM site_widget_settings WHERE site_id = ? AND widget_type = ?',
         [siteId, widgetType]
       );
 
       if (existing) {
-        await queries.execute(
+        await execute(
           `UPDATE site_widget_settings
            SET category_id = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
            WHERE id = ?`,
@@ -151,7 +164,7 @@ export async function PATCH(request: NextRequest) {
         );
       } else {
         const id = nanoid();
-        await queries.execute(
+        await execute(
           `INSERT INTO site_widget_settings (id, site_id, widget_type, category_id, sort_order)
            VALUES (?, ?, ?, ?, ?)`,
           [id, siteId, widgetType, categoryId, sortOrder]

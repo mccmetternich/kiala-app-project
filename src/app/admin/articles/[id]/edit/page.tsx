@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Save,
@@ -104,6 +104,8 @@ export default function EditArticle() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [libraryEditMode, setLibraryEditMode] = useState(false);
+  const [customCategories, setCustomCategories] = useState<Array<{id: string; name: string; slug: string; colorBg: string; colorText: string; sortOrder: number}>>([]);
+  const [widgetSettings, setWidgetSettings] = useState<Record<string, {categoryId?: string; sortOrder: number}>>({});
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -134,6 +136,13 @@ export default function EditArticle() {
     }
     fetchSites();
   }, [articleId]);
+
+  // Fetch widget library settings when site changes
+  useEffect(() => {
+    if (formData.site_id) {
+      fetchWidgetLibrarySettings(formData.site_id);
+    }
+  }, [formData.site_id]);
 
   const fetchSites = async () => {
     try {
@@ -218,6 +227,77 @@ export default function EditArticle() {
     }
   };
 
+  // Fetch custom widget categories and settings
+  const fetchWidgetLibrarySettings = async (siteId: string) => {
+    try {
+      const [categoriesRes, settingsRes] = await Promise.all([
+        fetch(`/api/admin/widget-categories?siteId=${siteId}`),
+        fetch(`/api/admin/widget-settings?siteId=${siteId}`)
+      ]);
+
+      if (categoriesRes.ok) {
+        const catData = await categoriesRes.json();
+        const allCategories = [...(catData.global || []), ...(catData.site || [])];
+        setCustomCategories(allCategories.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          colorBg: c.color_bg || 'bg-gray-500/10',
+          colorText: c.color_text || 'text-gray-400',
+          sortOrder: c.sort_order || 0
+        })));
+        // Expand new custom categories
+        setExpandedCategories(prev => {
+          const newSet = new Set(prev);
+          allCategories.forEach((c: any) => newSet.add(c.name));
+          return newSet;
+        });
+      }
+
+      if (settingsRes.ok) {
+        const settData = await settingsRes.json();
+        const settingsMap: Record<string, {categoryId?: string; sortOrder: number}> = {};
+        (settData.settings || []).forEach((s: any) => {
+          settingsMap[s.widgetType] = { categoryId: s.categoryId, sortOrder: s.sortOrder };
+        });
+        setWidgetSettings(settingsMap);
+      }
+    } catch (error) {
+      console.error('Error fetching widget library settings:', error);
+    }
+  };
+
+  // Move widget to different category
+  const moveWidgetToCategory = async (widgetType: string, targetCategory: string, newSortOrder: number) => {
+    if (!formData.site_id) return;
+
+    try {
+      // Find the custom category ID if it's a custom category
+      const customCat = customCategories.find(c => c.name === targetCategory);
+
+      const response = await fetch('/api/admin/widget-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          siteId: formData.site_id,
+          widgetType,
+          categoryId: customCat?.id || null,
+          sortOrder: newSortOrder,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setWidgetSettings(prev => ({
+          ...prev,
+          [widgetType]: { categoryId: customCat?.id, sortOrder: newSortOrder }
+        }));
+      }
+    } catch (error) {
+      console.error('Error moving widget:', error);
+    }
+  };
+
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
@@ -288,14 +368,51 @@ export default function EditArticle() {
 
   const selectedSite = sites.find(site => site.id === formData.site_id);
 
-  // Group widgets by category
-  const widgetsByCategory = widgetTypes.reduce((acc, widget) => {
-    if (!acc[widget.category]) {
-      acc[widget.category] = [];
-    }
-    acc[widget.category].push(widget);
-    return acc;
-  }, {} as Record<string, typeof widgetTypes>);
+  // Group widgets by category (including custom categories)
+  const widgetsByCategory = useMemo(() => {
+    const result: Record<string, typeof widgetTypes> = {};
+
+    // First add custom categories (empty initially)
+    customCategories.forEach(cat => {
+      result[cat.name] = [];
+    });
+
+    // Then group widgets by their category (or custom assigned category)
+    widgetTypes.forEach(widget => {
+      // Check if this widget has been moved to a custom category
+      const setting = widgetSettings[widget.type];
+      let category = widget.category;
+
+      if (setting?.categoryId) {
+        const customCat = customCategories.find(c => c.id === setting.categoryId);
+        if (customCat) {
+          category = customCat.name;
+        }
+      }
+
+      if (!result[category]) {
+        result[category] = [];
+      }
+      result[category].push(widget);
+    });
+
+    // Remove empty standard categories but keep custom ones
+    Object.keys(result).forEach(key => {
+      if (result[key].length === 0 && !customCategories.find(c => c.name === key)) {
+        delete result[key];
+      }
+    });
+
+    return result;
+  }, [widgetTypes, customCategories, widgetSettings]);
+
+  // Get all category names in display order
+  const allCategoryNames = useMemo(() => {
+    const standardOrder = ['Content', 'Social Proof', 'Commerce', 'Lead Gen', 'Doctor'];
+    const customNames = customCategories.map(c => c.name);
+    const allNames = [...standardOrder, ...customNames];
+    return allNames.filter(name => widgetsByCategory[name]);
+  }, [widgetsByCategory, customCategories]);
 
   if (initialLoading) {
     return (
@@ -511,8 +628,12 @@ export default function EditArticle() {
 
                 {/* Categories */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                  {Object.entries(widgetsByCategory).map(([category, categoryWidgets]) => {
-                    const colors = categoryColors[category] || categoryColors['Content'];
+                  {allCategoryNames.map((category, categoryIndex) => {
+                    const categoryWidgets = widgetsByCategory[category] || [];
+                    const customCat = customCategories.find(c => c.name === category);
+                    const colors = customCat
+                      ? { bg: customCat.colorBg, text: customCat.colorText }
+                      : (categoryColors[category] || categoryColors['Content']);
                     const isExpanded = expandedCategories.has(category);
 
                     const toggleCategory = () => {
@@ -532,7 +653,10 @@ export default function EditArticle() {
                           onClick={toggleCategory}
                           className={`w-full flex items-center justify-between p-3 ${colors.bg} hover:brightness-125 transition-all`}
                         >
-                          <span className={`text-sm font-semibold ${colors.text}`}>{category}</span>
+                          <span className={`text-sm font-semibold ${colors.text}`}>
+                            {category}
+                            {customCat && <span className="ml-1 text-xs opacity-60">(custom)</span>}
+                          </span>
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">{categoryWidgets.length}</span>
                             <ChevronRight className={`w-4 h-4 ${colors.text} transition-transform duration-150 ${isExpanded ? 'rotate-90' : ''}`} />
@@ -542,81 +666,107 @@ export default function EditArticle() {
                         {/* Widgets in Category */}
                         {isExpanded && (
                           <div className="p-2 space-y-1">
-                            {categoryWidgets.map((widget, widgetIndex) => {
-                              const Icon = widget.icon;
-                              const allCategories = Object.keys(widgetsByCategory);
-                              const currentCategoryIndex = allCategories.indexOf(category);
-                              const isFirstInCategory = widgetIndex === 0;
-                              const isLastInCategory = widgetIndex === categoryWidgets.length - 1;
-                              const canMoveUp = !isFirstInCategory || currentCategoryIndex > 0;
-                              const canMoveDown = !isLastInCategory || currentCategoryIndex < allCategories.length - 1;
+                            {categoryWidgets.length === 0 ? (
+                              <p className="text-xs text-gray-500 italic p-2">Drag widgets here or use arrows to move</p>
+                            ) : (
+                              categoryWidgets.map((widget, widgetIndex) => {
+                                const Icon = widget.icon;
+                                const isFirstInCategory = widgetIndex === 0;
+                                const isLastInCategory = widgetIndex === categoryWidgets.length - 1;
+                                const canMoveUp = !isFirstInCategory || categoryIndex > 0;
+                                const canMoveDown = !isLastInCategory || categoryIndex < allCategoryNames.length - 1;
 
-                              return (
-                                <div
-                                  key={widget.type}
-                                  draggable={!libraryEditMode}
-                                  onDragStart={(e) => {
-                                    if (libraryEditMode) {
-                                      e.preventDefault();
-                                      return;
-                                    }
-                                    e.dataTransfer.setData('widgetType', widget.type);
-                                    e.dataTransfer.effectAllowed = 'copy';
-                                  }}
-                                  onClick={() => {
-                                    if (!libraryEditMode) {
-                                      addWidget(widget.type as WidgetType);
-                                    }
-                                  }}
-                                  className={`w-full flex items-start gap-2.5 p-2.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 transition-colors group text-left ${
-                                    libraryEditMode ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
-                                  }`}
-                                >
-                                  {/* Edit mode arrows */}
-                                  {libraryEditMode && (
-                                    <div className="flex flex-col gap-0.5 flex-shrink-0">
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          // TODO: Move widget up (to previous category if first in current)
-                                          console.log('Move up:', widget.type);
-                                        }}
-                                        disabled={!canMoveUp}
-                                        className={`p-1 rounded transition-colors ${
-                                          canMoveUp
-                                            ? 'hover:bg-gray-600 text-gray-400 hover:text-white'
-                                            : 'text-gray-700 cursor-not-allowed'
-                                        }`}
-                                      >
-                                        <ChevronUp className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          // TODO: Move widget down (to next category if last in current)
-                                          console.log('Move down:', widget.type);
-                                        }}
-                                        disabled={!canMoveDown}
-                                        className={`p-1 rounded transition-colors ${
-                                          canMoveDown
-                                            ? 'hover:bg-gray-600 text-gray-400 hover:text-white'
-                                            : 'text-gray-700 cursor-not-allowed'
-                                        }`}
-                                      >
-                                        <ChevronDown className="w-3.5 h-3.5" />
-                                      </button>
+                                // Get previous/next category for cross-category moves
+                                const prevCategory = categoryIndex > 0 ? allCategoryNames[categoryIndex - 1] : null;
+                                const nextCategory = categoryIndex < allCategoryNames.length - 1 ? allCategoryNames[categoryIndex + 1] : null;
+
+                                const handleMoveUp = async () => {
+                                  if (isFirstInCategory && prevCategory) {
+                                    // Move to end of previous category
+                                    const prevWidgets = widgetsByCategory[prevCategory] || [];
+                                    await moveWidgetToCategory(widget.type, prevCategory, prevWidgets.length);
+                                  } else if (!isFirstInCategory) {
+                                    // Swap with widget above (just reorder within same category)
+                                    // For now, moving within same category changes sort order
+                                    await moveWidgetToCategory(widget.type, category, widgetIndex - 1);
+                                  }
+                                };
+
+                                const handleMoveDown = async () => {
+                                  if (isLastInCategory && nextCategory) {
+                                    // Move to start of next category
+                                    await moveWidgetToCategory(widget.type, nextCategory, 0);
+                                  } else if (!isLastInCategory) {
+                                    // Swap with widget below
+                                    await moveWidgetToCategory(widget.type, category, widgetIndex + 1);
+                                  }
+                                };
+
+                                return (
+                                  <div
+                                    key={widget.type}
+                                    draggable={!libraryEditMode}
+                                    onDragStart={(e) => {
+                                      if (libraryEditMode) {
+                                        e.preventDefault();
+                                        return;
+                                      }
+                                      e.dataTransfer.setData('widgetType', widget.type);
+                                      e.dataTransfer.effectAllowed = 'copy';
+                                    }}
+                                    onClick={() => {
+                                      if (!libraryEditMode) {
+                                        addWidget(widget.type as WidgetType);
+                                      }
+                                    }}
+                                    className={`w-full flex items-start gap-2.5 p-2.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 transition-colors group text-left ${
+                                      libraryEditMode ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+                                    }`}
+                                  >
+                                    {/* Edit mode arrows */}
+                                    {libraryEditMode && (
+                                      <div className="flex flex-col gap-0.5 flex-shrink-0">
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleMoveUp();
+                                          }}
+                                          disabled={!canMoveUp}
+                                          className={`p-1 rounded transition-colors ${
+                                            canMoveUp
+                                              ? 'hover:bg-gray-600 text-gray-400 hover:text-white'
+                                              : 'text-gray-700 cursor-not-allowed'
+                                          }`}
+                                        >
+                                          <ChevronUp className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleMoveDown();
+                                          }}
+                                          disabled={!canMoveDown}
+                                          className={`p-1 rounded transition-colors ${
+                                            canMoveDown
+                                              ? 'hover:bg-gray-600 text-gray-400 hover:text-white'
+                                              : 'text-gray-700 cursor-not-allowed'
+                                          }`}
+                                        >
+                                          <ChevronDown className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    )}
+                                    <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0`}>
+                                      <Icon className={`w-4 h-4 ${colors.text}`} />
                                     </div>
-                                  )}
-                                  <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0`}>
-                                    <Icon className={`w-4 h-4 ${colors.text}`} />
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{widget.name}</p>
+                                      <p className="text-xs text-gray-500 mt-0.5 leading-snug line-clamp-2">{widget.description}</p>
+                                    </div>
                                   </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{widget.name}</p>
-                                    <p className="text-xs text-gray-500 mt-0.5 leading-snug line-clamp-2">{widget.description}</p>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              })
+                            )}
                           </div>
                         )}
                       </div>
@@ -1148,9 +1298,6 @@ export default function EditArticle() {
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
-              <p className="text-xs text-gray-500">
-                Note: This is a placeholder for the full category management system. Custom categories will be stored in the database once the migration is run.
-              </p>
             </div>
             <div className="p-6 border-t border-gray-700 flex items-center justify-end gap-3">
               <button
@@ -1176,6 +1323,8 @@ export default function EditArticle() {
                         }),
                       });
                       if (response.ok) {
+                        // Refresh the widget library to include the new category
+                        await fetchWidgetLibrarySettings(formData.site_id);
                         setSaveMessage('Category created successfully!');
                         setTimeout(() => setSaveMessage(null), 3000);
                       }

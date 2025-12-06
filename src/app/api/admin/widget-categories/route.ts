@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createQueries } from '@/lib/db-enhanced';
+import db from '@/lib/db-enhanced';
 import { nanoid } from 'nanoid';
 
-const queries = createQueries();
+// Helper functions for raw SQL queries
+async function queryAll(sql: string, args: any[] = []): Promise<any[]> {
+  const result = await db.execute({ sql, args });
+  return result.rows as any[];
+}
+
+async function queryOne(sql: string, args: any[] = []): Promise<any> {
+  const result = await db.execute({ sql, args });
+  return result.rows[0] || null;
+}
+
+async function execute(sql: string, args: any[] = []) {
+  return db.execute({ sql, args });
+}
 
 /**
  * GET /api/admin/widget-categories
@@ -14,14 +27,14 @@ export async function GET(request: NextRequest) {
     const siteId = searchParams.get('siteId');
 
     // Get global categories
-    const globalCategories = await queries.queryAll(
+    const globalCategories = await queryAll(
       'SELECT * FROM widget_categories WHERE is_global = 1 ORDER BY sort_order ASC'
     );
 
     // Get site-specific categories if siteId provided
     let siteCategories: any[] = [];
     if (siteId) {
-      siteCategories = await queries.queryAll(
+      siteCategories = await queryAll(
         'SELECT * FROM widget_categories WHERE site_id = ? AND is_global = 0 ORDER BY sort_order ASC',
         [siteId]
       );
@@ -70,17 +83,29 @@ export async function POST(request: NextRequest) {
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
     // Get max sort order
-    const maxOrderResult = await queries.queryOne(
+    const maxOrderResult = await queryOne(
       'SELECT MAX(sort_order) as max_order FROM widget_categories WHERE site_id IS ? OR (? IS NULL AND is_global = 1)',
       [siteId || null, siteId || null]
     );
     const sortOrder = (maxOrderResult?.max_order || 0) + 1;
 
     const id = nanoid();
-    await queries.execute(
+    await execute(
       `INSERT INTO widget_categories (id, site_id, name, slug, description, color_bg, color_text, color_border, icon, sort_order, is_global)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, isGlobal ? null : siteId, name, slug, description, colorBg, colorText, colorBorder, icon, sortOrder, isGlobal ? 1 : 0]
+      [
+        id,
+        isGlobal ? null : (siteId || null),
+        name,
+        slug,
+        description || null,
+        colorBg,
+        colorText,
+        colorBorder || null,
+        icon || null,
+        sortOrder,
+        isGlobal ? 1 : 0
+      ]
     );
 
     return NextResponse.json({
@@ -126,7 +151,7 @@ export async function PATCH(request: NextRequest) {
 
     // Update sort orders
     for (const cat of categories) {
-      await queries.execute(
+      await execute(
         'UPDATE widget_categories SET sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
         [cat.sortOrder, cat.id]
       );
@@ -159,7 +184,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Don't allow deleting global default categories
-    const category = await queries.queryOne(
+    const category = await queryOne(
       'SELECT * FROM widget_categories WHERE id = ?',
       [id]
     );
@@ -172,13 +197,13 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Move widgets in this category to null (uncategorized)
-    await queries.execute(
+    await execute(
       'UPDATE site_widget_settings SET category_id = NULL WHERE category_id = ?',
       [id]
     );
 
     // Delete the category
-    await queries.execute('DELETE FROM widget_categories WHERE id = ?', [id]);
+    await execute('DELETE FROM widget_categories WHERE id = ?', [id]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
