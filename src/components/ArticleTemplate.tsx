@@ -72,10 +72,22 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             title={widget.config.name}
             description={widget.config.description}
             image={widget.config.image}
-            price={widget.config.originalPrice ? `$${widget.config.price} (was $${widget.config.originalPrice})` : `$${widget.config.price}`}
+            price={widget.config.price ? `$${widget.config.price}` : undefined}
+            originalPrice={widget.config.originalPrice ? `$${widget.config.originalPrice}` : undefined}
             features={widget.config.benefits}
             ctaText={widget.config.buttonText}
-            ctaLink={widget.config.buttonUrl}
+            ctaLink={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.buttonUrl}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
+            ctaBullets={widget.config.ctaBullets}
+            showTestimonial={widget.config.showTestimonial}
+            testimonialQuote={widget.config.testimonialQuote}
+            testimonialAuthor={widget.config.testimonialAuthor}
+            testimonialImage={widget.config.testimonialImage}
+            showRating={widget.config.showRating}
+            ratingStars={widget.config.ratingStars}
+            ratingCount={widget.config.ratingCount}
+            widgetId={widget.id}
           />
         </div>
       );
@@ -94,9 +106,16 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
         <div className="my-8">
           <ComparisonTable
             title={widget.config.title || widget.config.headline || 'Compare Options'}
+            subtitle={widget.config.subtitle}
             rows={comparisonRows}
             leftColumnHeader={widget.config.leftColumnHeader || 'Standard'}
             rightColumnHeader={widget.config.rightColumnHeader || 'Premium'}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaSubtext={widget.config.ctaSubtext}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
           />
         </div>
       );
@@ -108,6 +127,17 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             endDate={widget.config.endDate}
             message={widget.config.headline}
             urgencyText={widget.config.subheading}
+            productImage={widget.config.productImage}
+            productName={widget.config.productName}
+            productDescription={widget.config.productDescription}
+            originalPrice={widget.config.originalPrice != null ? String(widget.config.originalPrice) : undefined}
+            salePrice={widget.config.salePrice != null ? String(widget.config.salePrice) : undefined}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
+            benefits={widget.config.benefits}
+            widgetId={widget.id}
           />
         </div>
       );
@@ -172,10 +202,20 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
     case 'cta-button':
       return (
         <CTAButton
-          buttonUrl={widget.config.buttonUrl}
+          title={widget.config.title}
+          subtitle={widget.config.subtitle}
+          buttonUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.buttonUrl}
           buttonText={widget.config.buttonText}
           target={widget.config.target}
           style={widget.config.style as 'primary' | 'secondary' | undefined}
+          ctaType={widget.config.ctaType}
+          showSocialProof={widget.config.showSocialProof}
+          socialProofAvatars={widget.config.socialProofAvatars}
+          socialProofStars={widget.config.socialProofStars}
+          socialProofText={widget.config.socialProofText}
+          showBadges={widget.config.showBadges}
+          badges={widget.config.badges}
+          widgetId={widget.id}
         />
       );
 
@@ -263,13 +303,17 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             headline={widget.config.headline}
             subheading={widget.config.subheading}
             offerDescription={widget.config.description}
+            productImage={widget.config.productImage}
             originalPrice={widget.config.originalPrice}
             salePrice={widget.config.price}
             features={widget.config.features}
             redemptionCount={widget.config.redemptionCount}
             limitedSpots={widget.config.limitedSpots}
             ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.buttonUrl}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.buttonUrl}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
+            widgetId={widget.id}
           />
         </div>
       );
@@ -308,13 +352,24 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
       );
 
     case 'dual-offer-comparison':
+      // Transform offer configs to include anchor URLs if needed
+      const transformOffer = (offer: any) => {
+        if (!offer) return offer;
+        return {
+          ...offer,
+          ctaUrl: offer.ctaType === 'anchor' ? `#widget-${offer.anchorWidgetId}` : offer.ctaUrl
+        };
+      };
       return (
         <div className="my-8">
           <DualOfferComparison
             headline={widget.config.headline}
             subheading={widget.config.subheading}
-            leftOffer={widget.config.leftOffer}
-            rightOffer={widget.config.rightOffer}
+            leftOffer={transformOffer(widget.config.leftOffer)}
+            rightOffer={transformOffer(widget.config.rightOffer)}
+            showExclusiveBanner={widget.config.showExclusiveBanner}
+            exclusiveText={widget.config.exclusiveText}
+            widgetId={widget.id}
           />
         </div>
       );
@@ -627,6 +682,12 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             additionalCount={widget.config.additionalCount}
             additionalText={widget.config.additionalText}
             showAdditional={widget.config.showAdditional}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaSubtext={widget.config.ctaSubtext}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
           />
         </div>
       );

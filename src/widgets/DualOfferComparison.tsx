@@ -1,7 +1,8 @@
 'use client';
 
-import { Check, X, Star, Crown, Zap } from 'lucide-react';
-import TrackedLink from '@/components/TrackedLink';
+import { Check, X, Star, Crown, Zap, Clock, ArrowRight } from 'lucide-react';
+import { useTracking } from '@/contexts/TrackingContext';
+import { trackInitiateCheckout } from '@/lib/meta-pixel';
 
 interface Offer {
   name: string;
@@ -14,6 +15,8 @@ interface Offer {
   highlighted?: boolean;
   ctaText: string;
   ctaUrl: string;
+  ctaType?: 'external' | 'anchor';
+  target?: '_self' | '_blank';
 }
 
 interface DualOfferComparisonProps {
@@ -22,6 +25,9 @@ interface DualOfferComparisonProps {
   leftOffer?: Offer;
   rightOffer?: Offer;
   vsText?: string;
+  showExclusiveBanner?: boolean;
+  exclusiveText?: string;
+  widgetId?: string;
 }
 
 const defaultLeftOffer: Offer = {
@@ -69,62 +75,109 @@ export default function DualOfferComparison({
   subheading = 'Select the option that fits your goals',
   leftOffer = defaultLeftOffer,
   rightOffer = defaultRightOffer,
-  vsText = 'VS'
+  vsText = 'VS',
+  showExclusiveBanner = true,
+  exclusiveText = 'Community Exclusive - Limited Time Pricing',
+  widgetId
 }: DualOfferComparisonProps) {
   return (
     <div className="my-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{headline}</h2>
-        <p className="text-gray-600">{subheading}</p>
-      </div>
-
-      {/* Comparison Grid */}
-      <div className="grid md:grid-cols-2 gap-4 md:gap-0 relative">
-        {/* VS Badge - Center */}
-        <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="w-16 h-16 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-xl">
-            {vsText}
+      {/* Exclusive Banner */}
+      {showExclusiveBanner && (
+        <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white rounded-t-2xl px-4 py-3 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <Clock className="w-4 h-4 animate-pulse" />
+            <span className="font-bold text-sm uppercase tracking-wide">{exclusiveText}</span>
+            <Clock className="w-4 h-4 animate-pulse" />
           </div>
         </div>
+      )}
 
-        {/* Left Offer */}
-        <OfferCard offer={leftOffer} side="left" />
+      <div className={`bg-gradient-to-br from-gray-50 to-white p-6 md:p-8 ${showExclusiveBanner ? 'rounded-b-2xl' : 'rounded-2xl'} shadow-xl border border-gray-100`}>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{headline}</h2>
+          <p className="text-gray-600">{subheading}</p>
+        </div>
 
-        {/* Right Offer */}
-        <OfferCard offer={rightOffer} side="right" />
-      </div>
+        {/* Comparison Grid */}
+        <div className="grid md:grid-cols-2 gap-6 relative">
+          {/* VS Badge - Center */}
+          <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+            <div className="w-16 h-16 bg-gradient-to-br from-gray-900 to-gray-700 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-xl border-4 border-white">
+              {vsText}
+            </div>
+          </div>
 
-      {/* Bottom note */}
-      <div className="text-center mt-6">
-        <p className="text-sm text-gray-500">
-          💡 <strong>Pro tip:</strong> 94% of members choose the Complete Kit for best results
-        </p>
+          {/* Left Offer */}
+          <OfferCard offer={leftOffer} side="left" widgetId={widgetId} />
+
+          {/* Right Offer */}
+          <OfferCard offer={rightOffer} side="right" widgetId={widgetId} />
+        </div>
+
+        {/* Bottom note */}
+        <div className="text-center mt-6">
+          <p className="text-sm text-gray-500">
+            <Star className="w-4 h-4 inline text-amber-500 mr-1" />
+            <strong>Pro tip:</strong> 94% of members choose the Complete Kit for best results
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
+function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'right'; widgetId?: string }) {
   const isHighlighted = offer.highlighted;
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
+
+  const finalUrl = offer.ctaType === 'anchor' ? offer.ctaUrl : appendTracking(offer.ctaUrl);
+  const finalTarget = offer.ctaType === 'anchor' ? '_self' : (offer.target || '_self');
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (offer.ctaType === 'anchor' && offer.ctaUrl) {
+      e.preventDefault();
+      const element = document.getElementById(offer.ctaUrl.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
+    if (isExternalUrl(offer.ctaUrl)) {
+      trackInitiateCheckout({
+        content_name: offer.name || 'Dual Offer',
+        content_category: 'dual_offer_comparison',
+        value: offer.price
+      });
+
+      trackExternalClick({
+        widget_type: 'dual-offer-comparison',
+        widget_id: widgetId || `dual-offer-${side}`,
+        widget_name: offer.name || 'Dual Offer',
+        destination_url: offer.ctaUrl
+      });
+    }
+  };
 
   return (
-    <div className={`relative ${side === 'left' ? 'md:pr-6' : 'md:pl-6'}`}>
+    <div className={`relative ${side === 'left' ? 'md:pr-4' : 'md:pl-4'}`}>
       {/* Highlighted glow effect */}
       {isHighlighted && (
-        <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl opacity-20 blur-lg"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 to-purple-500 rounded-2xl opacity-30 blur-lg"></div>
       )}
 
       <div className={`relative bg-white rounded-2xl overflow-hidden border-2 h-full flex flex-col ${
         isHighlighted
-          ? 'border-amber-400 shadow-2xl ring-2 ring-amber-200'
+          ? 'border-primary-400 shadow-2xl ring-2 ring-primary-200'
           : 'border-gray-200 shadow-lg'
       }`}>
         {/* Badge */}
         {offer.badge && (
-          <div className={`text-center py-2 font-bold text-sm ${
+          <div className={`text-center py-2.5 font-bold text-sm uppercase tracking-wide ${
             isHighlighted
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+              ? 'bg-gradient-to-r from-primary-500 to-purple-500 text-white'
               : 'bg-gray-100 text-gray-700'
           }`}>
             {isHighlighted && <Crown className="w-4 h-4 inline mr-1" />}
@@ -133,14 +186,21 @@ function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
         )}
 
         <div className="p-6 flex-1 flex flex-col">
-          {/* Image & Name */}
-          <div className="text-center mb-4">
+          {/* Image & Name - Larger image */}
+          <div className="text-center mb-5">
             {offer.image && (
-              <img
-                src={offer.image}
-                alt={offer.name}
-                className="w-24 h-24 rounded-xl mx-auto mb-4 shadow-md object-cover"
-              />
+              <div className="relative inline-block mb-4">
+                <img
+                  src={offer.image}
+                  alt={offer.name}
+                  className="w-36 h-36 rounded-2xl mx-auto shadow-lg object-cover border-2 border-gray-100"
+                />
+                {isHighlighted && (
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                    <Star className="w-5 h-5 text-white fill-white" />
+                  </div>
+                )}
+              </div>
             )}
             <h3 className="text-xl font-bold text-gray-900">{offer.name}</h3>
             <p className="text-gray-600 text-sm mt-1">{offer.description}</p>
@@ -152,7 +212,7 @@ function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
               {offer.originalPrice && (
                 <span className="text-xl text-gray-400 line-through">${offer.originalPrice}</span>
               )}
-              <span className="text-4xl font-bold text-gray-900">${offer.price}</span>
+              <span className={`text-4xl font-bold ${isHighlighted ? 'text-primary-600' : 'text-gray-900'}`}>${offer.price}</span>
             </div>
             {offer.originalPrice && (
               <p className="text-green-600 text-sm font-medium mt-1">
@@ -182,26 +242,26 @@ function OfferCard({ offer, side }: { offer: Offer; side: 'left' | 'right' }) {
           </div>
 
           {/* CTA */}
-          <TrackedLink
-            href={offer.ctaUrl}
-            widgetType="dual-offer-comparison"
-            widgetId={`dual-offer-${side}`}
-            widgetName={offer.name}
-            value={offer.price}
-            className={`block w-full py-4 rounded-xl font-bold text-lg transition-all text-center ${
+          <a
+            href={finalUrl}
+            target={finalTarget}
+            rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
+            onClick={handleCtaClick}
+            className={`flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-lg transition-all text-center ${
               isHighlighted
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
+                ? 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
             }`}
           >
-            {isHighlighted && <Zap className="w-5 h-5 inline mr-2" />}
+            {isHighlighted && <Zap className="w-5 h-5" />}
             {offer.ctaText}
-          </TrackedLink>
+            <ArrowRight className="w-5 h-5" />
+          </a>
         </div>
 
         {/* Popular ribbon for highlighted */}
         {isHighlighted && (
-          <div className="absolute -right-8 top-12 bg-red-500 text-white px-10 py-1 transform rotate-45 text-xs font-bold shadow-lg">
+          <div className="absolute -right-8 top-14 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-10 py-1 transform rotate-45 text-xs font-bold shadow-lg">
             MOST POPULAR
           </div>
         )}

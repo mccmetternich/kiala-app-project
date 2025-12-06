@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Gift, Users, Clock, Shield, Star, TrendingUp, CheckCircle } from 'lucide-react';
-import TrackedLink from '@/components/TrackedLink';
+import { Gift, Users, Clock, Shield, Star, TrendingUp, CheckCircle, ArrowRight } from 'lucide-react';
+import { useTracking } from '@/contexts/TrackingContext';
+import { trackInitiateCheckout } from '@/lib/meta-pixel';
 
 interface SpecialOfferWidgetProps {
   headline?: string;
   subheading?: string;
   offerDescription?: string;
+  productImage?: string;
   originalPrice?: number;
   salePrice?: number;
   savingsText?: string;
@@ -16,15 +18,18 @@ interface SpecialOfferWidgetProps {
   limitedSpots?: number;
   ctaText?: string;
   ctaUrl?: string;
+  ctaType?: 'external' | 'anchor';
   target?: '_self' | '_blank';
   urgencyMessage?: string;
   endDate?: string;
+  widgetId?: string;
 }
 
 export default function SpecialOfferWidget({
   headline = 'EXCLUSIVE READER OFFER',
   subheading = 'Unlock Your Complete Hormone Reset Kit',
   offerDescription = 'Get instant access to everything you need to naturally balance your hormones and transform your health in 12 weeks or less.',
+  productImage,
   originalPrice = 197,
   salePrice = 97,
   savingsText,
@@ -39,13 +44,45 @@ export default function SpecialOfferWidget({
   limitedSpots = 50,
   ctaText = 'Claim Your Spot Now →',
   ctaUrl = '#',
+  ctaType = 'external',
   target = '_self',
   urgencyMessage = 'Only {spots} spots left at this price!',
-  endDate
+  endDate,
+  widgetId
 }: SpecialOfferWidgetProps) {
   const [spotsRemaining, setSpotsRemaining] = useState(limitedSpots);
   const [recentRedemptions, setRecentRedemptions] = useState(redemptionCount);
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
+
+  const finalUrl = ctaType === 'anchor' ? ctaUrl : appendTracking(ctaUrl);
+  const finalTarget = ctaType === 'anchor' ? '_self' : target;
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (ctaType === 'anchor' && ctaUrl) {
+      e.preventDefault();
+      const element = document.getElementById(ctaUrl.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
+    if (isExternalUrl(ctaUrl)) {
+      trackInitiateCheckout({
+        content_name: subheading || 'Special Offer',
+        content_category: 'special_offer',
+        value: salePrice
+      });
+
+      trackExternalClick({
+        widget_type: 'special-offer',
+        widget_id: widgetId || `special-offer-${subheading?.substring(0, 20)}`,
+        widget_name: subheading || 'Special Offer',
+        destination_url: ctaUrl
+      });
+    }
+  };
 
   // Simulate real-time social proof
   useEffect(() => {
@@ -83,24 +120,24 @@ export default function SpecialOfferWidget({
   return (
     <div className="my-8 relative">
       {/* Animated border */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-red-500 to-purple-500 rounded-2xl opacity-75 blur animate-pulse"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-purple-500 to-primary-600 rounded-2xl opacity-75 blur animate-pulse"></div>
 
-      <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-amber-400">
+      <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-primary-400">
         {/* Top banner */}
-        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-3 flex items-center justify-center gap-3">
+        <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white p-3 flex items-center justify-center gap-3">
           <Gift className="w-5 h-5 animate-bounce" />
           <span className="font-bold uppercase tracking-wide">{headline}</span>
           <Gift className="w-5 h-5 animate-bounce" />
         </div>
 
         {/* Social proof ticker */}
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
+        <div className="bg-primary-50 border-b border-primary-200 px-4 py-2">
           <div className="flex items-center justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2 text-amber-800">
+            <div className="flex items-center gap-2 text-primary-800">
               <Users className="w-4 h-4" />
               <span><strong>{recentRedemptions.toLocaleString()}</strong> women joined today</span>
             </div>
-            <div className="flex items-center gap-2 text-red-600 font-medium">
+            <div className="flex items-center gap-2 text-purple-700 font-medium">
               <TrendingUp className="w-4 h-4" />
               <span>{urgencyMessage.replace('{spots}', spotsRemaining.toString())}</span>
             </div>
@@ -108,15 +145,31 @@ export default function SpecialOfferWidget({
         </div>
 
         <div className="p-6 md:p-8">
-          {/* Header */}
-          <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{subheading}</h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">{offerDescription}</p>
+          {/* Header with optional product image */}
+          <div className="flex flex-col md:flex-row items-center gap-6 mb-6">
+            {productImage && (
+              <div className="md:w-1/3 flex-shrink-0">
+                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                  <img
+                    src={productImage}
+                    alt={subheading}
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-primary-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                    {savingsPercent}% OFF
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className={`text-center ${productImage ? 'md:text-left md:w-2/3' : ''}`}>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{subheading}</h2>
+              <p className="text-gray-600 text-lg">{offerDescription}</p>
+            </div>
           </div>
 
           {/* Countdown Timer */}
-          <div className="bg-gray-900 text-white rounded-xl p-4 mb-6">
-            <div className="text-center mb-2 text-amber-400 font-medium text-sm">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl p-4 mb-6">
+            <div className="text-center mb-2 text-primary-300 font-medium text-sm">
               <Clock className="w-4 h-4 inline mr-1" />
               OFFER EXPIRES IN
             </div>
@@ -127,7 +180,7 @@ export default function SpecialOfferWidget({
                 { value: timeLeft.seconds, label: 'Seconds' }
               ].map((item, idx) => (
                 <div key={idx} className="text-center">
-                  <div className="bg-gray-800 rounded-lg px-4 py-2 min-w-[60px]">
+                  <div className="bg-gray-700 rounded-lg px-4 py-2 min-w-[60px]">
                     <span className="text-3xl font-bold font-mono">{String(item.value).padStart(2, '0')}</span>
                   </div>
                   <div className="text-xs text-gray-400 mt-1">{item.label}</div>
@@ -160,16 +213,16 @@ export default function SpecialOfferWidget({
 
           {/* CTA Button */}
           <div className="text-center">
-            <TrackedLink
-              href={ctaUrl}
-              target={target}
-              widgetType="special-offer"
-              widgetName={subheading}
-              value={salePrice}
-              className="block w-full md:w-auto md:inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
+            <a
+              href={finalUrl}
+              target={finalTarget}
+              rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
+              onClick={handleCtaClick}
+              className="block w-full md:w-auto md:inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
             >
               {ctaText}
-            </TrackedLink>
+              <ArrowRight className="w-6 h-6 hidden md:inline" />
+            </a>
 
             {/* Trust signals */}
             <div className="flex flex-wrap justify-center gap-4 mt-4 text-sm text-gray-500">
@@ -190,8 +243,8 @@ export default function SpecialOfferWidget({
         </div>
 
         {/* Bottom urgency bar */}
-        <div className="bg-red-600 text-white py-2 px-4 text-center text-sm font-medium">
-          ⚡ {spotsRemaining} people are viewing this offer right now
+        <div className="bg-gradient-to-r from-primary-600 to-purple-600 text-white py-2 px-4 text-center text-sm font-medium">
+          <span className="animate-pulse">⚡</span> {spotsRemaining} people are viewing this offer right now
         </div>
       </div>
     </div>

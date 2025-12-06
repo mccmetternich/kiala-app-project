@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ArrowRight, ShieldCheck, Truck, Star } from 'lucide-react';
-import TrackedLink from '@/components/TrackedLink';
+import { useTracking } from '@/contexts/TrackingContext';
+import { trackInitiateCheckout } from '@/lib/meta-pixel';
 
 interface CountdownTimerProps {
   endDate?: string;
@@ -16,7 +17,10 @@ interface CountdownTimerProps {
   salePrice?: string;
   ctaText?: string;
   ctaUrl?: string;
+  ctaType?: 'external' | 'anchor';
+  target?: '_self' | '_blank';
   benefits?: string[];
+  widgetId?: string;
 }
 
 export default function CountdownTimer({
@@ -30,9 +34,43 @@ export default function CountdownTimer({
   salePrice = '$89',
   ctaText = 'Claim Your Discount Now',
   ctaUrl = '#',
-  benefits = ['Free Shipping', '60-Day Guarantee', '24/7 Support']
+  ctaType = 'external',
+  target = '_self',
+  benefits = ['Free Shipping', '60-Day Guarantee', '24/7 Support'],
+  widgetId
 }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
+
+  const finalUrl = ctaType === 'anchor' ? ctaUrl : appendTracking(ctaUrl);
+  const finalTarget = ctaType === 'anchor' ? '_self' : target;
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Handle anchor type
+    if (ctaType === 'anchor' && ctaUrl) {
+      e.preventDefault();
+      const element = document.getElementById(ctaUrl.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
+    // Track for external URLs
+    if (isExternalUrl(ctaUrl)) {
+      trackInitiateCheckout({
+        content_name: productName || 'Countdown Timer',
+        content_category: 'countdown_timer'
+      });
+
+      trackExternalClick({
+        widget_type: 'countdown-timer',
+        widget_id: widgetId || `countdown-timer-${productName?.substring(0, 20)}`,
+        widget_name: productName || 'Countdown Timer',
+        destination_url: ctaUrl
+      });
+    }
+  };
 
   useEffect(() => {
     if (!endDate) {
@@ -136,15 +174,16 @@ export default function CountdownTimer({
             </div>
 
             {/* CTA Button */}
-            <TrackedLink
-              href={ctaUrl}
-              widgetType="countdown-timer"
-              widgetName={productName}
+            <a
+              href={finalUrl}
+              target={finalTarget}
+              rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
+              onClick={handleCtaClick}
               className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl text-base mb-4"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />
-            </TrackedLink>
+            </a>
 
             {/* Trust Badges */}
             <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">

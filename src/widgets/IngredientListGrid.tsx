@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles, Plus } from 'lucide-react';
+import { Sparkles, Plus, ArrowRight } from 'lucide-react';
+import { useTracking } from '@/contexts/TrackingContext';
 
 interface Ingredient {
   name: string;
@@ -18,6 +19,13 @@ interface IngredientListGridProps {
   additionalCount?: number;
   additionalText?: string;
   showAdditional?: boolean;
+  // CTA props
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  ctaSubtext?: string;
+  ctaType?: 'external' | 'anchor';
+  target?: '_self' | '_blank';
 }
 
 const defaultIngredients: Ingredient[] = [
@@ -61,8 +69,47 @@ export default function IngredientListGrid({
   style = 'default',
   additionalCount = 20,
   additionalText = 'hormone-supporting, gut-healing superfoods in every scoop',
-  showAdditional = true
+  showAdditional = true,
+  showCta = false,
+  ctaText = 'Learn More →',
+  ctaUrl = '#',
+  ctaSubtext = '',
+  ctaType = 'external',
+  target = '_self'
 }: IngredientListGridProps) {
+  const { appendTracking } = useTracking();
+  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
+  const finalTarget = ctaType === 'anchor' ? '_self' : target;
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (ctaType === 'anchor' && ctaUrl) {
+      e.preventDefault();
+      const element = document.getElementById(ctaUrl.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
+  // CTA Button component to reuse across styles
+  const CtaButton = () => showCta && ctaText && ctaUrl ? (
+    <div className="mt-6 text-center">
+      <a
+        href={finalCtaUrl}
+        target={finalTarget}
+        rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
+        onClick={handleCtaClick}
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+      >
+        {ctaText}
+        <ArrowRight className="w-5 h-5" />
+      </a>
+      {ctaSubtext && (
+        <p className="mt-2 text-sm text-gray-500">{ctaSubtext}</p>
+      )}
+    </div>
+  ) : null;
+
   const gridCols = {
     2: 'md:grid-cols-2',
     3: 'md:grid-cols-3',
@@ -116,6 +163,8 @@ export default function IngredientListGrid({
             </div>
           </div>
         )}
+
+        <CtaButton />
       </div>
     );
   }
@@ -196,6 +245,8 @@ export default function IngredientListGrid({
             </div>
           </div>
         )}
+
+        <CtaButton />
       </div>
     </div>
   );

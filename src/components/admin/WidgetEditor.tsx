@@ -51,56 +51,52 @@ interface WidgetEditorProps {
 
 const widgetTypes: { type: WidgetType; name: string; icon: any; category: string; description: string }[] = [
   // Content Widgets
-  { type: 'text-block', name: 'Text Block', icon: Type, category: 'Content', description: 'Rich text editor for articles and stories' },
+  { type: 'text-block', name: 'Rich Text Block', icon: Type, category: 'Content', description: 'A flexible, stylable text widget' },
   { type: 'top-ten-list', name: 'Top 10 List', icon: ListOrdered, category: 'Content', description: 'Numbered routine or tips list' },
   { type: 'expectation-timeline', name: 'Timeline', icon: Timer, category: 'Content', description: 'Visual timeline of expected results' },
-  { type: 'faq-accordion', name: 'FAQ Accordion', icon: HelpCircle, category: 'Content', description: 'Expandable FAQ section' },
-  { type: 'data-overview', name: 'Data Overview', icon: BarChart3, category: 'Content', description: 'Statistics and data points display' },
-  { type: 'symptoms-checker', name: 'Symptoms Checker', icon: MessageSquare, category: 'Content', description: '"Is this you?" symptom checker' },
-  { type: 'ingredient-list-grid', name: 'Ingredient List Grid', icon: LayoutGrid, category: 'Content', description: 'Grid of ingredients with avatars and descriptions' },
-
-  // Social Proof Widgets
-  { type: 'testimonial', name: 'Testimonial Carousel', icon: Quote, category: 'Social Proof', description: 'Customer success stories carousel' },
-  { type: 'stacked-quotes', name: 'Stacked Quotes', icon: Quote, category: 'Social Proof', description: 'Vertically stacked testimonials' },
-  { type: 'before-after-comparison', name: 'Before/After Slider', icon: ArrowLeftRight, category: 'Social Proof', description: 'Interactive drag-to-compare transformation' },
-  { type: 'before-after-side-by-side', name: 'Before/After Static', icon: Columns, category: 'Social Proof', description: 'Side-by-side transformation images' },
-  { type: 'rating-stars', name: 'Rating Display', icon: Star, category: 'Social Proof', description: 'Star ratings and reviews' },
-  { type: 'review-grid', name: 'Review Grid', icon: Star, category: 'Social Proof', description: '4-column review cards with ratings' },
-  { type: 'press-logos', name: 'Press Logos', icon: Award, category: 'Social Proof', description: 'Featured press mentions with quotes' },
-  { type: 'scrolling-thumbnails', name: 'Scrolling Thumbnails', icon: ImageIcon, category: 'Social Proof', description: 'Infinite scrolling customer photos' },
-  { type: 'testimonial-hero-no-cta', name: 'Testimonial Hero - No CTA', icon: Quote, category: 'Social Proof', description: 'Large testimonial with image, no button' },
-  { type: 'testimonial-hero', name: 'Testimonial Hero - With CTA', icon: Quote, category: 'Social Proof', description: 'Large testimonial with image and CTA button' },
-
-  // Conversion Widgets
-  { type: 'product-showcase', name: 'Product Showcase', icon: ShoppingCart, category: 'Conversion', description: 'Featured product with ratings and CTA' },
-  { type: 'exclusive-product', name: "Dr Amy's #1 Pick", icon: Award, category: 'Conversion', description: 'Dr. recommended product card' },
-  { type: 'shop-now', name: 'Shop Now - 3x Options', icon: Store, category: 'Conversion', description: 'Product with pricing options' },
-  { type: 'special-offer', name: 'Special Offer', icon: Gift, category: 'Conversion', description: 'Offer with countdown and social proof' },
-  { type: 'dual-offer-comparison', name: 'Dual Offers', icon: Columns, category: 'Conversion', description: 'Side-by-side offer comparison' },
-  { type: 'us-vs-them-comparison', name: 'Us Vs Them', icon: Columns, category: 'Conversion', description: 'Two-column product comparison' },
-  { type: 'comparison-table', name: 'Comparison Table', icon: BarChart3, category: 'Conversion', description: 'Us vs them product comparison' },
-  { type: 'cta-button', name: 'CTA Button', icon: ExternalLink, category: 'Conversion', description: 'Call-to-action button' },
-
-  // Urgency Widgets
-  { type: 'countdown-timer', name: 'Countdown Timer', icon: Clock, category: 'Urgency', description: 'Limited time offer countdown' },
-
-  // Lead Gen Widgets
-  { type: 'email-capture', name: 'Email Capture', icon: Mail, category: 'Lead Gen', description: 'Newsletter signup with lead magnet' },
-
-  // Interactive & Engagement Widgets
+  { type: 'faq-accordion', name: 'FAQ Accordion', icon: HelpCircle, category: 'Content', description: 'An infinitely long FAQ accordion with click to expose fields' },
+  { type: 'data-overview', name: 'Data & Stat Highlights', icon: BarChart3, category: 'Content', description: '4x prominent stat fields to re-enforce data points' },
+  { type: 'symptoms-checker', name: 'Symptoms Checker', icon: MessageSquare, category: 'Content', description: 'An interactive table for users to self-diagnose with CTA' },
+  { type: 'ingredient-list-grid', name: 'Ingredient Grid', icon: LayoutGrid, category: 'Content', description: 'A grid of key ingredients with ingredient avatars and CTA' },
   { type: 'poll', name: 'Poll', icon: BarChart3, category: 'Content', description: 'Interactive community poll with results' },
   { type: 'myth-buster', name: 'Myth Buster', icon: AlertCircle, category: 'Content', description: 'Myth vs. Reality comparison cards' },
   { type: 'warning-box', name: 'Warning Box', icon: AlertTriangle, category: 'Content', description: 'Highlighted warning or cascade list' },
   { type: 'dr-tip', name: "Dr's Tip", icon: Lightbulb, category: 'Content', description: 'Professional insight callout' },
   { type: 'checklist', name: 'Checklist', icon: CheckSquare, category: 'Content', description: 'Interactive or assessment checklist' },
-  { type: 'two-approaches', name: 'Two Approaches', icon: Columns, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' }
+  { type: 'two-approaches', name: 'Two Approaches', icon: Columns, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' },
+  { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: Columns, category: 'Content', description: 'Side by side comparison of us vs the other guys with CTA' },
+  { type: 'comparison-table', name: 'Compare Table', icon: BarChart3, category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
+
+  // Social Proof Widgets
+  { type: 'testimonial', name: 'Testimonial Carousel', icon: Quote, category: 'Social Proof', description: 'A rotating series of customer testimonials' },
+  { type: 'stacked-quotes', name: 'Stacked Testimonials', icon: Quote, category: 'Social Proof', description: 'A series of large text based testimonials' },
+  { type: 'before-after-comparison', name: 'Before & After Slider', icon: ArrowLeftRight, category: 'Social Proof', description: 'An interactive slider of before & after with story and CTA' },
+  { type: 'before-after-side-by-side', name: 'Before & After Static', icon: Columns, category: 'Social Proof', description: 'Two side by side images for before & after with quote and CTA' },
+  { type: 'rating-stars', name: 'Rating Display', icon: Star, category: 'Social Proof', description: 'Star ratings and reviews' },
+  { type: 'review-grid', name: 'Review Tiles', icon: Star, category: 'Social Proof', description: '4x tiles with avatars, stars, review quotes in a grid' },
+  { type: 'press-logos', name: 'Press Logos', icon: Award, category: 'Social Proof', description: 'A grid of press logos with quotes' },
+  { type: 'scrolling-thumbnails', name: 'Scrolling Photowall', icon: ImageIcon, category: 'Social Proof', description: 'A large, animated photo wall of thumbnails that scrolls' },
+  { type: 'testimonial-hero-no-cta', name: 'Large Photo Testimonial', icon: Quote, category: 'Social Proof', description: 'A large testimonial with a photo, no CTA' },
+  { type: 'testimonial-hero', name: 'Large Photo Testimonial CTA', icon: Quote, category: 'Social Proof', description: 'A large testimonial with photo AND CTA' },
+  { type: 'community-survey-results', name: 'Community Survey Results', icon: BarChart3, category: 'Social Proof', description: 'Survey results with percentages and social proof' },
+
+  // Commerce Widgets
+  { type: 'product-showcase', name: 'Shop Product', icon: ShoppingCart, category: 'Commerce', description: 'A simple horizontal, smaller tile' },
+  { type: 'exclusive-product', name: "Shop #1 Product Pick", icon: Award, category: 'Commerce', description: 'A large product feature with CTA' },
+  { type: 'shop-now', name: 'Shop 3x Options', icon: Store, category: 'Commerce', description: 'Product carousel with description and 3x option radio buttons' },
+  { type: 'special-offer', name: 'Shop Special Offer', icon: Gift, category: 'Commerce', description: 'A big, loud CTA with countdown timer, bullets and price' },
+  { type: 'dual-offer-comparison', name: 'Shop Two Offers', icon: Columns, category: 'Commerce', description: 'Side by side of starter vs best value offers and CTA' },
+  { type: 'cta-button', name: 'Simple CTA', icon: ExternalLink, category: 'Commerce', description: 'Simple CTA button with copy' },
+  { type: 'countdown-timer', name: 'Shop Product + Countdown', icon: Clock, category: 'Commerce', description: 'A simple horizontal product image and countdown timer with CTA' },
+
+  // Lead Gen Widgets
+  { type: 'email-capture', name: 'Email Capture', icon: Mail, category: 'Lead Gen', description: 'Newsletter signup with lead magnet' }
 ];
 
 const categoryColors: Record<string, string> = {
   'Content': 'bg-blue-100 text-blue-700',
-  'Conversion': 'bg-green-100 text-green-700',
+  'Commerce': 'bg-green-100 text-green-700',
   'Social Proof': 'bg-purple-100 text-purple-700',
-  'Urgency': 'bg-red-100 text-red-700',
   'Lead Gen': 'bg-yellow-100 text-yellow-700'
 };
 
@@ -1112,6 +1108,70 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         </div>
       )}
     </div>
+  );
+
+  // Checkbox field helper
+  const renderCheckboxField = (label: string, field: string) => (
+    <div className="flex items-center gap-2">
+      <input
+        type="checkbox"
+        id={`${widget.id}-${field}`}
+        checked={!!widget.config[field]}
+        onChange={(e) => onUpdate({ [field]: e.target.checked })}
+        className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+      />
+      <label htmlFor={`${widget.id}-${field}`} className="text-sm text-gray-700">{label}</label>
+    </div>
+  );
+
+  // CTA Type and Target selector (simplified version for use alongside renderTextField)
+  const renderCtaTypeAndTarget = () => (
+    <>
+      <div className="mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+        <select
+          value={widget.config.ctaType || 'external'}
+          onChange={(e) => onUpdate({ ctaType: e.target.value })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+        >
+          <option value="external">Link to URL</option>
+          <option value="anchor">Jump to Widget on Page</option>
+        </select>
+      </div>
+
+      {widget.config.ctaType !== 'anchor' && (
+        <>
+          {renderTextField('Button URL', 'ctaUrl', '#')}
+          {renderSelectField('Open in', 'target', [
+            { value: '_self', label: 'Same tab' },
+            { value: '_blank', label: 'New tab' }
+          ])}
+        </>
+      )}
+
+      {widget.config.ctaType === 'anchor' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+          <select
+            value={widget.config.anchorWidgetId || ''}
+            onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+          >
+            <option value="">Select a widget...</option>
+            {allWidgets
+              .filter((w: Widget) => w.id !== widget.id && w.enabled)
+              .sort((a: Widget, b: Widget) => a.position - b.position)
+              .map((w: Widget) => (
+                <option key={w.id} value={w.id}>
+                  {getWidgetDisplayName(w)} (Position {w.position + 1})
+                </option>
+              ))
+            }
+          </select>
+          <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+        </div>
+      )}
+    </>
   );
 
   // Multi-image field for carousels/galleries with drag-and-drop
@@ -2194,6 +2254,70 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </div>
             )}
           </div>
+
+          {/* CTA Section */}
+          <div className="border-t pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show CTA Button
+            </label>
+            {widget.config.showCta && (
+              <div className="space-y-3 pl-6">
+                {renderTextField('CTA Text', 'ctaText', 'Learn More →')}
+                {renderTextField('CTA Subtext (small text below button)', 'ctaSubtext', '')}
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+                  <select
+                    value={widget.config.ctaType || 'external'}
+                    onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="external">Link to URL</option>
+                    <option value="anchor">Jump to Widget on Page</option>
+                  </select>
+                </div>
+
+                {widget.config.ctaType !== 'anchor' && (
+                  <>
+                    {renderTextField('CTA URL', 'ctaUrl', 'https://kialanutrition.com')}
+                    {renderSelectField('Open in', 'target', [
+                      { value: '_self', label: 'Same tab' },
+                      { value: '_blank', label: 'New tab' }
+                    ])}
+                  </>
+                )}
+
+                {widget.config.ctaType === 'anchor' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                    <select
+                      value={widget.config.anchorWidgetId || ''}
+                      onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">Select a widget...</option>
+                      {allWidgets
+                        .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                        .sort((a: Widget, b: Widget) => a.position - b.position)
+                        .map((w: Widget) => (
+                          <option key={w.id} value={w.id}>
+                            {getWidgetDisplayName(w)} (Position {w.position + 1})
+                          </option>
+                        ))
+                      }
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -2542,27 +2666,65 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {/* Product Showcase */}
       {widget.type === 'product-showcase' && (
         <div className="space-y-4">
+          {/* Product Info */}
           {renderTextField('Product Name', 'name', 'Complete Hormone Reset')}
           {renderTextAreaField('Description', 'description', 'Product description...', 3)}
           {renderImageField('Product Image', 'image')}
-          <ImageGalleryField label="Product Gallery" field="gallery" />
           <div className="grid grid-cols-2 gap-4">
             {renderNumberField('Price', 'price', 0)}
             {renderNumberField('Original Price', 'originalPrice', 0)}
           </div>
-          {renderTextField('Badge Text', 'badge', 'BEST SELLER')}
-          {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
-          {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
-          {renderSelectField('Size', 'size', [
-            { value: 'small', label: 'Small' },
-            { value: 'medium', label: 'Medium' },
-            { value: 'large', label: 'Large' },
-            { value: 'hero', label: 'Hero (full width)' }
-          ])}
+          <BenefitsListEditor
+            benefits={widget.config.benefits || []}
+            onChange={(benefits: string[]) => onUpdate({ benefits })}
+          />
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
+            {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
+            {renderCtaTypeAndTarget()}
+          </div>
+
+          {/* CTA Bullets */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Trust Badges (under button)</h6>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Badges (one per line)</label>
+              <textarea
+                value={(widget.config.ctaBullets || ['Free Shipping', '60-Day Guarantee', '24/7 Support']).join('\n')}
+                onChange={(e) => onUpdate({ ctaBullets: e.target.value.split('\n').filter(b => b.trim()) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                rows={3}
+                placeholder="Free Shipping&#10;60-Day Guarantee&#10;24/7 Support"
+              />
+            </div>
+          </div>
+
+          {/* Rating */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Rating Display</h6>
+            {renderCheckboxField('Show Rating', 'showRating')}
+            {widget.config.showRating !== false && (
+              <div className="space-y-3 mt-3 pl-4 border-l-2 border-primary-200">
+                {renderNumberField('Star Rating', 'ratingStars', 1, 5, '5')}
+                {renderTextField('Review Count', 'ratingCount', '2,847 reviews')}
+              </div>
+            )}
+          </div>
+
+          {/* Testimonial */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Testimonial</h6>
+            {renderCheckboxField('Show Testimonial', 'showTestimonial')}
+            {widget.config.showTestimonial && (
+              <div className="space-y-3 mt-3 pl-4 border-l-2 border-primary-200">
+                {renderImageField('Customer Photo', 'testimonialImage')}
+                {renderTextAreaField('Quote', 'testimonialQuote', '"This product changed my life!"', 2)}
+                {renderTextField('Author', 'testimonialAuthor', 'Sarah M., Texas')}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -2584,26 +2746,59 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {/* Countdown Timer */}
       {widget.type === 'countdown-timer' && (
         <div className="space-y-4">
-          {renderTextField('Headline', 'headline', 'Limited Time Offer')}
-          {renderTextField('Subheading', 'subheading', 'Special pricing ends soon')}
-          {renderImageField('Background Image', 'backgroundImage')}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Timer Duration (hours)</label>
-            <input
-              type="number"
-              min={1}
-              max={168}
-              value={Math.floor((widget.config.timer || 86400000) / 3600000)}
-              onChange={(e) => onUpdate({ timer: parseInt(e.target.value) * 3600000 })}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-primary-500 text-gray-900"
-            />
+          {/* Header */}
+          {renderTextField('Banner Message', 'headline', 'Flash Sale - 40% Off Today Only!')}
+          {renderTextField('Timer Label', 'subheading', 'Offer expires in:')}
+
+          {/* Product Info */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Product Details</h6>
+            {renderImageField('Product Image', 'productImage')}
+            {renderTextField('Product Name', 'productName', 'Hormone Balance Complete Kit')}
+            {renderTextAreaField('Product Description', 'productDescription', 'Everything you need to start your hormone reset journey.', 2)}
+            <div className="grid grid-cols-2 gap-4">
+              {renderTextField('Sale Price', 'salePrice', '$89')}
+              {renderTextField('Original Price', 'originalPrice', '$147')}
+            </div>
           </div>
-          {renderSelectField('Style', 'style', [
-            { value: 'default', label: 'Default' },
-            { value: 'urgent', label: 'Urgent (Red)' },
-            { value: 'subtle', label: 'Subtle' },
-            { value: 'flash-sale', label: 'Flash Sale' }
-          ])}
+
+          {/* Timer Settings */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Timer Settings</h6>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Timer Duration (hours)</label>
+              <input
+                type="number"
+                min={1}
+                max={168}
+                value={Math.floor((widget.config.timer || 86400000) / 3600000)}
+                onChange={(e) => onUpdate({ timer: parseInt(e.target.value) * 3600000 })}
+                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-primary-500 text-gray-900"
+              />
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
+            {renderTextField('Button Text', 'ctaText', 'Claim Your Discount Now')}
+            {renderCtaTypeAndTarget()}
+          </div>
+
+          {/* Trust Badges */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Trust Badges</h6>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Benefits (one per line)</label>
+              <textarea
+                value={(widget.config.benefits || ['Free Shipping', '60-Day Guarantee', '24/7 Support']).join('\n')}
+                onChange={(e) => onUpdate({ benefits: e.target.value.split('\n').filter(b => b.trim()) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                rows={3}
+                placeholder="Free Shipping&#10;60-Day Guarantee&#10;24/7 Support"
+              />
+            </div>
+          </div>
         </div>
       )}
 
@@ -2626,17 +2821,54 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {/* CTA Button */}
       {widget.type === 'cta-button' && (
         <div className="space-y-4">
-          {renderTextField('Button Text', 'buttonText', 'Take Action Now →')}
-          {renderTextField('Button URL', 'buttonUrl', 'https://example.com')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
-          {renderSelectField('Style', 'style', [
-            { value: 'primary', label: 'Primary' },
-            { value: 'secondary', label: 'Secondary' },
-            { value: 'outline', label: 'Outline' }
-          ])}
+          {/* Title and Subtitle */}
+          {renderTextField('Title', 'title', 'Ready to Transform Your Health?')}
+          {renderTextField('Subtitle', 'subtitle', 'Join thousands of women who have taken control')}
+
+          {/* Button Settings */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Button Settings</h6>
+            {renderTextField('Button Text', 'buttonText', 'Take Action Now →')}
+            {renderSelectField('Style', 'style', [
+              { value: 'primary', label: 'Primary' },
+              { value: 'secondary', label: 'Secondary' }
+            ])}
+            {renderCtaTypeAndTarget()}
+          </div>
+
+          {/* Social Proof */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Social Proof</h6>
+            {renderCheckboxField('Show Social Proof', 'showSocialProof')}
+            {widget.config.showSocialProof && (
+              <div className="space-y-3 mt-3 pl-4 border-l-2 border-primary-200">
+                <ImageGalleryField label="Customer Avatars" field="socialProofAvatars" />
+                {renderNumberField('Star Rating', 'socialProofStars', 1, 5, '5')}
+                {renderTextField('Review Text', 'socialProofText', '10,000+ happy customers')}
+              </div>
+            )}
+          </div>
+
+          {/* Badges */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Trust Badges</h6>
+            {renderCheckboxField('Show Badges', 'showBadges')}
+            {widget.config.showBadges && (
+              <div className="space-y-3 mt-3 pl-4 border-l-2 border-primary-200">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Badges (one per line)</label>
+                  <textarea
+                    value={(widget.config.badges || ['Free Shipping', '90-Day Guarantee', 'Made in USA']).join('\n')}
+                    onChange={(e) => onUpdate({ badges: e.target.value.split('\n').filter(b => b.trim()) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                    rows={3}
+                    placeholder="Free Shipping&#10;90-Day Guarantee&#10;Made in USA"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Enter each badge text on a new line</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -2656,21 +2888,49 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {/* Special Offer */}
       {widget.type === 'special-offer' && (
         <div className="space-y-4">
-          {renderTextField('Headline', 'headline', 'EXCLUSIVE READER OFFER')}
-          {renderTextField('Subheading', 'subheading', 'Limited spots available')}
-          {renderTextAreaField('Description', 'description', 'Offer details...', 3)}
-          {renderImageField('Offer Image', 'image')}
-          <div className="grid grid-cols-2 gap-4">
-            {renderNumberField('Sale Price', 'price', 0)}
-            {renderNumberField('Original Price', 'originalPrice', 0)}
+          {/* Header */}
+          {renderTextField('Banner Headline', 'headline', 'EXCLUSIVE READER OFFER')}
+          {renderTextField('Title', 'subheading', 'Unlock Your Complete Hormone Reset Kit')}
+          {renderTextAreaField('Description', 'description', 'Get instant access to everything you need...', 3)}
+
+          {/* Product Image */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Product Image</h6>
+            {renderImageField('Product Image', 'productImage')}
+            <p className="text-xs text-gray-500 mt-1">Optional: Display a product image alongside the offer details</p>
           </div>
-          {renderNumberField('Limited Spots', 'limitedSpots', 1)}
-          {renderTextField('Button Text', 'buttonText', 'Claim Your Spot →')}
-          {renderTextField('Button URL', 'buttonUrl', '/checkout')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
+
+          {/* Pricing */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Pricing</h6>
+            <div className="grid grid-cols-2 gap-4">
+              {renderNumberField('Sale Price', 'price', 0)}
+              {renderNumberField('Original Price', 'originalPrice', 0)}
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Features</h6>
+            <BenefitsListEditor
+              benefits={widget.config.features || []}
+              onChange={(features: string[]) => onUpdate({ features })}
+            />
+          </div>
+
+          {/* Urgency */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Urgency Settings</h6>
+            {renderNumberField('Limited Spots', 'limitedSpots', 50)}
+            {renderNumberField('Recent Redemptions', 'redemptionCount', 1247)}
+          </div>
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
+            {renderTextField('Button Text', 'buttonText', 'Claim Your Spot Now →')}
+            {renderCtaTypeAndTarget()}
+          </div>
         </div>
       )}
 
@@ -3020,16 +3280,24 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {widget.type === 'comparison-table' && (
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'How Our Solution Compares')}
+          {renderTextField('Subtitle', 'subtitle', 'See why thousands of women are making the switch')}
           <div className="grid grid-cols-2 gap-4">
-            {renderImageField('Our Product Image', 'ourImage')}
-            {renderImageField('Competitor Image', 'competitorImage')}
+            {renderTextField('Left Column Header', 'leftColumnHeader', 'Standard')}
+            {renderTextField('Right Column Header', 'rightColumnHeader', 'Premium')}
           </div>
-          {renderTextField('Button Text', 'buttonText', 'Choose the Better Option →')}
-          {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
+            {renderCheckboxField('Show CTA Button', 'showCta')}
+            {widget.config.showCta && (
+              <div className="space-y-3 mt-3 pl-4 border-l-2 border-primary-200">
+                {renderTextField('Button Text', 'ctaText', 'Get Started →')}
+                {renderTextField('Subtext', 'ctaSubtext', 'Free shipping on all orders')}
+                {renderCtaTypeAndTarget()}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -3225,13 +3493,121 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {/* Dual Offer Comparison */}
       {widget.type === 'dual-offer-comparison' && (
         <div className="space-y-4">
-          {renderTextField('Headline', 'headline', 'Choose Your Path')}
+          {/* Header */}
+          {renderTextField('Headline', 'headline', 'Choose Your Path to Transformation')}
           {renderTextField('Subheading', 'subheading', 'Select the option that fits your goals')}
-          <div className="grid grid-cols-2 gap-4">
-            {renderImageField('Option 1 Image', 'option1Image')}
-            {renderImageField('Option 2 Image', 'option2Image')}
+
+          {/* Exclusive Banner */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Exclusive Banner</h6>
+            {renderCheckboxField('Show Exclusive Banner', 'showExclusiveBanner')}
+            {widget.config.showExclusiveBanner !== false && (
+              <div className="mt-3 pl-4 border-l-2 border-primary-200">
+                {renderTextField('Banner Text', 'exclusiveText', 'Community Exclusive - Limited Time Pricing')}
+              </div>
+            )}
           </div>
-          <p className="text-xs text-gray-500">Offer details are configured in the article defaults.</p>
+
+          {/* Left Offer */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Left Offer (Starter)</h6>
+            <div className="space-y-3 pl-4 border-l-2 border-gray-200">
+              {renderTextField('Offer Name', 'leftOffer.name', 'Basic Protocol')}
+              {renderTextField('Description', 'leftOffer.description', 'Great for getting started')}
+              {renderImageField('Offer Image', 'leftOffer.image')}
+              <div className="grid grid-cols-2 gap-4">
+                {renderNumberField('Price', 'leftOffer.price', 47)}
+                {renderNumberField('Original Price', 'leftOffer.originalPrice', 0)}
+              </div>
+              {renderTextField('Badge Text', 'leftOffer.badge', 'STARTER')}
+              {renderTextField('Button Text', 'leftOffer.ctaText', 'Get Basic')}
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+                <select
+                  value={(widget.config.leftOffer as any)?.ctaType || 'external'}
+                  onChange={(e) => onUpdate({ leftOffer: { ...(widget.config.leftOffer as any || {}), ctaType: e.target.value } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                >
+                  <option value="external">Link to URL</option>
+                  <option value="anchor">Jump to Widget on Page</option>
+                </select>
+              </div>
+              {(widget.config.leftOffer as any)?.ctaType !== 'anchor' && (
+                renderTextField('Button URL', 'leftOffer.ctaUrl', '#')
+              )}
+              {(widget.config.leftOffer as any)?.ctaType === 'anchor' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                  <select
+                    value={(widget.config.leftOffer as any)?.anchorWidgetId || ''}
+                    onChange={(e) => onUpdate({ leftOffer: { ...(widget.config.leftOffer as any || {}), anchorWidgetId: e.target.value } })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                  >
+                    <option value="">Select a widget...</option>
+                    {allWidgets
+                      .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                      .sort((a: Widget, b: Widget) => a.position - b.position)
+                      .map((w: Widget) => (
+                        <option key={w.id} value={w.id}>
+                          {getWidgetDisplayName(w)} (Position {w.position + 1})
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Offer */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Right Offer (Best Value)</h6>
+            <div className="space-y-3 pl-4 border-l-2 border-primary-200">
+              {renderTextField('Offer Name', 'rightOffer.name', 'Complete Reset Kit')}
+              {renderTextField('Description', 'rightOffer.description', 'Everything you need for transformation')}
+              {renderImageField('Offer Image', 'rightOffer.image')}
+              <div className="grid grid-cols-2 gap-4">
+                {renderNumberField('Price', 'rightOffer.price', 97)}
+                {renderNumberField('Original Price', 'rightOffer.originalPrice', 197)}
+              </div>
+              {renderTextField('Badge Text', 'rightOffer.badge', 'BEST VALUE')}
+              {renderCheckboxField('Highlight as Recommended', 'rightOffer.highlighted')}
+              {renderTextField('Button Text', 'rightOffer.ctaText', 'Get Complete Kit →')}
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+                <select
+                  value={(widget.config.rightOffer as any)?.ctaType || 'external'}
+                  onChange={(e) => onUpdate({ rightOffer: { ...(widget.config.rightOffer as any || {}), ctaType: e.target.value } })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                >
+                  <option value="external">Link to URL</option>
+                  <option value="anchor">Jump to Widget on Page</option>
+                </select>
+              </div>
+              {(widget.config.rightOffer as any)?.ctaType !== 'anchor' && (
+                renderTextField('Button URL', 'rightOffer.ctaUrl', '#')
+              )}
+              {(widget.config.rightOffer as any)?.ctaType === 'anchor' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                  <select
+                    value={(widget.config.rightOffer as any)?.anchorWidgetId || ''}
+                    onChange={(e) => onUpdate({ rightOffer: { ...(widget.config.rightOffer as any || {}), anchorWidgetId: e.target.value } })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                  >
+                    <option value="">Select a widget...</option>
+                    {allWidgets
+                      .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                      .sort((a: Widget, b: Widget) => a.position - b.position)
+                      .map((w: Widget) => (
+                        <option key={w.id} value={w.id}>
+                          {getWidgetDisplayName(w)} (Position {w.position + 1})
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
