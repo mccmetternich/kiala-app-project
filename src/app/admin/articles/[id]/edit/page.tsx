@@ -489,7 +489,7 @@ export default function EditArticle() {
                 </div>
 
                 {/* Categories */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
                   {Object.entries(widgetsByCategory).map(([category, categoryWidgets]) => {
                     const colors = categoryColors[category] || categoryColors['Content'];
                     const isExpanded = expandedCategories.has(category);
@@ -505,42 +505,45 @@ export default function EditArticle() {
                     };
 
                     return (
-                      <div key={category} className={`rounded-xl border ${colors.border} overflow-hidden bg-gray-800/50`}>
+                      <div key={category} className="rounded-xl overflow-hidden bg-gray-800/30">
                         {/* Category Header */}
                         <button
                           onClick={toggleCategory}
-                          className={`w-full flex items-center justify-between p-3.5 ${colors.bg} hover:brightness-110 transition-all`}
+                          className={`w-full flex items-center justify-between p-3 ${colors.bg} hover:brightness-125 transition-all`}
                         >
                           <span className={`text-sm font-semibold ${colors.text}`}>{category}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-500 bg-gray-700/50 px-2 py-0.5 rounded-full">{categoryWidgets.length}</span>
-                            <ChevronRight className={`w-4 h-4 ${colors.text} transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
+                            <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">{categoryWidgets.length}</span>
+                            <ChevronRight className={`w-4 h-4 ${colors.text} transition-transform duration-150 ${isExpanded ? 'rotate-90' : ''}`} />
                           </div>
                         </button>
 
                         {/* Widgets in Category */}
                         {isExpanded && (
-                          <div className="p-2 space-y-1.5">
-                            {categoryWidgets.map((widget) => (
-                              <div
-                                key={widget.type}
-                                draggable
-                                onDragStart={(e) => {
-                                  e.dataTransfer.setData('widgetType', widget.type);
-                                  e.dataTransfer.effectAllowed = 'copy';
-                                }}
-                                onClick={() => addWidget(widget.type as WidgetType)}
-                                className="w-full flex items-start gap-3 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-500 transition-all group text-left cursor-grab active:cursor-grabbing hover:shadow-lg"
-                              >
-                                <div className={`w-9 h-9 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                                  <Plus className={`w-4 h-4 ${colors.text}`} />
+                          <div className="p-2 space-y-1">
+                            {categoryWidgets.map((widget) => {
+                              const Icon = widget.icon;
+                              return (
+                                <div
+                                  key={widget.type}
+                                  draggable
+                                  onDragStart={(e) => {
+                                    e.dataTransfer.setData('widgetType', widget.type);
+                                    e.dataTransfer.effectAllowed = 'copy';
+                                  }}
+                                  onClick={() => addWidget(widget.type as WidgetType)}
+                                  className="w-full flex items-start gap-2.5 p-2.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 transition-colors group text-left cursor-grab active:cursor-grabbing"
+                                >
+                                  <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0`}>
+                                    <Icon className={`w-4 h-4 ${colors.text}`} />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{widget.name}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5 leading-snug line-clamp-2">{widget.description}</p>
+                                  </div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-medium text-white group-hover:text-primary-300 transition-colors">{widget.name}</p>
-                                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{widget.description}</p>
-                                </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         )}
                       </div>

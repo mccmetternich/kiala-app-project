@@ -459,21 +459,23 @@ export default function EditPage() {
                 <h3 className="text-sm font-semibold text-white">Widget Library</h3>
                 <p className="text-xs text-gray-400 mt-1">Click or drag widgets to add to your page</p>
               </div>
-              <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
+              <div className="max-h-[calc(100vh-300px)] overflow-y-auto p-2 space-y-1.5">
                 {Object.entries(widgetsByCategory).map(([category, categoryWidgets]) => (
-                  <div key={category} className="border-b border-gray-700/50 last:border-0">
+                  <div key={category} className="rounded-lg overflow-hidden bg-gray-800/30">
                     <button
                       onClick={() => toggleCategory(category)}
-                      className={`w-full flex items-center justify-between p-3 hover:bg-gray-750 transition-colors ${expandedCategories.has(category) ? categoryColors[category]?.bg || '' : ''}`}
+                      className={`w-full flex items-center justify-between p-2.5 ${categoryColors[category]?.bg || 'bg-gray-700/50'} hover:brightness-125 transition-all`}
                     >
                       <span className={`text-sm font-medium ${categoryColors[category]?.text || 'text-gray-300'}`}>
                         {category}
-                        <span className="ml-2 text-xs text-gray-500">({categoryWidgets.length})</span>
                       </span>
-                      <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${expandedCategories.has(category) ? 'rotate-180' : ''}`} />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">{categoryWidgets.length}</span>
+                        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-150 ${expandedCategories.has(category) ? 'rotate-180' : ''}`} />
+                      </div>
                     </button>
                     {expandedCategories.has(category) && (
-                      <div className="px-3 pb-3 space-y-2">
+                      <div className="p-2 space-y-1">
                         {categoryWidgets.map((widget) => {
                           const Icon = widget.icon;
                           return (
@@ -485,14 +487,14 @@ export default function EditPage() {
                                 e.dataTransfer.effectAllowed = 'copy';
                               }}
                               onClick={() => addWidget(widget.type as WidgetType)}
-                              className="w-full flex items-start gap-3 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-500 transition-all group text-left cursor-grab active:cursor-grabbing hover:shadow-lg"
+                              className="w-full flex items-start gap-2.5 p-2.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 transition-colors group text-left cursor-grab active:cursor-grabbing"
                             >
-                              <div className={`w-8 h-8 rounded-lg ${categoryColors[category]?.bg || 'bg-gray-700'} flex items-center justify-center flex-shrink-0`}>
-                                <Icon className={`w-4 h-4 ${categoryColors[category]?.text || 'text-gray-400'}`} />
+                              <div className={`w-7 h-7 rounded-lg ${categoryColors[category]?.bg || 'bg-gray-700'} flex items-center justify-center flex-shrink-0`}>
+                                <Icon className={`w-3.5 h-3.5 ${categoryColors[category]?.text || 'text-gray-400'}`} />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white group-hover:text-primary-300 transition-colors">{widget.name}</p>
-                                <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{widget.description}</p>
+                                <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{widget.name}</p>
+                                <p className="text-xs text-gray-500 leading-snug mt-0.5 line-clamp-2">{widget.description}</p>
                               </div>
                             </div>
                           );
