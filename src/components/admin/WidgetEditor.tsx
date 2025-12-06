@@ -4563,6 +4563,264 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         </div>
       )}
 
+      {/* Dr's Tip Widget */}
+      {widget.type === 'dr-tip' && (
+        <div className="space-y-4">
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mb-4">
+            <p className="text-sm text-teal-800">
+              <strong>Dr's Tip:</strong> A professional callout to highlight expert insights with optional CTA.
+            </p>
+          </div>
+
+          {renderTextAreaField('Tip Content', 'tip', 'Enter your professional insight here...', 4)}
+          {renderTextField('Doctor Name', 'name', 'Dr. Amy Heart')}
+          {renderTextField('Credentials', 'credentials', 'MD, PhD - Hormone Specialist')}
+          {renderImageField('Doctor Photo', 'image')}
+
+          {renderSelectField('Style', 'style', [
+            { value: 'default', label: 'Default (Clean)' },
+            { value: 'highlighted', label: 'Highlighted (Prominent)' },
+            { value: 'featured', label: 'Featured (Large with header)' },
+            { value: 'minimal', label: 'Minimal (Compact)' }
+          ])}
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show CTA Button
+            </label>
+            {widget.config.showCta && renderCtaSection('Button Text', 'Learn More →', '#')}
+          </div>
+        </div>
+      )}
+
+      {/* Warning Box Widget */}
+      {widget.type === 'warning-box' && (
+        <div className="space-y-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-sm text-amber-800">
+              <strong>Warning Box:</strong> An attention-grabbing callout to highlight important information, warnings, or cascading issues.
+            </p>
+          </div>
+
+          {renderTextField('Headline', 'headline', 'Important Notice')}
+          {renderTextField('Subheading (optional)', 'content', 'Supporting text...')}
+
+          {renderSelectField('Style', 'style', [
+            { value: 'default', label: 'Default (Amber)' },
+            { value: 'urgent', label: 'Urgent (Red)' },
+            { value: 'info', label: 'Info (Blue)' },
+            { value: 'cascade', label: 'Cascade (Pyramid warnings)' }
+          ])}
+
+          {/* Warning Items Editor */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <div className="flex justify-between items-center mb-3">
+              <label className="block text-sm font-semibold text-gray-800">Warning Items</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const warnings = [...(widget.config.warnings || [])];
+                  warnings.push({ text: 'New warning item', severity: 'medium' });
+                  onUpdate({ warnings });
+                }}
+                className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-800 font-medium"
+              >
+                <Plus className="w-3 h-3" /> Add Warning
+              </button>
+            </div>
+            <div className="space-y-2">
+              {(widget.config.warnings || []).map((warning: any, idx: number) => (
+                <div key={idx} className="flex gap-2 items-center bg-gray-50 p-2 rounded-lg">
+                  <select
+                    value={warning.severity || 'medium'}
+                    onChange={(e) => {
+                      const warnings = [...(widget.config.warnings || [])];
+                      warnings[idx] = { ...warnings[idx], severity: e.target.value };
+                      onUpdate({ warnings });
+                    }}
+                    className="w-24 px-2 py-1.5 text-xs border border-gray-300 rounded"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                  <input
+                    type="text"
+                    value={warning.text}
+                    onChange={(e) => {
+                      const warnings = [...(widget.config.warnings || [])];
+                      warnings[idx] = { ...warnings[idx], text: e.target.value };
+                      onUpdate({ warnings });
+                    }}
+                    placeholder="Warning text"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const warnings = (widget.config.warnings || []).filter((_: any, i: number) => i !== idx);
+                      onUpdate({ warnings });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              {(widget.config.warnings || []).length === 0 && (
+                <p className="text-xs text-gray-500 italic p-2">No warnings yet. Add warning items above.</p>
+              )}
+            </div>
+          </div>
+
+          {renderTextField('Footer Text (optional)', 'footer', 'Call to action message...')}
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show CTA Button
+            </label>
+            {widget.config.showCta && renderCtaSection('Button Text', 'Take Action →', '#')}
+          </div>
+        </div>
+      )}
+
+      {/* Myth Buster Widget */}
+      {widget.type === 'myth-buster' && (
+        <div className="space-y-4">
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4">
+            <p className="text-sm text-purple-800">
+              <strong>Myth Buster:</strong> Compare myths vs reality to educate and persuade readers.
+            </p>
+          </div>
+
+          {renderTextField('Headline', 'headline', 'Myth vs. Reality')}
+          {renderTextField('Subheading (optional)', 'subheading', "What you've been told vs what's actually true")}
+
+          {renderSelectField('Style', 'style', [
+            { value: 'cards', label: 'Cards (Side by side)' },
+            { value: 'list', label: 'List (Stacked rows)' },
+            { value: 'compact', label: 'Compact (Minimal)' }
+          ])}
+
+          {/* Myth Items Editor */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <div className="flex justify-between items-center mb-3">
+              <label className="block text-sm font-semibold text-gray-800">Myths & Truths</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const myths = [...(widget.config.myths || [])];
+                  myths.push({ myth: 'Common misconception', truth: 'The actual truth', icon: 'brain' });
+                  onUpdate({ myths });
+                }}
+                className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium"
+              >
+                <Plus className="w-3 h-3" /> Add Myth
+              </button>
+            </div>
+            <div className="space-y-3">
+              {(widget.config.myths || []).map((item: any, idx: number) => (
+                <div key={idx} className="border border-gray-200 rounded-lg p-3 bg-white">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-medium text-gray-500">Myth #{idx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const myths = (widget.config.myths || []).filter((_: any, i: number) => i !== idx);
+                        onUpdate({ myths });
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    <div>
+                      <label className="block text-xs text-rose-600 mb-1">Myth (What people believe)</label>
+                      <input
+                        type="text"
+                        value={item.myth || ''}
+                        onChange={(e) => {
+                          const myths = [...(widget.config.myths || [])];
+                          myths[idx] = { ...myths[idx], myth: e.target.value };
+                          onUpdate({ myths });
+                        }}
+                        placeholder="The misconception..."
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-emerald-600 mb-1">Truth (The reality)</label>
+                      <input
+                        type="text"
+                        value={item.truth || ''}
+                        onChange={(e) => {
+                          const myths = [...(widget.config.myths || [])];
+                          myths[idx] = { ...myths[idx], truth: e.target.value };
+                          onUpdate({ myths });
+                        }}
+                        placeholder="What's actually true..."
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Icon (optional)</label>
+                      <select
+                        value={item.icon || 'brain'}
+                        onChange={(e) => {
+                          const myths = [...(widget.config.myths || [])];
+                          myths[idx] = { ...myths[idx], icon: e.target.value };
+                          onUpdate({ myths });
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                      >
+                        <option value="brain">Brain</option>
+                        <option value="heart">Heart</option>
+                        <option value="zap">Energy/Zap</option>
+                        <option value="scale">Scale/Balance</option>
+                        <option value="thermometer">Thermometer</option>
+                        <option value="link">Link/Connection</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {(widget.config.myths || []).length === 0 && (
+                <p className="text-xs text-gray-500 italic p-2">No myths yet. Add myth items above.</p>
+              )}
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <input
+                type="checkbox"
+                checked={widget.config.showCta || false}
+                onChange={(e) => onUpdate({ showCta: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Show CTA Button
+            </label>
+            {widget.config.showCta && renderCtaSection('Button Text', 'Learn The Truth →', '#')}
+          </div>
+        </div>
+      )}
+
       {widget.type === 'two-approaches' && (
         <div className="space-y-6">
           {renderTextField('Headline', 'headline', 'Two Paths Forward')}

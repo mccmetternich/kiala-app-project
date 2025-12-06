@@ -613,6 +613,39 @@ export default function EditArticle() {
               </div>
             </div>
 
+            {/* Boosted Article - Campaign Tracking */}
+            <div className={`bg-gray-800 rounded-2xl border-2 overflow-hidden transition-all ${
+              formData.boosted
+                ? 'border-yellow-500/50 ring-2 ring-yellow-500/20'
+                : 'border-gray-700'
+            }`}>
+              <label className="flex items-center gap-4 cursor-pointer p-5">
+                <input
+                  type="checkbox"
+                  checked={formData.boosted}
+                  onChange={(e) => handleInputChange('boosted', e.target.checked)}
+                  className="w-6 h-6 text-yellow-500 bg-gray-700 border-gray-600 rounded focus:ring-yellow-500"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <span className="text-white font-semibold text-lg">Boosted Article</span>
+                    {formData.boosted ? (
+                      <span className="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-bold animate-pulse">
+                        🔥 ACTIVE
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 bg-gray-700 text-gray-400 rounded-full text-xs font-medium">
+                        Inactive
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Track active ad campaigns. Internal only - not visible to visitors.
+                  </p>
+                </div>
+              </label>
+            </div>
+
             {/* Article Info */}
             <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
               <div className="p-5 border-b border-gray-700 bg-gray-800/50">
@@ -790,34 +823,6 @@ export default function EditArticle() {
                       Leave empty to use the actual publish time. Set a past date for backdating articles.
                     </p>
                   </div>
-                </div>
-
-                {/* Boosted Article - Internal Tagging */}
-                <div className="mt-6 pt-6 border-t border-gray-700">
-                  <h3 className="text-sm font-medium text-gray-300 mb-4">Campaign Tracking</h3>
-                  <label className={`flex items-center gap-4 cursor-pointer p-4 rounded-xl transition-all border-2 ${
-                    formData.boosted
-                      ? 'bg-yellow-500/10 border-yellow-500/50'
-                      : 'bg-gray-700/50 border-transparent hover:bg-gray-700'
-                  }`}>
-                    <input
-                      type="checkbox"
-                      checked={formData.boosted}
-                      onChange={(e) => handleInputChange('boosted', e.target.checked)}
-                      className="w-6 h-6 text-yellow-500 bg-gray-700 border-gray-600 rounded focus:ring-yellow-500"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-semibold text-lg">Boosted Article</span>
-                        {formData.boosted && (
-                          <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">Active</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-400 mt-1">
-                        Mark this article as boosted to track active ad campaigns. This is for internal tracking only and won't be visible to visitors.
-                      </p>
-                    </div>
-                  </label>
                 </div>
 
                 {/* Visibility Flags */}

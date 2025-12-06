@@ -33,7 +33,7 @@ const iconMap: Record<string, React.ReactNode> = {
 export default function MythBuster({
   headline = "Myth vs. Reality",
   subheading,
-  myths,
+  myths = [],
   style = 'cards',
   ctaText,
   ctaUrl,
@@ -42,6 +42,9 @@ export default function MythBuster({
   const { appendTracking } = useTracking();
   const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // Safety check for myths array
+  const safeMyths = Array.isArray(myths) ? myths : [];
 
   if (style === 'compact') {
     return (
@@ -58,7 +61,7 @@ export default function MythBuster({
           <p className="text-gray-600 mb-6 ml-12">{subheading}</p>
         )}
         <div className="space-y-4">
-          {myths.map((item, idx) => (
+          {safeMyths.map((item, idx) => (
             <div
               key={idx}
               className="bg-white rounded-xl p-5 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
@@ -111,7 +114,7 @@ export default function MythBuster({
           </div>
         )}
         <div className="bg-white divide-y divide-gray-100">
-          {myths.map((item, idx) => (
+          {safeMyths.map((item, idx) => (
             <div
               key={idx}
               className="p-6 hover:bg-gray-50 transition-colors"
@@ -184,7 +187,7 @@ export default function MythBuster({
 
       <div className={`bg-white shadow-xl border border-gray-100 ${headline ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
         <div className="p-6 space-y-4">
-          {myths.map((item, idx) => (
+          {safeMyths.map((item, idx) => (
             <div
               key={idx}
               className="rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-primary-200 transition-all duration-300 hover:shadow-lg group"
