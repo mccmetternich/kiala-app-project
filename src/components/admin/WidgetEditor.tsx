@@ -484,7 +484,7 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
           </div>
 
           {/* Group by category */}
-          {['Content', 'Social Proof', 'Conversion', 'Urgency', 'Lead Gen'].map(category => (
+          {['Content', 'Social Proof', 'Commerce', 'Lead Gen'].map(category => (
             <div key={category} className="mb-6">
               <h5 className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
                 <span className={`px-2 py-0.5 rounded text-xs ${categoryColors[category]}`}>{category}</span>
