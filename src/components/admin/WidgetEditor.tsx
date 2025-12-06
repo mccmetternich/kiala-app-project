@@ -185,9 +185,10 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
               <label className="block text-xs font-medium text-gray-600 mb-1">Sale Price ($)</label>
               <input
                 type="number"
+                step="any"
                 value={option.price === 0 || option.price ? option.price : ''}
                 onChange={(e) => updateOption(index, 'price', e.target.value === '' ? '' : parseFloat(e.target.value))}
-                placeholder="97"
+                placeholder="97.00"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
@@ -195,9 +196,10 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
               <label className="block text-xs font-medium text-gray-600 mb-1">Original Price ($)</label>
               <input
                 type="number"
+                step="any"
                 value={option.originalPrice === 0 || option.originalPrice ? option.originalPrice : ''}
                 onChange={(e) => updateOption(index, 'originalPrice', e.target.value === '' ? '' : parseFloat(e.target.value))}
-                placeholder="167"
+                placeholder="167.00"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
@@ -851,7 +853,8 @@ function NumberField({
   max,
   placeholder,
   value,
-  onChange
+  onChange,
+  step = 'any'
 }: {
   label: string;
   field: string;
@@ -860,6 +863,7 @@ function NumberField({
   placeholder?: string;
   value: number | string;
   onChange: (field: string, value: number | undefined) => void;
+  step?: string | number;
 }) {
   return (
     <div>
@@ -868,8 +872,9 @@ function NumberField({
         type="number"
         min={min}
         max={max}
+        step={step}
         value={value}
-        onChange={(e) => onChange(field, e.target.value ? parseInt(e.target.value) : undefined)}
+        onChange={(e) => onChange(field, e.target.value ? parseFloat(e.target.value) : undefined)}
         placeholder={placeholder}
         className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-primary-500 text-gray-900 placeholder-gray-400"
       />
