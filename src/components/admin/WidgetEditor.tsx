@@ -5527,3 +5527,4 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
 
   return defaults[type] || {};
 }
+
