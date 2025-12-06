@@ -441,6 +441,46 @@ export async function initDb() {
     await execute(`ALTER TABLE widget_clicks ADD COLUMN session_id TEXT`);
   } catch { /* Column already exists */ }
 
+  // Widget categories table - for custom category organization
+  // Global categories have site_id = NULL, site-specific have site_id set
+  await execute(`
+    CREATE TABLE IF NOT EXISTS widget_categories (
+      id TEXT PRIMARY KEY,
+      site_id TEXT,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      description TEXT,
+      color_bg TEXT DEFAULT 'bg-gray-500/10',
+      color_text TEXT DEFAULT 'text-gray-400',
+      color_border TEXT DEFAULT 'border-gray-500/30',
+      icon TEXT,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      is_global INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (site_id) REFERENCES sites(id) ON DELETE CASCADE
+    )
+  `);
+
+  // Site-specific widget settings - for per-site widget organization
+  // Allows sites to reorder widgets within categories, hide certain widgets, etc.
+  await execute(`
+    CREATE TABLE IF NOT EXISTS site_widget_settings (
+      id TEXT PRIMARY KEY,
+      site_id TEXT NOT NULL,
+      widget_type TEXT NOT NULL,
+      category_id TEXT,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      hidden INTEGER DEFAULT 0,
+      custom_name TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (site_id) REFERENCES sites(id) ON DELETE CASCADE,
+      FOREIGN KEY (category_id) REFERENCES widget_categories(id) ON DELETE SET NULL,
+      UNIQUE(site_id, widget_type)
+    )
+  `);
+
   // Create indexes for performance
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_sites_domain ON sites (domain)',
@@ -476,6 +516,13 @@ export async function initDb() {
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_date ON widget_clicks(clicked_at)',
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_external ON widget_clicks(is_external)',
     'CREATE INDEX IF NOT EXISTS idx_widget_clicks_session ON widget_clicks(session_id)',
+    // Widget categories indexes
+    'CREATE INDEX IF NOT EXISTS idx_widget_categories_site ON widget_categories(site_id)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_categories_global ON widget_categories(is_global)',
+    'CREATE INDEX IF NOT EXISTS idx_widget_categories_sort ON widget_categories(sort_order)',
+    // Site widget settings indexes
+    'CREATE INDEX IF NOT EXISTS idx_site_widget_settings_site ON site_widget_settings(site_id)',
+    'CREATE INDEX IF NOT EXISTS idx_site_widget_settings_widget ON site_widget_settings(widget_type)',
   ];
 
   for (const idx of indexes) {

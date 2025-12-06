@@ -99,6 +99,8 @@ export default function EditArticle() {
   });
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Content', 'Social Proof', 'Commerce']));
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -551,9 +553,9 @@ export default function EditArticle() {
                   })}
                 </div>
 
-                {/* Stats Footer */}
+                {/* Stats Footer with Add Category Button */}
                 <div className="p-4 border-t border-gray-700/50 bg-gray-900/80 backdrop-blur-sm">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-sm mb-3">
                     <span className="text-gray-400">Active Widgets</span>
                     <div className="flex items-center gap-2">
                       <span className="text-white font-bold">{widgets.filter(w => w.enabled).length}</span>
@@ -561,6 +563,13 @@ export default function EditArticle() {
                       <span className="text-gray-400">{widgets.length}</span>
                     </div>
                   </div>
+                  <button
+                    onClick={() => setShowCategoryModal(true)}
+                    className="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg bg-gray-700/50 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors border border-dashed border-gray-600 hover:border-gray-500"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add Category</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1047,6 +1056,73 @@ export default function EditArticle() {
           }}
           siteId={formData.site_id}
         />
+      )}
+
+      {/* Add Category Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-md mx-4">
+            <div className="p-6 border-b border-gray-700">
+              <h3 className="text-lg font-semibold text-white">Create New Category</h3>
+              <p className="text-sm text-gray-400 mt-1">Add a custom category to organize your widgets</p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Category Name</label>
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="e.g., My Custom Widgets"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+              <p className="text-xs text-gray-500">
+                Note: This is a placeholder for the full category management system. Custom categories will be stored in the database once the migration is run.
+              </p>
+            </div>
+            <div className="p-6 border-t border-gray-700 flex items-center justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  setNewCategoryName('');
+                }}
+                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (newCategoryName.trim()) {
+                    try {
+                      const response = await fetch('/api/admin/widget-categories', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          name: newCategoryName.trim(),
+                          siteId: formData.site_id,
+                          isGlobal: false,
+                        }),
+                      });
+                      if (response.ok) {
+                        setSaveMessage('Category created successfully!');
+                        setTimeout(() => setSaveMessage(null), 3000);
+                      }
+                    } catch (error) {
+                      console.error('Error creating category:', error);
+                    }
+                    setShowCategoryModal(false);
+                    setNewCategoryName('');
+                  }
+                }}
+                disabled={!newCategoryName.trim()}
+                className="px-4 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
+              >
+                Create Category
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

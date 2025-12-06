@@ -202,6 +202,32 @@ export interface DnsChallengeRow {
   created_at: string;
 }
 
+// Widget category row (for custom category organization)
+export interface WidgetCategoryRow extends BaseRow {
+  id: string;
+  site_id: string | null; // NULL = global category
+  name: string;
+  slug: string;
+  description: string | null;
+  color_bg: string;
+  color_text: string;
+  color_border: string | null;
+  icon: string | null;
+  sort_order: number;
+  is_global: number; // SQLite boolean
+}
+
+// Site widget settings row (per-site widget organization)
+export interface SiteWidgetSettingsRow extends BaseRow {
+  id: string;
+  site_id: string;
+  widget_type: string;
+  category_id: string | null;
+  sort_order: number;
+  hidden: number; // SQLite boolean
+  custom_name: string | null;
+}
+
 /**
  * Type guards and helper functions
  */
