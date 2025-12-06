@@ -48,12 +48,12 @@ export default function DrTip({
   if (style === 'minimal') {
     return (
       <div
-        className="flex items-start gap-4 p-5 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+        className="flex items-start gap-4 p-5 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className={`p-2 rounded-full transition-all duration-300 ${isHovered ? 'bg-amber-200 shadow-md' : 'bg-amber-100'}`}>
-          <Lightbulb className="w-5 h-5 text-amber-600" />
+        <div className={`p-2 rounded-full transition-all duration-300 ${isHovered ? 'bg-pink-200 shadow-md' : 'bg-pink-100'}`}>
+          <Lightbulb className="w-5 h-5 text-pink-600" />
         </div>
         <div className="flex-1">
           <p className="text-gray-700 text-base leading-relaxed">{tip}</p>
@@ -62,7 +62,7 @@ export default function DrTip({
               <img
                 src={image}
                 alt={name}
-                className="w-8 h-8 rounded-full object-cover border-2 border-amber-200 shadow-sm"
+                className="w-8 h-8 rounded-full object-cover border-2 border-pink-200 shadow-sm"
               />
             )}
             <p className="text-sm font-medium text-gray-600">— {name}</p>
@@ -215,10 +215,10 @@ export default function DrTip({
     );
   }
 
-  // Default style - enhanced with avatar and better styling
+  // Default style - enhanced with avatar and professional pink/purple theme
   return (
     <div
-      className="my-8 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 rounded-2xl p-6 border-2 border-amber-200 shadow-lg hover:shadow-xl transition-all duration-300"
+      className="my-8 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -232,29 +232,29 @@ export default function DrTip({
                 alt={name}
                 className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
               />
-              <div className="absolute -bottom-1 -right-1 bg-amber-400 rounded-full p-1">
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full p-1">
                 <Lightbulb className="w-3 h-3 text-white" />
               </div>
             </div>
           )}
           {!image && (
-            <div className={`flex-shrink-0 p-3 rounded-full transition-all duration-300 ${isHovered ? 'bg-amber-200 shadow-md' : 'bg-amber-100'}`}>
-              <Lightbulb className="w-6 h-6 text-amber-600" />
+            <div className={`flex-shrink-0 p-3 rounded-full transition-all duration-300 ${isHovered ? 'bg-pink-200 shadow-md' : 'bg-pink-100'}`}>
+              <Lightbulb className="w-6 h-6 text-pink-600" />
             </div>
           )}
         </div>
 
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs font-bold text-amber-700 uppercase tracking-wider bg-amber-100 px-3 py-1 rounded-full">
-              💡 Dr.'s Tip
+            <span className="text-xs font-bold text-pink-700 uppercase tracking-wider bg-pink-100 px-3 py-1 rounded-full">
+              Dr.'s Tip
             </span>
           </div>
           <p className="text-lg text-gray-800 leading-relaxed font-medium">{tip}</p>
           <div className="flex items-center gap-2 mt-4">
             <span className="text-sm font-semibold text-gray-700">— {name}</span>
             {credentials && (
-              <span className="text-sm text-amber-700 font-medium">• {credentials}</span>
+              <span className="text-sm text-pink-700 font-medium">• {credentials}</span>
             )}
           </div>
 
@@ -264,7 +264,7 @@ export default function DrTip({
               href={finalCtaUrl || '#'}
               target={finalTarget}
               onClick={handleCtaClick}
-              className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />

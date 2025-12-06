@@ -51,20 +51,20 @@ export default function WarningBox({
         border: 'border-red-300',
         icon: <XCircle className="w-5 h-5 text-red-600" />,
         text: 'text-red-900',
-        pulse: '', // Removed pulsing animation
+        pulse: '',
       },
       medium: {
-        bg: isHovered ? 'bg-gradient-to-r from-orange-100 to-amber-100' : 'bg-gradient-to-r from-orange-50 to-amber-50',
-        border: 'border-orange-300',
-        icon: <AlertCircle className="w-5 h-5 text-orange-600" />,
-        text: 'text-orange-900',
+        bg: isHovered ? 'bg-gradient-to-r from-rose-100 to-pink-100' : 'bg-gradient-to-r from-rose-50 to-pink-50',
+        border: 'border-rose-300',
+        icon: <AlertCircle className="w-5 h-5 text-rose-600" />,
+        text: 'text-rose-900',
         pulse: '',
       },
       low: {
-        bg: isHovered ? 'bg-gradient-to-r from-amber-100 to-yellow-100' : 'bg-gradient-to-r from-amber-50 to-yellow-50',
-        border: 'border-amber-300',
-        icon: <Info className="w-5 h-5 text-amber-600" />,
-        text: 'text-amber-900',
+        bg: isHovered ? 'bg-gradient-to-r from-pink-100 to-purple-100' : 'bg-gradient-to-r from-pink-50 to-purple-50',
+        border: 'border-pink-300',
+        icon: <Info className="w-5 h-5 text-pink-600" />,
+        text: 'text-pink-900',
         pulse: '',
       },
     };
@@ -140,8 +140,8 @@ export default function WarningBox({
                         {/* Level indicator - on the left */}
                         <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm md:text-base font-bold ${
                           warning.severity === 'high' ? 'bg-red-200 text-red-800' :
-                          warning.severity === 'low' ? 'bg-amber-200 text-amber-800' :
-                          'bg-orange-200 text-orange-800'
+                          warning.severity === 'low' ? 'bg-pink-200 text-pink-800' :
+                          'bg-rose-200 text-rose-800'
                         }`}>
                           {idx + 1}
                         </div>
@@ -196,25 +196,25 @@ export default function WarningBox({
 
   // Container styles for other variants
   const containerStyles = {
-    default: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300',
+    default: 'bg-gradient-to-br from-rose-50 to-pink-50 border-rose-300',
     urgent: 'bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 border-red-300',
     info: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300',
   };
 
   const headerStyles = {
-    default: 'from-amber-500 to-yellow-500',
+    default: 'from-rose-500 to-pink-500',
     urgent: 'from-red-500 to-rose-500',
     info: 'from-blue-500 to-indigo-500',
   };
 
   const headerTextStyles = {
-    default: 'text-amber-900',
+    default: 'text-rose-900',
     urgent: 'text-red-900',
     info: 'text-blue-900',
   };
 
   const iconBgStyles = {
-    default: 'bg-amber-100 text-amber-600',
+    default: 'bg-rose-100 text-rose-600',
     urgent: 'bg-red-100 text-red-600',
     info: 'bg-blue-100 text-blue-600',
   };

@@ -94,6 +94,7 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   // ============================================
   // COMMERCE WIDGETS
   // ============================================
+  { type: 'product-reveal', name: 'Product Reveal', icon: Award, category: 'Commerce', description: 'Big product reveal with doctor endorsement, benefits, and social proof' },
   { type: 'product-showcase', name: 'Shop Product', icon: ShoppingCart, category: 'Commerce', description: 'A simple horizontal, smaller tile' },
   { type: 'exclusive-product', name: 'Shop #1 Product Pick', icon: Award, category: 'Commerce', description: 'A large product feature with CTA' },
   { type: 'shop-now', name: 'Shop 3x Options', icon: Store, category: 'Commerce', description: 'Product carousel with description and 3x option radio buttons' },
@@ -186,14 +187,36 @@ export function getOrderedCategories(widgets: WidgetTypeDefinition[]): string[] 
 }
 
 /**
- * Find a widget by type
+ * Legacy widget type aliases
+ * Maps old widget type names to their current canonical types
+ * Used to display proper names for widgets created before standardization
+ */
+export const LEGACY_TYPE_ALIASES: Record<string, string> = {
+  'timeline': 'expectation-timeline',
+  'top-ten': 'top-ten-list',
+  'faq': 'faq-accordion',
+  'before-after': 'before-after-comparison',
+};
+
+/**
+ * Find a widget by type (handles legacy aliases)
  */
 export function getWidgetByType(type: string): WidgetTypeDefinition | undefined {
-  return WIDGET_TYPES.find(w => w.type === type);
+  // First try direct match
+  const directMatch = WIDGET_TYPES.find(w => w.type === type);
+  if (directMatch) return directMatch;
+
+  // Try legacy alias
+  const canonicalType = LEGACY_TYPE_ALIASES[type];
+  if (canonicalType) {
+    return WIDGET_TYPES.find(w => w.type === canonicalType);
+  }
+
+  return undefined;
 }
 
 /**
- * Get display name for a widget type
+ * Get display name for a widget type (handles legacy aliases)
  */
 export function getWidgetDisplayName(type: string): string {
   const widget = getWidgetByType(type);
