@@ -880,6 +880,12 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             source={widget.config.source}
             highlightText={widget.config.highlightText}
             style={widget.config.style as any}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaSubtext={widget.config.ctaSubtext}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
           />
         </div>
       );

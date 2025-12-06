@@ -1,6 +1,7 @@
 'use client';
 
-import { Users, TrendingUp, CheckCircle, Award, Sparkles } from 'lucide-react';
+import { Users, TrendingUp, CheckCircle, Award, Sparkles, ArrowRight } from 'lucide-react';
+import { useTracking } from '@/contexts/TrackingContext';
 
 interface SurveyResult {
   label: string;
@@ -16,6 +17,13 @@ interface CommunitySurveyResultsProps {
   source?: string;
   highlightText?: string;
   style?: 'default' | 'compact' | 'featured';
+  // CTA props
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  ctaSubtext?: string;
+  ctaType?: 'external' | 'anchor';
+  target?: '_self' | '_blank';
 }
 
 export default function CommunitySurveyResults({
@@ -30,8 +38,46 @@ export default function CommunitySurveyResults({
   totalRespondents = "10,000+",
   source = "Dr. Amy Heart Community Challenge, 2024",
   highlightText = "Compare that 83% to the 8% who succeed with traditional New Year resolutions.",
-  style = 'default'
+  style = 'default',
+  showCta = false,
+  ctaText = 'See How They Did It →',
+  ctaUrl = '#',
+  ctaSubtext = '',
+  ctaType = 'external',
+  target = '_self'
 }: CommunitySurveyResultsProps) {
+  const { appendTracking } = useTracking();
+  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
+  const finalTarget = ctaType === 'anchor' ? '_self' : target;
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (ctaType === 'anchor' && ctaUrl) {
+      e.preventDefault();
+      const element = document.getElementById(ctaUrl.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
+  // CTA Button component to reuse across styles
+  const CtaButton = () => showCta && ctaText && ctaUrl ? (
+    <div className="mt-6 text-center">
+      <a
+        href={finalCtaUrl}
+        target={finalTarget}
+        rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
+        onClick={handleCtaClick}
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+      >
+        {ctaText}
+        <ArrowRight className="w-5 h-5" />
+      </a>
+      {ctaSubtext && (
+        <p className="mt-2 text-sm text-gray-500">{ctaSubtext}</p>
+      )}
+    </div>
+  ) : null;
 
   if (style === 'compact') {
     return (
@@ -55,6 +101,7 @@ export default function CommunitySurveyResults({
             </div>
           ))}
         </div>
+        <CtaButton />
       </div>
     );
   }
@@ -123,6 +170,8 @@ export default function CommunitySurveyResults({
               </span>
               <span>{source}</span>
             </div>
+
+            <CtaButton />
           </div>
         </div>
       </div>
@@ -190,6 +239,8 @@ export default function CommunitySurveyResults({
             </span>
             <span>{source}</span>
           </div>
+
+          <CtaButton />
         </div>
       </div>
     </div>
