@@ -61,14 +61,15 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   // ============================================
   // CONTENT WIDGETS
   // ============================================
+  { type: 'hero-image', name: 'Hero Image', icon: ImageIcon, category: 'Content', description: 'Hero Image for All Articles' },
   { type: 'text-block', name: 'Rich Text Block', icon: FileText, category: 'Content', description: 'A flexible, stylable text widget' },
   { type: 'top-ten-list', name: 'Top 10 List', icon: ListOrdered, category: 'Content', description: 'Numbered routine or tips list' },
-  { type: 'expectation-timeline', name: 'Timeline', icon: Timer, category: 'Content', description: 'Visual timeline of expected results' },
+  { type: 'expectation-timeline', name: 'Timeline or Sequence', icon: Timer, category: 'Content', description: 'Visual timeline of expected results' },
   { type: 'faq-accordion', name: 'FAQ Accordion', icon: HelpCircle, category: 'Content', description: 'An infinitely long FAQ accordion with click to expose fields' },
   { type: 'data-overview', name: 'Data & Stat Highlights', icon: BarChart3, category: 'Content', description: '4x prominent stat fields to re-enforce data points' },
   { type: 'symptoms-checker', name: 'Symptoms Checker', icon: MessageSquare, category: 'Content', description: 'An interactive table for users to self-diagnose with CTA' },
   { type: 'ingredient-list-grid', name: 'Ingredient Grid', icon: LayoutGrid, category: 'Content', description: 'A grid of key ingredients with ingredient avatars and CTA' },
-  { type: 'poll', name: 'Poll', icon: BarChart3, category: 'Content', description: 'Interactive community poll with results' },
+  { type: 'poll', name: 'Interactive Poll', icon: BarChart3, category: 'Content', description: 'Interactive community poll with results' },
   { type: 'myth-buster', name: 'Myth Buster', icon: AlertCircle, category: 'Content', description: 'Myth vs. Reality comparison cards' },
   { type: 'warning-box', name: 'Warning Box', icon: AlertTriangle, category: 'Content', description: 'Highlighted warning or cascade list' },
   { type: 'dr-tip', name: "Dr's Tip", icon: Lightbulb, category: 'Content', description: 'Professional insight callout' },
@@ -90,7 +91,7 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   { type: 'scrolling-thumbnails', name: 'Scrolling Photowall', icon: ImageIcon, category: 'Social Proof', description: 'A large, animated photo wall of thumbnails that scrolls' },
   { type: 'testimonial-hero-no-cta', name: 'Large Photo Testimonial', icon: Quote, category: 'Social Proof', description: 'A large testimonial with a photo, no CTA' },
   { type: 'testimonial-hero', name: 'Large Photo Testimonial CTA', icon: Quote, category: 'Social Proof', description: 'A large testimonial with photo AND CTA' },
-  { type: 'community-survey-results', name: 'Community Survey Results', icon: BarChart3, category: 'Social Proof', description: 'Survey results with percentages and social proof' },
+  { type: 'community-survey-results', name: 'Poll Results Only', icon: BarChart3, category: 'Social Proof', description: 'Survey results with percentages and social proof' },
 
   // ============================================
   // COMMERCE WIDGETS
@@ -115,14 +116,6 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   { type: 'doctor-closing-word', name: 'Dr Closing', icon: FileText, category: 'Doctor', description: 'Doctor closing word' },
 
   // ============================================
-  // MEDIA WIDGETS (Article-specific)
-  // ============================================
-  { type: 'hero-image', name: 'Hero Image', icon: ImageIcon, category: 'Media', description: 'Full-width hero image' },
-  { type: 'opening-hook', name: 'Opening Hook', icon: FileText, category: 'Media', description: 'Article intro hook' },
-  { type: 'main-content', name: 'Main Content', icon: FileText, category: 'Media', description: 'Body content block' },
-  { type: 'final-cta', name: 'Final CTA', icon: ExternalLink, category: 'Media', description: 'Closing call to action' },
-
-  // ============================================
   // PAGE LAYOUT WIDGETS (Page-specific)
   // ============================================
   { type: 'hero-story', name: 'Hero Story', icon: ImageIcon, category: 'Page Layout', description: 'Hero section with headline, image, CTA' },
@@ -140,7 +133,6 @@ export const CATEGORY_COLORS: Record<string, CategoryColors> = {
   'Commerce': { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/30' },
   'Lead Gen': { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30' },
   'Doctor': { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/30' },
-  'Media': { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/30' },
   'Page Layout': { bg: 'bg-indigo-500/10', text: 'text-indigo-400', border: 'border-indigo-500/30' },
 };
 
@@ -154,7 +146,6 @@ export const CATEGORY_ORDER = [
   'Commerce',
   'Lead Gen',
   'Doctor',
-  'Media',
   'Page Layout',
 ];
 
