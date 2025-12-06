@@ -762,7 +762,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             style={widget.config.style as any}
             showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
-            ctaUrl={widget.config.ctaUrl}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
             pollId={widget.id}
           />
         </div>
@@ -812,7 +814,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             style={widget.config.style as any}
             showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
-            ctaUrl={widget.config.ctaUrl}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
           />
         </div>
       );
@@ -830,7 +834,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             alertMessage={widget.config.alertMessage}
             showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
-            ctaUrl={widget.config.ctaUrl}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
             style={widget.config.style as any}
           />
         </div>

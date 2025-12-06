@@ -23,6 +23,8 @@ interface PollProps {
   ctaText?: string;
   ctaUrl?: string;
   showCta?: boolean;
+  ctaType?: 'external' | 'anchor';
+  target?: '_self' | '_blank';
   // Poll ID for localStorage persistence (optional)
   pollId?: string;
 }
@@ -38,10 +40,23 @@ export default function Poll({
   ctaText,
   ctaUrl,
   showCta = false,
+  ctaType = 'external',
+  target = '_self',
   pollId,
 }: PollProps) {
   const { appendTracking } = useTracking();
-  const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
+  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
+  const finalTarget = ctaType === 'anchor' ? '_self' : target;
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (ctaType === 'anchor' && ctaUrl) {
+      e.preventDefault();
+      const element = document.getElementById(ctaUrl.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   // Only results-only style shows results immediately. Regular polls always start as unanswered.
   const [hasVoted, setHasVoted] = useState(style === 'results-only');
@@ -258,7 +273,9 @@ export default function Poll({
           {/* CTA */}
           {showCta && ctaText && ctaUrl && (
             <a
-              href={trackedCtaUrl}
+              href={finalCtaUrl || '#'}
+              target={finalTarget}
+              onClick={handleCtaClick}
               className={`mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
                 isHighlighted
                   ? 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white'
