@@ -139,15 +139,15 @@ export default function DrTip({
             <div className="flex flex-col md:flex-row gap-6">
               {/* Doctor avatar - prominent */}
               {image && (
-                <div className="flex-shrink-0">
-                  <div className={`relative transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}>
+                <div className="flex-shrink-0 flex justify-center md:justify-start">
+                  <div className={`relative inline-block transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}>
                     <img
                       src={image}
                       alt={name}
                       className="w-24 h-24 md:w-28 md:h-28 rounded-2xl object-cover border-4 border-primary-100 shadow-xl"
                     />
-                    <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
-                      <BadgeCheck className="w-5 h-5 text-white" />
+                    <div className="absolute bottom-1 right-1 md:-bottom-2 md:-right-2 bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-1.5 md:p-2 shadow-lg">
+                      <BadgeCheck className="w-4 h-4 md:w-5 md:h-5 text-white" />
                     </div>
                   </div>
                 </div>
