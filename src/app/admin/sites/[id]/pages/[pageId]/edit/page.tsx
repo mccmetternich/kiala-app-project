@@ -20,6 +20,7 @@ import {
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import WidgetEditor from '@/components/admin/WidgetEditor';
 import { Widget, WidgetType } from '@/types';
+import { getPageWidgets, getWidgetsByCategory, CATEGORY_COLORS, getOrderedCategories } from '@/lib/widget-library';
 // Generate simple default config for page widgets
 const generatePageWidgetConfig = (type: WidgetType): Record<string, any> => {
   const defaults: Record<string, Record<string, any>> = {
@@ -65,63 +66,9 @@ const PAGE_TYPE_INFO: Record<string, { description: string; suggestedWidgets: Wi
   }
 };
 
-// Unified Widget Library - same widgets available for both articles and pages
-const widgetTypes: { type: WidgetType; name: string; category: string; description: string }[] = [
-  // Page-Specific Widgets
-  { type: 'hero-story', name: 'Hero Story', category: 'Page Layout', description: 'Hero section with headline, image, CTA' },
-  { type: 'article-grid', name: 'Article Grid', category: 'Page Layout', description: 'Display articles from site' },
-  { type: 'social-proof', name: 'Social Proof Banner', category: 'Page Layout', description: 'Community count and trust indicators' },
-
-  // Content Widgets
-  { type: 'text-block', name: 'Rich Text Block', category: 'Content', description: 'A flexible, stylable text widget' },
-  { type: 'top-ten-list', name: 'Top 10 List', category: 'Content', description: 'Numbered routine or tips list' },
-  { type: 'expectation-timeline', name: 'Timeline', category: 'Content', description: 'Visual timeline of expected results' },
-  { type: 'faq-accordion', name: 'FAQ Accordion', category: 'Content', description: 'An infinitely long FAQ accordion with click to expose fields' },
-  { type: 'data-overview', name: 'Data & Stat Highlights', category: 'Content', description: '4x prominent stat fields to re-enforce data points' },
-  { type: 'symptoms-checker', name: 'Symptoms Checker', category: 'Content', description: 'An interactive table for users to self-diagnose with CTA' },
-  { type: 'ingredient-list-grid', name: 'Ingredient Grid', category: 'Content', description: 'A grid of key ingredients with ingredient avatars and CTA' },
-  { type: 'poll', name: 'Poll', category: 'Content', description: 'Interactive community poll with results' },
-  { type: 'myth-buster', name: 'Myth Buster', category: 'Content', description: 'Myth vs. Reality comparison cards' },
-  { type: 'warning-box', name: 'Warning Box', category: 'Content', description: 'Highlighted warning or cascade list' },
-  { type: 'dr-tip', name: "Dr's Tip", category: 'Content', description: 'Professional insight callout' },
-  { type: 'checklist', name: 'Checklist', category: 'Content', description: 'Interactive or assessment checklist' },
-  { type: 'two-approaches', name: 'Two Approaches', category: 'Content', description: 'Side-by-side comparison of two approaches/paths' },
-  { type: 'us-vs-them-comparison', name: 'Us vs Them', category: 'Content', description: 'Side by side comparison of us vs the other guys with CTA' },
-  { type: 'comparison-table', name: 'Compare Table', category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
-
-  // Social Proof Widgets
-  { type: 'testimonial', name: 'Testimonial Carousel', category: 'Social Proof', description: 'A rotating series of customer testimonials' },
-  { type: 'stacked-quotes', name: 'Stacked Testimonials', category: 'Social Proof', description: 'A series of large text based testimonials' },
-  { type: 'before-after-comparison', name: 'Before & After Slider', category: 'Social Proof', description: 'An interactive slider of before & after with story and CTA' },
-  { type: 'before-after-side-by-side', name: 'Before & After Static', category: 'Social Proof', description: 'Two side by side images for before & after with quote and CTA' },
-  { type: 'rating-stars', name: 'Rating Display', category: 'Social Proof', description: 'Star ratings and reviews' },
-  { type: 'review-grid', name: 'Review Tiles', category: 'Social Proof', description: '4x tiles with avatars, stars, review quotes in a grid' },
-  { type: 'press-logos', name: 'Press Logos', category: 'Social Proof', description: 'A grid of press logos with quotes' },
-  { type: 'scrolling-thumbnails', name: 'Scrolling Photowall', category: 'Social Proof', description: 'A large, animated photo wall of thumbnails that scrolls' },
-  { type: 'testimonial-hero-no-cta', name: 'Large Photo Testimonial', category: 'Social Proof', description: 'A large testimonial with a photo, no CTA' },
-  { type: 'testimonial-hero', name: 'Large Photo Testimonial CTA', category: 'Social Proof', description: 'A large testimonial with photo AND CTA' },
-  { type: 'community-survey-results', name: 'Community Survey Results', category: 'Social Proof', description: 'Survey results with percentages and social proof' },
-
-  // Commerce Widgets
-  { type: 'product-showcase', name: 'Shop Product', category: 'Commerce', description: 'A simple horizontal, smaller tile' },
-  { type: 'exclusive-product', name: 'Shop #1 Product Pick', category: 'Commerce', description: 'A large product feature with CTA' },
-  { type: 'shop-now', name: 'Shop 3x Options', category: 'Commerce', description: 'Product carousel with description and 3x option radio buttons' },
-  { type: 'special-offer', name: 'Shop Special Offer', category: 'Commerce', description: 'A big, loud CTA with countdown timer, bullets and price' },
-  { type: 'dual-offer-comparison', name: 'Shop Two Offers', category: 'Commerce', description: 'Side by side of starter vs best value offers and CTA' },
-  { type: 'cta-button', name: 'Simple CTA', category: 'Commerce', description: 'Simple CTA button with copy' },
-  { type: 'countdown-timer', name: 'Shop Product + Countdown', category: 'Commerce', description: 'A simple horizontal product image and countdown timer with CTA' },
-
-  // Lead Gen Widgets
-  { type: 'email-capture', name: 'Email Capture', category: 'Lead Gen', description: 'Newsletter signup with lead magnet' }
-];
-
-const categoryColors: Record<string, { bg: string; text: string }> = {
-  'Page Layout': { bg: 'bg-cyan-500/10', text: 'text-cyan-400' },
-  'Content': { bg: 'bg-blue-500/10', text: 'text-blue-400' },
-  'Social Proof': { bg: 'bg-purple-500/10', text: 'text-purple-400' },
-  'Commerce': { bg: 'bg-green-500/10', text: 'text-green-400' },
-  'Lead Gen': { bg: 'bg-yellow-500/10', text: 'text-yellow-400' },
-};
+// Get widgets from centralized library (includes all widgets for pages)
+const widgetTypes = getPageWidgets();
+const categoryColors = CATEGORY_COLORS;
 
 // Default pages fallback (same as dashboard)
 const DEFAULT_PAGES = [
@@ -529,7 +476,7 @@ export default function EditPage() {
                         {categoryWidgets.map((widget) => (
                           <button
                             key={widget.type}
-                            onClick={() => addWidget(widget.type)}
+                            onClick={() => addWidget(widget.type as WidgetType)}
                             className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${categoryColors[category]?.bg || 'bg-gray-700/50'} hover:bg-gray-700`}
                           >
                             <Plus className="w-3 h-3 text-gray-500" />

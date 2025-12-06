@@ -2,44 +2,23 @@
 
 import { useState, useRef, useCallback } from 'react';
 import {
-  Type,
-  Image as ImageIcon,
-  ShoppingCart,
-  Star,
-  Clock,
-  Mail,
-  BarChart3,
-  Quote,
-  ExternalLink,
   Settings,
   Trash2,
   Copy,
   Move,
   Eye,
   EyeOff,
-  ArrowLeftRight,
-  ListOrdered,
-  Timer,
-  Gift,
-  Award,
-  Columns,
-  MessageSquare,
-  HelpCircle,
-  Store,
   GripVertical,
   Plus,
   X,
   Upload,
-  LayoutGrid,
-  AlertCircle,
-  AlertTriangle,
-  Lightbulb,
-  CheckSquare
+  Type
 } from 'lucide-react';
 import { Widget, WidgetConfig, WidgetType } from '@/types';
 import Badge from '@/components/ui/Badge';
 import MediaLibrary from '@/components/admin/MediaLibrary';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import { WIDGET_TYPES, CATEGORY_COLORS, getWidgetByType, getWidgetDisplayName } from '@/lib/widget-library';
 
 interface WidgetEditorProps {
   widgets: Widget[];
@@ -49,56 +28,9 @@ interface WidgetEditorProps {
   articleId?: string;
 }
 
-const widgetTypes: { type: WidgetType; name: string; icon: any; category: string; description: string }[] = [
-  // Content Widgets
-  { type: 'text-block', name: 'Rich Text Block', icon: Type, category: 'Content', description: 'A flexible, stylable text widget' },
-  { type: 'top-ten-list', name: 'Top 10 List', icon: ListOrdered, category: 'Content', description: 'Numbered routine or tips list' },
-  { type: 'expectation-timeline', name: 'Timeline', icon: Timer, category: 'Content', description: 'Visual timeline of expected results' },
-  { type: 'faq-accordion', name: 'FAQ Accordion', icon: HelpCircle, category: 'Content', description: 'An infinitely long FAQ accordion with click to expose fields' },
-  { type: 'data-overview', name: 'Data & Stat Highlights', icon: BarChart3, category: 'Content', description: '4x prominent stat fields to re-enforce data points' },
-  { type: 'symptoms-checker', name: 'Symptoms Checker', icon: MessageSquare, category: 'Content', description: 'An interactive table for users to self-diagnose with CTA' },
-  { type: 'ingredient-list-grid', name: 'Ingredient Grid', icon: LayoutGrid, category: 'Content', description: 'A grid of key ingredients with ingredient avatars and CTA' },
-  { type: 'poll', name: 'Poll', icon: BarChart3, category: 'Content', description: 'Interactive community poll with results' },
-  { type: 'myth-buster', name: 'Myth Buster', icon: AlertCircle, category: 'Content', description: 'Myth vs. Reality comparison cards' },
-  { type: 'warning-box', name: 'Warning Box', icon: AlertTriangle, category: 'Content', description: 'Highlighted warning or cascade list' },
-  { type: 'dr-tip', name: "Dr's Tip", icon: Lightbulb, category: 'Content', description: 'Professional insight callout' },
-  { type: 'checklist', name: 'Checklist', icon: CheckSquare, category: 'Content', description: 'Interactive or assessment checklist' },
-  { type: 'two-approaches', name: 'Two Approaches', icon: Columns, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' },
-  { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: Columns, category: 'Content', description: 'Side by side comparison of us vs the other guys with CTA' },
-  { type: 'comparison-table', name: 'Compare Table', icon: BarChart3, category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
-
-  // Social Proof Widgets
-  { type: 'testimonial', name: 'Testimonial Carousel', icon: Quote, category: 'Social Proof', description: 'A rotating series of customer testimonials' },
-  { type: 'stacked-quotes', name: 'Stacked Testimonials', icon: Quote, category: 'Social Proof', description: 'A series of large text based testimonials' },
-  { type: 'before-after-comparison', name: 'Before & After Slider', icon: ArrowLeftRight, category: 'Social Proof', description: 'An interactive slider of before & after with story and CTA' },
-  { type: 'before-after-side-by-side', name: 'Before & After Static', icon: Columns, category: 'Social Proof', description: 'Two side by side images for before & after with quote and CTA' },
-  { type: 'rating-stars', name: 'Rating Display', icon: Star, category: 'Social Proof', description: 'Star ratings and reviews' },
-  { type: 'review-grid', name: 'Review Tiles', icon: Star, category: 'Social Proof', description: '4x tiles with avatars, stars, review quotes in a grid' },
-  { type: 'press-logos', name: 'Press Logos', icon: Award, category: 'Social Proof', description: 'A grid of press logos with quotes' },
-  { type: 'scrolling-thumbnails', name: 'Scrolling Photowall', icon: ImageIcon, category: 'Social Proof', description: 'A large, animated photo wall of thumbnails that scrolls' },
-  { type: 'testimonial-hero-no-cta', name: 'Large Photo Testimonial', icon: Quote, category: 'Social Proof', description: 'A large testimonial with a photo, no CTA' },
-  { type: 'testimonial-hero', name: 'Large Photo Testimonial CTA', icon: Quote, category: 'Social Proof', description: 'A large testimonial with photo AND CTA' },
-  { type: 'community-survey-results', name: 'Community Survey Results', icon: BarChart3, category: 'Social Proof', description: 'Survey results with percentages and social proof' },
-
-  // Commerce Widgets
-  { type: 'product-showcase', name: 'Shop Product', icon: ShoppingCart, category: 'Commerce', description: 'A simple horizontal, smaller tile' },
-  { type: 'exclusive-product', name: "Shop #1 Product Pick", icon: Award, category: 'Commerce', description: 'A large product feature with CTA' },
-  { type: 'shop-now', name: 'Shop 3x Options', icon: Store, category: 'Commerce', description: 'Product carousel with description and 3x option radio buttons' },
-  { type: 'special-offer', name: 'Shop Special Offer', icon: Gift, category: 'Commerce', description: 'A big, loud CTA with countdown timer, bullets and price' },
-  { type: 'dual-offer-comparison', name: 'Shop Two Offers', icon: Columns, category: 'Commerce', description: 'Side by side of starter vs best value offers and CTA' },
-  { type: 'cta-button', name: 'Simple CTA', icon: ExternalLink, category: 'Commerce', description: 'Simple CTA button with copy' },
-  { type: 'countdown-timer', name: 'Shop Product + Countdown', icon: Clock, category: 'Commerce', description: 'A simple horizontal product image and countdown timer with CTA' },
-
-  // Lead Gen Widgets
-  { type: 'email-capture', name: 'Email Capture', icon: Mail, category: 'Lead Gen', description: 'Newsletter signup with lead magnet' }
-];
-
-const categoryColors: Record<string, string> = {
-  'Content': 'bg-blue-100 text-blue-700',
-  'Commerce': 'bg-green-100 text-green-700',
-  'Social Proof': 'bg-purple-100 text-purple-700',
-  'Lead Gen': 'bg-yellow-100 text-yellow-700'
-};
+// Widget types and category colors now imported from centralized library
+const widgetTypes = WIDGET_TYPES;
+const categoryColors = CATEGORY_COLORS;
 
 // Pricing Options Editor - moved outside main component to prevent re-renders
 const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange: (options: any[]) => void }) => {
@@ -493,9 +425,9 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
                 {widgetTypes.filter(w => w.category === category).map((widgetType) => (
                   <button
                     key={widgetType.type}
-                    onClick={() => addWidget(widgetType.type)}
+                    onClick={() => addWidget(widgetType.type as WidgetType)}
                     draggable
-                    onDragStart={(e) => handlePaletteDragStart(e, widgetType.type)}
+                    onDragStart={(e) => handlePaletteDragStart(e, widgetType.type as WidgetType)}
                     className="p-3 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all text-left group cursor-grab active:cursor-grabbing"
                   >
                     <div className="flex items-center gap-2">
