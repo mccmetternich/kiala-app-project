@@ -79,45 +79,52 @@ type TabType = 'content' | 'details';
 // Widget type definitions for the library
 const widgetTypes: { type: WidgetType; name: string; icon: any; category: string; description: string }[] = [
   // Content Widgets
-  { type: 'text-block', name: 'Text Block', icon: FileText, category: 'Content', description: 'Rich text content' },
-  { type: 'top-ten-list', name: 'Top 10 List', icon: BarChart3, category: 'Content', description: 'Numbered list' },
-  { type: 'expectation-timeline', name: 'Timeline', icon: Clock, category: 'Content', description: 'Visual timeline' },
-  { type: 'faq-accordion', name: 'FAQ', icon: FileText, category: 'Content', description: 'Expandable Q&A' },
-  { type: 'data-overview', name: 'Data Overview', icon: BarChart3, category: 'Content', description: 'Stats display' },
-  { type: 'symptoms-checker', name: 'Symptoms', icon: FileText, category: 'Content', description: 'Symptom checker' },
-  { type: 'ingredient-list-grid', name: 'Ingredients', icon: Layers, category: 'Content', description: 'Ingredient grid' },
+  { type: 'text-block', name: 'Rich Text Block', icon: FileText, category: 'Content', description: 'A flexible, stylable text widget' },
+  { type: 'top-ten-list', name: 'Top 10 List', icon: BarChart3, category: 'Content', description: 'Numbered routine or tips list' },
+  { type: 'expectation-timeline', name: 'Timeline', icon: Clock, category: 'Content', description: 'Visual timeline of expected results' },
+  { type: 'faq-accordion', name: 'FAQ Accordion', icon: FileText, category: 'Content', description: 'An infinitely long FAQ accordion with click to expose fields' },
+  { type: 'data-overview', name: 'Data & Stat Highlights', icon: BarChart3, category: 'Content', description: '4x prominent stat fields to re-enforce data points' },
+  { type: 'symptoms-checker', name: 'Symptoms Checker', icon: FileText, category: 'Content', description: 'An interactive table for users to self-diagnose with CTA' },
+  { type: 'ingredient-list-grid', name: 'Ingredient Grid', icon: Layers, category: 'Content', description: 'A grid of key ingredients with ingredient avatars and CTA' },
+  { type: 'poll', name: 'Poll', icon: BarChart3, category: 'Content', description: 'Interactive community poll with results' },
+  { type: 'myth-buster', name: 'Myth Buster', icon: FileText, category: 'Content', description: 'Myth vs. Reality comparison cards' },
+  { type: 'warning-box', name: 'Warning Box', icon: FileText, category: 'Content', description: 'Highlighted warning or cascade list' },
+  { type: 'dr-tip', name: "Dr's Tip", icon: FileText, category: 'Content', description: 'Professional insight callout' },
+  { type: 'checklist', name: 'Checklist', icon: FileText, category: 'Content', description: 'Interactive or assessment checklist' },
+  { type: 'two-approaches', name: 'Two Approaches', icon: FileText, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' },
+  { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: FileText, category: 'Content', description: 'Side by side comparison of us vs the other guys with CTA' },
+  { type: 'comparison-table', name: 'Compare Table', icon: BarChart3, category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
 
-  // Social Proof
-  { type: 'testimonial', name: 'Testimonials', icon: FileText, category: 'Social Proof', description: 'Carousel' },
-  { type: 'stacked-quotes', name: 'Stacked Quotes', icon: FileText, category: 'Social Proof', description: 'Stacked testimonials' },
-  { type: 'before-after-comparison', name: 'Before/After', icon: FileText, category: 'Social Proof', description: 'Slider comparison' },
-  { type: 'before-after-side-by-side', name: 'Side by Side', icon: FileText, category: 'Social Proof', description: 'Static comparison' },
-  { type: 'rating-stars', name: 'Ratings', icon: FileText, category: 'Social Proof', description: 'Star display' },
-  { type: 'review-grid', name: 'Reviews', icon: FileText, category: 'Social Proof', description: 'Review cards' },
-  { type: 'press-logos', name: 'Press', icon: FileText, category: 'Social Proof', description: 'Media logos' },
-  { type: 'scrolling-thumbnails', name: 'Thumbnails', icon: FileText, category: 'Social Proof', description: 'Scrolling photos' },
-  { type: 'testimonial-hero-no-cta', name: 'Hero Quote', icon: FileText, category: 'Social Proof', description: 'Large testimonial' },
-  { type: 'testimonial-hero', name: 'Hero CTA', icon: FileText, category: 'Social Proof', description: 'Testimonial + CTA' },
+  // Social Proof Widgets
+  { type: 'testimonial', name: 'Testimonial Carousel', icon: FileText, category: 'Social Proof', description: 'A rotating series of customer testimonials' },
+  { type: 'stacked-quotes', name: 'Stacked Testimonials', icon: FileText, category: 'Social Proof', description: 'A series of large text based testimonials' },
+  { type: 'before-after-comparison', name: 'Before & After Slider', icon: FileText, category: 'Social Proof', description: 'An interactive slider of before & after with story and CTA' },
+  { type: 'before-after-side-by-side', name: 'Before & After Static', icon: FileText, category: 'Social Proof', description: 'Two side by side images for before & after with quote and CTA' },
+  { type: 'rating-stars', name: 'Rating Display', icon: FileText, category: 'Social Proof', description: 'Star ratings and reviews' },
+  { type: 'review-grid', name: 'Review Tiles', icon: FileText, category: 'Social Proof', description: '4x tiles with avatars, stars, review quotes in a grid' },
+  { type: 'press-logos', name: 'Press Logos', icon: FileText, category: 'Social Proof', description: 'A grid of press logos with quotes' },
+  { type: 'scrolling-thumbnails', name: 'Scrolling Photowall', icon: ImageIcon, category: 'Social Proof', description: 'A large, animated photo wall of thumbnails that scrolls' },
+  { type: 'testimonial-hero-no-cta', name: 'Large Photo Testimonial', icon: FileText, category: 'Social Proof', description: 'A large testimonial with a photo, no CTA' },
+  { type: 'testimonial-hero', name: 'Large Photo Testimonial CTA', icon: FileText, category: 'Social Proof', description: 'A large testimonial with photo AND CTA' },
+  { type: 'community-survey-results', name: 'Community Survey Results', icon: BarChart3, category: 'Social Proof', description: 'Survey results with percentages and social proof' },
 
-  // Conversion
-  { type: 'product-showcase', name: 'Product', icon: FileText, category: 'Conversion', description: 'Product card' },
-  { type: 'exclusive-product', name: '#1 Pick', icon: FileText, category: 'Conversion', description: 'Dr. recommended' },
-  { type: 'shop-now', name: 'Shop Now', icon: FileText, category: 'Conversion', description: '3x pricing options' },
-  { type: 'special-offer', name: 'Offer', icon: FileText, category: 'Conversion', description: 'Special offer' },
-  { type: 'dual-offer-comparison', name: 'Dual Offers', icon: FileText, category: 'Conversion', description: 'Compare offers' },
-  { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: FileText, category: 'Conversion', description: 'Product comparison' },
-  { type: 'comparison-table', name: 'Compare Table', icon: FileText, category: 'Conversion', description: 'Feature table' },
-  { type: 'cta-button', name: 'CTA Button', icon: ExternalLink, category: 'Conversion', description: 'Action button' },
+  // Commerce Widgets
+  { type: 'product-showcase', name: 'Shop Product', icon: FileText, category: 'Commerce', description: 'A simple horizontal, smaller tile' },
+  { type: 'exclusive-product', name: 'Shop #1 Product Pick', icon: FileText, category: 'Commerce', description: 'A large product feature with CTA' },
+  { type: 'shop-now', name: 'Shop 3x Options', icon: FileText, category: 'Commerce', description: 'Product carousel with description and 3x option radio buttons' },
+  { type: 'special-offer', name: 'Shop Special Offer', icon: FileText, category: 'Commerce', description: 'A big, loud CTA with countdown timer, bullets and price' },
+  { type: 'dual-offer-comparison', name: 'Shop Two Offers', icon: FileText, category: 'Commerce', description: 'Side by side of starter vs best value offers and CTA' },
+  { type: 'cta-button', name: 'Simple CTA', icon: ExternalLink, category: 'Commerce', description: 'Simple CTA button with copy' },
+  { type: 'countdown-timer', name: 'Shop Product + Countdown', icon: Clock, category: 'Commerce', description: 'A simple horizontal product image and countdown timer with CTA' },
 
-  // Urgency & Lead Gen
-  { type: 'countdown-timer', name: 'Countdown', icon: Clock, category: 'Urgency', description: 'Timer' },
-  { type: 'email-capture', name: 'Email Signup', icon: FileText, category: 'Lead Gen', description: 'Newsletter form' },
+  // Lead Gen Widgets
+  { type: 'email-capture', name: 'Email Capture', icon: FileText, category: 'Lead Gen', description: 'Newsletter signup with lead magnet' },
 
   // Doctor Widgets
   { type: 'doctor-assessment', name: 'Dr Assessment', icon: FileText, category: 'Doctor', description: 'Doctor quote' },
   { type: 'doctor-closing-word', name: 'Dr Closing', icon: FileText, category: 'Doctor', description: 'Closing word' },
 
-  // Media
+  // Media Widgets
   { type: 'hero-image', name: 'Hero Image', icon: ImageIcon, category: 'Media', description: 'Full-width image' },
   { type: 'opening-hook', name: 'Opening Hook', icon: FileText, category: 'Media', description: 'Article intro' },
   { type: 'main-content', name: 'Main Content', icon: FileText, category: 'Media', description: 'Body content' },
@@ -127,8 +134,7 @@ const widgetTypes: { type: WidgetType; name: string; icon: any; category: string
 const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
   'Content': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' },
   'Social Proof': { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
-  'Conversion': { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/30' },
-  'Urgency': { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30' },
+  'Commerce': { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/30' },
   'Lead Gen': { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30' },
   'Doctor': { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/30' },
   'Media': { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/30' },
