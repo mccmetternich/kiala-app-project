@@ -15,6 +15,8 @@ import {
   Plus,
   GripVertical,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Check,
   Clock,
   BarChart3,
@@ -101,6 +103,7 @@ export default function EditArticle() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Content', 'Social Proof', 'Commerce']));
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [libraryEditMode, setLibraryEditMode] = useState(false);
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -481,13 +484,29 @@ export default function EditArticle() {
               <div className="h-full flex flex-col">
                 {/* Library Header */}
                 <div className="p-5 border-b border-gray-700/50 bg-gray-800/80 backdrop-blur-sm">
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
-                      <Plus className="w-4 h-4 text-white" />
-                    </div>
-                    Widget Library
-                  </h3>
-                  <p className="text-sm text-gray-400 mt-2">Click to add or drag widgets into your article</p>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
+                        <Plus className="w-4 h-4 text-white" />
+                      </div>
+                      Widget Library
+                    </h3>
+                    <button
+                      onClick={() => setLibraryEditMode(!libraryEditMode)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                        libraryEditMode
+                          ? 'bg-primary-500 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {libraryEditMode ? 'Done' : 'Organize'}
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    {libraryEditMode
+                      ? 'Use arrows to move widgets between categories'
+                      : 'Click to add or drag widgets into your article'}
+                  </p>
                 </div>
 
                 {/* Categories */}
@@ -523,19 +542,71 @@ export default function EditArticle() {
                         {/* Widgets in Category */}
                         {isExpanded && (
                           <div className="p-2 space-y-1">
-                            {categoryWidgets.map((widget) => {
+                            {categoryWidgets.map((widget, widgetIndex) => {
                               const Icon = widget.icon;
+                              const allCategories = Object.keys(widgetsByCategory);
+                              const currentCategoryIndex = allCategories.indexOf(category);
+                              const isFirstInCategory = widgetIndex === 0;
+                              const isLastInCategory = widgetIndex === categoryWidgets.length - 1;
+                              const canMoveUp = !isFirstInCategory || currentCategoryIndex > 0;
+                              const canMoveDown = !isLastInCategory || currentCategoryIndex < allCategories.length - 1;
+
                               return (
                                 <div
                                   key={widget.type}
-                                  draggable
+                                  draggable={!libraryEditMode}
                                   onDragStart={(e) => {
+                                    if (libraryEditMode) {
+                                      e.preventDefault();
+                                      return;
+                                    }
                                     e.dataTransfer.setData('widgetType', widget.type);
                                     e.dataTransfer.effectAllowed = 'copy';
                                   }}
-                                  onClick={() => addWidget(widget.type as WidgetType)}
-                                  className="w-full flex items-start gap-2.5 p-2.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 transition-colors group text-left cursor-grab active:cursor-grabbing"
+                                  onClick={() => {
+                                    if (!libraryEditMode) {
+                                      addWidget(widget.type as WidgetType);
+                                    }
+                                  }}
+                                  className={`w-full flex items-start gap-2.5 p-2.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 transition-colors group text-left ${
+                                    libraryEditMode ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+                                  }`}
                                 >
+                                  {/* Edit mode arrows */}
+                                  {libraryEditMode && (
+                                    <div className="flex flex-col gap-0.5 flex-shrink-0">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          // TODO: Move widget up (to previous category if first in current)
+                                          console.log('Move up:', widget.type);
+                                        }}
+                                        disabled={!canMoveUp}
+                                        className={`p-1 rounded transition-colors ${
+                                          canMoveUp
+                                            ? 'hover:bg-gray-600 text-gray-400 hover:text-white'
+                                            : 'text-gray-700 cursor-not-allowed'
+                                        }`}
+                                      >
+                                        <ChevronUp className="w-3.5 h-3.5" />
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          // TODO: Move widget down (to next category if last in current)
+                                          console.log('Move down:', widget.type);
+                                        }}
+                                        disabled={!canMoveDown}
+                                        className={`p-1 rounded transition-colors ${
+                                          canMoveDown
+                                            ? 'hover:bg-gray-600 text-gray-400 hover:text-white'
+                                            : 'text-gray-700 cursor-not-allowed'
+                                        }`}
+                                      >
+                                        <ChevronDown className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  )}
                                   <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0`}>
                                     <Icon className={`w-4 h-4 ${colors.text}`} />
                                   </div>
