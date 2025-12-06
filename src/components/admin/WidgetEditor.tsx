@@ -1576,6 +1576,130 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             { value: 'simple', label: 'Simple' }
           ])}
 
+          {/* Before Stats Editor */}
+          {(widget.config.style === 'detailed' || widget.config.style === 'cards') && (
+            <>
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="block text-sm font-semibold text-gray-800">Before Stats (Optional)</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const stats = [...(widget.config.beforeStats || [])];
+                        stats.push({ label: 'Label', value: 'Value' });
+                        onUpdate({ beforeStats: stats });
+                      }}
+                      className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-800 font-medium"
+                    >
+                      <Plus className="w-3 h-3" /> Add Stat
+                    </button>
+                  </div>
+                  {(widget.config.beforeStats || []).length === 0 && (
+                    <p className="text-xs text-gray-500 italic">No before stats. Add stats to show metrics under the before image.</p>
+                  )}
+                  <div className="space-y-2">
+                    {(widget.config.beforeStats || []).map((stat: any, idx: number) => (
+                      <div key={idx} className="flex gap-2 items-center">
+                        <input
+                          type="text"
+                          value={stat.label}
+                          onChange={(e) => {
+                            const stats = [...(widget.config.beforeStats || [])];
+                            stats[idx] = { ...stats[idx], label: e.target.value };
+                            onUpdate({ beforeStats: stats });
+                          }}
+                          placeholder="Label"
+                          className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded"
+                        />
+                        <input
+                          type="text"
+                          value={stat.value}
+                          onChange={(e) => {
+                            const stats = [...(widget.config.beforeStats || [])];
+                            stats[idx] = { ...stats[idx], value: e.target.value };
+                            onUpdate({ beforeStats: stats });
+                          }}
+                          placeholder="Value"
+                          className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const stats = (widget.config.beforeStats || []).filter((_: any, i: number) => i !== idx);
+                            onUpdate({ beforeStats: stats });
+                          }}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* After Stats Editor */}
+              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-semibold text-green-800">After Stats (Optional)</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const stats = [...(widget.config.afterStats || [])];
+                      stats.push({ label: 'Label', value: 'Value' });
+                      onUpdate({ afterStats: stats });
+                    }}
+                    className="flex items-center gap-1 text-xs text-green-600 hover:text-green-800 font-medium"
+                  >
+                    <Plus className="w-3 h-3" /> Add Stat
+                  </button>
+                </div>
+                {(widget.config.afterStats || []).length === 0 && (
+                  <p className="text-xs text-gray-500 italic">No after stats. Add stats to show metrics under the after image.</p>
+                )}
+                <div className="space-y-2">
+                  {(widget.config.afterStats || []).map((stat: any, idx: number) => (
+                    <div key={idx} className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={stat.label}
+                        onChange={(e) => {
+                          const stats = [...(widget.config.afterStats || [])];
+                          stats[idx] = { ...stats[idx], label: e.target.value };
+                          onUpdate({ afterStats: stats });
+                        }}
+                        placeholder="Label"
+                        className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded"
+                      />
+                      <input
+                        type="text"
+                        value={stat.value}
+                        onChange={(e) => {
+                          const stats = [...(widget.config.afterStats || [])];
+                          stats[idx] = { ...stats[idx], value: e.target.value };
+                          onUpdate({ afterStats: stats });
+                        }}
+                        placeholder="Value"
+                        className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const stats = (widget.config.afterStats || []).filter((_: any, i: number) => i !== idx);
+                          onUpdate({ afterStats: stats });
+                        }}
+                        className="text-red-500 hover:text-red-700 p-1"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
           {/* CTA Section */}
           <div className="border-t border-gray-200 pt-4 mt-2">
             <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>

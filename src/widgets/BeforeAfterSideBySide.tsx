@@ -112,7 +112,7 @@ export default function BeforeAfterSideBySide({
         )}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Before Card */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
             <div className="aspect-square relative">
               <img src={beforeImage} alt="Before" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute top-4 left-4">
@@ -122,12 +122,12 @@ export default function BeforeAfterSideBySide({
               </div>
             </div>
             {beforeStats && beforeStats.length > 0 && (
-              <div className="p-4 bg-gray-50 border-t">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 bg-gray-50 border-t border-gray-200">
+                <div className="space-y-2">
                   {beforeStats.map((stat, idx) => (
-                    <div key={idx} className="text-center">
-                      <div className="text-lg font-bold text-gray-400">{stat.value}</div>
-                      <div className="text-sm text-gray-500">{stat.label}</div>
+                    <div key={idx} className="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0">
+                      <span className="text-sm text-gray-500">{stat.label}</span>
+                      <span className="text-sm font-semibold text-gray-700">{stat.value}</span>
                     </div>
                   ))}
                 </div>
@@ -153,11 +153,11 @@ export default function BeforeAfterSideBySide({
             </div>
             {afterStats && afterStats.length > 0 && (
               <div className="p-4 bg-primary-50 border-t border-primary-100">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
                   {afterStats.map((stat, idx) => (
-                    <div key={idx} className="text-center">
-                      <div className="text-lg font-bold text-primary-600">{stat.value}</div>
-                      <div className="text-sm text-gray-600">{stat.label}</div>
+                    <div key={idx} className="flex justify-between items-center py-1.5 border-b border-primary-100 last:border-0">
+                      <span className="text-sm text-gray-600">{stat.label}</span>
+                      <span className="text-sm font-semibold text-primary-700">{stat.value}</span>
                     </div>
                   ))}
                 </div>
@@ -223,11 +223,11 @@ export default function BeforeAfterSideBySide({
               </div>
               {beforeStats && beforeStats.length > 0 && (
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
                     {beforeStats.map((stat, idx) => (
-                      <div key={idx} className="text-center p-2 bg-white rounded-lg">
-                        <div className="text-xl font-bold text-gray-400">{stat.value}</div>
-                        <div className="text-sm text-gray-500">{stat.label}</div>
+                      <div key={idx} className="flex justify-between items-center py-2 px-3 bg-white rounded-lg border border-gray-100">
+                        <span className="text-sm text-gray-500">{stat.label}</span>
+                        <span className="text-sm font-semibold text-gray-600">{stat.value}</span>
                       </div>
                     ))}
                   </div>
@@ -256,11 +256,11 @@ export default function BeforeAfterSideBySide({
               </div>
               {afterStats && afterStats.length > 0 && (
                 <div className="bg-primary-50 rounded-lg p-4 border border-primary-100">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
                     {afterStats.map((stat, idx) => (
-                      <div key={idx} className="text-center p-2 bg-white rounded-lg border border-primary-100">
-                        <div className="text-xl font-bold text-primary-600">{stat.value}</div>
-                        <div className="text-sm text-gray-600">{stat.label}</div>
+                      <div key={idx} className="flex justify-between items-center py-2 px-3 bg-white rounded-lg border border-primary-100">
+                        <span className="text-sm text-gray-600">{stat.label}</span>
+                        <span className="text-sm font-semibold text-primary-700">{stat.value}</span>
                       </div>
                     ))}
                   </div>
