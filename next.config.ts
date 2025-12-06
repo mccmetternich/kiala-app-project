@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Force cache bust on new deployments
+  generateBuildId: async () => {
+    return `build-${Date.now()}`;
+  },
   async redirects() {
     return [
       {
