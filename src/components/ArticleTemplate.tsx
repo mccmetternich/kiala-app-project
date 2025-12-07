@@ -301,12 +301,21 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
 
     case 'timeline':
     case 'expectation-timeline':
+      // Transform milestones format to steps format if needed
+      const timelineSteps = widget.config.steps || widget.config.events ||
+        (widget.config.milestones?.map((m: any) => ({
+          period: m.timeframe || m.period,
+          title: m.title,
+          description: m.description,
+          icon: m.icon,
+          benefits: m.benefits
+        })));
       return (
         <div className="my-8">
           <ExpectationTimeline
             headline={widget.config.headline}
-            subheading={widget.config.subheading}
-            steps={widget.config.steps || widget.config.events}
+            subheading={widget.config.subheading || widget.config.subheadline}
+            steps={timelineSteps}
             ctaText={widget.config.ctaText || widget.config.buttonText}
             ctaUrl={getCtaUrl(widget.config)}
             target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
