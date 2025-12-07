@@ -146,6 +146,16 @@ export default function ProductReveal({
                 <span className="text-gray-600 text-sm">{formatReviewCount(reviewCount)} reviews</span>
               </div>
             </div>
+
+            {/* Social Proof Stats - moved under rating for balanced columns */}
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              {socialProofStats.map((stat, idx) => (
+                <div key={idx} className="text-center bg-gradient-to-b from-purple-50 to-white rounded-xl p-3 border border-purple-100/50">
+                  <div className="text-lg md:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.value}</div>
+                  <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Content Side - Tighter padding */}
@@ -154,23 +164,13 @@ export default function ProductReveal({
             <p className="text-gray-600 mb-6 leading-relaxed">{productDescription}</p>
 
             {/* Key Benefits */}
-            <div className="space-y-3 mb-8">
+            <div className="space-y-3 mb-6">
               {keyBenefits.map((benefit, idx) => (
                 <div key={idx} className="flex items-start gap-3">
                   <div className="p-1 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full mt-0.5 shadow-sm">
                     <CheckCircle className="w-4 h-4 text-green-600" />
                   </div>
                   <span className="text-gray-700">{benefit}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Social Proof Stats */}
-            <div className="grid grid-cols-3 gap-3 mb-8">
-              {socialProofStats.map((stat, idx) => (
-                <div key={idx} className="text-center bg-gradient-to-b from-purple-50 to-white rounded-xl p-3 border border-purple-100/50">
-                  <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.value}</div>
-                  <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
                 </div>
               ))}
             </div>
