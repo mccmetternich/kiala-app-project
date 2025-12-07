@@ -275,11 +275,7 @@ export default function Poll({
               widgetType="poll"
               widgetId={pollId}
               widgetName={question}
-              className={`mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
-                isHighlighted
-                  ? 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white'
-                  : 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white'
-              }`}
+              className="mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-rose-500 via-pink-500 to-orange-500 hover:from-rose-600 hover:via-pink-600 hover:to-orange-600 text-white"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />
