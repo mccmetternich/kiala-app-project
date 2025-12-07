@@ -8,6 +8,7 @@ import ArticleTemplate from '@/components/ArticleTemplate';
 import { Site, Page, Widget } from '@/types';
 import { generateDefaultWidgetConfig, parseWidgetConfig } from '@/lib/article-widget-defaults';
 import { getCommunityCount } from '@/lib/format-community-count';
+import { TrackingProvider } from '@/contexts/TrackingContext';
 
 // Fallback site data
 const fallbackSite: Site = {
@@ -231,7 +232,7 @@ export default function PreviewArticlePage() {
   };
 
   return (
-    <>
+    <TrackingProvider config={article.tracking_config}>
       {/* Preview Banner */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-amber-500 text-amber-900 py-2 px-4 text-center text-sm font-medium shadow-md">
         <span className="inline-flex items-center gap-2">
@@ -268,6 +269,6 @@ export default function PreviewArticlePage() {
           />
         </SiteLayout>
       </div>
-    </>
+    </TrackingProvider>
   );
 }

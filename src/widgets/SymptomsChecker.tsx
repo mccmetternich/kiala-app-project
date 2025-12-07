@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Check, AlertCircle, Sparkles } from 'lucide-react';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Symptom {
   id?: string;
@@ -143,12 +144,14 @@ export default function SymptomsChecker({
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{conclusionHeadline}</h3>
                 <p className="text-gray-700 leading-relaxed">{conclusionText}</p>
                 {showCta && (
-                  <a
+                  <TrackedLink
                     href={computedCtaUrl}
+                    widgetType="symptoms-checker"
+                    widgetName={headline}
                     className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
                   >
                     {ctaText}
-                  </a>
+                  </TrackedLink>
                 )}
               </div>
             </div>
