@@ -58,21 +58,30 @@ export default function Poll({
     }
   };
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  // Only results-only style shows results immediately. Regular polls always start as unanswered.
-  const [hasVoted, setHasVoted] = useState(style === 'results-only');
+  // ALWAYS start as not voted, unless explicitly results-only style
+  // This ensures fresh visitors always see the poll first
+  const isResultsOnlyStyle = style === 'results-only';
+  const [hasVoted, setHasVoted] = useState(isResultsOnlyStyle);
   const [isClient, setIsClient] = useState(false);
 
   // Check localStorage on client mount to see if user already voted
+  // This only runs on the client after hydration
   useEffect(() => {
     setIsClient(true);
-    if (pollId && style !== 'results-only') {
-      const votedPolls = JSON.parse(localStorage.getItem('votedPolls') || '{}');
-      if (votedPolls[pollId]) {
-        setSelectedOption(votedPolls[pollId]);
-        setHasVoted(true);
+    // Only check localStorage for non-results-only polls
+    if (!isResultsOnlyStyle && pollId) {
+      try {
+        const votedPolls = JSON.parse(localStorage.getItem('votedPolls') || '{}');
+        if (votedPolls[pollId]) {
+          setSelectedOption(votedPolls[pollId]);
+          setHasVoted(true);
+        }
+      } catch (e) {
+        // localStorage might be unavailable or corrupted
+        console.warn('Could not read poll state from localStorage');
       }
     }
-  }, [pollId, style]);
+  }, [pollId, isResultsOnlyStyle]);
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
   const handleVote = (optionId: string) => {
@@ -110,7 +119,6 @@ export default function Poll({
     totalVotes.toLocaleString()
   );
 
-  const isResultsOnly = style === 'results-only';
   const isHighlighted = style === 'highlighted';
 
   return (
@@ -127,7 +135,7 @@ export default function Poll({
           </div>
           <div className="flex-1">
             <h3 className="text-xl md:text-2xl font-bold text-white">{question}</h3>
-            {!hasVoted && !isResultsOnly && (
+            {!hasVoted && !isResultsOnlyStyle && (
               <p className="text-white/80 mt-1">Tap to vote and see how others answered</p>
             )}
             {hasVoted && (
