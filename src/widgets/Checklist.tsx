@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, Circle, ArrowRight, ClipboardList, AlertTriangle, Sparkles, Heart } from 'lucide-react';
+import { Check, ArrowRight, ClipboardList, AlertTriangle, Sparkles, Heart } from 'lucide-react';
 import TrackedLink from '@/components/TrackedLink';
 
 interface ChecklistItem {
@@ -192,10 +192,8 @@ export default function Checklist({
                             : 'bg-gradient-to-r from-primary-500 to-purple-500 border-primary-500 shadow-lg')
                       : 'border-gray-300 bg-white'
                   }`}>
-                    {isChecked ? (
+                    {isChecked && (
                       <Check className="w-4 h-4 text-white" />
-                    ) : (
-                      <Circle className="w-3 h-3 text-gray-300" />
                     )}
                   </div>
                   <span className={`text-base leading-relaxed ${
