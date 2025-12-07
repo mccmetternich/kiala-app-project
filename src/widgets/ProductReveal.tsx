@@ -54,7 +54,7 @@ export default function ProductReveal({
   ],
   ctaText = "See Why Women Are Choosing Kiala",
   ctaUrl = "https://kialanutrition.com/pages/greens",
-  target = "_blank",
+  target = "_self",
   badge = "Dr. Amy's #1 Pick",
   communityExclusive = true,
   communityExclusiveText = "Exclusive to our community members"

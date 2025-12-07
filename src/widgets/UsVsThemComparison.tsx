@@ -59,7 +59,7 @@ export default function UsVsThemComparison({
   // Legacy props
   buttonText,
   buttonUrl,
-  target = '_blank',
+  target = '_self',
   guaranteeBadge = '90-Day Money Back Guarantee',
   satisfactionBadge = '100% Community Approved'
 }: UsVsThemComparisonProps) {

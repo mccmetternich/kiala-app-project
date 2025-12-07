@@ -5458,7 +5458,7 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       benefitsRow2: [],
       ctaText: 'START NOW',
       ctaUrl: 'https://trygreens.com/dr-amy',
-      target: '_blank',
+      target: '_self',
       guaranteeText: '90-Day Money-Back Guarantee',
       showTestimonial: true,
       testimonialQuote: 'This completely changed my energy levels and mood. I feel like myself again after just 3 weeks!',
@@ -5717,7 +5717,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       ctaText: 'Get Started →',
       ctaUrl: '/checkout',
       ctaType: 'external',
-      target: '_blank'
+      target: '_self'
     },
     'us-vs-them-comparison': {
       headline: 'See The Difference',
@@ -5902,6 +5902,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       ],
       ctaText: 'Learn More →',
       ctaUrl: '#',
+      target: '_self',
       badge: "Doctor's #1 Pick"
     },
     'community-survey-results': {

@@ -48,7 +48,7 @@ export default function BeforeAfterSideBySide({
   showCta = false,
   ctaText = 'Get The Same Results →',
   ctaUrl = '#',
-  target = '_blank'
+  target = '_self'
 }: BeforeAfterSideBySideProps) {
   // CTA button component to reuse across styles
   const CtaButton = () => showCta ? (
