@@ -89,27 +89,22 @@ export default function ProductReveal({
 
         <div className="md:grid md:grid-cols-2 gap-0">
           {/* Product Image Side */}
-          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-4 md:p-6 flex flex-col">
-            {/* Main Product Image Container */}
-            <div className="relative flex-1">
-              {/* #1 Badge - positioned inside image top-right */}
-              <div className="absolute top-3 right-3 z-10">
-                <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl px-3 py-2 shadow-lg flex items-center gap-1.5">
-                  <span className="text-white font-black text-lg">#1</span>
-                  <Award className="w-5 h-5 text-white" />
-                </div>
+          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-6 md:p-8">
+            {/* Badge with #1 - positioned top-left of image */}
+            <div className="absolute top-8 left-8 md:top-10 md:left-10 z-10">
+              <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl px-4 py-2.5 shadow-xl flex items-center gap-2">
+                <Award className="w-5 h-5 text-white" />
+                <span className="text-white font-black text-lg">#1</span>
               </div>
+            </div>
 
-              {/* Main Product Image - Large and impressive */}
-              <div className="relative bg-gradient-to-br from-purple-100/50 to-pink-100/50 rounded-2xl p-4 md:p-8">
-                {/* Subtle glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-200/40 to-pink-200/40 rounded-2xl blur-xl" />
-                <img
-                  src={images[selectedImageIndex]}
-                  alt={productName}
-                  className="relative w-full h-auto max-h-[400px] object-contain mx-auto drop-shadow-2xl transition-all duration-300"
-                />
-              </div>
+            {/* Main Product Image - Large */}
+            <div className="relative">
+              <img
+                src={images[selectedImageIndex]}
+                alt={productName}
+                className="w-full h-auto min-h-[300px] max-h-[500px] object-contain mx-auto drop-shadow-2xl"
+              />
             </div>
 
             {/* Image Thumbnails - Only show if multiple images exist */}
@@ -135,9 +130,9 @@ export default function ProductReveal({
               </div>
             )}
 
-            {/* Rating badge - Full width under image */}
+            {/* Rating badge - directly under image */}
             <div className="mt-4">
-              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-purple-100 w-full">
+              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-purple-100">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
