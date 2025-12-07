@@ -1,8 +1,7 @@
 'use client';
 
 import { Check, X, Star, Crown, Zap, Clock, ArrowRight } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
-import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Offer {
   name: string;
@@ -130,36 +129,6 @@ export default function DualOfferComparison({
 
 function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'right'; widgetId?: string }) {
   const isHighlighted = offer.highlighted;
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-
-  const finalUrl = offer.ctaType === 'anchor' ? offer.ctaUrl : appendTracking(offer.ctaUrl);
-  const finalTarget = offer.ctaType === 'anchor' ? '_self' : (offer.target || '_self');
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (offer.ctaType === 'anchor' && offer.ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(offer.ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
-
-    if (isExternalUrl(offer.ctaUrl)) {
-      trackInitiateCheckout({
-        content_name: offer.name || 'Dual Offer',
-        content_category: 'dual_offer_comparison',
-        value: offer.price
-      });
-
-      trackExternalClick({
-        widget_type: 'dual-offer-comparison',
-        widget_id: widgetId || `dual-offer-${side}`,
-        widget_name: offer.name || 'Dual Offer',
-        destination_url: offer.ctaUrl
-      });
-    }
-  };
 
   return (
     <div className={`relative ${side === 'left' ? 'md:pr-4' : 'md:pl-4'}`}>
@@ -242,11 +211,13 @@ function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'ri
           </div>
 
           {/* CTA */}
-          <a
-            href={finalUrl}
-            target={finalTarget}
-            rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-            onClick={handleCtaClick}
+          <TrackedLink
+            href={offer.ctaUrl}
+            target={offer.target || '_self'}
+            widgetType="dual-offer-comparison"
+            widgetId={widgetId || `dual-offer-${side}`}
+            widgetName={offer.name}
+            value={offer.price}
             className={`flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-lg transition-all text-center ${
               isHighlighted
                 ? 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
@@ -256,7 +227,7 @@ function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'ri
             {isHighlighted && <Zap className="w-5 h-5" />}
             {offer.ctaText}
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </TrackedLink>
         </div>
 
         {/* Popular ribbon for highlighted */}

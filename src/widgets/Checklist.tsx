@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Check, Circle, ArrowRight, ClipboardList, AlertTriangle, Sparkles, Heart } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ChecklistItem {
   id: string;
@@ -43,19 +43,6 @@ export default function Checklist({
   target = '_self',
   style = 'default',
 }: ChecklistProps) {
-  const { appendTracking } = useTracking();
-  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
   const [checkedItems, setCheckedItems] = useState<Set<string>>(
     new Set(items.filter(i => i.checked).map(i => i.id))
   );
@@ -244,16 +231,17 @@ export default function Checklist({
 
               {/* CTA in alert */}
               {showCta && ctaText && ctaUrl && (
-                <a
-                  href={finalCtaUrl || '#'}
-                  target={finalTarget}
-                  onClick={handleCtaClick}
+                <TrackedLink
+                  href={ctaUrl}
+                  target={target}
+                  widgetType="checklist"
+                  widgetName={headline}
                   className="mt-5 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <Heart className="w-5 h-5" />
                   {ctaText}
                   <ArrowRight className="w-5 h-5" />
-                </a>
+                </TrackedLink>
               )}
             </div>
           </div>
@@ -261,10 +249,11 @@ export default function Checklist({
 
         {/* CTA - shown when not in alert state */}
         {!showAlert && showCta && ctaText && ctaUrl && (
-          <a
-            href={finalCtaUrl || '#'}
-            target={finalTarget}
-            onClick={handleCtaClick}
+          <TrackedLink
+            href={ctaUrl}
+            target={target}
+            widgetType="checklist"
+            widgetName={headline}
             className={`mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
               isAssessment
                 ? 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white'
@@ -273,7 +262,7 @@ export default function Checklist({
           >
             {ctaText}
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </TrackedLink>
         )}
       </div>
     </div>

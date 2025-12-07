@@ -1,7 +1,7 @@
 'use client';
 
 import { Star, BadgeCheck } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Review {
   name: string;
@@ -65,20 +65,6 @@ export default function ReviewGrid({
   ctaUrl = '#',
   target = '_self'
 }: ReviewGridProps) {
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
-
-  const handleCtaClick = () => {
-    if (isExternalUrl(ctaUrl)) {
-      trackExternalClick({
-        widget_type: 'review-grid',
-        widget_id: `review-grid-${headline?.substring(0, 20)}`,
-        widget_name: headline || ctaText || 'Review Grid',
-        destination_url: ctaUrl
-      });
-    }
-  };
-
   return (
     <div className="my-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 md:p-10">
       {/* Header */}
@@ -150,14 +136,16 @@ export default function ReviewGrid({
 
       {/* CTA Button */}
       <div className="text-center">
-        <a
-          href={trackedCtaUrl}
+        <TrackedLink
+          href={ctaUrl}
           target={target}
-          onClick={handleCtaClick}
+          widgetType="review-grid"
+          widgetId={`review-grid-${headline?.substring(0, 20)}`}
+          widgetName={headline || ctaText || 'Review Grid'}
           className="inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
         >
           {ctaText}
-        </a>
+        </TrackedLink>
       </div>
     </div>
   );

@@ -331,6 +331,19 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 
   // Bulk actions
   const bulkDuplicate = () => {
+    // If onDuplicateElsewhere is available, use the modal for the first selected widget
+    // This gives user the choice of where to duplicate
+    if (onDuplicateElsewhere && selectedWidgets.size > 0) {
+      const firstSelectedId = Array.from(selectedWidgets)[0];
+      const widget = widgets.find(w => w.id === firstSelectedId);
+      if (widget) {
+        onDuplicateElsewhere(widget);
+        clearSelection();
+        return;
+      }
+    }
+
+    // Fallback: duplicate in place if no modal available
     const duplicatedWidgets = Array.from(selectedWidgets).map(id => {
       const widget = widgets.find(w => w.id === id);
       if (!widget) return null;
@@ -352,6 +365,25 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
     onWidgetsChange(updatedWidgets);
     clearSelection();
   };
+
+  const bulkShow = () => {
+    const updatedWidgets = widgets.map(widget =>
+      selectedWidgets.has(widget.id) ? { ...widget, enabled: true } : widget
+    );
+    onWidgetsChange(updatedWidgets);
+    clearSelection();
+  };
+
+  // Check if selected widgets have any hidden ones (for showing the "Show" button)
+  const hasHiddenSelected = Array.from(selectedWidgets).some(id => {
+    const widget = widgets.find(w => w.id === id);
+    return widget && !widget.enabled;
+  });
+
+  const hasVisibleSelected = Array.from(selectedWidgets).some(id => {
+    const widget = widgets.find(w => w.id === id);
+    return widget && widget.enabled;
+  });
 
   const bulkDelete = () => {
     const filteredWidgets = widgets.filter(widget => !selectedWidgets.has(widget.id));
@@ -457,50 +489,81 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 
   return (
     <div className="p-6">
-      {/* Bulk Actions Bar */}
+      {/* Floating Bulk Actions Toolbar - Vertical right-side position */}
       {selectedWidgets.size > 0 && (
-        <div className="mb-4 p-3 bg-primary-50 border border-primary-200 rounded-xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-primary-700">
-              {selectedWidgets.size} widget{selectedWidgets.size > 1 ? 's' : ''} selected
-            </span>
-            <button
-              onClick={clearSelection}
-              className="text-xs text-primary-600 hover:text-primary-800"
-            >
-              Clear selection
-            </button>
-            {selectedWidgets.size < widgets.length && (
+        <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 animate-in slide-in-from-right-4 duration-200">
+          <div className="bg-gray-900 text-white rounded-2xl shadow-2xl border border-gray-700 px-3 py-4 flex flex-col items-center gap-3">
+            {/* Selection count */}
+            <div className="flex flex-col items-center gap-1 pb-3 border-b border-gray-700">
+              <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center font-bold text-lg">
+                {selectedWidgets.size}
+              </div>
+              <span className="text-xs text-gray-300">
+                selected
+              </span>
+            </div>
+
+            {/* Action buttons - vertical */}
+            <div className="flex flex-col items-center gap-1">
               <button
-                onClick={selectAllWidgets}
-                className="text-xs text-primary-600 hover:text-primary-800"
+                onClick={bulkDuplicate}
+                className="flex flex-col items-center gap-1 p-2 text-xs rounded-lg hover:bg-gray-800 text-gray-200 transition-colors w-full"
+                title="Duplicate selected"
               >
-                Select all
+                <Copy className="w-5 h-5" />
+                <span>Duplicate</span>
               </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={bulkDuplicate}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700"
-            >
-              <Copy className="w-4 h-4" />
-              Duplicate
-            </button>
-            <button
-              onClick={bulkHide}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700"
-            >
-              <EyeOff className="w-4 h-4" />
-              Hide
-            </button>
-            <button
-              onClick={() => setShowBulkDeleteConfirm(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 text-red-700"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
+              {hasHiddenSelected && (
+                <button
+                  onClick={bulkShow}
+                  className="flex flex-col items-center gap-1 p-2 text-xs rounded-lg hover:bg-green-500/20 text-green-400 transition-colors w-full"
+                  title="Show selected"
+                >
+                  <Eye className="w-5 h-5" />
+                  <span>Show</span>
+                </button>
+              )}
+              {hasVisibleSelected && (
+                <button
+                  onClick={bulkHide}
+                  className="flex flex-col items-center gap-1 p-2 text-xs rounded-lg hover:bg-gray-800 text-gray-200 transition-colors w-full"
+                  title="Hide selected"
+                >
+                  <EyeOff className="w-5 h-5" />
+                  <span>Hide</span>
+                </button>
+              )}
+              <button
+                onClick={() => setShowBulkDeleteConfirm(true)}
+                className="flex flex-col items-center gap-1 p-2 text-xs rounded-lg hover:bg-red-500/20 text-red-400 transition-colors w-full"
+                title="Delete selected"
+              >
+                <Trash2 className="w-5 h-5" />
+                <span>Delete</span>
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full h-px bg-gray-700" />
+
+            {/* Select all / Clear */}
+            <div className="flex flex-col items-center gap-1">
+              {selectedWidgets.size < widgets.length && (
+                <button
+                  onClick={selectAllWidgets}
+                  className="px-3 py-2 text-xs rounded-lg hover:bg-gray-800 text-gray-400 transition-colors"
+                >
+                  Select all
+                </button>
+              )}
+              <button
+                onClick={clearSelection}
+                className="p-2 rounded-lg hover:bg-gray-800 text-gray-400 transition-colors"
+                title="Clear selection"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1216,6 +1279,78 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
     </div>
   );
 
+  // Optional CTA Section with toggle - standardized across all widgets
+  const renderOptionalCtaSection = (ctaTextDefault: string = 'Learn More →', ctaUrlDefault: string = '#') => (
+    <div className="border-t border-gray-200 pt-4 mt-4">
+      <div className="flex items-center justify-between mb-3">
+        <label className="block text-sm font-medium text-gray-700">Call to Action</label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <span className="text-sm text-gray-500">{widget.config.showCta ? 'Enabled' : 'Disabled'}</span>
+          <div className="relative">
+            <input
+              type="checkbox"
+              checked={!!widget.config.showCta}
+              onChange={(e) => onUpdate({ showCta: e.target.checked })}
+              className="sr-only peer"
+            />
+            <div className="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-500"></div>
+          </div>
+        </label>
+      </div>
+
+      {widget.config.showCta && (
+        <div className="space-y-3 bg-gray-50 rounded-lg p-3">
+          {renderTextField('Button Text', 'ctaText', ctaTextDefault)}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+            <select
+              value={widget.config.ctaType || 'external'}
+              onChange={(e) => onUpdate({ ctaType: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="external">Link to URL</option>
+              <option value="anchor">Jump to Widget on Page</option>
+            </select>
+          </div>
+
+          {widget.config.ctaType !== 'anchor' && (
+            <>
+              {renderTextField('Button URL', 'ctaUrl', ctaUrlDefault)}
+              {renderSelectField('Open in', 'target', [
+                { value: '_self', label: 'Same tab' },
+                { value: '_blank', label: 'New tab' }
+              ])}
+            </>
+          )}
+
+          {widget.config.ctaType === 'anchor' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+              <select
+                value={widget.config.anchorWidgetId || ''}
+                onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="">Select a widget...</option>
+                {allWidgets
+                  .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                  .sort((a: Widget, b: Widget) => a.position - b.position)
+                  .map((w: Widget) => (
+                    <option key={w.id} value={w.id}>
+                      {getWidgetDisplayName(w)} (Position {w.position + 1})
+                    </option>
+                  ))
+                }
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   // CTA Type and Target selector (simplified version for use alongside renderTextField)
   const renderCtaTypeAndTarget = () => (
     <>
@@ -1589,6 +1724,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               placeholder="Enter your content here..."
             />
           </div>
+          {renderOptionalCtaSection('Learn More →', '#')}
         </div>
       )}
 
@@ -1651,54 +1787,10 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           </div>
 
           {/* CTA Section */}
-          <div className="border-t border-gray-200 pt-4 mt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
             {renderTextField('Button Text', 'ctaText', 'Get The Same Results')}
-
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
-              <select
-                value={widget.config.ctaType || 'external'}
-                onChange={(e) => onUpdate({ ctaType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="external">Link to URL</option>
-                <option value="anchor">Jump to Widget on Page</option>
-              </select>
-            </div>
-
-            {widget.config.ctaType !== 'anchor' && (
-              <>
-                {renderTextField('Button URL', 'ctaUrl', '#')}
-                {renderSelectField('Open in', 'target', [
-                  { value: '_self', label: 'Same tab' },
-                  { value: '_blank', label: 'New tab' }
-                ])}
-              </>
-            )}
-
-            {widget.config.ctaType === 'anchor' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
-                <select
-                  value={widget.config.anchorWidgetId || ''}
-                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="">Select a widget...</option>
-                  {allWidgets
-                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
-                    .sort((a: Widget, b: Widget) => a.position - b.position)
-                    .map((w: Widget) => (
-                      <option key={w.id} value={w.id}>
-                        {getWidgetDisplayName(w)} (Position {w.position + 1})
-                      </option>
-                    ))
-                  }
-                </select>
-                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
-              </div>
-            )}
+            {renderCtaTypeAndTarget()}
           </div>
         </div>
       )}
@@ -1933,8 +2025,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextAreaField('Subtitle', 'subtitle', 'Supporting text...', 2)}
           {renderImageField('Hero Image', 'image')}
           {renderTextField('Image Alt Text', 'imageAlt', 'Description of image')}
-          {renderTextField('Button Text', 'buttonText', 'Learn More')}
-          {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
+          {renderOptionalCtaSection('Learn More', '/top-picks')}
         </div>
       )}
 
@@ -2038,6 +2129,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </div>
             ))}
           </div>
+          {renderOptionalCtaSection('Learn More →', '#')}
         </div>
       )}
 
@@ -2639,7 +2731,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         </div>
       )}
 
-      {/* Testimonial */}
+      {/* Testimonial Carousel */}
       {widget.type === 'testimonial' && (
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'Success Stories')}
@@ -2650,6 +2742,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             { value: 'carousel', label: 'Carousel' },
             { value: 'grid', label: 'Grid' }
           ])}
+          {renderOptionalCtaSection('See More Stories →', '#')}
         </div>
       )}
 
@@ -2658,13 +2751,12 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'Top 10 Foods for Hormone Balance')}
           {renderTextField('Subheading', 'subheading', 'Research-backed recommendations')}
-          {renderTextField('Button Text', 'buttonText', 'Download Full List →')}
-          {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
           {renderSelectField('Style', 'style', [
             { value: 'numbered', label: 'Numbered' },
             { value: 'cards', label: 'Cards' },
             { value: 'checklist', label: 'Checklist' }
           ])}
+          {renderOptionalCtaSection('Download Full List →', '/top-picks')}
         </div>
       )}
 
@@ -2725,12 +2817,13 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             </div>
           </div>
 
-          {renderTextField('Button Text', 'ctaText', 'START NOW')}
-          {renderTextField('Button URL', 'ctaUrl', 'https://trygreens.com/dr-amy')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-2">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
+            {renderTextField('Button Text', 'ctaText', 'START NOW')}
+            {renderCtaTypeAndTarget()}
+          </div>
+
           {renderTextField('Guarantee Text', 'guaranteeText', '90-Day Money-Back Guarantee')}
 
           {/* Testimonial */}
@@ -2832,6 +2925,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             { value: 'grid', label: 'Grid' }
           ])}
           <p className="text-xs text-gray-500">FAQ items are configured in the article defaults. Edit the JSON directly for custom questions.</p>
+          {renderOptionalCtaSection('Get Your Answer →', '#')}
         </div>
       )}
 
@@ -3031,57 +3125,6 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'See The Difference')}
 
-          {/* CTA Section */}
-          <div className="border-t border-gray-200 pt-4 mt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
-            {renderTextField('Button Text', 'buttonText', 'Try Kiala Greens →')}
-
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
-              <select
-                value={widget.config.ctaType || 'external'}
-                onChange={(e) => onUpdate({ ctaType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="external">Link to URL</option>
-                <option value="anchor">Jump to Widget on Page</option>
-              </select>
-            </div>
-
-            {widget.config.ctaType !== 'anchor' && (
-              <>
-                {renderTextField('Button URL', 'buttonUrl', '/top-picks')}
-                {renderSelectField('Open in', 'target', [
-                  { value: '_self', label: 'Same tab' },
-                  { value: '_blank', label: 'New tab' }
-                ])}
-              </>
-            )}
-
-            {widget.config.ctaType === 'anchor' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
-                <select
-                  value={widget.config.anchorWidgetId || ''}
-                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="">Select a widget...</option>
-                  {allWidgets
-                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
-                    .sort((a: Widget, b: Widget) => a.position - b.position)
-                    .map((w: Widget) => (
-                      <option key={w.id} value={w.id}>
-                        {getWidgetDisplayName(w)} (Position {w.position + 1})
-                      </option>
-                    ))
-                  }
-                </select>
-                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
-              </div>
-            )}
-          </div>
-
           {/* Column 1 (Us / Kiala) */}
           <div className="border-t pt-4 mt-4">
             <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -3187,6 +3230,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               ))}
             </div>
           </div>
+
+          {renderCtaSection('Try Kiala Greens →', '/top-picks')}
         </div>
       )}
 
@@ -3365,6 +3410,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </div>
             ))}
           </div>
+          {renderOptionalCtaSection('Join Our Community →', '#')}
         </div>
       )}
 
@@ -3509,54 +3555,10 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           </div>
 
           {/* Button/CTA */}
-          <div className="border-t border-gray-200 pt-4 mt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
             {renderTextField('Button Text', 'ctaText', 'TRY IT NOW')}
-
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
-              <select
-                value={widget.config.ctaType || 'external'}
-                onChange={(e) => onUpdate({ ctaType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="external">Link to URL</option>
-                <option value="anchor">Jump to Widget on Page</option>
-              </select>
-            </div>
-
-            {widget.config.ctaType !== 'anchor' && (
-              <>
-                {renderTextField('Button URL', 'ctaUrl', 'https://kialanutrition.com')}
-                {renderSelectField('Open in', 'target', [
-                  { value: '_self', label: 'Same tab' },
-                  { value: '_blank', label: 'New tab' }
-                ])}
-              </>
-            )}
-
-            {widget.config.ctaType === 'anchor' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
-                <select
-                  value={widget.config.anchorWidgetId || ''}
-                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="">Select a widget...</option>
-                  {allWidgets
-                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
-                    .sort((a: Widget, b: Widget) => a.position - b.position)
-                    .map((w: Widget) => (
-                      <option key={w.id} value={w.id}>
-                        {getWidgetDisplayName(w)} (Position {w.position + 1})
-                      </option>
-                    ))
-                  }
-                </select>
-                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
-              </div>
-            )}
+            {renderCtaTypeAndTarget()}
           </div>
 
           {/* Testimonial Section */}
@@ -3625,7 +3627,20 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 </select>
               </div>
               {(widget.config.leftOffer as any)?.ctaType !== 'anchor' && (
-                renderTextField('Button URL', 'leftOffer.ctaUrl', '#')
+                <>
+                  {renderTextField('Button URL', 'leftOffer.ctaUrl', '#')}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Open in</label>
+                    <select
+                      value={(widget.config.leftOffer as any)?.target || '_self'}
+                      onChange={(e) => onUpdate({ leftOffer: { ...(widget.config.leftOffer as any || {}), target: e.target.value } })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                    >
+                      <option value="_self">Same tab</option>
+                      <option value="_blank">New tab</option>
+                    </select>
+                  </div>
+                </>
               )}
               {(widget.config.leftOffer as any)?.ctaType === 'anchor' && (
                 <div>
@@ -3676,7 +3691,20 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 </select>
               </div>
               {(widget.config.rightOffer as any)?.ctaType !== 'anchor' && (
-                renderTextField('Button URL', 'rightOffer.ctaUrl', '#')
+                <>
+                  {renderTextField('Button URL', 'rightOffer.ctaUrl', '#')}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Open in</label>
+                    <select
+                      value={(widget.config.rightOffer as any)?.target || '_self'}
+                      onChange={(e) => onUpdate({ rightOffer: { ...(widget.config.rightOffer as any || {}), target: e.target.value } })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                    >
+                      <option value="_self">Same tab</option>
+                      <option value="_blank">New tab</option>
+                    </select>
+                  </div>
+                </>
               )}
               {(widget.config.rightOffer as any)?.ctaType === 'anchor' && (
                 <div>
@@ -3718,12 +3746,6 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         <div className="space-y-4">
           {renderTextField('Headline', 'headline', 'Real Results From Real Women')}
           {renderTextField('Subheading', 'subheading', 'Join thousands who have transformed their health')}
-          {renderTextField('Button Text', 'buttonText', 'Try It Now →')}
-          {renderTextField('Button URL', 'buttonUrl', 'https://kialanutrition.com/products/kiala-greens')}
-          {renderSelectField('Open in', 'target', [
-            { value: '_self', label: 'Same tab' },
-            { value: '_blank', label: 'New tab' }
-          ])}
 
           {/* Editable Reviews */}
           <div className="border-t pt-4 mt-4">
@@ -3886,6 +3908,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </div>
             ))}
           </div>
+
+          {renderOptionalCtaSection('Try It Now →', '#')}
         </div>
       )}
 
@@ -3983,6 +4007,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               </div>
             ))}
           </div>
+
+          {renderOptionalCtaSection('Learn More →', '#')}
         </div>
       )}
 
@@ -3994,6 +4020,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderNumberField('Scroll Speed', 'speed', 10, 100, '30')}
           <ImageGalleryField label="Customer Photos" field="customImages" />
           <p className="text-xs text-gray-500">Upload customer photos for the scrolling gallery. Only your uploaded photos will be shown (stock photos only appear if no images uploaded).</p>
+
+          {renderOptionalCtaSection('Join Them →', '#')}
         </div>
       )}
 
@@ -4003,6 +4031,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderImageField('Testimonial Photo', 'image')}
           {renderTextField('Title', 'headline', 'I Lost 22 lbs and My Energy is Through the Roof!')}
           {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text...', 6)}
+
+          {renderOptionalCtaSection('Try It Yourself →', '#')}
         </div>
       )}
 
@@ -4012,50 +4042,10 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderImageField('Testimonial Photo', 'image')}
           {renderTextField('Title', 'headline', 'I Lost 22 lbs and My Energy is Through the Roof!')}
           {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text...', 6)}
-          {renderTextField('Button Text', 'buttonText', 'TRY NOW - SAVE 50%')}
 
-          {/* CTA Type Selection */}
-          {renderSelectField('Button Action', 'ctaType', [
-            { value: 'external', label: 'Link to URL' },
-            { value: 'anchor', label: 'Jump to Widget on Page' }
-          ])}
+          {renderCtaSection('TRY NOW - SAVE 50%', 'https://kialanutrition.com/products/kiala-greens')}
 
-          {/* Show URL field if external link */}
-          {(widget.config.ctaType !== 'anchor') && (
-            <>
-              {renderTextField('Button URL', 'buttonUrl', 'https://kialanutrition.com/products/kiala-greens')}
-              {renderSelectField('Open in', 'target', [
-                { value: '_self', label: 'Same tab' },
-                { value: '_blank', label: 'New tab' }
-              ])}
-            </>
-          )}
-
-          {/* Show widget selector if anchor link */}
-          {widget.config.ctaType === 'anchor' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
-              <select
-                value={widget.config.anchorWidgetId || ''}
-                onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="">Select a widget...</option>
-                {allWidgets
-                  .filter((w: Widget) => w.id !== widget.id && w.enabled)
-                  .sort((a: Widget, b: Widget) => a.position - b.position)
-                  .map((w: Widget) => (
-                    <option key={w.id} value={w.id}>
-                      {getWidgetDisplayName(w)} (Position {w.position + 1})
-                    </option>
-                  ))
-                }
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
-            </div>
-          )}
-
-          <p className="text-xs text-gray-500">Benefit icons (90-day guarantee, no risk, free gifts) are shown by default.</p>
+          <p className="text-xs text-gray-500 mt-2">Benefit icons (90-day guarantee, no risk, free gifts) are shown by default.</p>
         </div>
       )}
 
@@ -4546,8 +4536,12 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
             </div>
           </div>
 
-          {renderTextField('CTA Text', 'ctaText', 'Learn More →')}
-          {renderTextField('CTA URL', 'ctaUrl', '#')}
+          {/* CTA Section */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
+            {renderTextField('Button Text', 'ctaText', 'Learn More →')}
+            {renderCtaTypeAndTarget()}
+          </div>
 
           {/* Community Exclusive */}
           <div className="border-t pt-4 mt-4">
@@ -4672,56 +4666,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               />
               Show CTA Button {widget.config.style === 'assessment' ? '(appears in alert)' : ''}
             </label>
-            {widget.config.showCta && (
-              <div className="space-y-3 pl-6">
-                {renderTextField('CTA Text', 'ctaText', 'See The Solution →')}
-
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
-                  <select
-                    value={widget.config.ctaType || 'external'}
-                    onChange={(e) => onUpdate({ ctaType: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="external">Link to URL</option>
-                    <option value="anchor">Jump to Widget on Page</option>
-                  </select>
-                </div>
-
-                {widget.config.ctaType !== 'anchor' && (
-                  <>
-                    {renderTextField('CTA URL', 'ctaUrl', 'https://kialanutrition.com')}
-                    {renderSelectField('Open in', 'target', [
-                      { value: '_self', label: 'Same tab' },
-                      { value: '_blank', label: 'New tab' }
-                    ])}
-                  </>
-                )}
-
-                {widget.config.ctaType === 'anchor' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
-                    <select
-                      value={widget.config.anchorWidgetId || ''}
-                      onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-                    >
-                      <option value="">Select a widget...</option>
-                      {allWidgets
-                        .filter((w: Widget) => w.id !== widget.id && w.enabled)
-                        .sort((a: Widget, b: Widget) => a.position - b.position)
-                        .map((w: Widget) => (
-                          <option key={w.id} value={w.id}>
-                            {getWidgetDisplayName(w)} (Position {w.position + 1})
-                          </option>
-                        ))
-                      }
-                    </select>
-                    <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
-                  </div>
-                )}
-              </div>
-            )}
+            {widget.config.showCta && renderCtaSection('Button Text', 'See The Solution →', 'https://kialanutrition.com')}
           </div>
         </div>
       )}
@@ -5149,6 +5094,8 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
               />
             </div>
           </div>
+
+          {renderOptionalCtaSection('Choose the Right Way →', '#')}
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircle, Star } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface StatItem {
   label: string;
@@ -50,20 +50,18 @@ export default function BeforeAfterSideBySide({
   ctaUrl = '#',
   target = '_blank'
 }: BeforeAfterSideBySideProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
-
   // CTA button component to reuse across styles
   const CtaButton = () => showCta ? (
     <div className="mt-6 text-center">
-      <a
-        href={trackedCtaUrl}
+      <TrackedLink
+        href={ctaUrl}
         target={target}
-        rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+        widgetType="before-after-side-by-side"
+        widgetName={`Before/After: ${name || headline}`}
         className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
       >
         {ctaText}
-      </a>
+      </TrackedLink>
     </div>
   ) : null;
   if (style === 'simple') {
@@ -294,14 +292,15 @@ export default function BeforeAfterSideBySide({
         )}
         {showCta && (
           <div className="p-6 border-t text-center">
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
               target={target}
-              rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+              widgetType="before-after-side-by-side"
+              widgetName={`Before/After: ${name || headline}`}
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
             >
               {ctaText}
-            </a>
+            </TrackedLink>
           </div>
         )}
       </div>

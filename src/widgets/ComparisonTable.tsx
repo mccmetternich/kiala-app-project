@@ -1,7 +1,7 @@
 'use client';
 
 import { X, Check, ArrowRight } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ComparisonRow {
   feature: string;
@@ -37,20 +37,6 @@ export default function ComparisonTable({
   ctaType = 'external',
   target = '_self'
 }: ComparisonTableProps) {
-  const { appendTracking } = useTracking();
-  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
-
   return (
     <div className="my-12 overflow-x-auto">
       {/* Header with title and subtitle */}
@@ -122,16 +108,16 @@ export default function ComparisonTable({
       {/* CTA Button */}
       {showCta && ctaText && ctaUrl && (
         <div className="mt-8 text-center">
-          <a
-            href={finalCtaUrl}
-            target={finalTarget}
-            rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-            onClick={handleCtaClick}
+          <TrackedLink
+            href={ctaUrl}
+            target={target}
+            widgetType="comparison-table"
+            widgetName={title}
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             {ctaText}
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </TrackedLink>
           {ctaSubtext && (
             <p className="mt-2 text-sm text-gray-500">{ctaSubtext}</p>
           )}

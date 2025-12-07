@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CheckCircle, Users, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface PollOption {
   id: string;
@@ -15,7 +15,8 @@ interface PollProps {
   question: string;
   options: PollOption[];
   totalVotes: number;
-  showResults?: boolean;  // Only used for 'results-only' style - regular polls always start unanswered
+  /** @deprecated Use style='results-only' instead. This prop is ignored. */
+  showResults?: boolean;
   resultsMessage?: string;
   source?: string;
   style?: 'default' | 'highlighted' | 'results-only';
@@ -44,28 +45,12 @@ export default function Poll({
   target = '_self',
   pollId,
 }: PollProps) {
-  const { appendTracking } = useTracking();
-  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  // ALWAYS start as not voted, unless explicitly results-only style
-  // This ensures fresh visitors always see the voting options first
-  // v2: Force initial state to false for non-results-only polls
+  // Only show results immediately if style is explicitly 'results-only'
+  // The 'showResults' prop is IGNORED - use style='results-only' to show results immediately
+  // Regular polls (default, highlighted) ALWAYS start with voting options visible
   const isResultsOnlyStyle = style === 'results-only';
-  const [hasVoted, setHasVoted] = useState(() => {
-    // Only show results immediately if style is explicitly 'results-only'
-    return isResultsOnlyStyle;
-  });
+  const [hasVoted, setHasVoted] = useState(isResultsOnlyStyle);
   const [isClient, setIsClient] = useState(false);
 
   // Check localStorage on client mount to see if user already voted
@@ -284,10 +269,12 @@ export default function Poll({
 
           {/* CTA - Only shown after voting (isClient check ensures proper hydration) */}
           {isClient && hasVoted && showCta && ctaText && ctaUrl && (
-            <a
-              href={finalCtaUrl || '#'}
-              target={finalTarget}
-              onClick={handleCtaClick}
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="poll"
+              widgetId={pollId}
+              widgetName={question}
               className={`mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
                 isHighlighted
                   ? 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white'
@@ -296,7 +283,7 @@ export default function Poll({
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </TrackedLink>
           )}
         </div>
       </div>

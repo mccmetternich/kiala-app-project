@@ -327,3 +327,98 @@ export function MyWidget({ settings }: { settings: MyWidgetSettings }) {
 3. **Test on mobile** - Widgets should be responsive
 4. **Use consistent styling** - Match your site's brand
 5. **A/B test** - Try different headlines and positions
+
+---
+
+## CTA Link Tracking Requirements (MANDATORY)
+
+**All widgets with external CTA links MUST use the `TrackedLink` component.**
+
+This ensures:
+- Meta Pixel `InitiateCheckout` events fire on external clicks
+- UTM parameters are automatically appended (utm_source = site name)
+- fbclid and FB cookies pass through for cross-domain tracking
+- Internal/anchor links are NOT tracked (only external URLs)
+- Smooth scrolling works for anchor links (`#widget-id`)
+
+### Using TrackedLink
+
+```typescript
+import TrackedLink from '@/components/TrackedLink';
+
+// In your widget component:
+<TrackedLink
+  href={ctaUrl}
+  widgetType="your-widget-type"  // REQUIRED - e.g., 'shop-now', 'product-card'
+  widgetName={productName}        // Human-readable name for analytics
+  className="your-styles"
+  target="_blank"  // Optional: '_self' (default) or '_blank'
+>
+  Shop Now
+</TrackedLink>
+```
+
+### What TrackedLink Handles Automatically
+
+| URL Type | Tracking | Behavior |
+|----------|----------|----------|
+| External (`https://...`) | ✅ Fires InitiateCheckout + UTM params | Normal navigation |
+| Anchor (`#section-id`) | ❌ No tracking | Smooth scroll to element |
+| Internal (`/articles/...`) | ❌ No tracking | Normal navigation |
+| mailto/tel | ❌ No tracking | Normal navigation |
+
+### Required Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | string | Yes | The URL (external, internal, or anchor) |
+| `widgetType` | string | Yes | Widget category for analytics |
+| `widgetName` | string | No | Human-readable name (defaults to widgetType) |
+| `widgetId` | string | No | Unique instance ID for per-widget tracking |
+| `value` | number | No | Checkout value for Meta Pixel |
+| `skipTracking` | boolean | No | Set true to disable tracking entirely |
+
+### DO NOT Use Raw `<a>` Tags for CTAs
+
+❌ **Wrong:**
+```typescript
+<a href={ctaUrl} target="_blank" className="btn">
+  Shop Now
+</a>
+```
+
+✅ **Correct:**
+```typescript
+<TrackedLink
+  href={ctaUrl}
+  widgetType="product-card"
+  widgetName="Hormone Reset Kit"
+  className="btn"
+  target="_blank"
+>
+  Shop Now
+</TrackedLink>
+```
+
+### For Non-Link Elements (Buttons, Custom Components)
+
+Use the `useTrackedClick` hook:
+
+```typescript
+import { useTrackedClick } from '@/components/TrackedLink';
+
+function MyWidget() {
+  const { trackClick, getTrackedUrl, isExternalUrl } = useTrackedClick();
+
+  const handleClick = () => {
+    trackClick({
+      url: ctaUrl,
+      widgetType: 'custom-modal',
+      widgetName: 'Newsletter Popup'
+    });
+    window.open(getTrackedUrl(ctaUrl), '_blank');
+  };
+
+  return <button onClick={handleClick}>Shop Now</button>;
+}
+```

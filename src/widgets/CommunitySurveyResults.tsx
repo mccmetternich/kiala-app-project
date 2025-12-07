@@ -1,7 +1,7 @@
 'use client';
 
 import { Users, TrendingUp, CheckCircle, Award, Sparkles, ArrowRight } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface SurveyResult {
   label: string;
@@ -46,33 +46,19 @@ export default function CommunitySurveyResults({
   ctaType = 'external',
   target = '_self'
 }: CommunitySurveyResultsProps) {
-  const { appendTracking } = useTracking();
-  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
-
   // CTA Button component to reuse across styles
   const CtaButton = () => showCta && ctaText && ctaUrl ? (
     <div className="mt-6 text-center">
-      <a
-        href={finalCtaUrl}
-        target={finalTarget}
-        rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-        onClick={handleCtaClick}
+      <TrackedLink
+        href={ctaUrl}
+        target={target}
+        widgetType="community-survey-results"
+        widgetName={headline}
         className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         {ctaText}
         <ArrowRight className="w-5 h-5" />
-      </a>
+      </TrackedLink>
       {ctaSubtext && (
         <p className="mt-2 text-sm text-gray-500">{ctaSubtext}</p>
       )}

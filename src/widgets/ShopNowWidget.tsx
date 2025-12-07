@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Star, Shield, Truck, CheckCircle, Gift, BadgeCheck, Clock } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
-import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import TrackedLink from '@/components/TrackedLink';
 
 interface PricingOption {
   id: string;
@@ -153,7 +152,6 @@ export default function ShopNowWidget({
   const [selectedOption, setSelectedOption] = useState(
     pricingOptions.find(opt => opt.popular)?.id || pricingOptions[1]?.id || pricingOptions[0].id
   );
-  const { appendTracking, trackExternalClick } = useTracking();
 
   // Touch swipe state for image gallery
   const touchStartX = useRef<number | null>(null);
@@ -503,53 +501,19 @@ export default function ShopNowWidget({
       ? `${packageUrl}&option=${selectedOption}`
       : `${packageUrl}?option=${selectedOption}`;
 
-    const handleCTAClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      // Fire InitiateCheckout event with product details (Meta Pixel)
-      trackInitiateCheckout({
-        content_name: productName,
-        content_category: 'product',
-        content_ids: [selectedOption],
-        value: currentOption.price,
-        currency: 'USD',
-        num_items: currentOption.quantity
-      });
-
-      // Track external click for conversion analytics
-      // widget_id includes the selected package for unique tracking
-      trackExternalClick({
-        widget_type: 'shop-now',
-        widget_id: `shop-now-${selectedOption}`,
-        widget_name: `${productName} - ${currentOption.label}`,
-        destination_url: baseUrl
-      });
-
-      // Append tracking params at click time (ensures cookies are available)
-      const trackedUrl = appendTracking(baseUrl);
-
-      // If URL was modified with tracking, update the navigation
-      if (trackedUrl !== baseUrl) {
-        e.preventDefault();
-        if (target === '_blank') {
-          window.open(trackedUrl, '_blank');
-        } else {
-          window.location.href = trackedUrl;
-        }
-      }
-    };
-
-    // Pre-computed URL for href (fallback if JS disabled)
-    const hrefUrl = appendTracking(baseUrl);
-
     return (
     <>
-      <a
-        href={hrefUrl}
+      <TrackedLink
+        href={baseUrl}
         target={target}
-        onClick={handleCTAClick}
+        widgetType="shop-now"
+        widgetId={`shop-now-${selectedOption}`}
+        widgetName={`${productName} - ${currentOption.label}`}
+        value={currentOption.price}
         className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
       >
         {ctaText} ${currentOption.price}
-      </a>
+      </TrackedLink>
       <div className="flex items-center justify-center gap-4 md:gap-6 mt-4 text-gray-500 text-xs md:text-sm flex-wrap">
         <div className="flex items-center gap-1">
           <Shield className="w-4 h-4 text-green-600" />

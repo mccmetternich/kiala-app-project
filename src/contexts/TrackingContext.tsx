@@ -43,6 +43,7 @@ export interface TrackingProviderProps {
   children: ReactNode;
   config: TrackingConfig | string | null | undefined;
   siteId?: string;
+  siteName?: string;
   articleId?: string;
 }
 
@@ -101,14 +102,24 @@ function checkIsExternalUrl(url: string): boolean {
   }
 }
 
-export function TrackingProvider({ children, config, siteId, articleId }: TrackingProviderProps) {
+export function TrackingProvider({ children, config, siteId, siteName, articleId }: TrackingProviderProps) {
   const [currentParams, setCurrentParams] = useState<URLSearchParams>(new URLSearchParams());
   const [sessionId, setSessionId] = useState<string>('');
 
   // Parse config if it's a string
-  const trackingConfig: TrackingConfig | null = config
+  let trackingConfig: TrackingConfig | null = config
     ? (typeof config === 'string' ? JSON.parse(config) : config)
     : null;
+
+  // If no utm_source is set and we have a siteName, use it as the default source
+  // Convert site name to URL-safe slug (e.g., "Dr. Amy Heart" -> "dr-amy-heart")
+  if (siteName && (!trackingConfig || !trackingConfig.utm_source)) {
+    const siteSlug = siteName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    trackingConfig = {
+      ...trackingConfig,
+      utm_source: siteSlug
+    };
+  }
 
   useEffect(() => {
     // Get current URL params on mount (client-side only)

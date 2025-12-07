@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Gift, Users, Clock, Shield, Star, TrendingUp, CheckCircle, ArrowRight } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
-import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import TrackedLink from '@/components/TrackedLink';
 
 interface SpecialOfferWidgetProps {
   headline?: string;
@@ -53,36 +52,6 @@ export default function SpecialOfferWidget({
   const [spotsRemaining, setSpotsRemaining] = useState(limitedSpots);
   const [recentRedemptions, setRecentRedemptions] = useState(redemptionCount);
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-
-  const finalUrl = ctaType === 'anchor' ? ctaUrl : appendTracking(ctaUrl);
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
-
-    if (isExternalUrl(ctaUrl)) {
-      trackInitiateCheckout({
-        content_name: subheading || 'Special Offer',
-        content_category: 'special_offer',
-        value: salePrice
-      });
-
-      trackExternalClick({
-        widget_type: 'special-offer',
-        widget_id: widgetId || `special-offer-${subheading?.substring(0, 20)}`,
-        widget_name: subheading || 'Special Offer',
-        destination_url: ctaUrl
-      });
-    }
-  };
 
   // Simulate real-time social proof
   useEffect(() => {
@@ -213,16 +182,18 @@ export default function SpecialOfferWidget({
 
           {/* CTA Button */}
           <div className="text-center">
-            <a
-              href={finalUrl}
-              target={finalTarget}
-              rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-              onClick={handleCtaClick}
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="special-offer"
+              widgetId={widgetId || `special-offer-${subheading?.substring(0, 20)}`}
+              widgetName={subheading || 'Special Offer'}
+              value={salePrice}
               className="block w-full md:w-auto md:inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
             >
               {ctaText}
               <ArrowRight className="w-6 h-6 hidden md:inline" />
-            </a>
+            </TrackedLink>
 
             {/* Trust signals */}
             <div className="flex flex-wrap justify-center gap-4 mt-4 text-sm text-gray-500">

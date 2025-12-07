@@ -3,6 +3,7 @@ import { Calendar, Clock, Eye, Share2, Heart } from 'lucide-react';
 import { Page, Site, Widget } from '@/types';
 import { formatDate } from '@/lib/utils';
 import Badge from './ui/Badge';
+import TrackedLink from '@/components/TrackedLink';
 
 // Widget Components
 import ProductShowcase from '@/widgets/ProductShowcase';
@@ -715,13 +716,36 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
       );
 
     case 'hero-image':
+      const heroCtaUrl = widget.config.ctaType === 'anchor'
+        ? `#widget-${widget.config.anchorWidgetId}`
+        : widget.config.ctaUrl;
       return (
         <div className="my-8">
+          {widget.config.headline && (
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{widget.config.headline}</h2>
+          )}
+          {widget.config.subtitle && (
+            <p className="text-lg text-gray-600 mb-4">{widget.config.subtitle}</p>
+          )}
           <img
             src={widget.config.image}
-            alt={widget.config.alt || 'Article hero image'}
+            alt={widget.config.imageAlt || widget.config.alt || 'Article hero image'}
             className="w-full rounded-xl shadow-lg"
           />
+          {widget.config.showCta && widget.config.ctaText && heroCtaUrl && (
+            <div className="mt-6 text-center">
+              <TrackedLink
+                href={heroCtaUrl}
+                target={widget.config.target || '_self'}
+                widgetType="hero-image"
+                widgetId={widget.id}
+                widgetName={widget.config.headline || 'Hero Image'}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+              >
+                {widget.config.ctaText}
+              </TrackedLink>
+            </div>
+          )}
         </div>
       );
 

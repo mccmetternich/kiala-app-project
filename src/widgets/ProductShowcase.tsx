@@ -1,8 +1,7 @@
 'use client';
 
 import { Star, ArrowRight, Check, Quote } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
-import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ProductShowcaseProps {
   title?: string;
@@ -50,36 +49,6 @@ export default function ProductShowcase({
   ratingCount = '2,847 reviews',
   widgetId
 }: ProductShowcaseProps) {
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-
-  const finalUrl = ctaType === 'anchor' ? ctaLink : appendTracking(ctaLink);
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaLink) {
-      e.preventDefault();
-      const element = document.getElementById(ctaLink.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
-
-    if (isExternalUrl(ctaLink)) {
-      trackInitiateCheckout({
-        content_name: title || 'Product Showcase',
-        content_category: 'product_showcase'
-      });
-
-      trackExternalClick({
-        widget_type: 'product-showcase',
-        widget_id: widgetId || `product-showcase-${title?.substring(0, 20)}`,
-        widget_name: title || 'Product Showcase',
-        destination_url: ctaLink
-      });
-    }
-  };
-
   return (
     <div className="bg-gradient-to-br from-primary-50 via-white to-purple-50 rounded-2xl shadow-xl border border-gray-100 overflow-hidden my-8">
       <div className="flex flex-col md:flex-row items-stretch">
@@ -140,16 +109,17 @@ export default function ProductShowcase({
           )}
 
           {/* CTA Button */}
-          <a
-            href={finalUrl}
-            target={finalTarget}
-            rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-            onClick={handleCtaClick}
+          <TrackedLink
+            href={ctaLink}
+            target={target}
+            widgetType="product-showcase"
+            widgetId={widgetId || `product-showcase-${title?.substring(0, 20)}`}
+            widgetName={title || 'Product Showcase'}
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
           >
             {ctaText}
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </TrackedLink>
 
           {/* Bullets under CTA */}
           {ctaBullets && ctaBullets.length > 0 && (

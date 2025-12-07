@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircle, Star, Clock, Sparkles } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ListItem {
   title: string;
@@ -90,8 +90,6 @@ export default function TopTenList({
   ctaText = 'Download the Full Protocol →',
   ctaUrl = '#'
 }: TopTenListProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
 
   const getIcon = (index: number) => {
     if (style === 'checkmarks') {
@@ -161,12 +159,14 @@ export default function TopTenList({
 
         {/* CTA */}
         <div className="mt-6 text-center">
-          <a
-            href={trackedCtaUrl}
+          <TrackedLink
+            href={ctaUrl}
+            widgetType="top-ten-list"
+            widgetName={headline || 'Top Ten List'}
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl text-center"
           >
             {ctaText}
-          </a>
+          </TrackedLink>
           <p className="text-sm text-gray-500 mt-3">
             Join 47,000+ women following this protocol
           </p>

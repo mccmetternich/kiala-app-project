@@ -1,8 +1,7 @@
 'use client';
 
 import { Star, ArrowRight } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
-import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import TrackedLink from '@/components/TrackedLink';
 
 interface CTAButtonProps {
   // Title and subtitle
@@ -42,39 +41,6 @@ export default function CTAButton({
   badges = ['Free Shipping', '90-Day Guarantee', 'Made in USA'],
   widgetId
 }: CTAButtonProps) {
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-
-  const finalUrl = ctaType === 'anchor' ? buttonUrl : appendTracking(buttonUrl);
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Handle anchor type
-    if (ctaType === 'anchor' && buttonUrl) {
-      e.preventDefault();
-      const element = document.getElementById(buttonUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
-
-    // Only track and fire pixel for external URLs (not anchors or internal links)
-    if (isExternalUrl(buttonUrl)) {
-      // Fire InitiateCheckout event for CTA clicks (Meta Pixel)
-      trackInitiateCheckout({
-        content_name: buttonText || 'CTA Button',
-        content_category: 'cta_button'
-      });
-
-      // Track external click for conversion analytics
-      trackExternalClick({
-        widget_type: 'cta-button',
-        widget_id: widgetId || `cta-button-${buttonText?.substring(0, 20)}`,
-        widget_name: buttonText || 'CTA Button',
-        destination_url: buttonUrl
-      });
-    }
-  };
 
   // Default avatars if none provided
   const defaultAvatars = [
@@ -133,11 +99,12 @@ export default function CTAButton({
 
         {/* CTA Button */}
         <div className="text-center">
-          <a
-            href={finalUrl}
-            target={finalTarget}
-            rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-            onClick={handleClick}
+          <TrackedLink
+            href={buttonUrl}
+            target={target}
+            widgetType="cta-button"
+            widgetId={widgetId}
+            widgetName={buttonText}
             className={`inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl ${
               style === 'secondary'
                 ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
@@ -146,7 +113,7 @@ export default function CTAButton({
           >
             {buttonText}
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </TrackedLink>
         </div>
 
         {/* Badges Section */}

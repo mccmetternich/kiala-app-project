@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ArrowRight, ShieldCheck, Truck, Star } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
-import { trackInitiateCheckout } from '@/lib/meta-pixel';
+import TrackedLink from '@/components/TrackedLink';
 
 interface CountdownTimerProps {
   endDate?: string;
@@ -40,37 +39,6 @@ export default function CountdownTimer({
   widgetId
 }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-
-  const finalUrl = ctaType === 'anchor' ? ctaUrl : appendTracking(ctaUrl);
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Handle anchor type
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
-
-    // Track for external URLs
-    if (isExternalUrl(ctaUrl)) {
-      trackInitiateCheckout({
-        content_name: productName || 'Countdown Timer',
-        content_category: 'countdown_timer'
-      });
-
-      trackExternalClick({
-        widget_type: 'countdown-timer',
-        widget_id: widgetId || `countdown-timer-${productName?.substring(0, 20)}`,
-        widget_name: productName || 'Countdown Timer',
-        destination_url: ctaUrl
-      });
-    }
-  };
 
   useEffect(() => {
     if (!endDate) {
@@ -174,16 +142,18 @@ export default function CountdownTimer({
             </div>
 
             {/* CTA Button */}
-            <a
-              href={finalUrl}
-              target={finalTarget}
-              rel={finalTarget === '_blank' ? 'noopener noreferrer' : undefined}
-              onClick={handleCtaClick}
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="countdown-timer"
+              widgetId={widgetId}
+              widgetName={productName}
+              value={parseFloat(salePrice.replace(/[^0-9.]/g, ''))}
               className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl text-base mb-4"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </TrackedLink>
 
             {/* Trust Badges */}
             <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">

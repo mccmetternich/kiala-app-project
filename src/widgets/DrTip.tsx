@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Lightbulb, Quote, ArrowRight, Sparkles, BadgeCheck } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface DrTipProps {
   tip: string;
@@ -30,20 +30,7 @@ export default function DrTip({
   ctaType = 'external',
   target = '_self',
 }: DrTipProps) {
-  const { appendTracking } = useTracking();
-  const finalCtaUrl = ctaType === 'anchor' ? ctaUrl : (ctaUrl ? appendTracking(ctaUrl) : '#');
-  const finalTarget = ctaType === 'anchor' ? '_self' : target;
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (ctaType === 'anchor' && ctaUrl) {
-      e.preventDefault();
-      const element = document.getElementById(ctaUrl.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
 
   if (style === 'minimal') {
     return (
@@ -120,15 +107,16 @@ export default function DrTip({
 
           {/* CTA */}
           {showCta && ctaText && ctaUrl && (
-            <a
-              href={finalCtaUrl || '#'}
-              target={finalTarget}
-              onClick={handleCtaClick}
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="dr-tip"
+              widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
               className="inline-flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </TrackedLink>
           )}
         </div>
       </div>
@@ -196,17 +184,18 @@ export default function DrTip({
             {/* CTA */}
             {showCta && ctaText && ctaUrl && (
               <div className="mt-6 pt-6 border-t border-gray-100">
-                <a
-                  href={finalCtaUrl || '#'}
-                  target={finalTarget}
-                  onClick={handleCtaClick}
+                <TrackedLink
+                  href={ctaUrl}
+                  target={target}
+                  widgetType="dr-tip"
+                  widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
                   className="block w-full text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="flex items-center justify-center gap-2">
                     {ctaText}
                     <ArrowRight className="w-5 h-5" />
                   </span>
-                </a>
+                </TrackedLink>
               </div>
             )}
           </div>
@@ -260,15 +249,16 @@ export default function DrTip({
 
           {/* CTA */}
           {showCta && ctaText && ctaUrl && (
-            <a
-              href={finalCtaUrl || '#'}
-              target={finalTarget}
-              onClick={handleCtaClick}
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="dr-tip"
+              widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
               className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </TrackedLink>
           )}
         </div>
       </div>

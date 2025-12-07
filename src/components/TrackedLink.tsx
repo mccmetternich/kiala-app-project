@@ -84,6 +84,19 @@ export default function TrackedLink({
   const trackedHref = appendTracking(href);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Handle anchor links with smooth scrolling
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const elementId = href.replace('#', '');
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      // Call original onClick if provided (for anchor links)
+      onClick?.(e);
+      return;
+    }
+
     // Only track external URLs (not anchors, not internal paths, not mailto/tel)
     // This is AUTOMATIC - no need for the widget to check
     if (!skipTracking && isExternalUrl(href)) {

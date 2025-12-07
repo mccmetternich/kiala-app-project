@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { XCircle, CheckCircle, Sparkles, ArrowRight, Brain, Thermometer, Link, Zap, Heart, Scale } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Myth {
   myth: string;
@@ -39,8 +39,6 @@ export default function MythBuster({
   ctaUrl,
   showCta = false,
 }: MythBusterProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Safety check for myths array
@@ -86,13 +84,15 @@ export default function MythBuster({
 
         {showCta && ctaText && ctaUrl && (
           <div className="mt-6 text-center">
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
+              widgetType="myth-buster"
+              widgetName={headline || 'Myth vs. Reality'}
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </TrackedLink>
           </div>
         )}
       </div>
@@ -155,13 +155,15 @@ export default function MythBuster({
 
         {showCta && ctaText && ctaUrl && (
           <div className="bg-gray-50 p-6 text-center border-t border-gray-100">
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
+              widgetType="myth-buster"
+              widgetName={headline || 'Myth vs. Reality'}
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </TrackedLink>
           </div>
         )}
       </div>
@@ -256,8 +258,10 @@ export default function MythBuster({
 
         {showCta && ctaText && ctaUrl && (
           <div className="px-6 pb-6">
-            <a
-              href={trackedCtaUrl}
+            <TrackedLink
+              href={ctaUrl}
+              widgetType="myth-buster"
+              widgetName={headline || 'Myth vs. Reality'}
               className="block w-full text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span className="flex items-center justify-center gap-2">
@@ -265,7 +269,7 @@ export default function MythBuster({
                 {ctaText}
                 <ArrowRight className="w-5 h-5" />
               </span>
-            </a>
+            </TrackedLink>
           </div>
         )}
       </div>

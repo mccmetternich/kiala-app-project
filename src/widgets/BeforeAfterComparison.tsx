@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Star, CheckCircle, ArrowRight } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface BeforeAfterComparisonProps {
   beforeImage?: string;
@@ -33,21 +33,8 @@ export default function BeforeAfterComparison({
   ctaUrl = '#',
   target = '_self'
 }: BeforeAfterComparisonProps) {
-  const { appendTracking, trackExternalClick, isExternalUrl } = useTracking();
-  const trackedCtaUrl = appendTracking(ctaUrl);
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-
-  const handleCtaClick = () => {
-    if (isExternalUrl(ctaUrl)) {
-      trackExternalClick({
-        widget_type: 'before-after-comparison',
-        widget_id: `before-after-${name?.replace(/\s+/g, '-').toLowerCase()}`,
-        widget_name: `Before/After: ${name} - ${result}`,
-        destination_url: ctaUrl
-      });
-    }
-  };
 
   const handleSliderMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isDragging) return;
@@ -170,16 +157,16 @@ export default function BeforeAfterComparison({
 
             {/* CTA */}
             <div className="text-center">
-              <a
-                href={trackedCtaUrl}
+              <TrackedLink
+                href={ctaUrl}
                 target={target}
-                rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-                onClick={handleCtaClick}
+                widgetType="before-after-comparison"
+                widgetName={`Before/After: ${name} - ${result}`}
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
               >
                 {ctaText}
                 <ArrowRight className="w-5 h-5" />
-              </a>
+              </TrackedLink>
             </div>
           </div>
         </div>

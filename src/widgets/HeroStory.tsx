@@ -1,7 +1,7 @@
 'use client';
 
 import { Heart, Eye, Clock, MessageCircle, TrendingUp } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface HeroStoryProps {
   title?: string;
@@ -49,8 +49,6 @@ export default function HeroStory({
   isTrending = true,
   config
 }: HeroStoryProps) {
-  const { appendTracking } = useTracking();
-
   // Use config props if provided (from homepage)
   const displayTitle = config?.headline || title || 'Transform Your Health Today';
   const displaySubtitle = config?.subheading || subtitle || 'Join thousands who have already changed their lives';
@@ -62,10 +60,8 @@ export default function HeroStory({
   const displayAuthor = config?.author || author;
   const displayAuthorImage = config?.authorImage || authorImage;
 
-  const trackedCtaLink = appendTracking(displayCtaLink);
-
   return (
-    <a href={trackedCtaLink} className="block relative bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+    <TrackedLink href={displayCtaLink} widgetType="hero-story" widgetName={displayTitle} className="block relative bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
       <div className="grid md:grid-cols-2 gap-0">
         {/* Image Side */}
         {displayImage && (
@@ -148,6 +144,6 @@ export default function HeroStory({
           </span>
         </div>
       </div>
-    </a>
+    </TrackedLink>
   );
 }

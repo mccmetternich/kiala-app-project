@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AlertTriangle, AlertCircle, XCircle, Info, ChevronDown, ArrowRight, Sparkles } from 'lucide-react';
-import { useTracking } from '@/contexts/TrackingContext';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Warning {
   text: string;
@@ -33,8 +33,6 @@ export default function WarningBox({
   ctaUrl,
   showCta = false,
 }: WarningBoxProps) {
-  const { appendTracking } = useTracking();
-  const trackedCtaUrl = ctaUrl ? appendTracking(ctaUrl) : '#';
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -221,15 +219,17 @@ export default function WarningBox({
             {/* CTA */}
             {showCta && ctaText && ctaUrl && (
               <div className="mt-6">
-                <a
-                  href={trackedCtaUrl}
+                <TrackedLink
+                  href={ctaUrl}
+                  widgetType="warning-box"
+                  widgetName={headline}
                   className="block w-full text-center bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="flex items-center justify-center gap-2">
                     {ctaText}
                     <ArrowRight className="w-5 h-5" />
                   </span>
-                </a>
+                </TrackedLink>
               </div>
             )}
           </div>
@@ -327,15 +327,17 @@ export default function WarningBox({
           {/* CTA */}
           {showCta && ctaText && ctaUrl && (
             <div className="mt-6">
-              <a
-                href={trackedCtaUrl}
+              <TrackedLink
+                href={ctaUrl}
+                widgetType="warning-box"
+                widgetName={headline}
                 className={`block w-full text-center bg-gradient-to-r ${headerStyles[style as keyof typeof headerStyles] || headerStyles.default} hover:opacity-90 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
               >
                 <span className="flex items-center justify-center gap-2">
                   {ctaText}
                   <ArrowRight className="w-5 h-5" />
                 </span>
-              </a>
+              </TrackedLink>
             </div>
           )}
         </div>
