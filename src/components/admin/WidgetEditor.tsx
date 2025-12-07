@@ -5318,6 +5318,40 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     'expectation-timeline': {
       headline: 'Your Transformation Timeline',
       subheading: 'What to expect when you start',
+      steps: [
+        {
+          period: 'Week 1',
+          title: 'Initial Reset',
+          subtitle: 'Probiotics • Digestive Enzymes',
+          description: 'Your body begins adjusting',
+          benefits: ['Reduced bloating', 'Better digestion', 'First energy boost'],
+          icon: 'zap'
+        },
+        {
+          period: 'Month 1',
+          title: 'Hormone Support',
+          subtitle: 'Adaptogens • Prebiotics',
+          description: 'Real changes you can feel',
+          benefits: ['Hormones begin to steady', 'Less inflammation', 'Improved mood'],
+          icon: 'leaf'
+        },
+        {
+          period: 'Month 2',
+          title: 'Deep Transformation',
+          subtitle: 'Antioxidants • Polyphenols',
+          description: 'The shift begins',
+          benefits: ['Better sleep', 'Fewer hot flashes', 'Mental clarity'],
+          icon: 'moon'
+        },
+        {
+          period: 'Month 3',
+          title: 'Full Results',
+          subtitle: 'Complete Protocol',
+          description: 'Your transformation complete',
+          benefits: ['Sustained weight loss', 'Consistent energy', 'Feel like yourself again'],
+          icon: 'crown'
+        }
+      ],
       showCta: true,
       ctaText: 'Start Your Journey →',
       ctaUrl: '#'
