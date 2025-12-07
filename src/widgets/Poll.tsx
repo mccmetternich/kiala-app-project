@@ -59,9 +59,13 @@ export default function Poll({
   };
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   // ALWAYS start as not voted, unless explicitly results-only style
-  // This ensures fresh visitors always see the poll first
+  // This ensures fresh visitors always see the voting options first
+  // v2: Force initial state to false for non-results-only polls
   const isResultsOnlyStyle = style === 'results-only';
-  const [hasVoted, setHasVoted] = useState(isResultsOnlyStyle);
+  const [hasVoted, setHasVoted] = useState(() => {
+    // Only show results immediately if style is explicitly 'results-only'
+    return isResultsOnlyStyle;
+  });
   const [isClient, setIsClient] = useState(false);
 
   // Check localStorage on client mount to see if user already voted
