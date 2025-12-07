@@ -321,10 +321,6 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
     });
   };
 
-  const selectAllWidgets = () => {
-    setSelectedWidgets(new Set(widgets.map(w => w.id)));
-  };
-
   const clearSelection = () => {
     setSelectedWidgets(new Set());
   };
@@ -489,12 +485,21 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 
   return (
     <div className="p-6">
-      {/* Floating Bulk Actions Toolbar - Vertical right-side position */}
+      {/* Floating Bulk Actions Toolbar - Fixed left position */}
       {selectedWidgets.size > 0 && (
-        <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 animate-in slide-in-from-right-4 duration-200">
-          <div className="bg-gray-900 text-white rounded-2xl shadow-2xl border border-gray-700 px-3 py-4 flex flex-col items-center gap-3">
+        <div className="fixed left-4 top-1/2 -translate-y-1/2 z-40 animate-in slide-in-from-left-4 duration-200">
+          <div className="bg-gray-900 text-white rounded-2xl shadow-2xl border border-gray-700 px-3 py-3 flex flex-col items-center gap-2 relative">
+            {/* Close button - top right */}
+            <button
+              onClick={clearSelection}
+              className="absolute -top-2 -right-2 w-6 h-6 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors shadow-lg"
+              title="Clear selection"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+
             {/* Selection count */}
-            <div className="flex flex-col items-center gap-1 pb-3 border-b border-gray-700">
+            <div className="flex flex-col items-center gap-1 pb-2 border-b border-gray-700 w-full">
               <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center font-bold text-lg">
                 {selectedWidgets.size}
               </div>
@@ -540,28 +545,6 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
               >
                 <Trash2 className="w-5 h-5" />
                 <span>Delete</span>
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="w-full h-px bg-gray-700" />
-
-            {/* Select all / Clear */}
-            <div className="flex flex-col items-center gap-1">
-              {selectedWidgets.size < widgets.length && (
-                <button
-                  onClick={selectAllWidgets}
-                  className="px-3 py-2 text-xs rounded-lg hover:bg-gray-800 text-gray-400 transition-colors"
-                >
-                  Select all
-                </button>
-              )}
-              <button
-                onClick={clearSelection}
-                className="p-2 rounded-lg hover:bg-gray-800 text-gray-400 transition-colors"
-                title="Clear selection"
-              >
-                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
