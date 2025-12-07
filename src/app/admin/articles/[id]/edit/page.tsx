@@ -715,13 +715,20 @@ export default function EditArticle() {
 
               {selectedSite && (
                 <a
-                  href={`https://kiala-app-project.vercel.app/preview/${selectedSite.subdomain}/articles/${formData.slug}?token=${articleId}`}
+                  href={formData.published
+                    ? `https://kiala-app-project.vercel.app/site/${selectedSite.subdomain}/articles/${formData.slug}`
+                    : `https://kiala-app-project.vercel.app/preview/${selectedSite.subdomain}/articles/${formData.slug}?token=${articleId}`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-all text-sm"
+                  className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm ${
+                    formData.published
+                      ? 'bg-green-600 hover:bg-green-500 text-white'
+                      : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                  }`}
                 >
                   <Eye className="w-4 h-4" />
-                  Preview
+                  {formData.published ? 'View Live' : 'Preview'}
                 </a>
               )}
               {hasUnsavedChanges ? (

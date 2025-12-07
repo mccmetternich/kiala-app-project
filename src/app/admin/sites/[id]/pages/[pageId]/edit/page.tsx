@@ -365,13 +365,17 @@ export default function EditPage() {
             </button>
 
             <a
-              href={`/site/${site?.subdomain || siteId}${currentPage.slug}`}
+              href={`https://kiala-app-project.vercel.app/site/${site?.subdomain || siteId}${currentPage.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                currentPage.enabled
+                  ? 'bg-green-600 hover:bg-green-500 text-white'
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+              }`}
             >
               <Eye className="w-4 h-4" />
-              Preview
+              {currentPage.enabled ? 'View Live' : 'Preview'}
             </a>
             <button
               onClick={handleSave}
