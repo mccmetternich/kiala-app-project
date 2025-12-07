@@ -640,6 +640,11 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             image={widget.config.image}
             title={widget.config.headline}
             body={widget.config.body}
+            authorName={widget.config.authorName}
+            authorAge={widget.config.authorAge}
+            authorLocation={widget.config.authorLocation}
+            authorAvatar={widget.config.authorAvatar}
+            showVerifiedBadge={widget.config.showVerifiedBadge}
           />
         </div>
       );

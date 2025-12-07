@@ -4075,7 +4075,30 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
         <div className="space-y-4">
           {renderImageField('Testimonial Photo', 'image')}
           {renderTextField('Title', 'headline', 'I Lost 22 lbs and My Energy is Through the Roof!')}
-          {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text...', 6)}
+          {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text (without signature)...', 6)}
+
+          {/* Author Attribution */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Author Attribution</label>
+            <div className="space-y-3 bg-gray-50 rounded-lg p-3">
+              <div className="grid grid-cols-3 gap-3">
+                {renderTextField('Name', 'authorName', 'Jennifer M.')}
+                {renderTextField('Age', 'authorAge', '52')}
+                {renderTextField('Location', 'authorLocation', 'Austin, TX')}
+              </div>
+              {renderImageField('Author Avatar (optional)', 'authorAvatar')}
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="showVerifiedBadge"
+                  checked={widget.config.showVerifiedBadge !== false}
+                  onChange={(e) => onUpdate({ showVerifiedBadge: e.target.checked })}
+                  className="rounded border-gray-300"
+                />
+                <label htmlFor="showVerifiedBadge" className="text-sm text-gray-700">Show "Verified Member" badge</label>
+              </div>
+            </div>
+          </div>
 
           {renderOptionalCtaSection('Try It Yourself →', '#')}
         </div>
@@ -5549,9 +5572,11 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
 
 Within the first week, my bloating was GONE. By week 4, I had more energy than I'd felt in years. And now, 8 weeks later? I've lost 22 pounds—most of it from my midsection—and I feel like I'm in my 30s again.
 
-If you're on the fence, just try it. The 90-day guarantee means you have nothing to lose (except the weight!). This has honestly changed my life."
-
-— Jennifer M., 52, Austin TX`
+If you're on the fence, just try it. The 90-day guarantee means you have nothing to lose (except the weight!). This has honestly changed my life."`,
+      authorName: 'Jennifer M.',
+      authorAge: '52',
+      authorLocation: 'Austin, TX',
+      showVerifiedBadge: true
     },
     'testimonial-hero': {
       headline: 'I Lost 22 lbs and My Energy is Through the Roof!',
