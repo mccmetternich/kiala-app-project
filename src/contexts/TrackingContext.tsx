@@ -45,6 +45,7 @@ export interface TrackingProviderProps {
   siteId?: string;
   siteName?: string;
   articleId?: string;
+  articleSlug?: string;
 }
 
 export type { WidgetClickData };
@@ -102,7 +103,7 @@ function checkIsExternalUrl(url: string): boolean {
   }
 }
 
-export function TrackingProvider({ children, config, siteId, siteName, articleId }: TrackingProviderProps) {
+export function TrackingProvider({ children, config, siteId, siteName, articleId, articleSlug }: TrackingProviderProps) {
   const [currentParams, setCurrentParams] = useState<URLSearchParams>(new URLSearchParams());
   const [sessionId, setSessionId] = useState<string>('');
 
@@ -118,6 +119,14 @@ export function TrackingProvider({ children, config, siteId, siteName, articleId
     trackingConfig = {
       ...trackingConfig,
       utm_source: siteSlug
+    };
+  }
+
+  // If no utm_campaign is set and we have an articleSlug, use it as the default campaign
+  if (articleSlug && (!trackingConfig || !trackingConfig.utm_campaign)) {
+    trackingConfig = {
+      ...trackingConfig,
+      utm_campaign: articleSlug
     };
   }
 

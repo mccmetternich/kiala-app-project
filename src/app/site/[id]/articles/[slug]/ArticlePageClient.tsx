@@ -229,7 +229,7 @@ export default function ArticlePageClient() {
   };
 
   return (
-    <TrackingProvider config={article.tracking_config} siteName={transformedSite.name}>
+    <TrackingProvider config={article.tracking_config} siteName={transformedSite.name} articleSlug={article.slug}>
       <SiteLayout
         site={transformedSite}
         showSidebar={true}
