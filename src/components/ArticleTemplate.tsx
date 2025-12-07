@@ -789,19 +789,40 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
         </div>
       );
 
-    case 'final-cta':
+    case 'final-cta': {
+      // Support both old field names (buttonText/buttonUrl) and new standard fields (ctaText/ctaUrl)
+      const finalCtaText = widget.config.ctaText || widget.config.buttonText || 'Get Started';
+      const finalCtaUrl = widget.config.ctaUrl || widget.config.buttonUrl || '#newsletter';
+      const finalCtaTarget = widget.config.target || '_self';
+      const finalCtaType = widget.config.ctaType || 'external';
+      const finalAnchorWidgetId = widget.config.anchorWidgetId;
+
       return (
         <div className="my-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">{widget.config.headline}</h2>
           <p className="text-lg text-white/90 mb-6 max-w-2xl mx-auto">{widget.config.content}</p>
-          <a
-            href={widget.config.buttonUrl || '#newsletter'}
-            className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
-          >
-            {widget.config.buttonText || 'Get Started'}
-          </a>
+          {finalCtaType === 'anchor' && finalAnchorWidgetId ? (
+            <a
+              href={`#widget-${finalAnchorWidgetId}`}
+              className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
+            >
+              {finalCtaText}
+            </a>
+          ) : (
+            <TrackedLink
+              href={finalCtaUrl}
+              target={finalCtaTarget}
+              widgetType="final-cta"
+              widgetId={widget.id}
+              widgetName={widget.config.headline}
+              className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
+            >
+              {finalCtaText}
+            </TrackedLink>
+          )}
         </div>
       );
+    }
 
     case 'doctor-assessment':
       return (

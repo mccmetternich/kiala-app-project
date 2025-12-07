@@ -2234,7 +2234,13 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 ])}
 
                 {widget.config.ctaType !== 'anchor' && (
-                  renderTextField('Button URL', 'ctaUrl', 'https://kialanutrition.com')
+                  <>
+                    {renderTextField('Button URL', 'ctaUrl', 'https://kialanutrition.com')}
+                    {renderSelectField('Open in', 'target', [
+                      { value: '_self', label: 'Same tab' },
+                      { value: '_blank', label: 'New tab' }
+                    ])}
+                  </>
                 )}
 
                 {widget.config.ctaType === 'anchor' && (
@@ -4073,8 +4079,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextField('Headline', 'headline', 'Ready to Transform?')}
           {renderTextAreaField('Description', 'description', 'Final call to action message...', 3)}
           {renderImageField('CTA Image', 'image')}
-          {renderTextField('Button Text', 'buttonText', 'Get Started Now →')}
-          {renderTextField('Button URL', 'buttonUrl', '/checkout')}
+          {renderCtaSection('Button Text', 'Get Started Now →', '/checkout')}
         </div>
       )}
 
@@ -5557,7 +5562,10 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     },
     'final-cta': {
       headline: 'Ready to Transform?',
-      buttonText: 'Get Started →'
+      ctaText: 'Get Started →',
+      ctaUrl: '/checkout',
+      ctaType: 'external',
+      target: '_blank'
     },
     'us-vs-them-comparison': {
       headline: 'See The Difference',
