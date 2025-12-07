@@ -175,8 +175,8 @@ export default function ProductReveal({
               </div>
             </div>
 
-            {/* Social Proof Stats - moved under rating for balanced columns */}
-            <div className="grid grid-cols-3 gap-2 mt-4">
+            {/* Social Proof Stats - hidden on mobile, shown on desktop */}
+            <div className="hidden md:grid grid-cols-3 gap-2 mt-4">
               {socialProofStats.map((stat, idx) => (
                 <div key={idx} className="text-center bg-gradient-to-b from-purple-50 to-white rounded-xl p-3 border border-purple-100/50">
                   <div className="text-lg md:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.value}</div>
@@ -224,6 +224,16 @@ export default function ProductReveal({
                 <span className="font-medium">{communityExclusiveText}</span>
               </div>
             )}
+
+            {/* Social Proof Stats - mobile only, shown at bottom */}
+            <div className="grid md:hidden grid-cols-3 gap-2 mt-6">
+              {socialProofStats.map((stat, idx) => (
+                <div key={idx} className="text-center bg-gradient-to-b from-purple-50 to-white rounded-xl p-3 border border-purple-100/50">
+                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.value}</div>
+                  <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
