@@ -52,13 +52,14 @@ export default function CTAButton({
   const finalCtaText = ctaText || buttonText;
   const finalCtaUrl = ctaUrl || buttonUrl;
 
-  // Default avatars if none provided
+  // Default avatars - women from Unsplash
   const defaultAvatars = [
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop'
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face'
   ];
-  const avatarsToShow = socialProofAvatars && socialProofAvatars.length > 0 ? socialProofAvatars : defaultAvatars;
+  const avatarsToShow = socialProofAvatars && socialProofAvatars.filter(a => a).length > 0 ? socialProofAvatars : defaultAvatars;
 
   return (
     <div className="my-8">
