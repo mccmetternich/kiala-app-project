@@ -66,7 +66,23 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
             {body}
           </div>
 
-          {/* Author Attribution Section */}
+          {/* Optional CTA */}
+          {showCta && ctaText && ctaUrl && (
+            <div className="mb-6 text-center">
+              <TrackedLink
+                href={ctaUrl}
+                target={target}
+                widgetType="testimonial-hero-no-cta"
+                widgetId={widgetId}
+                widgetName={title}
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                {ctaText}
+              </TrackedLink>
+            </div>
+          )}
+
+          {/* Author Attribution Section - Below CTA */}
           {(authorName || authorAge || authorLocation) && (
             <div className="mt-auto pt-4 border-t border-gray-200">
               <div className="flex items-center gap-4">
@@ -102,22 +118,6 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                   )}
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* Optional CTA */}
-          {showCta && ctaText && ctaUrl && (
-            <div className="mt-6 text-center">
-              <TrackedLink
-                href={ctaUrl}
-                target={target}
-                widgetType="testimonial-hero-no-cta"
-                widgetId={widgetId}
-                widgetName={title}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                {ctaText}
-              </TrackedLink>
             </div>
           )}
         </div>
