@@ -371,6 +371,40 @@ export default function EditArticle() {
     }
   };
 
+  // Toggle published state and save immediately
+  const handleTogglePublished = async () => {
+    const newPublishedState = !formData.published;
+
+    // Update local state immediately for responsive UI
+    setFormData(prev => ({ ...prev, published: newPublishedState }));
+
+    try {
+      const response = await fetch(`/api/articles/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: newPublishedState })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.article) {
+          setArticle(data.article);
+        }
+        setSaveMessage(newPublishedState ? 'Published!' : 'Unpublished!');
+        setTimeout(() => setSaveMessage(null), 2000);
+      } else {
+        // Revert on error
+        setFormData(prev => ({ ...prev, published: !newPublishedState }));
+        alert('Error updating publish status');
+      }
+    } catch (error) {
+      console.error('Error toggling published:', error);
+      // Revert on error
+      setFormData(prev => ({ ...prev, published: !newPublishedState }));
+      alert('Error updating publish status');
+    }
+  };
+
   const handleDuplicate = async () => {
     if (!formData.site_id || !formData.title) return;
 
@@ -976,7 +1010,7 @@ export default function EditArticle() {
                   <div className="bg-gray-700/50 rounded-xl p-4 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <button
-                        onClick={() => handleInputChange('published', !formData.published)}
+                        onClick={handleTogglePublished}
                         className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                           formData.published ? 'bg-green-500' : 'bg-gray-600'
                         }`}
