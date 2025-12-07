@@ -117,6 +117,8 @@ export default function EditArticle() {
   const [duplicateSuccess, setDuplicateSuccess] = useState(false);
   const [showDuplicateElsewhereModal, setShowDuplicateElsewhereModal] = useState(false);
   const [widgetToDuplicateElsewhere, setWidgetToDuplicateElsewhere] = useState<Widget | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSavedState, setLastSavedState] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -157,6 +159,20 @@ export default function EditArticle() {
       fetchWidgetLibrarySettings(formData.site_id);
     }
   }, [formData.site_id]);
+
+  // Detect unsaved changes (exclude published since it saves separately)
+  useEffect(() => {
+    if (!lastSavedState) return;
+
+    const { published, site_id, ...comparableFormData } = formData;
+    const currentState = JSON.stringify({
+      formData: comparableFormData,
+      widgets,
+      trackingConfig
+    });
+
+    setHasUnsavedChanges(currentState !== lastSavedState);
+  }, [formData, widgets, trackingConfig, lastSavedState]);
 
   const fetchSites = async () => {
     try {
@@ -236,6 +252,36 @@ export default function EditArticle() {
             console.error('Error parsing tracking config:', e);
           }
         }
+
+        // Store initial state for change detection (exclude published since it saves separately)
+        const initialState = JSON.stringify({
+          formData: {
+            title: data.article.title,
+            excerpt: data.article.excerpt || '',
+            content: data.article.content || '',
+            slug: data.article.slug,
+            category: data.article.category || '',
+            image: data.article.image || '',
+            featured: Boolean(data.article.featured),
+            trending: Boolean(data.article.trending),
+            hero: Boolean(data.article.hero),
+            boosted: Boolean(data.article.boosted),
+            read_time: data.article.read_time || 5,
+            published_at: data.article.published_at || '',
+            author_name: data.article.author_name || '',
+            author_image: data.article.author_image || '',
+            views: data.article.views || 0,
+            display_views: data.article.display_views || 0,
+            display_likes: data.article.display_likes || 0,
+            tags: data.article.tags || '',
+            seo_title: data.article.seo_title || '',
+            seo_description: data.article.seo_description || ''
+          },
+          widgets: storedWidgets || [],
+          trackingConfig: data.article.tracking_config ? JSON.parse(data.article.tracking_config) : {}
+        });
+        setLastSavedState(initialState);
+        setHasUnsavedChanges(false);
       }
     } catch (error) {
       console.error('Error fetching article:', error);
@@ -358,6 +404,15 @@ export default function EditArticle() {
             published: Boolean(data.article.published)
           }));
         }
+        // Update saved state to mark as "no changes"
+        const { published, site_id, ...comparableFormData } = formData;
+        const newSavedState = JSON.stringify({
+          formData: comparableFormData,
+          widgets,
+          trackingConfig
+        });
+        setLastSavedState(newSavedState);
+        setHasUnsavedChanges(false);
         setSaveMessage('Saved!');
         setTimeout(() => setSaveMessage(null), 3000);
       } else {
@@ -669,24 +724,25 @@ export default function EditArticle() {
                   Preview
                 </a>
               )}
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium ${
-                  saveMessage === 'Saved!'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20'
-                }`}
-              >
-                {loading ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : saveMessage === 'Saved!' ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                <span className="hidden sm:inline">{saveMessage === 'Saved!' ? 'Saved!' : 'Save Changes'}</span>
-              </button>
+              {hasUnsavedChanges ? (
+                <button
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20"
+                >
+                  {loading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  <span className="hidden sm:inline">Save Changes</span>
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-400">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span className="hidden sm:inline">Saved</span>
+                </div>
+              )}
 
               {/* Delete Button */}
               <button
