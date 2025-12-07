@@ -54,9 +54,9 @@ export async function generateMetadata(
 
   const { article, brand } = data;
 
-  // For OG/social sharing: Always use Dr. Amy's about image (not the article hero)
-  // This ensures a consistent brand presence when articles are shared
-  const ogImagePath = brand?.sidebarImage ||
+  // For OG/social sharing: Use the article's hero image first, then fall back to brand images
+  const ogImagePath = article.image ||
+                      brand?.sidebarImage ||
                       brand?.aboutImage ||
                       brand?.profileImage;
 
@@ -64,9 +64,9 @@ export async function generateMetadata(
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://dramyheart.com');
 
-  const ogImage = ogImagePath.startsWith('http')
+  const ogImage = ogImagePath?.startsWith('http')
     ? ogImagePath
-    : `${baseUrl}${ogImagePath}`;
+    : `${baseUrl}${ogImagePath || ''}`;
 
   const authorName = brand?.name || 'Dr. Amy Heart';
   const title = article.title;
