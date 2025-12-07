@@ -87,6 +87,34 @@ export default function ProductReveal({
         {/* Decorative top border */}
         <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500" />
 
+        {/* Doctor Endorsement Strip - At Top */}
+        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 p-5 md:p-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <div className="relative">
+                <div className="absolute inset-0 bg-white/20 rounded-full blur-sm scale-110" />
+                <img
+                  src={doctorImage}
+                  alt={doctorName}
+                  className="relative w-14 h-14 rounded-full border-3 border-white/30 shadow-xl object-cover"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <BadgeCheck className="w-5 h-5 text-amber-300" />
+                  <span className="font-bold text-white">{doctorName}</span>
+                </div>
+                <p className="text-purple-200 text-sm">Board-Certified • Women's Health</p>
+              </div>
+            </div>
+            <div className="flex-1">
+              <p className="text-white/90 italic text-center md:text-left leading-relaxed">
+                "{doctorQuote}"
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="md:grid md:grid-cols-[55%_45%] gap-0">
           {/* Product Image Side - Larger allocation */}
           <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-4 md:p-4">
@@ -199,33 +227,6 @@ export default function ProductReveal({
           </div>
         </div>
 
-        {/* Doctor Endorsement Strip - Updated gradient */}
-        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 p-6 md:p-8">
-          <div className="flex flex-col md:flex-row items-center gap-6 max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 flex-shrink-0">
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/20 rounded-full blur-sm scale-110" />
-                <img
-                  src={doctorImage}
-                  alt={doctorName}
-                  className="relative w-16 h-16 rounded-full border-3 border-white/30 shadow-xl object-cover"
-                />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <BadgeCheck className="w-5 h-5 text-amber-300" />
-                  <span className="font-bold text-white">{doctorName}</span>
-                </div>
-                <p className="text-purple-200 text-sm">Board-Certified • Women's Health</p>
-              </div>
-            </div>
-            <div className="flex-1">
-              <p className="text-white/90 italic text-center md:text-left leading-relaxed">
-                "{doctorQuote}"
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
