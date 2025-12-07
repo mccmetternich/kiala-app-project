@@ -716,7 +716,9 @@ export default function EditArticle() {
               {selectedSite && (
                 <a
                   href={formData.published
-                    ? `https://kiala-app-project.vercel.app/site/${selectedSite.subdomain}/articles/${formData.slug}`
+                    ? (selectedSite.domain
+                        ? `https://${selectedSite.domain}/articles/${formData.slug}`
+                        : `https://kiala-app-project.vercel.app/site/${selectedSite.subdomain}/articles/${formData.slug}`)
                     : `https://kiala-app-project.vercel.app/preview/${selectedSite.subdomain}/articles/${formData.slug}?token=${articleId}`
                   }
                   target="_blank"
