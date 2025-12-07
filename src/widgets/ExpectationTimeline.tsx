@@ -21,6 +21,14 @@ interface ExpectationTimelineProps {
   ctaUrl?: string;
   target?: '_self' | '_blank';
   showDisclaimer?: boolean;
+  // Bottom stats
+  showStats?: boolean;
+  stat1Label?: string;
+  weeksTotal?: string;
+  stat2Label?: string;
+  successStories?: string;
+  stat3Label?: string;
+  resultsPercent?: string;
 }
 
 const defaultSteps: TimelineStep[] = [
@@ -96,7 +104,14 @@ export default function ExpectationTimeline({
   ctaText = 'Start Your Transformation →',
   ctaUrl = '#',
   target = '_self',
-  showDisclaimer = true
+  showDisclaimer = true,
+  showStats = false,
+  stat1Label = 'Month Journey',
+  weeksTotal = '12',
+  stat2Label = 'Women Transformed',
+  successStories = '1M+',
+  stat3Label = 'Report Results',
+  resultsPercent = '94%'
 }: ExpectationTimelineProps) {
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden my-8 border border-gray-100">
@@ -210,21 +225,23 @@ export default function ExpectationTimeline({
           </div>
         )}
 
-        {/* Summary Stats */}
-        <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600">12</div>
-            <div className="text-sm text-gray-600">Month Journey</div>
+        {/* Summary Stats - Only shown if showStats is true */}
+        {showStats && (
+          <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary-600">{weeksTotal}</div>
+              <div className="text-sm text-gray-600">{stat1Label}</div>
+            </div>
+            <div className="text-center border-x border-primary-100">
+              <div className="text-3xl font-bold text-primary-600">{successStories}</div>
+              <div className="text-sm text-gray-600">{stat2Label}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary-600">{resultsPercent}</div>
+              <div className="text-sm text-gray-600">{stat3Label}</div>
+            </div>
           </div>
-          <div className="text-center border-x border-primary-100">
-            <div className="text-3xl font-bold text-primary-600">1M+</div>
-            <div className="text-sm text-gray-600">Women Transformed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600">94%</div>
-            <div className="text-sm text-gray-600">Report Results</div>
-          </div>
-        </div>
+        )}
 
         {/* CTA */}
         <div className="mt-6 text-center">

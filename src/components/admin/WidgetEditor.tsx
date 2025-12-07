@@ -2500,95 +2500,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextField('Headline', 'headline', 'Your Transformation Journey')}
           {renderTextField('Subheading', 'subheading', 'What to expect when you start')}
 
-          {/* CTA Section */}
-          <div className="border-t border-gray-200 pt-4 mt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
-            {renderTextField('Button Text', 'ctaText', 'Start Your Journey →')}
-
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
-              <select
-                value={widget.config.ctaType || 'external'}
-                onChange={(e) => onUpdate({ ctaType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="external">Link to URL</option>
-                <option value="anchor">Jump to Widget on Page</option>
-              </select>
-            </div>
-
-            {widget.config.ctaType !== 'anchor' && (
-              <>
-                {renderTextField('Button URL', 'ctaUrl', '/top-picks')}
-                {renderSelectField('Open in', 'target', [
-                  { value: '_self', label: 'Same tab' },
-                  { value: '_blank', label: 'New tab' }
-                ])}
-              </>
-            )}
-
-            {widget.config.ctaType === 'anchor' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
-                <select
-                  value={widget.config.anchorWidgetId || ''}
-                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="">Select a widget...</option>
-                  {allWidgets
-                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
-                    .sort((a: Widget, b: Widget) => a.position - b.position)
-                    .map((w: Widget) => (
-                      <option key={w.id} value={w.id}>
-                        {getWidgetDisplayName(w)} (Position {w.position + 1})
-                      </option>
-                    ))
-                  }
-                </select>
-                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
-              </div>
-            )}
-          </div>
-
-          {/* Summary Stats */}
-          <div className="border-t pt-4 mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Bottom Stats</label>
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Weeks Total</label>
-                <input
-                  type="text"
-                  value={widget.config.weeksTotal || '12'}
-                  onChange={(e) => onUpdate({ weeksTotal: e.target.value })}
-                  placeholder="12"
-                  className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Success Stories</label>
-                <input
-                  type="text"
-                  value={widget.config.successStories || '10k+'}
-                  onChange={(e) => onUpdate({ successStories: e.target.value })}
-                  placeholder="10k+"
-                  className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Results %</label>
-                <input
-                  type="text"
-                  value={widget.config.resultsPercent || '94%'}
-                  onChange={(e) => onUpdate({ resultsPercent: e.target.value })}
-                  placeholder="94%"
-                  className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Editable Steps */}
+          {/* Editable Steps - moved up */}
           <div className="border-t pt-4 mt-4">
             <div className="flex justify-between items-center mb-3">
               <label className="block text-sm font-medium text-gray-700">Timeline Steps (4 recommended)</label>
@@ -2716,6 +2628,150 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Bottom Stats - with toggle */}
+          <div className="border-t pt-4 mt-4">
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-medium text-gray-700">Bottom Stats</label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span className="text-sm text-gray-500">{widget.config.showStats ? 'Shown' : 'Hidden'}</span>
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={!!widget.config.showStats}
+                    onChange={(e) => onUpdate({ showStats: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-500"></div>
+                </div>
+              </label>
+            </div>
+
+            {widget.config.showStats && (
+              <div className="space-y-3 bg-gray-50 rounded-lg p-3">
+                {/* Stat 1 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat 1 Label</label>
+                    <input
+                      type="text"
+                      value={widget.config.stat1Label || 'Weeks Total'}
+                      onChange={(e) => onUpdate({ stat1Label: e.target.value })}
+                      placeholder="Weeks Total"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat 1 Value</label>
+                    <input
+                      type="text"
+                      value={widget.config.weeksTotal || '12'}
+                      onChange={(e) => onUpdate({ weeksTotal: e.target.value })}
+                      placeholder="12"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                    />
+                  </div>
+                </div>
+                {/* Stat 2 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat 2 Label</label>
+                    <input
+                      type="text"
+                      value={widget.config.stat2Label || 'Success Stories'}
+                      onChange={(e) => onUpdate({ stat2Label: e.target.value })}
+                      placeholder="Success Stories"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat 2 Value</label>
+                    <input
+                      type="text"
+                      value={widget.config.successStories || '10k+'}
+                      onChange={(e) => onUpdate({ successStories: e.target.value })}
+                      placeholder="10k+"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                    />
+                  </div>
+                </div>
+                {/* Stat 3 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat 3 Label</label>
+                    <input
+                      type="text"
+                      value={widget.config.stat3Label || 'Results'}
+                      onChange={(e) => onUpdate({ stat3Label: e.target.value })}
+                      placeholder="Results"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat 3 Value</label>
+                    <input
+                      type="text"
+                      value={widget.config.resultsPercent || '94%'}
+                      onChange={(e) => onUpdate({ resultsPercent: e.target.value })}
+                      placeholder="94%"
+                      className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* CTA Section - moved to bottom */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Call to Action</label>
+            {renderTextField('Button Text', 'ctaText', 'Start Your Journey →')}
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Button Action</label>
+              <select
+                value={widget.config.ctaType || 'external'}
+                onChange={(e) => onUpdate({ ctaType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="external">Link to URL</option>
+                <option value="anchor">Jump to Widget on Page</option>
+              </select>
+            </div>
+
+            {widget.config.ctaType !== 'anchor' && (
+              <>
+                {renderTextField('Button URL', 'ctaUrl', '/top-picks')}
+                {renderSelectField('Open in', 'target', [
+                  { value: '_self', label: 'Same tab' },
+                  { value: '_blank', label: 'New tab' }
+                ])}
+              </>
+            )}
+
+            {widget.config.ctaType === 'anchor' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jump to Widget</label>
+                <select
+                  value={widget.config.anchorWidgetId || ''}
+                  onChange={(e) => onUpdate({ anchorWidgetId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Select a widget...</option>
+                  {allWidgets
+                    .filter((w: Widget) => w.id !== widget.id && w.enabled)
+                    .sort((a: Widget, b: Widget) => a.position - b.position)
+                    .map((w: Widget) => (
+                      <option key={w.id} value={w.id}>
+                        {getWidgetDisplayName(w)} (Position {w.position + 1})
+                      </option>
+                    ))
+                  }
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Button will smoothly scroll to the selected widget</p>
+              </div>
+            )}
           </div>
         </div>
       )}

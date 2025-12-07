@@ -293,6 +293,13 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             ctaText={widget.config.ctaText || widget.config.buttonText}
             ctaUrl={getCtaUrl(widget.config)}
             target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
+            showStats={widget.config.showStats}
+            stat1Label={widget.config.stat1Label}
+            weeksTotal={widget.config.weeksTotal}
+            stat2Label={widget.config.stat2Label}
+            successStories={widget.config.successStories}
+            stat3Label={widget.config.stat3Label}
+            resultsPercent={widget.config.resultsPercent}
           />
         </div>
       );
