@@ -270,8 +270,8 @@ export default function Poll({
             {source && <span className="text-gray-400">{source}</span>}
           </div>
 
-          {/* CTA */}
-          {showCta && ctaText && ctaUrl && (
+          {/* CTA - Only shown after voting */}
+          {hasVoted && showCta && ctaText && ctaUrl && (
             <a
               href={finalCtaUrl || '#'}
               target={finalTarget}

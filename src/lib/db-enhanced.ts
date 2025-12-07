@@ -703,6 +703,14 @@ export class EnhancedQueries {
     },
 
     delete: async (id: string) => {
+      // Delete all related data first (foreign key constraints)
+      await execute('DELETE FROM articles WHERE site_id = ?', [id]);
+      await execute('DELETE FROM pages WHERE site_id = ?', [id]);
+      await execute('DELETE FROM subscribers WHERE site_id = ?', [id]);
+      await execute('DELETE FROM site_widget_settings WHERE site_id = ?', [id]);
+      await execute('DELETE FROM widget_categories WHERE site_id = ?', [id]);
+
+      // Delete the site itself
       const result = await execute('DELETE FROM sites WHERE id = ?', [id]);
 
       // Invalidate cache
@@ -711,6 +719,8 @@ export class EnhancedQueries {
       await cache.delPattern(`site:subdomain:*`);
       await cache.delPattern(`site:domain:*`);
       await cache.delPattern(`site:id:*`);
+      await cache.delPattern(`articles:site:${id}:*`);
+      await cache.delPattern(`pages:site:${id}:*`);
 
       return result;
     }

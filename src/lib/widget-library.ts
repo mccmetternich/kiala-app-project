@@ -75,7 +75,7 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   { type: 'checklist', name: 'Interactive Checklist', icon: CheckSquare, category: 'Content', description: 'Interactive or assessment checklist' },
   { type: 'two-approaches', name: 'Two Approaches', icon: Columns, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' },
   { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: Columns, category: 'Content', description: 'Side by side comparison of us vs the other guys with CTA' },
-  { type: 'comparison-table', name: 'Compare Table', icon: BarChart3, category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
+  { type: 'comparison-table', name: 'Simple Comparison Table', icon: BarChart3, category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
 
   // ============================================
   // SOCIAL PROOF WIDGETS
@@ -113,7 +113,7 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   // ============================================
   { type: 'dr-tip', name: "Dr's Tip", icon: Lightbulb, category: 'Doctor', description: 'Professional insight callout with CTA' },
   { type: 'doctor-assessment', name: 'Dr Assessment', icon: FileText, category: 'Doctor', description: 'Doctor quote and assessment' },
-  { type: 'doctor-closing-word', name: 'Dr Closing', icon: FileText, category: 'Doctor', description: 'Doctor closing word' },
+  { type: 'doctor-closing-word', name: 'Dr Closing Statement', icon: FileText, category: 'Doctor', description: 'Doctor closing statement' },
 
   // ============================================
   // PAGE LAYOUT WIDGETS (Page-specific)

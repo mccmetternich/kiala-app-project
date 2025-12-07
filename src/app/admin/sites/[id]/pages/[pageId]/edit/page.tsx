@@ -15,7 +15,11 @@ import {
   Trash2,
   ChevronDown,
   ChevronUp,
-  ExternalLink
+  ExternalLink,
+  Copy,
+  AlertTriangle,
+  Check,
+  X
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import WidgetEditor from '@/components/admin/WidgetEditor';
@@ -96,6 +100,10 @@ export default function EditPage() {
   const [showWidgetLibrary, setShowWidgetLibrary] = useState(false);
   const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Page Layout', 'Content', 'Social Proof', 'Commerce']));
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [duplicateLoading, setDuplicateLoading] = useState(false);
+  const [duplicateSuccess, setDuplicateSuccess] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -219,6 +227,66 @@ export default function EditPage() {
     });
   };
 
+  const handleDuplicate = async () => {
+    if (!siteId || !currentPage) return;
+
+    setDuplicateLoading(true);
+    setDuplicateSuccess(false);
+    try {
+      // Create a duplicate page with "DUPLICATE" in title and as draft
+      const duplicateData = {
+        siteId,
+        title: `DUPLICATE - ${currentPage.title}`,
+        slug: `${currentPage.slug}-duplicate-${Date.now()}`.replace(/^\//, ''),
+        template: currentPage.type || 'default',
+        widget_config: JSON.stringify(widgets),
+        published: false, // Always start as draft
+      };
+
+      const response = await fetch('/api/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(duplicateData)
+      });
+
+      if (response.ok) {
+        setDuplicateSuccess(true);
+        setTimeout(() => setDuplicateSuccess(false), 3000);
+      } else {
+        alert('Error duplicating page');
+      }
+    } catch (error) {
+      console.error('Error duplicating page:', error);
+      alert('Error duplicating page');
+    } finally {
+      setDuplicateLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!currentPage?.id) return;
+
+    setDeleteLoading(true);
+    try {
+      const response = await fetch(`/api/pages/${currentPage.id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Navigate back to site dashboard
+        router.push(`/admin/sites/${siteId}/dashboard`);
+      } else {
+        alert('Error deleting page');
+      }
+    } catch (error) {
+      console.error('Error deleting page:', error);
+      alert('Error deleting page');
+    } finally {
+      setDeleteLoading(false);
+      setShowDeleteModal(false);
+    }
+  };
+
   if (loading) {
     return (
       <EnhancedAdminLayout>
@@ -275,6 +343,27 @@ export default function EditPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            {/* Duplicate Button */}
+            <button
+              onClick={handleDuplicate}
+              disabled={duplicateLoading}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm ${
+                duplicateSuccess
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+              }`}
+              title="Duplicate Page"
+            >
+              {duplicateLoading ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : duplicateSuccess ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+              {duplicateSuccess ? 'Duplicated!' : 'Duplicate'}
+            </button>
+
             <a
               href={`/site/${site?.subdomain || siteId}${currentPage.slug}`}
               target="_blank"
@@ -291,6 +380,15 @@ export default function EditPage() {
             >
               <Save className="w-4 h-4" />
               {saving ? 'Saving...' : 'Save Page'}
+            </button>
+
+            {/* Delete Button */}
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+              title="Delete Page"
+            >
+              <Trash2 className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -530,6 +628,64 @@ export default function EditPage() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-red-500/10 border-b border-red-500/20 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Delete Page</h3>
+                  <p className="text-sm text-red-300">This action cannot be undone</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-6 py-5">
+              <p className="text-gray-300">
+                Are you sure you want to delete <span className="font-semibold text-white">"{currentPage.title}"</span>?
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                All widgets and configurations for this page will be permanently removed.
+              </p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-800/50 border-t border-gray-700 px-6 py-4 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleteLoading}
+                className="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleteLoading}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {deleteLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Delete Page
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </EnhancedAdminLayout>
   );
 }

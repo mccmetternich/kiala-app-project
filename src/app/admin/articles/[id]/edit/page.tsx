@@ -22,11 +22,16 @@ import {
   BarChart3,
   Tag,
   Link2,
-  Globe
+  Globe,
+  Copy,
+  Trash2,
+  AlertTriangle,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import MediaLibrary from '@/components/admin/MediaLibrary';
 import WidgetEditor from '@/components/admin/WidgetEditor';
+import DuplicateElsewhereModal from '@/components/admin/DuplicateElsewhereModal';
 import { Widget, WidgetType } from '@/types';
 import { generateDefaultWidgetConfig, parseWidgetConfig, serializeWidgetConfig } from '@/lib/article-widget-defaults';
 import { getArticleWidgets, getWidgetsByCategory, CATEGORY_COLORS, getOrderedCategories } from '@/lib/widget-library';
@@ -106,6 +111,12 @@ export default function EditArticle() {
   const [libraryEditMode, setLibraryEditMode] = useState(false);
   const [customCategories, setCustomCategories] = useState<Array<{id: string; name: string; slug: string; colorBg: string; colorText: string; sortOrder: number}>>([]);
   const [widgetSettings, setWidgetSettings] = useState<Record<string, {categoryId?: string; sortOrder: number}>>({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [duplicateLoading, setDuplicateLoading] = useState(false);
+  const [duplicateSuccess, setDuplicateSuccess] = useState(false);
+  const [showDuplicateElsewhereModal, setShowDuplicateElsewhereModal] = useState(false);
+  const [widgetToDuplicateElsewhere, setWidgetToDuplicateElsewhere] = useState<Widget | null>(null);
 
   const [formData, setFormData] = useState({
     site_id: '',
@@ -126,7 +137,10 @@ export default function EditArticle() {
     author_image: '',
     views: 0,  // Display views shown on front-end
     display_views: 0,
-    display_likes: 0
+    display_likes: 0,
+    tags: '',
+    seo_title: '',
+    seo_description: ''
   });
   const [showAuthorMediaLibrary, setShowAuthorMediaLibrary] = useState(false);
 
@@ -189,7 +203,10 @@ export default function EditArticle() {
           author_image: data.article.author_image || '',
           views: data.article.views || 0,
           display_views: data.article.display_views || 0,
-          display_likes: data.article.display_likes || 0
+          display_likes: data.article.display_likes || 0,
+          tags: data.article.tags || '',
+          seo_title: data.article.seo_title || '',
+          seo_description: data.article.seo_description || ''
         });
 
         const storedWidgets = parseWidgetConfig(data.article.widget_config);
@@ -268,7 +285,7 @@ export default function EditArticle() {
   };
 
   // Move widget to different category
-  const moveWidgetToCategory = async (widgetType: string, targetCategory: string, newSortOrder: number) => {
+  const moveWidgetToCategory = async (widgetType: string, targetCategory: string, newSortOrder: number, skipLocalUpdate = false) => {
     if (!formData.site_id) return;
 
     try {
@@ -286,8 +303,8 @@ export default function EditArticle() {
         }),
       });
 
-      if (response.ok) {
-        // Update local state
+      if (response.ok && !skipLocalUpdate) {
+        // Update local state (skip for swap operations where we update state ourselves)
         setWidgetSettings(prev => ({
           ...prev,
           [widgetType]: { categoryId: customCat?.id, sortOrder: newSortOrder }
@@ -355,6 +372,80 @@ export default function EditArticle() {
     }
   };
 
+  const handleDuplicate = async () => {
+    if (!formData.site_id || !formData.title) return;
+
+    setDuplicateLoading(true);
+    setDuplicateSuccess(false);
+    try {
+      // Create a duplicate article with "DUPLICATE" in title and as draft
+      const duplicateData = {
+        site_id: formData.site_id,
+        title: `DUPLICATE - ${formData.title}`,
+        slug: `${formData.slug}-duplicate-${Date.now()}`,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        category: formData.category,
+        image: formData.image,
+        read_time: formData.read_time,
+        tags: formData.tags,
+        seo_title: formData.seo_title,
+        seo_description: formData.seo_description,
+        author_name: formData.author_name,
+        author_image: formData.author_image,
+        display_views: formData.display_views,
+        display_likes: formData.display_likes,
+        widget_config: serializeWidgetConfig(widgets),
+        tracking_config: JSON.stringify(trackingConfig),
+        published: false, // Always start as draft
+        featured: false,
+        trending: false,
+        hero: false,
+        boosted: false,
+      };
+
+      const response = await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(duplicateData)
+      });
+
+      if (response.ok) {
+        setDuplicateSuccess(true);
+        setTimeout(() => setDuplicateSuccess(false), 3000);
+      } else {
+        alert('Error duplicating article');
+      }
+    } catch (error) {
+      console.error('Error duplicating article:', error);
+      alert('Error duplicating article');
+    } finally {
+      setDuplicateLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleteLoading(true);
+    try {
+      const response = await fetch(`/api/articles/${articleId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Navigate back to site dashboard or articles list
+        router.push(formData.site_id ? `/admin/sites/${formData.site_id}/dashboard` : '/admin/articles');
+      } else {
+        alert('Error deleting article');
+      }
+    } catch (error) {
+      console.error('Error deleting article:', error);
+      alert('Error deleting article');
+    } finally {
+      setDeleteLoading(false);
+      setShowDeleteModal(false);
+    }
+  };
+
   const addWidget = (type: WidgetType) => {
     const newWidget: Widget = {
       id: `widget-${Date.now()}`,
@@ -394,6 +485,15 @@ export default function EditArticle() {
         result[category] = [];
       }
       result[category].push(widget);
+    });
+
+    // Sort widgets within each category by their sortOrder
+    Object.keys(result).forEach(category => {
+      result[category].sort((a, b) => {
+        const sortA = widgetSettings[a.type]?.sortOrder ?? 999;
+        const sortB = widgetSettings[b.type]?.sortOrder ?? 999;
+        return sortA - sortB;
+      });
     });
 
     // Remove empty standard categories but keep custom ones
@@ -504,6 +604,27 @@ export default function EditArticle() {
 
             {/* Right: Actions */}
             <div className="flex items-center gap-2">
+              {/* Duplicate Button */}
+              <button
+                onClick={handleDuplicate}
+                disabled={duplicateLoading || !formData.site_id}
+                className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm ${
+                  duplicateSuccess
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                }`}
+                title="Duplicate Article"
+              >
+                {duplicateLoading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : duplicateSuccess ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+                <span>{duplicateSuccess ? 'Duplicated!' : 'Duplicate'}</span>
+              </button>
+
               {selectedSite && (
                 <a
                   href={`https://kiala-app-project.vercel.app/preview/${selectedSite.subdomain}/articles/${formData.slug}?token=${articleId}`}
@@ -544,6 +665,15 @@ export default function EditArticle() {
               >
                 {saveMessage === 'Published!' ? <Check className="w-4 h-4" /> : null}
                 {formData.published ? 'Update' : 'Publish'}
+              </button>
+
+              {/* Delete Button */}
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                title="Delete Article"
+              >
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -591,6 +721,10 @@ export default function EditArticle() {
                     onWidgetsChange={setWidgets}
                     siteId={formData.site_id}
                     articleId={articleId}
+                    onDuplicateElsewhere={(widget) => {
+                      setWidgetToDuplicateElsewhere(widget);
+                      setShowDuplicateElsewhereModal(true);
+                    }}
                   />
                 </div>
               </div>
@@ -686,9 +820,23 @@ export default function EditArticle() {
                                     const prevWidgets = widgetsByCategory[prevCategory] || [];
                                     await moveWidgetToCategory(widget.type, prevCategory, prevWidgets.length);
                                   } else if (!isFirstInCategory) {
-                                    // Swap with widget above (just reorder within same category)
-                                    // For now, moving within same category changes sort order
-                                    await moveWidgetToCategory(widget.type, category, widgetIndex - 1);
+                                    // Swap with widget above - need to update both widgets
+                                    const widgetAbove = categoryWidgets[widgetIndex - 1];
+                                    const currentSortOrder = widgetSettings[widget.type]?.sortOrder ?? widgetIndex;
+                                    const aboveSortOrder = widgetSettings[widgetAbove.type]?.sortOrder ?? (widgetIndex - 1);
+
+                                    // Swap sort orders: current widget gets lower order, widget above gets higher
+                                    setWidgetSettings(prev => ({
+                                      ...prev,
+                                      [widget.type]: { ...prev[widget.type], sortOrder: aboveSortOrder },
+                                      [widgetAbove.type]: { ...prev[widgetAbove.type], sortOrder: currentSortOrder }
+                                    }));
+
+                                    // Save to backend (skip local update since we did it already)
+                                    Promise.all([
+                                      moveWidgetToCategory(widget.type, category, aboveSortOrder, true),
+                                      moveWidgetToCategory(widgetAbove.type, category, currentSortOrder, true)
+                                    ]);
                                   }
                                 };
 
@@ -697,8 +845,23 @@ export default function EditArticle() {
                                     // Move to start of next category
                                     await moveWidgetToCategory(widget.type, nextCategory, 0);
                                   } else if (!isLastInCategory) {
-                                    // Swap with widget below
-                                    await moveWidgetToCategory(widget.type, category, widgetIndex + 1);
+                                    // Swap with widget below - need to update both widgets
+                                    const widgetBelow = categoryWidgets[widgetIndex + 1];
+                                    const currentSortOrder = widgetSettings[widget.type]?.sortOrder ?? widgetIndex;
+                                    const belowSortOrder = widgetSettings[widgetBelow.type]?.sortOrder ?? (widgetIndex + 1);
+
+                                    // Swap sort orders: current widget gets higher order, widget below gets lower
+                                    setWidgetSettings(prev => ({
+                                      ...prev,
+                                      [widget.type]: { ...prev[widget.type], sortOrder: belowSortOrder },
+                                      [widgetBelow.type]: { ...prev[widgetBelow.type], sortOrder: currentSortOrder }
+                                    }));
+
+                                    // Save to backend (skip local update since we did it already)
+                                    Promise.all([
+                                      moveWidgetToCategory(widget.type, category, belowSortOrder, true),
+                                      moveWidgetToCategory(widgetBelow.type, category, currentSortOrder, true)
+                                    ]);
                                   }
                                 };
 
@@ -1343,6 +1506,70 @@ export default function EditArticle() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60]">
+          <div className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-gray-700 overflow-hidden">
+            <div className="p-6 border-b border-gray-700">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-red-500/20 rounded-full">
+                  <AlertTriangle className="w-6 h-6 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Delete Article?</h3>
+                  <p className="text-sm text-gray-400 mt-1">This action cannot be undone</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-300 mb-4">
+                Are you sure you want to permanently delete <span className="font-semibold text-white">"{formData.title}"</span>?
+              </p>
+              <p className="text-sm text-gray-500">
+                All widgets and content associated with this article will be lost.
+              </p>
+            </div>
+            <div className="p-6 border-t border-gray-700 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleteLoading}
+                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleteLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors"
+              >
+                {deleteLoading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Trash2 className="w-4 h-4" />
+                )}
+                Delete Article
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Duplicate Elsewhere Modal */}
+      {showDuplicateElsewhereModal && widgetToDuplicateElsewhere && (
+        <DuplicateElsewhereModal
+          widget={widgetToDuplicateElsewhere}
+          currentSiteId={formData.site_id}
+          currentArticleId={articleId}
+          onClose={() => {
+            setShowDuplicateElsewhereModal(false);
+            setWidgetToDuplicateElsewhere(null);
+          }}
+          onSuccess={() => {
+            // Just show success - don't redirect
+          }}
+        />
       )}
     </div>
   );

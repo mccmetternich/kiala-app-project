@@ -81,6 +81,9 @@ export default function SiteDashboard() {
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [mediaTarget, setMediaTarget] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showDeleteSiteModal, setShowDeleteSiteModal] = useState(false);
+  const [deleteSiteLoading, setDeleteSiteLoading] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   // Emails state
   const [subscribers, setSubscribers] = useState<any[]>([]);
@@ -254,6 +257,32 @@ export default function SiteDashboard() {
       console.error('Error saving:', error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Delete site handler
+  const handleDeleteSite = async () => {
+    if (deleteConfirmText !== site?.name) return;
+
+    setDeleteSiteLoading(true);
+    try {
+      const response = await fetch(`/api/sites/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Navigate to sites list
+        router.push('/admin/sites');
+      } else {
+        alert('Error deleting site');
+      }
+    } catch (error) {
+      console.error('Error deleting site:', error);
+      alert('Error deleting site');
+    } finally {
+      setDeleteSiteLoading(false);
+      setShowDeleteSiteModal(false);
+      setDeleteConfirmText('');
     }
   };
 
@@ -1863,6 +1892,37 @@ export default function SiteDashboard() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Danger Zone */}
+                    <div className="bg-red-500/5 rounded-xl p-6 border-2 border-red-500/30">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center">
+                          <Trash2 className="w-5 h-5 text-red-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-red-400">Danger Zone</h3>
+                          <p className="text-sm text-gray-400">Irreversible actions</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-800/50 rounded-lg p-4 border border-red-500/20">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-white">Delete this site</h4>
+                            <p className="text-sm text-gray-400 mt-1">
+                              Permanently delete this site and all its content including articles, pages, and subscribers.
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => setShowDeleteSiteModal(true)}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors flex items-center gap-2 flex-shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete Site
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -2718,6 +2778,86 @@ export default function SiteDashboard() {
           initialFilter={mediaTarget === 'audio' || mediaTarget === 'aboutAudio' ? 'audio' : mediaTarget === 'leadMagnetPdf' ? 'document' : 'image'}
         />
       </div>
+
+      {/* Delete Site Confirmation Modal */}
+      {showDeleteSiteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-red-500/10 border-b border-red-500/20 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Delete Site</h3>
+                  <p className="text-sm text-red-300">This action cannot be undone</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-6 py-5">
+              <p className="text-gray-300">
+                Are you sure you want to delete <span className="font-semibold text-white">"{site?.name}"</span>?
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                This will permanently delete:
+              </p>
+              <ul className="text-sm text-gray-400 mt-2 list-disc list-inside space-y-1">
+                <li>All {articles.length} articles</li>
+                <li>All pages and widgets</li>
+                <li>All subscriber data</li>
+                <li>All site settings and configurations</li>
+              </ul>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Type <span className="font-mono text-red-400">"{site?.name}"</span> to confirm:
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="Enter site name"
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-800/50 border-t border-gray-700 px-6 py-4 flex items-center justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteSiteModal(false);
+                  setDeleteConfirmText('');
+                }}
+                disabled={deleteSiteLoading}
+                className="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteSite}
+                disabled={deleteSiteLoading || deleteConfirmText !== site?.name}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deleteSiteLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Delete Site Permanently
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </EnhancedAdminLayout>
   );
 }

@@ -12,7 +12,12 @@ import {
   Plus,
   X,
   Upload,
-  Type
+  Type,
+  ChevronDown,
+  ExternalLink,
+  Square,
+  CheckSquare,
+  AlertTriangle
 } from 'lucide-react';
 import { Widget, WidgetConfig, WidgetType } from '@/types';
 import Badge from '@/components/ui/Badge';
@@ -26,6 +31,7 @@ interface WidgetEditorProps {
   previewMode?: boolean;
   siteId: string;
   articleId?: string;
+  onDuplicateElsewhere?: (widget: Widget) => void;
 }
 
 // Widget types and category colors now imported from centralized library
@@ -228,11 +234,14 @@ const PricingOptionsEditor = ({ options, onChange }: { options: any[]; onChange:
   );
 };
 
-export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = false, siteId, articleId }: WidgetEditorProps) {
+export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = false, siteId, articleId, onDuplicateElsewhere }: WidgetEditorProps) {
   const [selectedWidget, setSelectedWidget] = useState<string | null>(null);
   const [showWidgetPalette, setShowWidgetPalette] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  // Multi-select state
+  const [selectedWidgets, setSelectedWidgets] = useState<Set<string>>(new Set());
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
 
   const addWidget = (type: WidgetType) => {
     const newWidget: Widget = {
@@ -297,6 +306,58 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
     });
 
     onWidgetsChange(newWidgets);
+  };
+
+  // Multi-select handlers
+  const toggleWidgetSelection = (id: string) => {
+    setSelectedWidgets(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const selectAllWidgets = () => {
+    setSelectedWidgets(new Set(widgets.map(w => w.id)));
+  };
+
+  const clearSelection = () => {
+    setSelectedWidgets(new Set());
+  };
+
+  // Bulk actions
+  const bulkDuplicate = () => {
+    const duplicatedWidgets = Array.from(selectedWidgets).map(id => {
+      const widget = widgets.find(w => w.id === id);
+      if (!widget) return null;
+      return {
+        ...widget,
+        id: `widget-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        position: widgets.length
+      };
+    }).filter(Boolean) as Widget[];
+
+    onWidgetsChange([...widgets, ...duplicatedWidgets]);
+    clearSelection();
+  };
+
+  const bulkHide = () => {
+    const updatedWidgets = widgets.map(widget =>
+      selectedWidgets.has(widget.id) ? { ...widget, enabled: false } : widget
+    );
+    onWidgetsChange(updatedWidgets);
+    clearSelection();
+  };
+
+  const bulkDelete = () => {
+    const filteredWidgets = widgets.filter(widget => !selectedWidgets.has(widget.id));
+    onWidgetsChange(filteredWidgets);
+    clearSelection();
+    setShowBulkDeleteConfirm(false);
   };
 
   // Drag and drop handlers for widget reordering
@@ -396,6 +457,92 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 
   return (
     <div className="p-6">
+      {/* Bulk Actions Bar */}
+      {selectedWidgets.size > 0 && (
+        <div className="mb-4 p-3 bg-primary-50 border border-primary-200 rounded-xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-primary-700">
+              {selectedWidgets.size} widget{selectedWidgets.size > 1 ? 's' : ''} selected
+            </span>
+            <button
+              onClick={clearSelection}
+              className="text-xs text-primary-600 hover:text-primary-800"
+            >
+              Clear selection
+            </button>
+            {selectedWidgets.size < widgets.length && (
+              <button
+                onClick={selectAllWidgets}
+                className="text-xs text-primary-600 hover:text-primary-800"
+              >
+                Select all
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={bulkDuplicate}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700"
+            >
+              <Copy className="w-4 h-4" />
+              Duplicate
+            </button>
+            <button
+              onClick={bulkHide}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700"
+            >
+              <EyeOff className="w-4 h-4" />
+              Hide
+            </button>
+            <button
+              onClick={() => setShowBulkDeleteConfirm(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 text-red-700"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {showBulkDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-red-100 rounded-full">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Delete {selectedWidgets.size} Widget{selectedWidgets.size > 1 ? 's' : ''}?</h3>
+                  <p className="text-sm text-gray-500 mt-1">This action cannot be undone</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700">
+                Are you sure you want to permanently delete the selected widget{selectedWidgets.size > 1 ? 's' : ''}?
+              </p>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowBulkDeleteConfirm(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={bulkDelete}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete {selectedWidgets.size} Widget{selectedWidgets.size > 1 ? 's' : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Widget List */}
       <div className="space-y-3">
@@ -425,11 +572,14 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
               <WidgetItem
                 widget={widget}
                 isSelected={selectedWidget === widget.id}
+                isChecked={selectedWidgets.has(widget.id)}
+                onCheckboxChange={() => toggleWidgetSelection(widget.id)}
                 isDragging={draggedWidget === widget.id}
                 onSelect={() => setSelectedWidget(selectedWidget === widget.id ? null : widget.id)}
                 onUpdate={(config) => updateWidget(widget.id, config)}
                 onDelete={() => deleteWidget(widget.id)}
                 onDuplicate={() => duplicateWidget(widget.id)}
+                onDuplicateElsewhere={onDuplicateElsewhere ? () => onDuplicateElsewhere(widget) : undefined}
                 onToggleEnabled={() => toggleWidgetEnabled(widget.id)}
                 onMove={(direction) => moveWidget(widget.id, direction)}
                 canMoveUp={index > 0}
@@ -505,11 +655,14 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 function WidgetItem({
   widget,
   isSelected,
+  isChecked,
+  onCheckboxChange,
   isDragging,
   onSelect,
   onUpdate,
   onDelete,
   onDuplicate,
+  onDuplicateElsewhere,
   onToggleEnabled,
   onMove,
   canMoveUp,
@@ -522,11 +675,14 @@ function WidgetItem({
 }: {
   widget: Widget;
   isSelected: boolean;
+  isChecked: boolean;
+  onCheckboxChange: () => void;
   isDragging: boolean;
   onSelect: () => void;
   onUpdate: (config: Partial<WidgetConfig>) => void;
   onDelete: () => void;
   onDuplicate: () => void;
+  onDuplicateElsewhere?: () => void;
   onToggleEnabled: () => void;
   onMove: (direction: 'up' | 'down') => void;
   canMoveUp: boolean;
@@ -537,7 +693,9 @@ function WidgetItem({
   articleId?: string;
   allWidgets: Widget[];
 }) {
-  const widgetType = widgetTypes.find(wt => wt.type === widget.type);
+  // Use getWidgetByType which handles legacy aliases like 'timeline' -> 'expectation-timeline'
+  const widgetType = getWidgetByType(widget.type);
+  const [showDuplicateMenu, setShowDuplicateMenu] = useState(false);
 
   return (
     <div
@@ -555,6 +713,14 @@ function WidgetItem({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {/* Checkbox for multi-select */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onCheckboxChange(); }}
+              className={`p-1 rounded transition-colors ${isChecked ? 'text-primary-600' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              {isChecked ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+            </button>
+
             {/* Drag handle */}
             <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100">
               <GripVertical className="w-5 h-5" />
@@ -612,13 +778,53 @@ function WidgetItem({
             >
               {widget.enabled ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Duplicate widget"
-            >
-              <Copy className="w-4 h-4" />
-            </button>
+            {/* Duplicate dropdown */}
+            <div className="relative">
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowDuplicateMenu(!showDuplicateMenu); }}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-0.5"
+                title="Duplicate widget"
+              >
+                <Copy className="w-4 h-4" />
+                <ChevronDown className="w-3 h-3" />
+              </button>
+              {showDuplicateMenu && (
+                <>
+                  {/* Backdrop to close dropdown */}
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={(e) => { e.stopPropagation(); setShowDuplicateMenu(false); }}
+                  />
+                  {/* Dropdown menu */}
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDuplicate();
+                        setShowDuplicateMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <Copy className="w-4 h-4 text-gray-400" />
+                      Duplicate Here
+                    </button>
+                    {onDuplicateElsewhere && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDuplicateElsewhere();
+                          setShowDuplicateMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <ExternalLink className="w-4 h-4 text-gray-400" />
+                        Duplicate Elsewhere...
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
             <button
               onClick={(e) => { e.stopPropagation(); onDelete(); }}
               className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -4235,52 +4441,9 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextField('Product Name', 'productName', 'Product Name')}
           {renderTextAreaField('Product Description', 'productDescription', 'A clinically-backed formula...', 3)}
 
-          {/* Product Images - Carousel */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Product Images (for carousel)</label>
-            <div className="space-y-2">
-              {(widget.config.productImages || [widget.config.productImage] || []).filter(Boolean).map((img: string, idx: number) => (
-                <div key={idx} className="flex gap-2 items-center">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                    {img && <img src={img} alt="" className="w-full h-full object-cover" />}
-                  </div>
-                  <input
-                    type="text"
-                    value={img}
-                    onChange={(e) => {
-                      const images = [...(widget.config.productImages || [widget.config.productImage] || [])].filter(Boolean);
-                      images[idx] = e.target.value;
-                      onUpdate({ productImages: images, productImage: images[0] });
-                    }}
-                    placeholder="Image URL"
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const images = (widget.config.productImages || [widget.config.productImage] || []).filter(Boolean).filter((_: any, i: number) => i !== idx);
-                      onUpdate({ productImages: images, productImage: images[0] || '' });
-                    }}
-                    className="text-red-500 hover:text-red-700 p-1"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => {
-                  const images = [...(widget.config.productImages || [widget.config.productImage] || [])].filter(Boolean);
-                  images.push('');
-                  onUpdate({ productImages: images });
-                }}
-                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
-              >
-                <Plus className="w-4 h-4" /> Add Image
-              </button>
-            </div>
-            <p className="mt-1 text-xs text-gray-500">Add multiple images to show a thumbnail carousel below the main image</p>
-          </div>
+          {/* Product Images - Carousel with upload */}
+          <ImageGalleryField label="Product Images (for carousel)" field="productImages" />
+          <p className="text-xs text-gray-500 -mt-2">The first image becomes the hero image. Drag to reorder or use arrows.</p>
 
           {renderTextAreaField('Doctor Quote', 'doctorQuote', "In 15 years of practice, I've never endorsed a specific supplement—until now.", 3)}
 
