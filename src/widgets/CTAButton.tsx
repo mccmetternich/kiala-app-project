@@ -18,6 +18,7 @@ interface CTAButtonProps {
   style?: 'primary' | 'secondary';
   // CTA type for anchor support
   ctaType?: 'external' | 'anchor';
+  anchorWidgetId?: string;
   // Social proof
   showSocialProof?: boolean;
   socialProofAvatars?: string[];
@@ -40,6 +41,7 @@ export default function CTAButton({
   target = '_self',
   style = 'primary',
   ctaType = 'external',
+  anchorWidgetId,
   showSocialProof = false,
   socialProofAvatars = [],
   socialProofStars = 5,
@@ -50,7 +52,18 @@ export default function CTAButton({
 }: CTAButtonProps) {
   // Use standardized props, fall back to legacy props
   const finalCtaText = ctaText || buttonText;
-  const finalCtaUrl = ctaUrl || buttonUrl;
+  const finalCtaUrl = ctaType === 'anchor' && anchorWidgetId ? `#${anchorWidgetId}` : (ctaUrl || buttonUrl);
+
+  // Handle anchor clicks with smooth scroll
+  const handleClick = (e: React.MouseEvent) => {
+    if (ctaType === 'anchor' && anchorWidgetId) {
+      e.preventDefault();
+      const element = document.getElementById(anchorWidgetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
 
   // Default avatars - women from Unsplash
   const defaultAvatars = [
@@ -113,7 +126,8 @@ export default function CTAButton({
           <div className="text-center">
             <TrackedLink
               href={finalCtaUrl}
-              target={target}
+              target={ctaType === 'anchor' ? undefined : target}
+              onClick={handleClick}
               widgetType="cta-button"
               widgetId={widgetId}
               widgetName={finalCtaText}

@@ -67,7 +67,7 @@ export default function Checklist({
   const isCelebratory = style === 'celebratory' || style === 'interactive';
   const isOverThreshold = checkedCount >= alertThreshold;
 
-  // Handle threshold crossing
+  // Handle threshold crossing - show alert when over, hide when under
   useEffect(() => {
     if (isOverThreshold && !showAlert) {
       setShowAlert(true);
@@ -75,6 +75,9 @@ export default function Checklist({
       // Stop shaking after animation
       const timer = setTimeout(() => setIsShaking(false), 600);
       return () => clearTimeout(timer);
+    } else if (!isOverThreshold && showAlert) {
+      // Reset alert when user deselects below threshold
+      setShowAlert(false);
     }
   }, [isOverThreshold, showAlert]);
 
@@ -269,23 +272,7 @@ export default function Checklist({
           </div>
         )}
 
-        {/* CTA - shown when not in alert state */}
-        {!showAlert && showCta && ctaText && ctaUrl && (
-          <TrackedLink
-            href={ctaUrl}
-            target={target}
-            widgetType="checklist"
-            widgetName={headline}
-            className={`mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
-              isAssessment
-                ? 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white'
-                : 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white'
-            }`}
-          >
-            {ctaText}
-            <ArrowRight className="w-5 h-5" />
-          </TrackedLink>
-        )}
+        {/* CTA is only shown inside the alert/reveal when threshold is met */}
       </div>
     </div>
   );
