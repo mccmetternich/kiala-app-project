@@ -52,18 +52,8 @@ export default function CTAButton({
 }: CTAButtonProps) {
   // Use standardized props, fall back to legacy props
   const finalCtaText = ctaText || buttonText;
+  // For anchor type, create #anchorWidgetId href (TrackedLink handles smooth scroll)
   const finalCtaUrl = ctaType === 'anchor' && anchorWidgetId ? `#${anchorWidgetId}` : (ctaUrl || buttonUrl);
-
-  // Handle anchor clicks with smooth scroll
-  const handleClick = (e: React.MouseEvent) => {
-    if (ctaType === 'anchor' && anchorWidgetId) {
-      e.preventDefault();
-      const element = document.getElementById(anchorWidgetId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
 
   // Default avatars - women from Unsplash
   const defaultAvatars = [
@@ -126,8 +116,7 @@ export default function CTAButton({
           <div className="text-center">
             <TrackedLink
               href={finalCtaUrl}
-              target={ctaType === 'anchor' ? undefined : target}
-              onClick={handleClick}
+              target={target}
               widgetType="cta-button"
               widgetId={widgetId}
               widgetName={finalCtaText}
