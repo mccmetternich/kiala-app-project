@@ -397,7 +397,6 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     const hasWidgetType = e.dataTransfer.types.includes('widgettype') || e.dataTransfer.types.includes('text/plain');
-    console.log('[Drag Over]', { index, hasWidgetType, types: Array.from(e.dataTransfer.types) });
     e.dataTransfer.dropEffect = hasWidgetType ? 'copy' : 'move';
     setDragOverIndex(index);
   };

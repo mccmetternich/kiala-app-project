@@ -874,7 +874,6 @@ export default function EditArticle() {
                                         e.preventDefault();
                                         return;
                                       }
-                                      console.log('[Drag Start]', widget.type);
                                       e.dataTransfer.setData('widgetType', widget.type);
                                       e.dataTransfer.setData('text/plain', widget.type);
                                       e.dataTransfer.effectAllowed = 'copy';
