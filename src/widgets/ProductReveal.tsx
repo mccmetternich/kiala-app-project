@@ -89,26 +89,30 @@ export default function ProductReveal({
 
         <div className="md:grid md:grid-cols-2 gap-0">
           {/* Product Image Side */}
-          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-6 md:p-10">
-            {/* Decorative corner badge */}
-            <div className="absolute top-4 right-4 md:top-6 md:right-6">
-              <div className="bg-white rounded-2xl p-3 shadow-lg border border-purple-100">
-                <Award className="w-6 h-6 text-purple-600" />
+          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-4 md:p-6 flex flex-col">
+            {/* Main Product Image Container */}
+            <div className="relative flex-1">
+              {/* #1 Badge - positioned inside image top-right */}
+              <div className="absolute top-3 right-3 z-10">
+                <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl px-3 py-2 shadow-lg flex items-center gap-1.5">
+                  <span className="text-white font-black text-lg">#1</span>
+                  <Award className="w-5 h-5 text-white" />
+                </div>
+              </div>
+
+              {/* Main Product Image - Large and impressive */}
+              <div className="relative bg-gradient-to-br from-purple-100/50 to-pink-100/50 rounded-2xl p-4 md:p-8">
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-200/40 to-pink-200/40 rounded-2xl blur-xl" />
+                <img
+                  src={images[selectedImageIndex]}
+                  alt={productName}
+                  className="relative w-full h-auto max-h-[400px] object-contain mx-auto drop-shadow-2xl transition-all duration-300"
+                />
               </div>
             </div>
 
-            {/* Main Product Image */}
-            <div className="relative mb-4">
-              {/* Subtle glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-200/40 to-pink-200/40 rounded-3xl blur-2xl scale-90" />
-              <img
-                src={images[selectedImageIndex]}
-                alt={productName}
-                className="relative w-full max-w-xs mx-auto drop-shadow-xl transition-all duration-300"
-              />
-            </div>
-
-            {/* Image Thumbnails Carousel */}
+            {/* Image Thumbnails - Only show if multiple images exist */}
             {images.length > 1 && (
               <div className="flex justify-center gap-2 mt-4">
                 {images.map((img, idx) => (
@@ -131,9 +135,9 @@ export default function ProductReveal({
               </div>
             )}
 
-            {/* Rating badge */}
-            <div className="flex justify-center mt-6">
-              <div className="inline-flex items-center gap-3 bg-white rounded-full px-5 py-2.5 shadow-lg border border-purple-100">
+            {/* Rating badge - Full width under image */}
+            <div className="mt-4">
+              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-purple-100 w-full">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star

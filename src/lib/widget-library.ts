@@ -94,7 +94,7 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   // ============================================
   // COMMERCE WIDGETS
   // ============================================
-  { type: 'product-reveal', name: 'Product Reveal', icon: Award, category: 'Commerce', description: 'Big product reveal with doctor endorsement, benefits, and social proof' },
+  { type: 'product-reveal', name: 'Shop Product Reveal', icon: Award, category: 'Commerce', description: 'Big product reveal with doctor endorsement, benefits, and social proof' },
   { type: 'product-showcase', name: 'Shop Product', icon: ShoppingCart, category: 'Commerce', description: 'A simple horizontal, smaller tile' },
   { type: 'exclusive-product', name: 'Shop #1 Product Pick', icon: Award, category: 'Commerce', description: 'A large product feature with CTA' },
   { type: 'shop-now', name: 'Shop 3x Options', icon: Store, category: 'Commerce', description: 'Product carousel with description and 3x option radio buttons' },
