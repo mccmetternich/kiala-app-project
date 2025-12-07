@@ -328,7 +328,7 @@ export default function EditArticle() {
     }
   };
 
-  const handleSave = async (publish?: boolean) => {
+  const handleSave = async () => {
     if (!formData.title || !formData.site_id) {
       alert('Title and site are required');
       return;
@@ -339,7 +339,6 @@ export default function EditArticle() {
     try {
       const dataToSend = {
         ...formData,
-        published: publish !== undefined ? publish : formData.published,
         widget_config: serializeWidgetConfig(widgets),
         tracking_config: JSON.stringify(trackingConfig)
       };
@@ -359,7 +358,7 @@ export default function EditArticle() {
             published: Boolean(data.article.published)
           }));
         }
-        setSaveMessage(publish ? 'Published!' : 'Saved!');
+        setSaveMessage('Saved!');
         setTimeout(() => setSaveMessage(null), 3000);
       } else {
         alert('Error saving article');
@@ -637,12 +636,12 @@ export default function EditArticle() {
                 </a>
               )}
               <button
-                onClick={() => handleSave(false)}
+                onClick={handleSave}
                 disabled={loading}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium ${
                   saveMessage === 'Saved!'
                     ? 'bg-green-600 text-white'
-                    : 'bg-gray-700 hover:bg-gray-600 text-white'
+                    : 'bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20'
                 }`}
               >
                 {loading ? (
@@ -652,19 +651,7 @@ export default function EditArticle() {
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                <span className="hidden sm:inline">{saveMessage === 'Saved!' ? 'Saved!' : 'Save'}</span>
-              </button>
-              <button
-                onClick={() => handleSave(true)}
-                disabled={loading}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium ${
-                  saveMessage === 'Published!'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-primary-600 hover:bg-primary-500 text-white shadow-lg shadow-primary-600/20'
-                }`}
-              >
-                {saveMessage === 'Published!' ? <Check className="w-4 h-4" /> : null}
-                {formData.published ? 'Update' : 'Publish'}
+                <span className="hidden sm:inline">{saveMessage === 'Saved!' ? 'Saved!' : 'Save Changes'}</span>
               </button>
 
               {/* Delete Button */}
