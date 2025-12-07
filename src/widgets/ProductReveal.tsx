@@ -87,23 +87,23 @@ export default function ProductReveal({
         {/* Decorative top border */}
         <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500" />
 
-        <div className="md:grid md:grid-cols-2 gap-0">
-          {/* Product Image Side */}
-          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-6 md:p-8">
+        <div className="md:grid md:grid-cols-[55%_45%] gap-0">
+          {/* Product Image Side - Larger allocation */}
+          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-4 md:p-4">
             {/* Badge with #1 - positioned top-left of image */}
-            <div className="absolute top-8 left-8 md:top-10 md:left-10 z-10">
+            <div className="absolute top-6 left-6 md:top-6 md:left-6 z-10">
               <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl px-4 py-2.5 shadow-xl flex items-center gap-2">
                 <Award className="w-5 h-5 text-white" />
                 <span className="text-white font-black text-lg">#1</span>
               </div>
             </div>
 
-            {/* Main Product Image - Large */}
-            <div className="relative">
+            {/* Main Product Image - Much Larger */}
+            <div className="relative flex items-center justify-center">
               <img
                 src={images[selectedImageIndex]}
                 alt={productName}
-                className="w-full h-auto min-h-[300px] max-h-[500px] object-contain mx-auto drop-shadow-2xl"
+                className="w-full h-auto min-h-[350px] md:min-h-[450px] max-h-[600px] object-contain drop-shadow-2xl"
               />
             </div>
 
@@ -148,8 +148,8 @@ export default function ProductReveal({
             </div>
           </div>
 
-          {/* Content Side */}
-          <div className="p-6 md:p-10 bg-gradient-to-b from-white to-purple-50/30">
+          {/* Content Side - Tighter padding */}
+          <div className="p-5 md:p-6 bg-gradient-to-b from-white to-purple-50/30">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{productName}</h3>
             <p className="text-gray-600 mb-6 leading-relaxed">{productDescription}</p>
 
