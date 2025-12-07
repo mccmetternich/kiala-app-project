@@ -1,6 +1,7 @@
 'use client';
 
 import { TrendingUp, Users, AlertTriangle, Clock, Percent, Heart, Target, Zap, CheckCircle, Activity, BarChart3 } from 'lucide-react';
+import TrackedLink from '@/components/TrackedLink';
 
 interface StatItem {
   value: string;
@@ -15,6 +16,12 @@ interface DataOverviewProps {
   stats?: StatItem[];
   source?: string;
   style?: 'cards' | 'inline' | 'banner';
+  // Optional CTA
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  target?: '_self' | '_blank';
+  widgetId?: string;
 }
 
 const defaultStats: StatItem[] = [
@@ -71,10 +78,31 @@ export default function DataOverview({
   subheading,
   stats = defaultStats,
   source = 'Journal of Clinical Endocrinology, 2023',
-  style = 'cards'
+  style = 'cards',
+  showCta = false,
+  ctaText = 'Learn More →',
+  ctaUrl = '#',
+  target = '_self',
+  widgetId
 }: DataOverviewProps) {
   // Use default subheading if not provided or undefined
   const displaySubheading = subheading || 'Key research findings';
+
+  // CTA Button component
+  const CtaButton = () => showCta && ctaText && ctaUrl ? (
+    <div className="mt-6 text-center">
+      <TrackedLink
+        href={ctaUrl}
+        target={target}
+        widgetType="data-overview"
+        widgetId={widgetId}
+        widgetName={headline}
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+      >
+        {ctaText}
+      </TrackedLink>
+    </div>
+  ) : null;
 
   if (style === 'banner') {
     return (
@@ -98,6 +126,7 @@ export default function DataOverview({
             Source: {source}
           </div>
         )}
+        <CtaButton />
       </div>
     );
   }
@@ -114,6 +143,7 @@ export default function DataOverview({
             </div>
           ))}
         </div>
+        <CtaButton />
       </div>
     );
   }

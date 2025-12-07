@@ -444,9 +444,12 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 
   const handlePaletteDrop = (e: React.DragEvent, index: number) => {
     e.preventDefault();
+    e.stopPropagation();
     const widgetType = e.dataTransfer.getData('widgetType') as WidgetType;
 
-    if (widgetType) {
+    console.log('handlePaletteDrop called', { widgetType, index, dataTransferTypes: e.dataTransfer.types });
+
+    if (widgetType && widgetType.length > 0) {
       const newWidget: Widget = {
         id: `widget-${Date.now()}`,
         type: widgetType,
@@ -454,6 +457,8 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
         enabled: true,
         config: getDefaultConfig(widgetType)
       };
+
+      console.log('Creating new widget', newWidget);
 
       const newWidgets = [...widgets];
       newWidgets.splice(index, 0, newWidget);
@@ -465,6 +470,8 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
 
       onWidgetsChange(newWidgets);
       setSelectedWidget(newWidget.id);
+    } else {
+      console.warn('No widgetType found in drop event');
     }
 
     setDragOverIndex(null);
@@ -603,7 +610,10 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
               }}
               onDragLeave={handleDragLeave}
               onDrop={(e) => {
-                if (e.dataTransfer.getData('widgetType')) {
+                e.preventDefault();
+                const widgetType = e.dataTransfer.getData('widgetType');
+                console.log('Drop on widget zone', { index, widgetType, types: e.dataTransfer.types });
+                if (widgetType) {
                   handlePaletteDrop(e, index);
                 } else {
                   handleDrop(e, index);
@@ -653,7 +663,10 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
             }}
             onDragLeave={handleDragLeave}
             onDrop={(e) => {
-              if (e.dataTransfer.getData('widgetType')) {
+              e.preventDefault();
+              const widgetType = e.dataTransfer.getData('widgetType');
+              console.log('Drop on end zone', { widgetType, types: e.dataTransfer.types });
+              if (widgetType) {
                 handlePaletteDrop(e, widgets.length);
               } else {
                 handleDrop(e, widgets.length);
@@ -680,7 +693,10 @@ export default function WidgetEditor({ widgets, onWidgetsChange, previewMode = f
           }}
           onDragLeave={handleDragLeave}
           onDrop={(e) => {
-            if (e.dataTransfer.getData('widgetType')) {
+            e.preventDefault();
+            const widgetType = e.dataTransfer.getData('widgetType');
+            console.log('Drop on empty zone', { widgetType, types: e.dataTransfer.types });
+            if (widgetType) {
               handlePaletteDrop(e, 0);
             }
           }}
@@ -2626,8 +2642,66 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
                     className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Callout (optional highlighted text)</label>
+                  <input
+                    type="text"
+                    value={step.callout || ''}
+                    onChange={(e) => {
+                      const steps = [...(widget.config.steps || []) as any[]];
+                      steps[idx] = { ...steps[idx], callout: e.target.value };
+                      onUpdate({ steps });
+                    }}
+                    placeholder="e.g., The cycle continues..."
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Disclaimer Section */}
+          <div className="border-t pt-4 mt-4">
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-medium text-gray-700">Disclaimer Section</label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span className="text-sm text-gray-500">{widget.config.showDisclaimer !== false ? 'Shown' : 'Hidden'}</span>
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={widget.config.showDisclaimer !== false}
+                    onChange={(e) => onUpdate({ showDisclaimer: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-500"></div>
+                </div>
+              </label>
+            </div>
+
+            {widget.config.showDisclaimer !== false && (
+              <div className="space-y-3 bg-amber-50 rounded-lg p-3">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Disclaimer Title</label>
+                  <input
+                    type="text"
+                    value={widget.config.disclaimerTitle || "Everyone's Journey Is Unique"}
+                    onChange={(e) => onUpdate({ disclaimerTitle: e.target.value })}
+                    placeholder="Everyone's Journey Is Unique"
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Disclaimer Body</label>
+                  <textarea
+                    rows={3}
+                    value={widget.config.disclaimerBody || "Results vary based on your starting point, consistency, and lifestyle. Some women notice changes within the first week, while deeper transformation unfolds over months. Trust the process—your body knows what to do when given the right support."}
+                    onChange={(e) => onUpdate({ disclaimerBody: e.target.value })}
+                    placeholder="Results vary based on your starting point..."
+                    className="w-full border border-gray-300 rounded p-2 text-sm text-gray-900"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Bottom Stats - with toggle */}
@@ -2910,11 +2984,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           />
 
           {/* CTA Section */}
-          <div className="border-t border-gray-200 pt-4 mt-4">
-            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
-            {renderTextField('Button Text', 'buttonText', 'Get Instant Access →')}
-            {renderCtaTypeAndTarget()}
-          </div>
+          {renderOptionalCtaSection('Get Instant Access →', '#')}
 
           {/* CTA Bullets */}
           <div className="border-t border-gray-200 pt-4 mt-4">
@@ -3039,13 +3109,13 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderTextField('Headline', 'headline', 'Get My Free Guide')}
           {renderTextField('Subheading', 'subheading', 'Join thousands getting weekly insights')}
           {renderImageField('Lead Magnet Image', 'leadMagnetImage')}
-          {renderTextField('Button Text', 'buttonText', 'Send Me The Guide')}
           {renderSelectField('Style', 'style', [
             { value: 'default', label: 'Default' },
             { value: 'minimal', label: 'Minimal' },
             { value: 'featured', label: 'Featured' },
             { value: 'inline', label: 'Inline' }
           ])}
+          {renderOptionalCtaSection('Send Me The Guide', '#')}
         </div>
       )}
 
@@ -3059,7 +3129,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {/* Button Settings */}
           <div className="border-t border-gray-200 pt-4 mt-4">
             <h6 className="font-medium text-gray-900 mb-3">Button Settings</h6>
-            {renderTextField('Button Text', 'buttonText', 'Take Action Now →')}
+            {renderTextField('Button Text', 'ctaText', 'Take Action Now →')}
             {renderSelectField('Style', 'style', [
               { value: 'primary', label: 'Primary' },
               { value: 'secondary', label: 'Secondary' }
@@ -3157,11 +3227,7 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           </div>
 
           {/* CTA Section */}
-          <div className="border-t border-gray-200 pt-4 mt-4">
-            <h6 className="font-medium text-gray-900 mb-3">Call to Action</h6>
-            {renderTextField('Button Text', 'buttonText', 'Claim Your Spot Now →')}
-            {renderCtaTypeAndTarget()}
-          </div>
+          {renderOptionalCtaSection('Claim Your Spot Now →', '#')}
         </div>
       )}
 
@@ -4108,10 +4174,10 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
       {widget.type === 'testimonial-hero' && (
         <div className="space-y-4">
           {renderImageField('Testimonial Photo', 'image')}
-          {renderTextField('Title', 'headline', 'I Lost 22 lbs and My Energy is Through the Roof!')}
+          {renderTextField('Title', 'title', 'I Lost 22 lbs and My Energy is Through the Roof!')}
           {renderTextAreaField('Testimonial Body', 'body', 'Full testimonial text...', 6)}
 
-          {renderCtaSection('TRY NOW - SAVE 50%', 'https://kialanutrition.com/products/kiala-greens')}
+          {renderOptionalCtaSection('TRY NOW - SAVE 50%', 'https://kialanutrition.com/products/kiala-greens')}
 
           <p className="text-xs text-gray-500 mt-2">Benefit icons (90-day guarantee, no risk, free gifts) are shown by default.</p>
         </div>
@@ -5190,7 +5256,9 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     },
     'product-showcase': {
       headline: "Dr. Heart's #1 Recommendation",
-      buttonText: 'Shop Now →',
+      showCta: true,
+      ctaText: 'Shop Now →',
+      ctaUrl: '#',
       size: 'medium',
       target: '_self'
     },
@@ -5198,17 +5266,22 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       headline: 'Limited Time Offer',
       subheading: 'Special pricing ends soon',
       timer: 86400000, // 24 hours
-      buttonText: 'Claim Discount Now',
+      showCta: true,
+      ctaText: 'Claim Discount Now',
+      ctaUrl: '#',
       style: 'default'
     },
     'email-capture': {
       headline: 'Want More Health Tips?',
       subheading: 'Join thousands getting weekly wellness insights',
-      buttonText: 'Subscribe'
+      showCta: true,
+      ctaText: 'Subscribe',
+      ctaUrl: '#'
     },
     'cta-button': {
-      buttonText: 'Take Action Now →',
-      buttonUrl: '#',
+      showCta: true,
+      ctaText: 'Take Action Now →',
+      ctaUrl: '#',
       target: '_self'
     },
     'testimonial': {
@@ -5217,7 +5290,9 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     },
     'comparison-table': {
       headline: 'How Our Solution Compares',
-      buttonText: 'Choose the Better Option →',
+      showCta: true,
+      ctaText: 'Choose the Better Option →',
+      ctaUrl: '#',
       target: '_self'
     },
     'rating-stars': {
@@ -5235,22 +5310,30 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     'top-ten-list': {
       headline: "Dr. Heart's Daily Routine",
       subheading: 'Follow these steps for optimal health',
-      buttonText: 'Download the Full Protocol →'
+      showCta: true,
+      ctaText: 'Download the Full Protocol →',
+      ctaUrl: '#'
     },
     'expectation-timeline': {
       headline: 'Your Transformation Timeline',
       subheading: 'What to expect when you start',
-      buttonText: 'Start Your Journey →'
+      showCta: true,
+      ctaText: 'Start Your Journey →',
+      ctaUrl: '#'
     },
     'special-offer': {
       headline: 'EXCLUSIVE READER OFFER',
       subheading: 'Unlock Your Complete Kit',
-      buttonText: 'Claim Your Spot Now →',
+      showCta: true,
+      ctaText: 'Claim Your Spot Now →',
+      ctaUrl: '#',
       target: '_self'
     },
     'exclusive-product': {
       headline: '#1 Recommendation',
-      buttonText: 'Get Instant Access →',
+      showCta: true,
+      ctaText: 'Get Instant Access →',
+      ctaUrl: '#',
       target: '_self'
     },
     'dual-offer-comparison': {
@@ -5511,8 +5594,9 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
     'review-grid': {
       headline: 'Real Results From Real Women',
       subheading: 'Join thousands who have transformed their health',
-      buttonText: 'Try It Now →',
-      buttonUrl: 'https://kialanutrition.com/products/kiala-greens',
+      showCta: true,
+      ctaText: 'Try It Now →',
+      ctaUrl: 'https://kialanutrition.com/products/kiala-greens',
       target: '_self',
       reviews: [
         {
@@ -5579,7 +5663,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       showVerifiedBadge: true
     },
     'testimonial-hero': {
-      headline: 'I Lost 22 lbs and My Energy is Through the Roof!',
+      title: 'I Lost 22 lbs and My Energy is Through the Roof!',
       body: `"At 52, I thought feeling tired and bloated was just part of getting older. I tried everything—different diets, expensive supplements, even considered medications. Nothing worked until I found Kiala Greens.
 
 Within the first week, my bloating was GONE. By week 4, I had more energy than I'd felt in years. And now, 8 weeks later? I've lost 22 pounds—most of it from my midsection—and I feel like I'm in my 30s again.
@@ -5587,8 +5671,9 @@ Within the first week, my bloating was GONE. By week 4, I had more energy than I
 If you're on the fence, just try it. The 90-day guarantee means you have nothing to lose (except the weight!). This has honestly changed my life."
 
 — Jennifer M., 52, Austin TX`,
-      buttonText: 'TRY NOW - SAVE 50%',
-      buttonUrl: 'https://kialanutrition.com/products/kiala-greens',
+      showCta: true,
+      ctaText: 'TRY NOW - SAVE 50%',
+      ctaUrl: 'https://kialanutrition.com/products/kiala-greens',
       target: '_self',
       benefits: [
         '90-Day Money Back Guarantee',
@@ -5598,7 +5683,9 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     },
     'hero-image': {
       headline: 'Your Headline Here',
-      buttonText: 'Learn More'
+      showCta: true,
+      ctaText: 'Learn More',
+      ctaUrl: '#'
     },
     'ingredient-list-grid': {
       headline: 'Powerful Ingredients, Proven Results',
@@ -5651,8 +5738,9 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
         'Chalky, unpleasant taste',
         'Generic one-size-fits-all formula'
       ],
-      buttonText: 'Try Kiala Greens Risk-Free →',
-      buttonUrl: 'https://trygreens.com/dr-amy',
+      showCta: true,
+      ctaText: 'Try Kiala Greens Risk-Free →',
+      ctaUrl: 'https://trygreens.com/dr-amy',
       guaranteeBadge: '90-Day Money Back Guarantee',
       satisfactionBadge: 'Dr. Amy Community Approved'
     },
@@ -5703,7 +5791,9 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
     'lead-magnet-form': {
       headline: 'Get Your Free Guide',
       subheading: 'Get instant access to my most popular health guide - absolutely free.',
-      buttonText: 'Get Instant Access',
+      showCta: true,
+      ctaText: 'Get Instant Access',
+      ctaUrl: '#',
       showPdfDownload: true
     },
     'articles-header': {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import TrackedLink from '@/components/TrackedLink';
 
 interface Testimonial {
   id: string;
@@ -13,10 +14,21 @@ interface Testimonial {
 
 interface TestimonialCarouselProps {
   testimonials?: Testimonial[];
+  // Optional CTA
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  target?: '_self' | '_blank';
+  widgetId?: string;
 }
 
 export default function TestimonialCarousel({
-  testimonials = []
+  testimonials = [],
+  showCta = false,
+  ctaText = 'Join Them →',
+  ctaUrl = '#',
+  target = '_self',
+  widgetId
 }: TestimonialCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -101,6 +113,22 @@ export default function TestimonialCarousel({
             />
           ))}
         </div>
+
+        {/* Optional CTA */}
+        {showCta && ctaText && ctaUrl && (
+          <div className="mt-8 text-center">
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="testimonial-carousel"
+              widgetId={widgetId}
+              widgetName="Testimonial Carousel"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              {ctaText}
+            </TrackedLink>
+          </div>
+        )}
       </div>
     </div>
   );

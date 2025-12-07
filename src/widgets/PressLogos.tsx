@@ -1,5 +1,7 @@
 'use client';
 
+import TrackedLink from '@/components/TrackedLink';
+
 interface PressItem {
   logo: string;
   publication: string;
@@ -9,6 +11,12 @@ interface PressItem {
 interface PressLogosProps {
   headline?: string;
   items?: PressItem[];
+  // Optional CTA
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  target?: '_self' | '_blank';
+  widgetId?: string;
 }
 
 // Default items - these should be replaced with uploaded images in admin
@@ -47,7 +55,12 @@ const defaultItems: PressItem[] = [
 
 export default function PressLogos({
   headline = 'As Featured In',
-  items = defaultItems
+  items = defaultItems,
+  showCta = false,
+  ctaText = 'Learn More →',
+  ctaUrl = '#',
+  target = '_self',
+  widgetId
 }: PressLogosProps) {
   return (
     <div className="my-8 py-10 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl">
@@ -90,6 +103,22 @@ export default function PressLogos({
           </div>
         ))}
       </div>
+
+      {/* Optional CTA */}
+      {showCta && ctaText && ctaUrl && (
+        <div className="mt-8 text-center">
+          <TrackedLink
+            href={ctaUrl}
+            target={target}
+            widgetType="press-logos"
+            widgetId={widgetId}
+            widgetName={headline}
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          >
+            {ctaText}
+          </TrackedLink>
+        </div>
+      )}
     </div>
   );
 }

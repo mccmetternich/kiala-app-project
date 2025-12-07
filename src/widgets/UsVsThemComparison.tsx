@@ -11,6 +11,11 @@ interface UsVsThemComparisonProps {
   column2Image?: string;
   column2Title?: string;
   column2Features?: string[];
+  // Standardized CTA props
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  // Legacy props for backwards compatibility
   buttonText?: string;
   buttonUrl?: string;
   target?: '_self' | '_blank';
@@ -19,9 +24,6 @@ interface UsVsThemComparisonProps {
   // CTA anchor support
   ctaType?: 'external' | 'anchor';
   anchorWidgetId?: string;
-  // Legacy props for backwards compatibility
-  ctaText?: string;
-  ctaUrl?: string;
 }
 
 const defaultColumn1Features = [
@@ -50,18 +52,20 @@ export default function UsVsThemComparison({
   column2Image = 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop',
   column2Title = 'Other Greens',
   column2Features = defaultColumn2Features,
+  // Standardized CTA props
+  showCta = true,
+  ctaText = 'Try Kiala Greens Risk-Free →',
+  ctaUrl = 'https://trygreens.com/dr-amy',
+  // Legacy props
   buttonText,
   buttonUrl,
   target = '_blank',
   guaranteeBadge = '90-Day Money Back Guarantee',
-  satisfactionBadge = '100% Community Approved',
-  // Legacy props
-  ctaText = 'Try Kiala Greens Risk-Free →',
-  ctaUrl = 'https://trygreens.com/dr-amy'
+  satisfactionBadge = '100% Community Approved'
 }: UsVsThemComparisonProps) {
-  // Use new props if set, otherwise fall back to legacy props
-  const finalButtonText = buttonText || ctaText;
-  const finalButtonUrl = buttonUrl || ctaUrl;
+  // Use standardized props, fall back to legacy props
+  const finalCtaText = ctaText || buttonText || 'Try Kiala Greens Risk-Free →';
+  const finalCtaUrl = ctaUrl || buttonUrl || 'https://trygreens.com/dr-amy';
 
   return (
     <div className="my-12">
@@ -156,24 +160,26 @@ export default function UsVsThemComparison({
       </div>
 
       {/* CTA Section */}
-      <div className="mt-10 text-center">
-        <TrackedLink
-          href={finalButtonUrl}
-          target={target}
-          widgetType="us-vs-them"
-          widgetId={`us-vs-them-${column1Title?.substring(0, 15)}`}
-          widgetName={`${column1Title} vs ${column2Title}`}
-          className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
-        >
-          {finalButtonText}
-        </TrackedLink>
+      {showCta && (
+        <div className="mt-10 text-center">
+          <TrackedLink
+            href={finalCtaUrl}
+            target={target}
+            widgetType="us-vs-them"
+            widgetId={`us-vs-them-${column1Title?.substring(0, 15)}`}
+            widgetName={`${column1Title} vs ${column2Title}`}
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+          >
+            {finalCtaText}
+          </TrackedLink>
 
-        {/* Guarantee Badge */}
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <Shield className="w-5 h-5 text-primary-600" />
-          <span className="text-sm font-medium text-gray-600">{guaranteeBadge}</span>
+          {/* Guarantee Badge */}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <Shield className="w-5 h-5 text-primary-600" />
+            <span className="text-sm font-medium text-gray-600">{guaranteeBadge}</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

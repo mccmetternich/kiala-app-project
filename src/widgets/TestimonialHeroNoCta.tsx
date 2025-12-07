@@ -1,6 +1,7 @@
 'use client';
 
 import { BadgeCheck } from 'lucide-react';
+import TrackedLink from '@/components/TrackedLink';
 
 interface TestimonialHeroNoCtaProps {
   image?: string;
@@ -12,6 +13,12 @@ interface TestimonialHeroNoCtaProps {
   authorLocation?: string;
   authorAvatar?: string;
   showVerifiedBadge?: boolean;
+  // Optional CTA
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  target?: '_self' | '_blank';
+  widgetId?: string;
 }
 
 export default function TestimonialHeroNoCta({
@@ -26,7 +33,12 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
   authorAge = '52',
   authorLocation = 'Austin, TX',
   authorAvatar,
-  showVerifiedBadge = true
+  showVerifiedBadge = true,
+  showCta = false,
+  ctaText = 'Try It Yourself →',
+  ctaUrl = '#',
+  target = '_self',
+  widgetId
 }: TestimonialHeroNoCtaProps) {
   return (
     <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-purple-50 rounded-2xl overflow-hidden shadow-xl">
@@ -90,6 +102,22 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Optional CTA */}
+          {showCta && ctaText && ctaUrl && (
+            <div className="mt-6 text-center">
+              <TrackedLink
+                href={ctaUrl}
+                target={target}
+                widgetType="testimonial-hero-no-cta"
+                widgetId={widgetId}
+                widgetName={title}
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                {ctaText}
+              </TrackedLink>
             </div>
           )}
         </div>

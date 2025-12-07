@@ -10,6 +10,7 @@ interface DoctorClosingWordProps {
   closingLine?: string;
   signature?: string;
   highlightParagraph?: number; // Index of paragraph to highlight (0-based)
+  showGuaranteeBadge?: boolean;
 }
 
 export default function DoctorClosingWord({
@@ -25,7 +26,8 @@ export default function DoctorClosingWord({
   ],
   closingLine = "Here's to your health,",
   signature = "— Dr. Amy Heart",
-  highlightParagraph = 1 // "You're not..." paragraph
+  highlightParagraph = 1, // "You're not..." paragraph
+  showGuaranteeBadge = true
 }: DoctorClosingWordProps) {
   return (
     <div className="my-8">
@@ -81,10 +83,12 @@ export default function DoctorClosingWord({
             </div>
 
             {/* Trust Badge */}
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg py-2">
-              <Shield className="w-4 h-4 text-green-600" />
-              <span>90-Day Money-Back Guarantee</span>
-            </div>
+            {showGuaranteeBadge && (
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg py-2">
+                <Shield className="w-4 h-4 text-green-600" />
+                <span>90-Day Money-Back Guarantee</span>
+              </div>
+            )}
           </div>
 
           {/* Desktop Layout */}
@@ -132,15 +136,17 @@ export default function DoctorClosingWord({
               </div>
 
               {/* Closing */}
-              <div className="mt-6 pt-4 border-t border-gray-200 flex items-end justify-between">
+              <div className={`mt-6 pt-4 border-t border-gray-200 flex items-end ${showGuaranteeBadge ? 'justify-between' : ''}`}>
                 <div>
                   <p className="text-gray-600 italic mb-1">{closingLine}</p>
                   <p className="text-gray-900 font-bold text-lg">{signature}</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
-                  <Shield className="w-4 h-4 text-green-600" />
-                  <span>90-Day Money-Back Guarantee</span>
-                </div>
+                {showGuaranteeBadge && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
+                    <Shield className="w-4 h-4 text-green-600" />
+                    <span>90-Day Money-Back Guarantee</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

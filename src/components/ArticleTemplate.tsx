@@ -182,6 +182,20 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
       return (
         <div className="my-6 prose prose-lg max-w-none">
           <div dangerouslySetInnerHTML={{ __html: widget.config.content || '' }} />
+          {widget.config.showCta && widget.config.ctaText && (
+            <div className="mt-6 text-center not-prose">
+              <TrackedLink
+                href={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : (widget.config.ctaUrl || '#')}
+                target={widget.config.ctaType === 'anchor' ? '_self' : (widget.config.target || '_self')}
+                widgetType="text-block"
+                widgetId={widget.id}
+                widgetName="Text Block"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+              >
+                {widget.config.ctaText}
+              </TrackedLink>
+            </div>
+          )}
         </div>
       );
       
@@ -645,6 +659,11 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             authorLocation={widget.config.authorLocation}
             authorAvatar={widget.config.authorAvatar}
             showVerifiedBadge={widget.config.showVerifiedBadge}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
+            widgetId={widget.id}
           />
         </div>
       );

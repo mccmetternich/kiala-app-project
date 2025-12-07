@@ -8,6 +8,9 @@ interface NewsletterSignupProps {
   title?: string;
   description?: string;
   placeholder?: string;
+  // Standardized prop
+  ctaText?: string;
+  // Legacy prop for backwards compatibility
   buttonText?: string;
   siteId?: string;
 }
@@ -16,9 +19,12 @@ export default function NewsletterSignup({
   title = 'Join Our Wellness Community',
   description = 'Get exclusive health insights, breakthrough protocols, and special offers delivered to your inbox',
   placeholder = 'Enter your email',
+  ctaText,
   buttonText = 'Join the Community',
   siteId
 }: NewsletterSignupProps) {
+  // Use standardized prop, fall back to legacy prop
+  const finalButtonText = ctaText || buttonText;
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -118,7 +124,7 @@ export default function NewsletterSignup({
             disabled={status === 'loading'}
             className="bg-white text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
           >
-            {status === 'loading' ? 'Joining...' : buttonText}
+            {status === 'loading' ? 'Joining...' : finalButtonText}
           </button>
         </form>
 

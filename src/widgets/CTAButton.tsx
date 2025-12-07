@@ -7,7 +7,11 @@ interface CTAButtonProps {
   // Title and subtitle
   title?: string;
   subtitle?: string;
-  // Button props
+  // CTA props (standardized)
+  showCta?: boolean;
+  ctaUrl?: string;
+  ctaText?: string;
+  // Legacy props for backwards compatibility
   buttonUrl?: string;
   buttonText?: string;
   target?: '_self' | '_blank';
@@ -28,6 +32,9 @@ interface CTAButtonProps {
 export default function CTAButton({
   title = '',
   subtitle = '',
+  showCta = true,
+  ctaUrl,
+  ctaText,
   buttonUrl = '#',
   buttonText = 'Take Action Now →',
   target = '_self',
@@ -41,6 +48,9 @@ export default function CTAButton({
   badges = ['Free Shipping', '90-Day Guarantee', 'Made in USA'],
   widgetId
 }: CTAButtonProps) {
+  // Use standardized props, fall back to legacy props
+  const finalCtaText = ctaText || buttonText;
+  const finalCtaUrl = ctaUrl || buttonUrl;
 
   // Default avatars if none provided
   const defaultAvatars = [
@@ -98,23 +108,25 @@ export default function CTAButton({
         )}
 
         {/* CTA Button */}
-        <div className="text-center">
-          <TrackedLink
-            href={buttonUrl}
-            target={target}
-            widgetType="cta-button"
-            widgetId={widgetId}
-            widgetName={buttonText}
-            className={`inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl ${
-              style === 'secondary'
-                ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                : 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white'
-            }`}
-          >
-            {buttonText}
-            <ArrowRight className="w-5 h-5" />
-          </TrackedLink>
-        </div>
+        {showCta && (
+          <div className="text-center">
+            <TrackedLink
+              href={finalCtaUrl}
+              target={target}
+              widgetType="cta-button"
+              widgetId={widgetId}
+              widgetName={finalCtaText}
+              className={`inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl ${
+                style === 'secondary'
+                  ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  : 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white'
+              }`}
+            >
+              {finalCtaText}
+              <ArrowRight className="w-5 h-5" />
+            </TrackedLink>
+          </div>
+        )}
 
         {/* Badges Section */}
         {showBadges && badges && badges.length > 0 && (

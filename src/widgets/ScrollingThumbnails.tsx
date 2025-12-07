@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import TrackedLink from '@/components/TrackedLink';
 
 interface ImageColumn {
   images: string[];
@@ -12,6 +13,12 @@ interface ScrollingThumbnailsProps {
   customImages?: string[]; // Array of uploaded image URLs
   speed?: number;
   imageHeight?: number;
+  // Optional CTA
+  showCta?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  target?: '_self' | '_blank';
+  widgetId?: string;
 }
 
 // Known working women's face images from Unsplash
@@ -63,7 +70,12 @@ export default function ScrollingThumbnails({
   columns,
   customImages = [],
   speed = 30,
-  imageHeight = 200
+  imageHeight = 200,
+  showCta = false,
+  ctaText = 'Join Them →',
+  ctaUrl = '#',
+  target = '_self',
+  widgetId
 }: ScrollingThumbnailsProps) {
   // Force minimum size of 200px (overrides any smaller saved values)
   const actualImageHeight = Math.max(200, imageHeight || 200);
@@ -153,6 +165,22 @@ export default function ScrollingThumbnails({
           })}
         </div>
       </div>
+
+      {/* Optional CTA */}
+      {showCta && ctaText && ctaUrl && (
+        <div className="mt-6 text-center">
+          <TrackedLink
+            href={ctaUrl}
+            target={target}
+            widgetType="scrolling-thumbnails"
+            widgetId={widgetId}
+            widgetName={headline}
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          >
+            {ctaText}
+          </TrackedLink>
+        </div>
+      )}
     </div>
   );
 }

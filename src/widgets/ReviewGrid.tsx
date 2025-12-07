@@ -17,9 +17,12 @@ interface ReviewGridProps {
   headline?: string;
   subheading?: string;
   reviews?: Review[];
+  // Optional CTA
+  showCta?: boolean;
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
+  widgetId?: string;
 }
 
 const defaultReviews: Review[] = [
@@ -61,9 +64,11 @@ export default function ReviewGrid({
   headline = 'Real Results From Real Women',
   subheading = 'Join thousands who have transformed their health',
   reviews = defaultReviews,
+  showCta = true,
   ctaText = 'Try It Now →',
   ctaUrl = '#',
-  target = '_self'
+  target = '_self',
+  widgetId
 }: ReviewGridProps) {
   return (
     <div className="my-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 md:p-10">
@@ -134,19 +139,21 @@ export default function ReviewGrid({
         ))}
       </div>
 
-      {/* CTA Button */}
-      <div className="text-center">
-        <TrackedLink
-          href={ctaUrl}
-          target={target}
-          widgetType="review-grid"
-          widgetId={`review-grid-${headline?.substring(0, 20)}`}
-          widgetName={headline || ctaText || 'Review Grid'}
-          className="inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
-        >
-          {ctaText}
-        </TrackedLink>
-      </div>
+      {/* CTA Button - Optional */}
+      {showCta && ctaText && ctaUrl && (
+        <div className="text-center">
+          <TrackedLink
+            href={ctaUrl}
+            target={target}
+            widgetType="review-grid"
+            widgetId={widgetId || `review-grid-${headline?.substring(0, 20)}`}
+            widgetName={headline || ctaText || 'Review Grid'}
+            className="inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+          >
+            {ctaText}
+          </TrackedLink>
+        </div>
+      )}
     </div>
   );
 }

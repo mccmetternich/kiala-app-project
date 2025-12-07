@@ -25,7 +25,7 @@ interface ChecklistProps {
   showCta?: boolean;
   ctaType?: 'external' | 'anchor';
   target?: '_self' | '_blank';
-  style?: 'default' | 'interactive' | 'assessment';
+  style?: 'default' | 'interactive' | 'assessment' | 'celebratory';
 }
 
 export default function Checklist({
@@ -50,7 +50,7 @@ export default function Checklist({
   const [showAlert, setShowAlert] = useState(false);
 
   const toggleItem = (id: string) => {
-    if (style !== 'interactive' && style !== 'assessment') return;
+    if (style !== 'interactive' && style !== 'assessment' && style !== 'celebratory') return;
 
     const newChecked = new Set(checkedItems);
     if (newChecked.has(id)) {
@@ -64,6 +64,7 @@ export default function Checklist({
   const checkedCount = checkedItems.size;
   const totalItems = items.length;
   const isAssessment = style === 'assessment';
+  const isCelebratory = style === 'celebratory' || style === 'interactive';
   const isOverThreshold = checkedCount >= alertThreshold;
 
   // Handle threshold crossing
@@ -89,6 +90,7 @@ export default function Checklist({
   // Progress bar color logic
   const getProgressColor = () => {
     const percentage = (checkedCount / alertThreshold) * 100;
+    if (isCelebratory && percentage >= 100) return 'from-emerald-500 to-teal-500';
     if (percentage >= 100) return 'from-red-500 to-rose-500';
     if (percentage >= 66) return 'from-orange-500 to-amber-500';
     return 'from-primary-500 to-purple-500';
@@ -128,25 +130,27 @@ export default function Checklist({
           </div>
         </div>
 
-        {/* Progress indicator for interactive/assessment */}
-        {(style === 'interactive' || style === 'assessment') && (
+        {/* Progress indicator for interactive/assessment/celebratory */}
+        {(style === 'interactive' || style === 'assessment' || style === 'celebratory') && (
           <div className="mt-5">
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-white/90 font-medium">
-                {checkedCount} of {totalItems} selected
+                {isCelebratory && isOverThreshold ? "You're Ready!" : `${checkedCount} of ${totalItems} selected`}
               </span>
               <span className={`font-bold px-3 py-1 rounded-full ${
-                isOverThreshold
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-white/20 text-white'
+                isCelebratory && isOverThreshold
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : isOverThreshold
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-white/20 text-white'
               }`}>
-                {Math.round((checkedCount / totalItems) * 100)}%
+                {isCelebratory && isOverThreshold ? '🎉' : `${Math.round((checkedCount / totalItems) * 100)}%`}
               </span>
             </div>
             <div className="h-3 bg-white/30 rounded-full overflow-hidden shadow-inner">
               <div
                 className={`h-full transition-all duration-500 bg-gradient-to-r ${getProgressColor()}`}
-                style={{ width: `${(checkedCount / totalItems) * 100}%` }}
+                style={{ width: isCelebratory && isOverThreshold ? '100%' : `${(checkedCount / totalItems) * 100}%` }}
               />
             </div>
           </div>
@@ -158,7 +162,7 @@ export default function Checklist({
         <ul className="space-y-3">
           {items.map((item) => {
             const isChecked = checkedItems.has(item.id);
-            const isClickable = style === 'interactive' || style === 'assessment';
+            const isClickable = style === 'interactive' || style === 'assessment' || style === 'celebratory';
 
             return (
               <li key={item.id}>
@@ -170,7 +174,9 @@ export default function Checklist({
                   } ${isChecked
                     ? (isAssessment
                         ? 'bg-gradient-to-r from-rose-50 to-pink-50 border-2 border-rose-300 shadow-md'
-                        : 'bg-gradient-to-r from-primary-50 to-purple-50 border-2 border-primary-300 shadow-md')
+                        : isCelebratory
+                          ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 shadow-md'
+                          : 'bg-gradient-to-r from-primary-50 to-purple-50 border-2 border-primary-300 shadow-md')
                     : 'bg-gray-50 border-2 border-gray-100 hover:border-gray-200'
                   }`}
                 >
@@ -178,7 +184,9 @@ export default function Checklist({
                     isChecked
                       ? (isAssessment
                           ? 'bg-gradient-to-r from-rose-500 to-pink-500 border-rose-500 shadow-lg'
-                          : 'bg-gradient-to-r from-primary-500 to-purple-500 border-primary-500 shadow-lg')
+                          : isCelebratory
+                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500 border-emerald-500 shadow-lg'
+                            : 'bg-gradient-to-r from-primary-500 to-purple-500 border-primary-500 shadow-lg')
                       : 'border-gray-300 bg-white'
                   }`}>
                     {isChecked ? (
@@ -211,23 +219,33 @@ export default function Checklist({
 
         {/* Alert Box - appears when threshold is hit */}
         {showAlert && (
-          <div className="mt-6 rounded-2xl overflow-hidden shadow-xl border-2 border-rose-300">
-            <div className="bg-gradient-to-r from-rose-500 via-red-500 to-orange-500 px-5 py-4">
+          <div className={`mt-6 rounded-2xl overflow-hidden shadow-xl border-2 ${
+            isCelebratory ? 'border-emerald-300' : 'border-rose-300'
+          }`}>
+            <div className={`px-5 py-4 ${
+              isCelebratory
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500'
+                : 'bg-gradient-to-r from-rose-500 via-red-500 to-orange-500'
+            }`}>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-full">
-                  <AlertTriangle className="w-6 h-6 text-white" />
+                  {isCelebratory ? (
+                    <Sparkles className="w-6 h-6 text-white" />
+                  ) : (
+                    <AlertTriangle className="w-6 h-6 text-white" />
+                  )}
                 </div>
                 <h4 className="text-xl font-bold text-white">{alertHeadline}</h4>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-6">
+            <div className={`p-6 ${
+              isCelebratory
+                ? 'bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50'
+                : 'bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50'
+            }`}>
               <p className="text-lg text-gray-800 leading-relaxed mb-4 font-medium">
                 {alertMessage}
               </p>
-              <div className="flex items-center gap-2 text-rose-700 font-semibold">
-                <Sparkles className="w-5 h-5" />
-                <span>You've selected {checkedCount} of {totalItems} signs.</span>
-              </div>
 
               {/* CTA in alert */}
               {showCta && ctaText && ctaUrl && (
@@ -236,7 +254,11 @@ export default function Checklist({
                   target={target}
                   widgetType="checklist"
                   widgetName={headline}
-                  className="mt-5 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className={`mt-5 w-full flex items-center justify-center gap-2 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
+                    isCelebratory
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600'
+                      : 'bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600'
+                  }`}
                 >
                   <Heart className="w-5 h-5" />
                   {ctaText}

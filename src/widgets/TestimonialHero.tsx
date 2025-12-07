@@ -12,10 +12,13 @@ interface TestimonialHeroProps {
   image?: string;
   title?: string;
   body?: string;
+  // Optional CTA
+  showCta?: boolean;
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
   benefits?: Benefit[] | string[];
+  widgetId?: string;
 }
 
 const iconMap = {
@@ -41,10 +44,12 @@ Within the first week, my bloating was GONE. By week 4, I had more energy than I
 If you're on the fence, just try it. The 90-day guarantee means you have nothing to lose (except the weight!). This has honestly changed my life."
 
 — Jennifer M., 52, Austin TX`,
+  showCta = true,
   ctaText = 'TRY NOW - SAVE 50%',
   ctaUrl = '#',
   target = '_self',
-  benefits = defaultBenefits
+  benefits = defaultBenefits,
+  widgetId
 }: TestimonialHeroProps) {
   return (
     <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-purple-50 rounded-2xl overflow-hidden shadow-xl">
@@ -72,16 +77,19 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
             {body}
           </div>
 
-          {/* CTA Button */}
-          <TrackedLink
-            href={ctaUrl}
-            target={target}
-            widgetType="testimonial-hero"
-            widgetName={title}
-            className="block w-full md:w-auto md:inline-block text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-6"
-          >
-            {ctaText}
-          </TrackedLink>
+          {/* CTA Button - Optional */}
+          {showCta && ctaText && ctaUrl && (
+            <TrackedLink
+              href={ctaUrl}
+              target={target}
+              widgetType="testimonial-hero"
+              widgetId={widgetId}
+              widgetName={title}
+              className="block w-full md:w-auto md:inline-block text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-6"
+            >
+              {ctaText}
+            </TrackedLink>
+          )}
 
           {/* Benefit Icons */}
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">

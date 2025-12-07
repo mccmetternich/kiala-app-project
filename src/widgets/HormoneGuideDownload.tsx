@@ -6,6 +6,9 @@ import { trackLead } from '@/lib/meta-pixel';
 interface HormoneGuideDownloadProps {
   title?: string;
   description?: string;
+  // Standardized prop
+  ctaText?: string;
+  // Legacy prop for backwards compatibility
   buttonText?: string;
   siteId?: string;
 }
@@ -13,9 +16,12 @@ interface HormoneGuideDownloadProps {
 export default function HormoneGuideDownload({
   title = 'Hormone Balance Quick Start Guide',
   description = 'Join 47,284+ women who have downloaded my free guide to naturally balance hormones in just 7 days. Get the exact meal plans and simple protocols I use with patients.',
+  ctaText,
   buttonText = 'Download Free Guide',
   siteId
 }: HormoneGuideDownloadProps) {
+  // Use standardized prop, fall back to legacy prop
+  const finalButtonText = ctaText || buttonText;
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -124,7 +130,7 @@ export default function HormoneGuideDownload({
               disabled={status === 'loading'}
               className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg disabled:opacity-50"
             >
-              {status === 'loading' ? 'Sending...' : buttonText}
+              {status === 'loading' ? 'Sending...' : finalButtonText}
             </button>
           </div>
         </form>

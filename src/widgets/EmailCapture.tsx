@@ -7,6 +7,10 @@ import { trackLead } from '@/lib/meta-pixel';
 interface EmailCaptureProps {
   headline?: string;
   subheading?: string;
+  // CTA props (standardized)
+  showCta?: boolean;
+  ctaText?: string;
+  // Legacy prop for backwards compatibility
   buttonText?: string;
   siteId: string;
   source?: string;
@@ -19,6 +23,8 @@ interface EmailCaptureProps {
 export default function EmailCapture({
   headline = 'Want More Health Tips?',
   subheading = 'Join 47k+ women getting weekly wellness insights',
+  showCta = true,
+  ctaText,
   buttonText = 'Subscribe',
   siteId,
   source = 'article_email_capture',
@@ -27,6 +33,8 @@ export default function EmailCapture({
   showNameField = false,
   incentive
 }: EmailCaptureProps) {
+  // Use standardized prop, fall back to legacy prop
+  const finalButtonText = ctaText || buttonText;
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -117,7 +125,7 @@ export default function EmailCapture({
             disabled={status === 'loading'}
             className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
           >
-            {status === 'loading' ? <Loader2 className="w-4 h-4 animate-spin" /> : buttonText}
+            {status === 'loading' ? <Loader2 className="w-4 h-4 animate-spin" /> : finalButtonText}
           </button>
         </form>
         {status === 'error' && <p className="text-red-600 text-xs mt-2">{message}</p>}
@@ -164,7 +172,7 @@ export default function EmailCapture({
               {status === 'loading' ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                buttonText
+                finalButtonText
               )}
             </button>
           </div>

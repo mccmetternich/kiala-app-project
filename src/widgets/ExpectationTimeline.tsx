@@ -11,6 +11,7 @@ interface TimelineStep {
   description: string;
   benefits?: string[];
   icon?: string;
+  callout?: string;  // Optional highlighted callout text (e.g., "The cycle continues")
 }
 
 interface ExpectationTimelineProps {
@@ -20,7 +21,10 @@ interface ExpectationTimelineProps {
   ctaText?: string;
   ctaUrl?: string;
   target?: '_self' | '_blank';
+  // Disclaimer section
   showDisclaimer?: boolean;
+  disclaimerTitle?: string;
+  disclaimerBody?: string;
   // Bottom stats
   showStats?: boolean;
   stat1Label?: string;
@@ -105,6 +109,8 @@ export default function ExpectationTimeline({
   ctaUrl = '#',
   target = '_self',
   showDisclaimer = true,
+  disclaimerTitle = "Everyone's Journey Is Unique",
+  disclaimerBody = "Results vary based on your starting point, consistency, and lifestyle. Some women notice changes within the first week, while deeper transformation unfolds over months. Trust the process—your body knows what to do when given the right support.",
   showStats = false,
   stat1Label = 'Month Journey',
   weeksTotal = '12',
@@ -190,6 +196,13 @@ export default function ExpectationTimeline({
                         </div>
                       )}
 
+                      {/* Optional Callout - highlighted text box */}
+                      {step.callout && (
+                        <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
+                          <p className="text-amber-800 font-semibold text-sm italic">{step.callout}</p>
+                        </div>
+                      )}
+
                       {/* Progress indicator for last step */}
                       {isLast && (
                         <div className="mt-3 p-3 bg-gradient-to-r from-primary-50 to-purple-50 rounded-lg border border-primary-200">
@@ -215,11 +228,8 @@ export default function ExpectationTimeline({
                 <Heart className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 mb-1">Everyone's Journey Is Unique</h4>
-                <p className="text-sm text-gray-600">
-                  Results vary based on your starting point, consistency, and lifestyle. Some women notice changes within the first week,
-                  while deeper transformation unfolds over months. Trust the process—your body knows what to do when given the right support.
-                </p>
+                <h4 className="font-bold text-gray-900 mb-1">{disclaimerTitle}</h4>
+                <p className="text-sm text-gray-600">{disclaimerBody}</p>
               </div>
             </div>
           </div>
