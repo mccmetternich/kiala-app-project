@@ -57,8 +57,7 @@ function getCtaUrl(config: Record<string, unknown>): string {
   if (ctaType === 'anchor' && config.anchorWidgetId) {
     return `#widget-${config.anchorWidgetId}`;
   }
-  // Prefer ctaUrl (new field) over buttonUrl (legacy field)
-  return (config.ctaUrl || config.buttonUrl || '#') as string;
+  return (config.ctaUrl || '#') as string;
 }
 
 // Widget renderer component
@@ -76,8 +75,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             price={widget.config.price ? `$${widget.config.price}` : undefined}
             originalPrice={widget.config.originalPrice ? `$${widget.config.originalPrice}` : undefined}
             features={widget.config.benefits}
-            ctaText={widget.config.buttonText}
-            ctaLink={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.buttonUrl}
+            ctaText={widget.config.ctaText}
+            ctaLink={getCtaUrl(widget.config)}
             ctaType={widget.config.ctaType}
             target={widget.config.target}
             ctaBullets={widget.config.ctaBullets}
@@ -205,7 +204,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
           <EmailCapture
             headline={widget.config.headline}
             subheading={widget.config.subheading}
-            buttonText={widget.config.buttonText}
+            buttonText={widget.config.ctaText}
             siteId={siteId || 'default'}
             source="article_widget"
             tags={['article', widget.id]}
@@ -221,8 +220,6 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
           subtitle={widget.config.subtitle}
           ctaUrl={widget.config.ctaUrl}
           ctaText={widget.config.ctaText}
-          buttonUrl={widget.config.buttonUrl}
-          buttonText={widget.config.buttonText}
           target={widget.config.target}
           style={widget.config.style as 'primary' | 'secondary' | undefined}
           ctaType={widget.config.ctaType}
@@ -293,8 +290,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             subheading={widget.config.subheading}
             items={widget.config.items}
             style={widget.config.listStyle || widget.config.style as any}
-            ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.buttonUrl}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
           />
         </div>
       );
@@ -334,8 +331,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             features={widget.config.features}
             redemptionCount={widget.config.redemptionCount}
             limitedSpots={widget.config.limitedSpots}
-            ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.buttonUrl}
+            ctaText={widget.config.ctaText}
+            ctaUrl={getCtaUrl(widget.config)}
             ctaType={widget.config.ctaType}
             target={widget.config.target}
             widgetId={widget.id}
@@ -362,9 +359,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             badges={widget.config.badges}
             doctorName={exclusiveDoctorName}
             doctorImage={exclusiveDoctorImage}
-            ctaText={widget.config.ctaText || widget.config.buttonText}
+            ctaText={widget.config.ctaText}
             ctaUrl={getCtaUrl(widget.config)}
-            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
+            target={widget.config.target}
             shippingBadgeText={widget.config.shippingBadgeText}
             guaranteeBadgeText={widget.config.guaranteeBadgeText}
             evaluatedBadgeText={widget.config.evaluatedBadgeText}
@@ -462,8 +459,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
                         <span className="text-sm text-gray-600">({product.reviews || 0})</span>
                       </div>
                     )}
-                    <a href={product.buttonUrl || '#'} className="block w-full btn-primary text-center py-2 rounded-lg font-semibold">
-                      {product.buttonText || 'Shop Now'}
+                    <a href={product.ctaUrl || '#'} className="block w-full btn-primary text-center py-2 rounded-lg font-semibold">
+                      {product.ctaText || 'Shop Now'}
                     </a>
                   </div>
                 </div>
@@ -494,8 +491,8 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             benefit4={widget.config.benefit4}
             benefit5={widget.config.benefit5}
             benefit6={widget.config.benefit6}
-            ctaText={widget.config.ctaText || widget.config.buttonText}
-            ctaUrl={widget.config.ctaUrl || widget.config.buttonUrl}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
             target={widget.config.target}
             guaranteeText={widget.config.guaranteeText}
             doctorName={widget.config.doctorName}
@@ -620,9 +617,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             headline={widget.config.headline}
             subheading={widget.config.subheading}
             reviews={widget.config.reviews}
-            ctaText={widget.config.buttonText}
-            ctaUrl={widget.config.buttonUrl}
-            target={widget.config.target}
+            ctaText={widget.config.ctaText}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
           />
         </div>
       );
@@ -678,7 +675,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             image={widget.config.image}
             title={widget.config.headline}
             body={widget.config.body}
-            ctaText={widget.config.buttonText}
+            ctaText={widget.config.ctaText}
             ctaUrl={getCtaUrl(widget.config)}
             target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
             benefits={widget.config.benefits}
@@ -738,11 +735,9 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             column2Image={widget.config.column2Image}
             column2Title={widget.config.column2Title}
             column2Features={widget.config.column2Features}
-            buttonText={widget.config.buttonText}
-            buttonUrl={getCtaUrl(widget.config)}
-            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
             ctaText={widget.config.ctaText}
-            ctaUrl={widget.config.ctaUrl}
+            ctaUrl={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : widget.config.target}
             guaranteeBadge={widget.config.guaranteeBadge}
             satisfactionBadge={widget.config.satisfactionBadge}
           />
@@ -824,36 +819,23 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
       );
 
     case 'final-cta': {
-      // Support both old field names (buttonText/buttonUrl) and new standard fields (ctaText/ctaUrl)
-      const finalCtaText = widget.config.ctaText || widget.config.buttonText || 'Get Started';
-      const finalCtaUrl = widget.config.ctaUrl || widget.config.buttonUrl || '#newsletter';
+      const finalCtaText = widget.config.ctaText || 'Get Started';
       const finalCtaTarget = widget.config.target || '_self';
-      const finalCtaType = widget.config.ctaType || 'external';
-      const finalAnchorWidgetId = widget.config.anchorWidgetId;
 
       return (
         <div className="my-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">{widget.config.headline}</h2>
           <p className="text-lg text-white/90 mb-6 max-w-2xl mx-auto">{widget.config.content}</p>
-          {finalCtaType === 'anchor' && finalAnchorWidgetId ? (
-            <a
-              href={`#widget-${finalAnchorWidgetId}`}
-              className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
-            >
-              {finalCtaText}
-            </a>
-          ) : (
-            <TrackedLink
-              href={finalCtaUrl}
-              target={finalCtaTarget}
-              widgetType="final-cta"
-              widgetId={widget.id}
-              widgetName={widget.config.headline}
-              className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
-            >
-              {finalCtaText}
-            </TrackedLink>
-          )}
+          <TrackedLink
+            href={getCtaUrl(widget.config)}
+            target={widget.config.ctaType === 'anchor' ? '_self' : finalCtaTarget}
+            widgetType="final-cta"
+            widgetId={widget.id}
+            widgetName={widget.config.headline}
+            className="inline-block bg-white text-primary-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all shadow-lg"
+          >
+            {finalCtaText}
+          </TrackedLink>
         </div>
       );
     }

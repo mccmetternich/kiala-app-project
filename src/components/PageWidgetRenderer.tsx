@@ -96,7 +96,7 @@ function WidgetComponent({
               headline: heroArticle.title,
               subheading: heroArticle.excerpt,
               image: heroArticle.image,
-              buttonText: config.buttonText || 'Read My Breakthrough Story',
+              buttonText: config.ctaText || config.buttonText || 'Read My Breakthrough Story',
               buttonUrl: `/site/${subdomain}/articles/${heroArticle.slug}`,
               rating: '4.9',
               views: heroArticle.views,
@@ -113,8 +113,8 @@ function WidgetComponent({
             headline: config.headline,
             subheading: config.subheading,
             image: config.image,
-            buttonText: config.buttonText,
-            buttonUrl: config.buttonUrl,
+            buttonText: config.ctaText || config.buttonText,
+            buttonUrl: config.ctaUrl || config.buttonUrl,
             author: brand?.name || config.author,
             authorImage: brand?.authorImage || brand?.sidebarImage || brand?.profileImage,
           }}
@@ -145,7 +145,7 @@ function WidgetComponent({
         <EmailCapture
           headline={config.headline}
           subheading={config.subheading}
-          buttonText={config.buttonText}
+          buttonText={config.ctaText || config.buttonText}
           siteId={siteId || ''}
         />
       );
@@ -417,7 +417,7 @@ function LeadMagnetFormWidget({ config, brand, settings, siteId }: any) {
             disabled={status === 'loading'}
             className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full font-semibold transition-colors disabled:opacity-50"
           >
-            {status === 'loading' ? 'Sending...' : config.buttonText || 'Get Instant Access'}
+            {status === 'loading' ? 'Sending...' : config.ctaText || config.buttonText || 'Get Instant Access'}
           </button>
         </form>
 
