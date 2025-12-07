@@ -219,11 +219,14 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
         <CTAButton
           title={widget.config.title}
           subtitle={widget.config.subtitle}
-          buttonUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.buttonUrl}
+          ctaUrl={widget.config.ctaUrl}
+          ctaText={widget.config.ctaText}
+          buttonUrl={widget.config.buttonUrl}
           buttonText={widget.config.buttonText}
           target={widget.config.target}
           style={widget.config.style as 'primary' | 'secondary' | undefined}
           ctaType={widget.config.ctaType}
+          anchorWidgetId={widget.config.anchorWidgetId}
           showSocialProof={widget.config.showSocialProof}
           socialProofAvatars={widget.config.socialProofAvatars}
           socialProofStars={widget.config.socialProofStars}
