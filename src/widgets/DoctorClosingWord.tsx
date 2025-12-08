@@ -10,6 +10,12 @@ interface DoctorClosingWordProps {
   closingLine?: string;
   signature?: string;
   highlightParagraph?: number; // Index of paragraph to highlight (0-based)
+  // Badge options
+  showBadge1?: boolean;
+  badge1Text?: string;
+  showBadge2?: boolean;
+  badge2Text?: string;
+  // Legacy prop for backwards compatibility
   showGuaranteeBadge?: boolean;
 }
 
@@ -27,8 +33,16 @@ export default function DoctorClosingWord({
   closingLine = "Here's to your health,",
   signature = "— Dr. Amy Heart",
   highlightParagraph = 1, // "You're not..." paragraph
-  showGuaranteeBadge = true
+  showBadge1 = false,
+  badge1Text = "90-Day Money-Back Guarantee",
+  showBadge2 = false,
+  badge2Text = "Exclusive Member Pricing",
+  showGuaranteeBadge // Legacy: if true and no new badges set, show badge1
 }: DoctorClosingWordProps) {
+  // Handle legacy prop - if showGuaranteeBadge is explicitly true, show badge1
+  const displayBadge1 = showBadge1 ?? (showGuaranteeBadge === true);
+  const displayBadge2 = showBadge2 ?? false;
+  const showAnyBadge = displayBadge1 || displayBadge2;
   return (
     <div className="my-8">
       <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
@@ -82,11 +96,21 @@ export default function DoctorClosingWord({
               <p className="text-gray-900 font-bold">{signature}</p>
             </div>
 
-            {/* Trust Badge */}
-            {showGuaranteeBadge && (
-              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg py-2">
-                <Shield className="w-4 h-4 text-green-600" />
-                <span>90-Day Money-Back Guarantee</span>
+            {/* Trust Badges */}
+            {showAnyBadge && (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                {displayBadge1 && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-3 py-2">
+                    <Shield className="w-4 h-4 text-green-600" />
+                    <span>{badge1Text}</span>
+                  </div>
+                )}
+                {displayBadge2 && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-3 py-2">
+                    <CheckCircle className="w-4 h-4 text-purple-600" />
+                    <span>{badge2Text}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -136,15 +160,25 @@ export default function DoctorClosingWord({
               </div>
 
               {/* Closing */}
-              <div className={`mt-6 pt-4 border-t border-gray-200 flex items-end ${showGuaranteeBadge ? 'justify-between' : ''}`}>
+              <div className={`mt-6 pt-4 border-t border-gray-200 flex items-end ${showAnyBadge ? 'justify-between' : ''}`}>
                 <div>
                   <p className="text-gray-600 italic mb-1">{closingLine}</p>
                   <p className="text-gray-900 font-bold text-lg">{signature}</p>
                 </div>
-                {showGuaranteeBadge && (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    <span>90-Day Money-Back Guarantee</span>
+                {showAnyBadge && (
+                  <div className="flex flex-wrap gap-2">
+                    {displayBadge1 && (
+                      <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
+                        <Shield className="w-4 h-4 text-green-600" />
+                        <span>{badge1Text}</span>
+                      </div>
+                    )}
+                    {displayBadge2 && (
+                      <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
+                        <CheckCircle className="w-4 h-4 text-purple-600" />
+                        <span>{badge2Text}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

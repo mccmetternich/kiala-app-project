@@ -5232,6 +5232,116 @@ function WidgetConfigPanel({ widget, onUpdate, siteId, articleId, allWidgets }: 
           {renderOptionalCtaSection('Choose the Right Way →', '#')}
         </div>
       )}
+
+      {widget.type === 'doctor-closing-word' && (
+        <div className="space-y-4">
+          {renderTextField('Doctor Name', 'doctorName', 'Dr. Amy Heart')}
+          {renderImageField('Doctor Image', 'doctorImage')}
+          {renderTextField('Headline', 'headline', 'A Final Word From Dr. Amy')}
+
+          {/* Paragraphs */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Paragraphs</label>
+            <div className="space-y-2">
+              {(widget.config.paragraphs || []).map((para: string, idx: number) => (
+                <div key={idx} className="flex gap-2">
+                  <textarea
+                    value={para}
+                    onChange={(e) => {
+                      const paragraphs = [...(widget.config.paragraphs || [])];
+                      paragraphs[idx] = e.target.value;
+                      onUpdate({ paragraphs });
+                    }}
+                    rows={2}
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const paragraphs = (widget.config.paragraphs || []).filter((_: any, i: number) => i !== idx);
+                      onUpdate({ paragraphs });
+                    }}
+                    className="text-red-500 hover:text-red-700 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const paragraphs = [...(widget.config.paragraphs || []), 'New paragraph...'];
+                  onUpdate({ paragraphs });
+                }}
+                className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 font-medium"
+              >
+                <Plus className="w-4 h-4" /> Add Paragraph
+              </button>
+            </div>
+          </div>
+
+          {renderTextField('Closing Line', 'closingLine', "Here's to your health,")}
+          {renderTextField('Signature', 'signature', '— Dr. Amy Heart')}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Highlight Paragraph #</label>
+            <input
+              type="number"
+              min="0"
+              max={(widget.config.paragraphs || []).length - 1}
+              value={widget.config.highlightParagraph ?? 1}
+              onChange={(e) => onUpdate({ highlightParagraph: parseInt(e.target.value) || 0 })}
+              className="w-20 px-3 py-2 text-sm border border-gray-300 rounded-lg"
+            />
+            <p className="text-xs text-gray-500 mt-1">0-based index of paragraph to bold</p>
+          </div>
+
+          {/* Badge Options */}
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Badge Options</h4>
+
+            <div className="space-y-3">
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={widget.config.showBadge1 || false}
+                  onChange={(e) => onUpdate({ showBadge1: e.target.checked })}
+                  className="rounded border-gray-300"
+                />
+                Show Badge 1 (Guarantee)
+              </label>
+              {widget.config.showBadge1 && (
+                <input
+                  type="text"
+                  value={widget.config.badge1Text || '90-Day Money-Back Guarantee'}
+                  onChange={(e) => onUpdate({ badge1Text: e.target.value })}
+                  placeholder="Badge 1 text"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                />
+              )}
+
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={widget.config.showBadge2 || false}
+                  onChange={(e) => onUpdate({ showBadge2: e.target.checked })}
+                  className="rounded border-gray-300"
+                />
+                Show Badge 2 (Exclusive)
+              </label>
+              {widget.config.showBadge2 && (
+                <input
+                  type="text"
+                  value={widget.config.badge2Text || 'Exclusive Member Pricing'}
+                  onChange={(e) => onUpdate({ badge2Text: e.target.value })}
+                  placeholder="Badge 2 text"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -5804,7 +5914,11 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
       ],
       closingLine: 'Here\'s to your health,',
       signature: '— Dr. Amy Heart',
-      highlightParagraph: 1
+      highlightParagraph: 1,
+      showBadge1: false,
+      badge1Text: '90-Day Money-Back Guarantee',
+      showBadge2: false,
+      badge2Text: 'Exclusive Member Pricing'
     },
     // Page-specific widgets
     'social-validation-tile': {

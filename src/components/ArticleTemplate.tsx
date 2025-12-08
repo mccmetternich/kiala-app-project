@@ -867,6 +867,10 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             closingLine={widget.config.closingLine}
             signature={widget.config.signature}
             highlightParagraph={widget.config.highlightParagraph}
+            showBadge1={widget.config.showBadge1}
+            badge1Text={widget.config.badge1Text}
+            showBadge2={widget.config.showBadge2}
+            badge2Text={widget.config.badge2Text}
           />
         </div>
       );
