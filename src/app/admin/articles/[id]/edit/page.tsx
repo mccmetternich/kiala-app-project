@@ -730,7 +730,7 @@ export default function EditArticle() {
                   }`}
                 >
                   <Eye className="w-4 h-4" />
-                  {formData.published ? 'View Live' : 'Preview'}
+                  {formData.published ? 'View Live' : 'Preview Draft'}
                 </a>
               )}
               {hasUnsavedChanges ? (

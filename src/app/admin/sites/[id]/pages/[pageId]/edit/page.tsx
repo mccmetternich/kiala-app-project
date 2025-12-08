@@ -104,10 +104,27 @@ export default function EditPage() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [duplicateLoading, setDuplicateLoading] = useState(false);
   const [duplicateSuccess, setDuplicateSuccess] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialState, setInitialState] = useState<{ widgets: string; seoTitle: string; seoDescription: string } | null>(null);
 
   useEffect(() => {
     loadData();
   }, [siteId, pageId]);
+
+  // Track unsaved changes
+  useEffect(() => {
+    if (!initialState) return;
+    const currentState = {
+      widgets: JSON.stringify(widgets),
+      seoTitle,
+      seoDescription
+    };
+    const hasChanges =
+      currentState.widgets !== initialState.widgets ||
+      currentState.seoTitle !== initialState.seoTitle ||
+      currentState.seoDescription !== initialState.seoDescription;
+    setHasUnsavedChanges(hasChanges);
+  }, [widgets, seoTitle, seoDescription, initialState]);
 
   const loadData = async () => {
     try {
@@ -133,9 +150,19 @@ export default function EditPage() {
         const page = pages.find((p: any) => p.id === pageId);
         if (page) {
           setCurrentPage(page);
-          setWidgets(page.widgets || []);
-          setSeoTitle(page.seoTitle || page.title || '');
-          setSeoDescription(page.seoDescription || '');
+          const pageWidgets = page.widgets || [];
+          const pageSeoTitle = page.seoTitle || page.title || '';
+          const pageSeoDescription = page.seoDescription || '';
+          setWidgets(pageWidgets);
+          setSeoTitle(pageSeoTitle);
+          setSeoDescription(pageSeoDescription);
+          // Store initial state for change detection
+          setInitialState({
+            widgets: JSON.stringify(pageWidgets),
+            seoTitle: pageSeoTitle,
+            seoDescription: pageSeoDescription
+          });
+          setHasUnsavedChanges(false);
         }
       }
     } catch (error) {
@@ -169,6 +196,13 @@ export default function EditPage() {
       if (response.ok) {
         // Update local state
         setPageConfig({ ...pageConfig, pages: updatedPages });
+        // Reset initial state to current state
+        setInitialState({
+          widgets: JSON.stringify(widgets),
+          seoTitle,
+          seoDescription
+        });
+        setHasUnsavedChanges(false);
       }
     } catch (error) {
       console.error('Error saving page:', error);
@@ -378,16 +412,27 @@ export default function EditPage() {
               }`}
             >
               <Eye className="w-4 h-4" />
-              {currentPage.enabled ? 'View Live' : 'Preview'}
+              {currentPage.enabled ? 'View Live' : 'Preview Draft'}
             </a>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-colors disabled:opacity-50"
-            >
-              <Save className="w-4 h-4" />
-              {saving ? 'Saving...' : 'Save Page'}
-            </button>
+            {hasUnsavedChanges ? (
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-colors disabled:opacity-50 shadow-lg shadow-primary-600/20"
+              >
+                {saving ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-400">
+                <Check className="w-4 h-4 text-green-500" />
+                Saved
+              </div>
+            )}
 
             {/* Delete Button */}
             <button
