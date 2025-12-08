@@ -22,6 +22,16 @@ import { useRouter } from 'next/navigation';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
 import { formatDistanceToNow } from 'date-fns';
 
+// Helper to parse dates that may or may not have timezone info
+const parseDate = (dateStr: string) => {
+  if (!dateStr) return new Date();
+  // If no timezone indicator, assume UTC
+  const normalized = dateStr.endsWith('Z') || dateStr.includes('+') || dateStr.includes('-')
+    ? dateStr
+    : dateStr + 'Z';
+  return new Date(normalized);
+};
+
 interface Article {
   id: string;
   title: string;
@@ -470,10 +480,10 @@ export default function ArticlesAdmin() {
                         <span>•</span>
                         <span className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
-                          {(article.realViews ?? 0).toLocaleString()} real
+                          {(article.realViews ?? 0).toLocaleString()} Real Views
                         </span>
                         <span>•</span>
-                        <span>{formatDistanceToNow(new Date(article.updated_at), { addSuffix: true })}</span>
+                        <span>Updated {formatDistanceToNow(parseDate(article.updated_at), { addSuffix: false })} ago</span>
                       </div>
                     </div>
 
