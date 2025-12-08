@@ -61,6 +61,8 @@ export default function ArticlesAdmin() {
   const [loading, setLoading] = useState(true);
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const togglePublished = async (e: React.MouseEvent, articleId: string, currentPublished: boolean) => {
     e.preventDefault();
@@ -136,14 +138,18 @@ export default function ArticlesAdmin() {
     setArticles(filtered);
   };
 
-  const deleteArticle = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this article?')) return;
+  const deleteArticle = async () => {
+    if (!articleToDelete) return;
 
+    setDeleting(true);
     try {
-      await fetch(`/api/articles/${id}`, { method: 'DELETE' });
-      setAllArticles(prev => prev.filter(a => a.id !== id));
+      await fetch(`/api/articles/${articleToDelete.id}`, { method: 'DELETE' });
+      setAllArticles(prev => prev.filter(a => a.id !== articleToDelete.id));
+      setArticleToDelete(null);
     } catch (error) {
       console.error('Error deleting article:', error);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -472,27 +478,31 @@ export default function ArticlesAdmin() {
                     </div>
 
                     {/* Actions - RIGHT SIDE */}
-                    <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                      {article.published && (
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(`/site/${getSiteSubdomain(article.site_id)}/articles/${article.slug}`, '_blank');
-                          }}
-                          className="p-2 text-gray-500 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
-                          title="View article"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </span>
-                      )}
-                      <span
+                    <div className="flex items-center gap-1 flex-shrink-0 ml-4">
+                      {/* View/Preview link */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const subdomain = getSiteSubdomain(article.site_id);
+                          const url = article.published
+                            ? `/site/${subdomain}/articles/${article.slug}`
+                            : `/site/${subdomain}/articles/${article.slug}?preview=true`;
+                          window.open(url, '_blank');
+                        }}
+                        className="p-2 text-gray-500 hover:text-primary-400 hover:bg-gray-700 rounded-lg transition-all"
+                        title={article.published ? "View live article" : "Preview draft"}
+                      >
+                        {article.published ? <ExternalLink className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                      <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           duplicateArticle(article);
                         }}
-                        className={`p-2 text-gray-500 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer ${duplicating === article.id ? 'opacity-50' : ''}`}
+                        disabled={duplicating === article.id}
+                        className={`p-2 text-gray-500 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-all ${duplicating === article.id ? 'opacity-50' : ''}`}
                         title="Duplicate article"
                       >
                         {duplicating === article.id ? (
@@ -500,19 +510,21 @@ export default function ArticlesAdmin() {
                         ) : (
                           <Copy className="w-4 h-4" />
                         )}
-                      </span>
-                      <span
+                      </button>
+                      <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          deleteArticle(article.id);
+                          setArticleToDelete(article);
                         }}
-                        className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all cursor-pointer"
+                        className="p-2 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all"
                         title="Delete article"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </span>
-                      <Edit3 className="w-4 h-4 text-gray-600 group-hover:text-primary-400 transition-colors ml-1" />
+                      </button>
+                      <div className="p-2 text-gray-600 group-hover:text-primary-400 transition-colors">
+                        <Edit3 className="w-4 h-4" />
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -528,6 +540,52 @@ export default function ArticlesAdmin() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {articleToDelete && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 max-w-md w-full p-6 shadow-2xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Delete Article</h3>
+                <p className="text-sm text-gray-400">This action cannot be undone</p>
+              </div>
+            </div>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete <span className="font-semibold text-white">"{articleToDelete.title}"</span>?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setArticleToDelete(null)}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-all disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteArticle}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {deleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </EnhancedAdminLayout>
   );
 }

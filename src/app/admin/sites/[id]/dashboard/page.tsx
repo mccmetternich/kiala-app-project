@@ -633,6 +633,8 @@ export default function SiteDashboard() {
   // Count visible pages (enabled + showInNav)
   const visiblePageCount = pageConfig.pages?.filter((p: any) => p.enabled && p.showInNav)?.length || 0;
   const totalPageCount = pageConfig.pages?.length || 0;
+  const livePageCount = pageConfig.pages?.filter((p: any) => p.enabled)?.length || 0;
+  const draftPageCount = totalPageCount - livePageCount;
   const boostedArticleCount = articles.filter((a: any) => a.boosted).length;
 
   const tabs: { id: TabType; label: string; icon: any; count?: number; dividerBefore?: boolean }[] = [
@@ -765,10 +767,10 @@ export default function SiteDashboard() {
                 {[
                   { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: true, onClick: () => setActiveTab('analytics') },
                   { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
-                  { label: 'Total Pages', value: totalPageCount, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
+                  { label: 'Pages', value: `${livePageCount} live`, subValue: draftPageCount > 0 ? `${draftPageCount} draft${draftPageCount !== 1 ? 's' : ''}` : undefined, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
                   { label: 'Total Active Emails', value: subscriberStats?.active || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
                   { label: 'PDF Downloads', value: subscriberStats?.pdfDownloads || 0, icon: Download, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('emails') },
-                ].map((stat, i) => (
+                ].map((stat: any, i) => (
                   <div
                     key={i}
                     onClick={stat.clickable ? stat.onClick : undefined}
@@ -782,12 +784,15 @@ export default function SiteDashboard() {
                       <div>
                         <p className="text-gray-400 text-sm">{stat.label}</p>
                         <p className="text-3xl font-bold text-white mt-1">{stat.value}</p>
+                        {stat.subValue && (
+                          <p className="text-sm text-gray-500 mt-0.5">{stat.subValue}</p>
+                        )}
                       </div>
                       <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
                         <stat.icon className={`w-6 h-6 ${stat.color}`} />
                       </div>
                     </div>
-                    {stat.clickable && (
+                    {stat.clickable && !stat.subValue && (
                       <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
                     )}
                   </div>
@@ -920,21 +925,6 @@ export default function SiteDashboard() {
                       </button>
                     </div>
                   </div>
-
-                  {/* Pages Tile */}
-                  <button
-                    onClick={() => setActiveTab('pages')}
-                    className="w-full bg-gray-800 rounded-2xl border border-gray-700 p-5 hover:border-primary-500 hover:bg-gray-750 transition-all text-left"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center">
-                        <Layers className="w-5 h-5 text-indigo-400" />
-                      </div>
-                      <span className="text-2xl font-bold text-white">{totalPageCount}</span>
-                    </div>
-                    <h3 className="font-semibold text-white">Pages</h3>
-                    <p className="text-sm text-gray-400 mt-1">{visiblePageCount} visible in nav</p>
-                  </button>
 
                   {/* Site Status Card */}
                   <div className="bg-gradient-to-br from-gray-800 to-gray-800/50 rounded-2xl border border-gray-700 p-5">
