@@ -1219,6 +1219,14 @@ export class EnhancedQueries {
 
   // Page operations
   pageQueries = {
+    getAll: async () => {
+      return withCache(
+        `pages:all`,
+        CacheTTL.PAGE_BLOCKS,
+        async () => queryAll('SELECT * FROM pages ORDER BY updated_at DESC')
+      );
+    },
+
     getAllBySite: async (siteId: string) => {
       return withCache(
         `pages:site:${siteId}:all`,

@@ -8,13 +8,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const siteId = searchParams.get('siteId');
     const slug = searchParams.get('slug');
+    const all = searchParams.get('all');
     const tenantId = request.headers.get('X-Tenant-Id') || undefined;
+
+    const queries = createQueries(tenantId);
+
+    // Fetch all pages across all sites
+    if (all === 'true') {
+      const pages = await queries.pageQueries.getAll();
+      return NextResponse.json({ pages: pages || [] });
+    }
 
     if (!siteId) {
       return NextResponse.json({ error: 'Site ID is required' }, { status: 400 });
     }
-
-    const queries = createQueries(tenantId);
 
     if (slug) {
       // Get specific page by slug

@@ -16,7 +16,9 @@ import {
   Edit3,
   ChevronDown,
   Building2,
-  BookOpen
+  BookOpen,
+  Globe,
+  Layers
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -135,10 +137,22 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
       description: 'Sites, articles and metrics'
     },
     {
+      name: 'All Sites',
+      href: '/admin/sites',
+      icon: Globe,
+      description: 'Manage all sites'
+    },
+    {
       name: 'All Articles',
       href: '/admin/articles',
       icon: Edit3,
       description: 'Articles across all sites'
+    },
+    {
+      name: 'All Pages',
+      href: '/admin/pages',
+      icon: Layers,
+      description: 'Pages across all sites'
     },
     {
       name: 'All Emails',
