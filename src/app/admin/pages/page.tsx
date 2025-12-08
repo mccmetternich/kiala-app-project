@@ -49,6 +49,7 @@ interface Site {
   name: string;
   domain: string;
   subdomain: string;
+  brand_profile?: any;
 }
 
 export default function PagesAdmin() {
@@ -180,6 +181,14 @@ export default function PagesAdmin() {
   const getSiteSubdomain = (siteId: string) => {
     const site = sites.find(s => s.id === siteId);
     return site?.subdomain || '';
+  };
+
+  const getSiteBrand = (siteId: string) => {
+    const site = sites.find(s => s.id === siteId);
+    if (!site?.brand_profile) return null;
+    return typeof site.brand_profile === 'string'
+      ? JSON.parse(site.brand_profile)
+      : site.brand_profile;
   };
 
   return (
@@ -320,7 +329,9 @@ export default function PagesAdmin() {
               </div>
             ) : (
               <div className="divide-y divide-gray-700/50">
-                {filteredPages.map((page) => (
+                {filteredPages.map((page) => {
+                  const brand = getSiteBrand(page.site_id);
+                  return (
                   <Link
                     key={page.id}
                     href={`/admin/sites/${page.site_id}/pages/${page.id}/edit`}
@@ -353,13 +364,19 @@ export default function PagesAdmin() {
                       </span>
                     </div>
 
-                    {/* Status Icon */}
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      page.published
-                        ? 'bg-green-500/10'
-                        : 'bg-gray-700'
-                    }`}>
-                      <Layers className={`w-5 h-5 ${page.published ? 'text-green-400' : 'text-gray-500'}`} />
+                    {/* Site Avatar */}
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-gray-700">
+                      {brand?.profileImage || brand?.sidebarImage ? (
+                        <img
+                          src={brand.profileImage || brand.sidebarImage}
+                          alt={getSiteName(page.site_id)}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
+                          <Layers className="w-5 h-5 text-white" />
+                        </div>
+                      )}
                     </div>
 
                     {/* Content */}
@@ -413,7 +430,8 @@ export default function PagesAdmin() {
                       </div>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

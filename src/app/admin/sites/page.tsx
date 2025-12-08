@@ -15,12 +15,12 @@ import {
   Check,
   Clock,
   Users,
-  BarChart3,
-  Building2
+  Building2,
+  Layers,
+  Zap
 } from 'lucide-react';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
-import PublishToggle from '@/components/admin/PublishToggle';
-import { formatDate } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function SitesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -202,7 +202,7 @@ export default function SitesPage() {
           {loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+                <div key={i} className="bg-gray-800 rounded-xl border border-gray-700 p-6">
                   <div className="animate-pulse">
                     <div className="h-6 bg-gray-700 rounded w-2/3 mb-4"></div>
                     <div className="space-y-2 mb-4">
@@ -217,127 +217,165 @@ export default function SitesPage() {
                 </div>
               ))}
             </div>
-          ) : filteredSites.length === 0 ? (
-            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-12 text-center">
-              <Globe className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                {searchQuery || statusFilter !== 'all' ? 'No sites found' : 'No sites yet'}
-              </h3>
-              <p className="text-gray-400 mb-6">
-                {searchQuery || statusFilter !== 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'Create your first direct response site to get started'
-                }
-              </p>
+          ) : filteredSites.length === 0 && !searchQuery && statusFilter === 'all' ? (
+            <div className="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
+              <Globe className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">No sites yet</h3>
+              <p className="text-gray-400 mb-6">Create your first site to get started</p>
               <Link
                 href="/admin/sites/new"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 transition-colors"
               >
-                <Plus className="w-4 h-4" />
-                Create New Site
+                <Plus className="w-5 h-5" />
+                Create Site
               </Link>
+            </div>
+          ) : filteredSites.length === 0 ? (
+            <div className="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
+              <Globe className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">No sites found</h3>
+              <p className="text-gray-400 mb-6">Try adjusting your search or filters</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredSites.map((site) => {
                 const brand = typeof site.brand_profile === 'string' ? JSON.parse(site.brand_profile) : site.brand_profile;
-                const status = site.status === 'published' ? 'live' : 'draft';
-                const metrics = sitesMetrics[site.id];
+                const isLive = site.status === 'published';
+                const metrics = sitesMetrics[site.id] || { totalArticles: 0, boostedCount: 0, totalViews: 0, totalPages: 0, totalEmails: 0 };
 
                 return (
-                  <Link href={`/admin/sites/${site.id}/dashboard`} key={site.id}>
-                    <div className="bg-gray-800 rounded-2xl border border-gray-700 hover:border-gray-600 hover:shadow-xl transition-all overflow-hidden group cursor-pointer h-full">
-                      {/* Header */}
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            {/* Brand Avatar */}
-                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-primary-500 to-purple-600 flex-shrink-0 flex items-center justify-center">
-                              {brand?.logoImage || brand?.sidebarImage || brand?.profileImage ? (
-                                <img
-                                  src={brand?.logoImage || brand?.sidebarImage || brand?.profileImage}
-                                  alt={brand?.name || 'Brand'}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Building2 className="w-6 h-6 text-white" />
-                              )}
+                  <div
+                    key={site.id}
+                    className="bg-gray-800 rounded-xl border border-gray-700 hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-200 overflow-hidden group"
+                  >
+                    {/* Site Header - Clickable */}
+                    <Link
+                      href={`/admin/sites/${site.id}/dashboard`}
+                      className="block p-5 border-b border-gray-700 group-hover:bg-gray-750 transition-colors"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          {brand?.profileImage || brand?.sidebarImage ? (
+                            <img
+                              src={brand.profileImage || brand.sidebarImage}
+                              alt={brand?.name || site.name}
+                              className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-700 group-hover:ring-primary-500/50 transition-all"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-700 group-hover:ring-primary-500/50 transition-all">
+                              <Globe className="w-5 h-5 text-white" />
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-lg font-bold text-white truncate group-hover:text-primary-400 transition-colors">
-                                {site.name}
-                              </h3>
-                              <p className="text-sm text-gray-400 truncate">{site.subdomain}</p>
-                            </div>
-                          </div>
-                          {/* Status Badge */}
-                          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                            status === 'live'
-                              ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                              : 'bg-gray-700/50 text-gray-400 border border-gray-600'
-                          }`}>
-                            <span className={`w-2 h-2 rounded-full ${status === 'live' ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`}></span>
-                            {status === 'live' ? 'Live' : 'Draft'}
+                          )}
+                          <div>
+                            <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors">{site.name}</h3>
+                            <p className="text-xs text-gray-400">{site.subdomain}</p>
                           </div>
                         </div>
-
-                        {/* Stats Row */}
-                        <div className="grid grid-cols-3 gap-3 mb-4">
-                          <div className="bg-gray-700/30 rounded-lg p-3 text-center">
-                            <p className="text-lg font-bold text-white">{metrics?.totalArticles || 0}</p>
-                            <p className="text-xs text-gray-400">Articles</p>
-                          </div>
-                          <div className="bg-gray-700/30 rounded-lg p-3 text-center">
-                            <p className="text-lg font-bold text-white">{metrics?.totalPages || 0}</p>
-                            <p className="text-xs text-gray-400">Pages</p>
-                          </div>
-                          <div className="bg-gray-700/30 rounded-lg p-3 text-center">
-                            <p className="text-lg font-bold text-white">{metrics?.totalEmails || 0}</p>
-                            <p className="text-xs text-gray-400">Emails</p>
-                          </div>
-                        </div>
-
-                        {/* Quick Links */}
-                        <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
-                          <Link
-                            href={`/admin/sites/${site.id}/articles`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-xs font-medium transition-colors border border-blue-500/20"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <FileText className="w-3 h-3" />
-                            Articles
-                          </Link>
-                          <Link
-                            href={`/admin/sites/${site.id}/settings`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-700/50 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium transition-colors border border-gray-600"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Edit3 className="w-3 h-3" />
-                            Settings
-                          </Link>
-                          <Link
-                            href={`/site/${site.subdomain}`}
-                            target="_blank"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 rounded-lg text-xs font-medium transition-colors border border-green-500/20"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <ExternalLink className="w-3 h-3" />
-                            Preview
-                          </Link>
-                        </div>
+                        {isLive ? (
+                          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-green-500/10 text-green-400 rounded-full text-xs font-medium">
+                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                            Live
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium">
+                            Draft
+                          </span>
+                        )}
                       </div>
 
-                      {/* Footer */}
-                      <div className="px-6 pb-4 pt-0">
-                        <div className="text-xs text-gray-500 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          Updated {formatDate(site.updated_at)}
-                        </div>
+                      {brand?.name && (
+                        <p className="text-sm text-gray-300 mb-1">{brand.name}</p>
+                      )}
+                      {brand?.tagline && (
+                        <p className="text-xs text-gray-500 truncate">{brand.tagline}</p>
+                      )}
+                    </Link>
+
+                    {/* Metrics - Pages, Boosted, Articles, Emails, Real Views - All Clickable */}
+                    <div className="px-5 py-3 bg-gray-850 border-b border-gray-700">
+                      <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-sm">
+                        <Link
+                          href={`/admin/sites/${site.id}/dashboard?tab=pages`}
+                          className="flex items-center gap-1.5 hover:text-indigo-400 transition-colors group/metric"
+                        >
+                          <Layers className="w-4 h-4 text-indigo-400" />
+                          <span className="text-gray-300 group-hover/metric:text-indigo-300">{metrics.totalPages || 0}</span>
+                          <span className="text-gray-500 group-hover/metric:text-indigo-400">pages</span>
+                        </Link>
+                        <Link
+                          href={`/admin/sites/${site.id}/dashboard?tab=articles`}
+                          className="flex items-center gap-1.5 hover:text-yellow-400 transition-colors group/metric"
+                        >
+                          <Zap className="w-4 h-4 text-yellow-400" />
+                          <span className="text-gray-300 group-hover/metric:text-yellow-300">{metrics.boostedCount || 0}</span>
+                          <span className="text-gray-500 group-hover/metric:text-yellow-400">boosted</span>
+                        </Link>
+                        <Link
+                          href={`/admin/sites/${site.id}/dashboard?tab=articles&subtab=all`}
+                          className="flex items-center gap-1.5 hover:text-blue-400 transition-colors group/metric"
+                        >
+                          <FileText className="w-4 h-4 text-blue-400" />
+                          <span className="text-gray-300 group-hover/metric:text-blue-300">{metrics.totalArticles || 0}</span>
+                          <span className="text-gray-500 group-hover/metric:text-blue-400">articles</span>
+                        </Link>
+                        <Link
+                          href={`/admin/sites/${site.id}/dashboard?tab=emails`}
+                          className="flex items-center gap-1.5 hover:text-green-400 transition-colors group/metric"
+                        >
+                          <Users className="w-4 h-4 text-green-400" />
+                          <span className="text-gray-300 group-hover/metric:text-green-300">{metrics.totalEmails || 0}</span>
+                          <span className="text-gray-500 group-hover/metric:text-green-400">emails</span>
+                        </Link>
+                        <Link
+                          href={`/admin/sites/${site.id}/dashboard?tab=analytics`}
+                          className="flex items-center gap-1.5 hover:text-purple-400 transition-colors group/metric"
+                        >
+                          <Eye className="w-4 h-4 text-purple-400" />
+                          <span className="text-gray-300 group-hover/metric:text-purple-300">{metrics.totalViews || 0}</span>
+                          <span className="text-gray-500 group-hover/metric:text-purple-400">views</span>
+                        </Link>
                       </div>
                     </div>
-                  </Link>
+
+                    {/* Actions */}
+                    <div className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/admin/sites/${site.id}/dashboard`}
+                          className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded-lg text-center text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                        >
+                          <FileText className="w-4 h-4" />
+                          Manage Site
+                        </Link>
+                        <a
+                          href={`/site/${site.subdomain}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
+                          title="View site"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-3 text-center">
+                        Updated {formatDistanceToNow(new Date(site.updated_at?.endsWith('Z') ? site.updated_at : site.updated_at + 'Z'), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </div>
                 );
               })}
+
+              {/* Add New Site Card */}
+              <Link
+                href="/admin/sites/new"
+                className="bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-700 hover:border-primary-500 hover:bg-gray-800 transition-colors p-8 flex flex-col items-center justify-center text-center min-h-[280px]"
+              >
+                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                  <Plus className="w-6 h-6 text-gray-400" />
+                </div>
+                <h3 className="font-semibold text-gray-300 mb-1">Create New Site</h3>
+                <p className="text-sm text-gray-500">Launch another DR site</p>
+              </Link>
             </div>
           )}
 
