@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Bell, Play, Pause } from 'lucide-react';
-import { Site } from '@/types';
+import { Site, NavigationTemplateConfig } from '@/types';
 import Badge from '../ui/Badge';
 import { useSiteUrl } from '@/hooks/useSiteUrl';
 import { formatCommunityCount } from '@/lib/format-community-count';
@@ -19,6 +19,7 @@ interface NavItem {
 
 interface SiteHeaderProps {
   site: Site;
+  navConfig?: NavigationTemplateConfig;
 }
 
 // Collection of unique women's faces for social proof
@@ -33,15 +34,24 @@ const WOMEN_AVATARS = [
   'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=32&h=32&fit=crop&crop=face',
 ];
 
-export default function SiteHeader({ site }: SiteHeaderProps) {
+export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Get audio URL from site settings
-  const effectiveAudioUrl = (site as any).settings?.audioUrl;
+  // Feature flags from navConfig (with defaults for global mode)
+  const showNavLinks = navConfig?.showNavLinks ?? true;
+  const showAudioTrack = navConfig?.showAudioTrack ?? true;
+  const showSocialProof = navConfig?.showSocialProof ?? true;
+  const showLogo = navConfig?.showLogo ?? true;
+  const showCta = navConfig?.showCta ?? true;
+
+  // Get audio URL from site settings (only if audio is enabled)
+  const effectiveAudioUrl = showAudioTrack
+    ? (navConfig?.audioTrack?.url || (site as any).settings?.audioUrl)
+    : undefined;
 
   // Use domain-aware URL helper
   const siteId = site.subdomain || site.id;

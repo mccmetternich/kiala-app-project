@@ -18,7 +18,8 @@ import {
   Building2,
   BookOpen,
   Globe,
-  Layers
+  Layers,
+  Navigation
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -159,6 +160,12 @@ export default function EnhancedAdminLayout({ children }: AdminLayoutProps) {
       href: '/admin/emails',
       icon: Users,
       description: 'All email subscribers'
+    },
+    {
+      name: 'Navigation',
+      href: '/admin/navigation',
+      icon: Navigation,
+      description: 'Navigation templates'
     },
     {
       name: 'Analytics',

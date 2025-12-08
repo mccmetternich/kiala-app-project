@@ -6,8 +6,33 @@ import ArticleFooter from './ArticleFooter';
 import MinimalHeader from './MinimalHeader';
 import PopupProvider from '@/components/PopupProvider';
 import ThemeProvider from '@/components/ThemeProvider';
-import { Site, NavMode } from '@/types';
+import { Site, NavMode, NavigationTemplateConfig } from '@/types';
 import { getCommunityCount } from '@/lib/format-community-count';
+
+// Default navigation configs for each mode (used when no template config provided)
+const DEFAULT_NAV_CONFIGS: Record<NavMode, NavigationTemplateConfig> = {
+  'global': {
+    showNavLinks: true,
+    showAudioTrack: true,
+    showSocialProof: true,
+    showLogo: true,
+    showCta: true,
+  },
+  'direct-response': {
+    showNavLinks: false,
+    showAudioTrack: true,
+    showSocialProof: true,
+    showLogo: true,
+    showCta: false,
+  },
+  'minimal': {
+    showNavLinks: false,
+    showAudioTrack: false,
+    showSocialProof: false,
+    showLogo: true,
+    showCta: false,
+  }
+};
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -17,6 +42,7 @@ interface SiteLayoutProps {
   showPopups?: boolean;
   isArticle?: boolean;  // Legacy: Use article-specific header/footer
   navMode?: NavMode;    // New: Explicit nav mode control (overrides isArticle)
+  navConfig?: NavigationTemplateConfig;  // Direct template config (highest priority)
   pageSlug?: string;    // Current page slug to look up config
 }
 
@@ -28,6 +54,7 @@ export default function SiteLayout({
   showPopups = true,
   isArticle = false,
   navMode,
+  navConfig,
   pageSlug
 }: SiteLayoutProps) {
   // Determine effective nav mode
@@ -58,16 +85,36 @@ export default function SiteLayout({
   const effectiveNavMode = getEffectiveNavMode();
   const useArticleFooter = effectiveNavMode === 'direct-response' || isArticle;
 
+  // Get effective navigation config
+  // Priority: explicit navConfig prop > site navigation_config > default for mode
+  const getEffectiveNavConfig = (): NavigationTemplateConfig => {
+    // If explicit navConfig provided, use it
+    if (navConfig) return navConfig;
+
+    // Check site-level navigation config
+    const siteNavConfig = (site as any).navigation_config;
+    if (siteNavConfig?.config) {
+      return typeof siteNavConfig.config === 'string'
+        ? JSON.parse(siteNavConfig.config)
+        : siteNavConfig.config;
+    }
+
+    // Fall back to default config for the nav mode
+    return DEFAULT_NAV_CONFIGS[effectiveNavMode];
+  };
+
+  const effectiveNavConfig = getEffectiveNavConfig();
+
   // Render the appropriate header based on nav mode
   const renderHeader = () => {
     switch (effectiveNavMode) {
       case 'minimal':
-        return <MinimalHeader site={site} />;
+        return <MinimalHeader site={site} navConfig={effectiveNavConfig} />;
       case 'direct-response':
-        return <ArticleHeader site={site} />;
+        return <ArticleHeader site={site} navConfig={effectiveNavConfig} />;
       case 'global':
       default:
-        return <SiteHeader site={site} />;
+        return <SiteHeader site={site} navConfig={effectiveNavConfig} />;
     }
   };
 

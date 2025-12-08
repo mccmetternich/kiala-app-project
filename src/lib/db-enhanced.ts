@@ -481,6 +481,22 @@ export async function initDb() {
     )
   `);
 
+  // Navigation templates table - for nav configuration management
+  // System templates have is_system = 1 (cannot be deleted, only customized)
+  // Site-specific overrides stored in sites.navigation_config as JSON
+  await execute(`
+    CREATE TABLE IF NOT EXISTS navigation_templates (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      base_type TEXT NOT NULL DEFAULT 'global',
+      is_system INTEGER DEFAULT 0,
+      config TEXT NOT NULL DEFAULT '{}',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Create indexes for performance
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_sites_domain ON sites (domain)',
@@ -523,6 +539,9 @@ export async function initDb() {
     // Site widget settings indexes
     'CREATE INDEX IF NOT EXISTS idx_site_widget_settings_site ON site_widget_settings(site_id)',
     'CREATE INDEX IF NOT EXISTS idx_site_widget_settings_widget ON site_widget_settings(widget_type)',
+    // Navigation templates indexes
+    'CREATE INDEX IF NOT EXISTS idx_navigation_templates_system ON navigation_templates(is_system)',
+    'CREATE INDEX IF NOT EXISTS idx_navigation_templates_base_type ON navigation_templates(base_type)',
   ];
 
   for (const idx of indexes) {
@@ -1440,6 +1459,78 @@ export class EnhancedQueries {
 
     delete: (email: string, siteId: string) => {
       return execute('DELETE FROM email_subscribers WHERE email = ? AND site_id = ?', [email, siteId]);
+    }
+  };
+
+  // Navigation template operations
+  navigationTemplateQueries = {
+    getAll: async () => {
+      return queryAll('SELECT * FROM navigation_templates ORDER BY is_system DESC, name ASC');
+    },
+
+    getById: async (id: string) => {
+      return queryOne('SELECT * FROM navigation_templates WHERE id = ?', [id]);
+    },
+
+    getSystemTemplates: async () => {
+      return queryAll('SELECT * FROM navigation_templates WHERE is_system = 1 ORDER BY name ASC');
+    },
+
+    getCustomTemplates: async () => {
+      return queryAll('SELECT * FROM navigation_templates WHERE is_system = 0 ORDER BY name ASC');
+    },
+
+    getByBaseType: async (baseType: string) => {
+      return queryAll('SELECT * FROM navigation_templates WHERE base_type = ? ORDER BY is_system DESC, name ASC', [baseType]);
+    },
+
+    create: async (data: {
+      id: string;
+      name: string;
+      description?: string;
+      baseType: string;
+      isSystem?: boolean;
+      config: any;
+    }) => {
+      return execute(`
+        INSERT INTO navigation_templates (id, name, description, base_type, is_system, config)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `, [
+        data.id,
+        data.name,
+        data.description || null,
+        data.baseType,
+        data.isSystem ? 1 : 0,
+        JSON.stringify(data.config)
+      ]);
+    },
+
+    update: async (id: string, data: {
+      name?: string;
+      description?: string;
+      baseType?: string;
+      config?: any;
+    }) => {
+      const updates: string[] = [];
+      const values: any[] = [];
+
+      if (data.name !== undefined) { updates.push('name = ?'); values.push(data.name); }
+      if (data.description !== undefined) { updates.push('description = ?'); values.push(data.description); }
+      if (data.baseType !== undefined) { updates.push('base_type = ?'); values.push(data.baseType); }
+      if (data.config !== undefined) { updates.push('config = ?'); values.push(JSON.stringify(data.config)); }
+
+      updates.push('updated_at = CURRENT_TIMESTAMP');
+      values.push(id);
+
+      return execute(`
+        UPDATE navigation_templates SET ${updates.join(', ')}
+        WHERE id = ?
+      `, values);
+    },
+
+    delete: async (id: string) => {
+      // Only allow deleting non-system templates
+      return execute('DELETE FROM navigation_templates WHERE id = ? AND is_system = 0', [id]);
     }
   };
 

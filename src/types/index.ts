@@ -476,6 +476,56 @@ export const DEFAULT_CONTENT_PROFILE: ContentProfile = {
 // Page Configuration for site page management
 export type NavMode = 'global' | 'direct-response' | 'minimal';
 
+// Navigation Template Configuration
+export interface NavigationTemplateConfig {
+  // Feature toggles
+  showNavLinks: boolean;
+  showAudioTrack: boolean;
+  showSocialProof: boolean;
+  showLogo: boolean;
+  showCta: boolean;
+
+  // Audio track settings
+  audioTrack?: {
+    enabled: boolean;
+    message: string;
+    url?: string;
+  };
+
+  // Social proof settings
+  socialProof?: {
+    enabled: boolean;
+    message: string;
+    count?: number;
+  };
+
+  // CTA settings
+  cta?: {
+    enabled: boolean;
+    text: string;
+    url: string;
+    style: 'primary' | 'secondary' | 'ghost';
+  };
+
+  // Styling
+  style?: {
+    backgroundColor?: string;
+    textColor?: string;
+    position?: 'fixed' | 'sticky' | 'static';
+  };
+}
+
+export interface NavigationTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  base_type: NavMode;
+  is_system: boolean;
+  config: NavigationTemplateConfig;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface SitePageConfig {
   id: string;
   type: PageType | 'faq' | 'custom';

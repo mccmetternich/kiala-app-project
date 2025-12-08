@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Site } from '@/types';
+import { Site, NavigationTemplateConfig } from '@/types';
 import { useSiteUrl } from '@/hooks/useSiteUrl';
 
 interface MinimalHeaderProps {
   site: Site;
+  navConfig?: NavigationTemplateConfig;
 }
 
 /**
@@ -13,11 +14,18 @@ interface MinimalHeaderProps {
  * Used for: Checkout pages, landing pages, special funnels
  * Navigation Mode: 'minimal'
  */
-export default function MinimalHeader({ site }: MinimalHeaderProps) {
+export default function MinimalHeader({ site, navConfig }: MinimalHeaderProps) {
+  // Feature flags (minimal mode typically has everything off except logo)
+  const showLogo = navConfig?.showLogo ?? true;
   const brand = site.brand;
   const siteId = site.subdomain || site.id;
   const { getSiteUrl } = useSiteUrl(siteId);
   const homeUrl = getSiteUrl('/');
+
+  // If logo is disabled, render nothing or a minimal bar
+  if (!showLogo) {
+    return <header className="bg-white shadow-sm sticky top-0 z-50 h-2" />;
+  }
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
