@@ -432,13 +432,13 @@ export default function ArticlesAdmin() {
 
                     {/* Status Icon - Thunderbolt for boosted, FileText for normal */}
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      article.boosted
+                      article.boosted === true
                         ? 'bg-yellow-500/20 ring-2 ring-yellow-500/30'
                         : article.published
                           ? 'bg-green-500/10'
                           : 'bg-gray-700'
                     }`}>
-                      {article.boosted ? (
+                      {article.boosted === true ? (
                         <Zap className="w-5 h-5 text-yellow-400" />
                       ) : (
                         <FileText className={`w-5 h-5 ${article.published ? 'text-green-400' : 'text-gray-500'}`} />
@@ -456,7 +456,7 @@ export default function ArticlesAdmin() {
                         <p className="text-white font-medium truncate group-hover:text-primary-400 transition-colors">
                           {article.title}
                         </p>
-                        {article.hero && (
+                        {article.hero === true && (
                           <span className="px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full text-xs font-medium flex-shrink-0">
                             Hero
                           </span>
