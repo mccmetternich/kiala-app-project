@@ -764,39 +764,103 @@ export default function SiteDashboard() {
             <div className="space-y-6">
               {/* Stats Cards - Order: Views, Boosted, Pages, Emails, PDF Downloads */}
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                {[
-                  { label: 'Total Views', value: metrics?.totalViews?.toLocaleString() || 0, icon: Eye, color: 'text-purple-400', bg: 'bg-purple-500/10', clickable: true, onClick: () => setActiveTab('analytics') },
-                  { label: 'Boosted Articles', value: boostedArticleCount, icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10', clickable: true, onClick: () => setActiveTab('articles') },
-                  { label: 'Pages', value: `${livePageCount} live`, subValue: draftPageCount > 0 ? `${draftPageCount} draft${draftPageCount !== 1 ? 's' : ''}` : undefined, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', clickable: true, onClick: () => setActiveTab('pages') },
-                  { label: 'Total Active Emails', value: subscriberStats?.active || 0, icon: Mail, color: 'text-green-400', bg: 'bg-green-500/10', clickable: true, onClick: () => setActiveTab('emails') },
-                  { label: 'PDF Downloads', value: subscriberStats?.pdfDownloads || 0, icon: Download, color: 'text-blue-400', bg: 'bg-blue-500/10', clickable: true, onClick: () => setActiveTab('emails') },
-                ].map((stat: any, i) => (
-                  <div
-                    key={i}
-                    onClick={stat.clickable ? stat.onClick : undefined}
-                    className={`bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all ${
-                      stat.clickable
-                        ? 'cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10'
-                        : 'hover:border-gray-600'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-gray-400 text-sm">{stat.label}</p>
-                        <p className="text-3xl font-bold text-white mt-1">{stat.value}</p>
-                        {stat.subValue && (
-                          <p className="text-sm text-gray-500 mt-0.5">{stat.subValue}</p>
-                        )}
-                      </div>
-                      <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                        <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                      </div>
+                {/* Total Views */}
+                <div
+                  onClick={() => setActiveTab('analytics')}
+                  className="bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Total Views</p>
+                      <p className="text-3xl font-bold text-white mt-1">{metrics?.totalViews?.toLocaleString() || 0}</p>
                     </div>
-                    {stat.clickable && !stat.subValue && (
-                      <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
-                    )}
+                    <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                      <Eye className="w-6 h-6 text-purple-400" />
+                    </div>
                   </div>
-                ))}
+                  <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
+                </div>
+
+                {/* Boosted Articles */}
+                <div
+                  onClick={() => setActiveTab('articles')}
+                  className="bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Boosted Articles</p>
+                      <p className="text-3xl font-bold text-white mt-1">{boostedArticleCount}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-yellow-400" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
+                </div>
+
+                {/* Pages - Custom layout with badges */}
+                <div
+                  onClick={() => setActiveTab('pages')}
+                  className="bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Pages</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
+                          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                          <span className="text-lg font-bold text-green-400">{livePageCount}</span>
+                          <span className="text-xs text-green-400/80">live</span>
+                        </span>
+                      </div>
+                      {draftPageCount > 0 && (
+                        <div className="mt-2">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-700/50 border border-gray-600 rounded-full">
+                            <span className="text-sm font-medium text-gray-400">{draftPageCount}</span>
+                            <span className="text-xs text-gray-500">draft{draftPageCount !== 1 ? 's' : ''}</span>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center">
+                      <Layers className="w-6 h-6 text-indigo-400" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total Active Emails */}
+                <div
+                  onClick={() => setActiveTab('emails')}
+                  className="bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Total Active Emails</p>
+                      <p className="text-3xl font-bold text-white mt-1">{subscriberStats?.active || 0}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                      <Mail className="w-6 h-6 text-green-400" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
+                </div>
+
+                {/* PDF Downloads */}
+                <div
+                  onClick={() => setActiveTab('emails')}
+                  className="bg-gray-800 rounded-2xl border border-gray-700 p-5 transition-all cursor-pointer hover:border-primary-500 hover:bg-gray-750 hover:shadow-lg hover:shadow-primary-500/10"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">PDF Downloads</p>
+                      <p className="text-3xl font-bold text-white mt-1">{subscriberStats?.pdfDownloads || 0}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                      <Download className="w-6 h-6 text-blue-400" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3">Click to manage →</p>
+                </div>
               </div>
 
               {/* Two Column Layout */}
