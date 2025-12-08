@@ -120,10 +120,10 @@ export default function AdminDashboard() {
             const pages = await pagesResponse.json();
             allPages = [...allPages, ...pages.map((p: any) => ({ ...p, site_id: site.id }))];
 
-            // Fetch email count
+            // Fetch email count (only active subscribers)
             const emailsResponse = await fetch(`/api/subscribers?siteId=${site.id}`);
             const emailsData = await emailsResponse.json();
-            const emailCount = emailsData.stats?.active || emailsData.subscribers?.length || 0;
+            const emailCount = emailsData.stats?.active ?? 0;
 
             return { siteId: site.id, articleCount: articles.length, boostedCount, viewCount, pageCount: pages.length, emailCount };
           } catch {
