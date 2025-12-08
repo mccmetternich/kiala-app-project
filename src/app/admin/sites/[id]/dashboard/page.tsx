@@ -2198,19 +2198,61 @@ export default function SiteDashboard() {
                 </div>
               )}
 
-              {/* Info box about articles */}
-              <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-4 h-4 text-purple-400" />
+              {/* Article Pages Section */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <div className="p-5 border-b border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">Individual Article Pages</h3>
+                      <p className="text-sm text-gray-400 mt-1">Navigation settings for all article pages on this site</p>
+                    </div>
+                    <Link
+                      href={`/admin/sites/${id}/articles`}
+                      className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Manage Articles
+                    </Link>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-300 font-medium">About Article Pages</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Individual articles use "No Nav Links" mode by default for better conversion.
-                      You can change this per-article in the article editor, or set a different default in Settings → Advanced.
-                    </p>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">{articles.length} Articles</p>
+                        <p className="text-xs text-gray-500">
+                          {articles.filter((a: any) => a.published).length} published, {articles.filter((a: any) => !a.published).length} drafts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-400">Default Nav:</span>
+                      <select
+                        value={pageConfig.defaultArticleNavMode || 'direct-response'}
+                        onChange={(e) => {
+                          const newConfig = { ...pageConfig, defaultArticleNavMode: e.target.value };
+                          setPageConfig(newConfig);
+                          // Auto-save
+                          fetch(`/api/sites/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ...site, page_config: newConfig }),
+                          });
+                        }}
+                        className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="direct-response">No Nav Links</option>
+                        <option value="global">Full Nav</option>
+                        <option value="minimal">Logo Only</option>
+                      </select>
+                    </div>
                   </div>
+                  <p className="text-xs text-gray-500 mt-4">
+                    Individual articles can override this in the article editor. "No Nav Links" is recommended for better conversion.
+                  </p>
                 </div>
               </div>
             </div>
