@@ -47,7 +47,8 @@ import {
   Square,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Navigation
 } from 'lucide-react';
 import { ContentProfile, DEFAULT_CONTENT_PROFILE } from '@/types';
 import EnhancedAdminLayout from '@/components/admin/EnhancedAdminLayout';
@@ -57,7 +58,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { clientAPI } from '@/lib/api';
 
 type TabType = 'overview' | 'articles' | 'pages' | 'emails' | 'analytics' | 'content-profile' | 'settings';
-type SettingsSubTab = 'content' | 'appearance' | 'advanced';
+type SettingsSubTab = 'content' | 'navigation' | 'appearance' | 'advanced';
 type ArticlesSubTab = 'boosted' | 'all' | 'drafts';
 
 export default function SiteDashboard() {
@@ -102,6 +103,8 @@ export default function SiteDashboard() {
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['mission']));
 
   // Pages state
+  const [pagesSubTab, setPagesSubTab] = useState<'pages' | 'navigation'>('pages');
+  const [navTemplates, setNavTemplates] = useState<any[]>([]);
   const [pageConfig, setPageConfig] = useState<any>({
     pages: [
       { id: 'home', type: 'homepage', slug: '/', title: 'Home', navLabel: 'Home', enabled: true, showInNav: true, navOrder: 1, navMode: 'global' },
@@ -119,12 +122,16 @@ export default function SiteDashboard() {
 
   const loadData = useCallback(async () => {
     try {
-      const [siteResponse, articlesData, subscribersResponse, pagesData] = await Promise.all([
+      const [siteResponse, articlesData, subscribersResponse, pagesData, navTemplatesData] = await Promise.all([
         fetch(`/api/sites/${id}`).then(res => res.json()),
         fetch(`/api/articles?siteId=${id}&published=false&includeRealViews=true`).then(res => res.json()).then(data => data.articles || []),
         fetch(`/api/subscribers?siteId=${id}`).then(res => res.json()).catch(() => ({ stats: { total: 0 }, subscribers: [] })),
-        fetch(`/api/pages?siteId=${id}`).then(res => res.json()).catch(() => [])
+        fetch(`/api/pages?siteId=${id}`).then(res => res.json()).catch(() => []),
+        fetch('/api/navigation-templates').then(res => res.json()).catch(() => ({ templates: [] }))
       ]);
+
+      // Set navigation templates
+      setNavTemplates(navTemplatesData?.templates || []);
 
       // Store database pages for widget counts
       setDbPages(pagesData || []);
@@ -649,6 +656,7 @@ export default function SiteDashboard() {
 
   const settingsTabs = [
     { id: 'content' as SettingsSubTab, label: 'Content & Profile', icon: User },
+    { id: 'navigation' as SettingsSubTab, label: 'Navigation', icon: Navigation },
     { id: 'appearance' as SettingsSubTab, label: 'Design', icon: Palette },
     { id: 'advanced' as SettingsSubTab, label: 'Advanced', icon: Shield },
   ];
@@ -1524,6 +1532,133 @@ export default function SiteDashboard() {
                   </div>
                 )}
 
+                {/* Navigation Settings */}
+                {settingsSubTab === 'navigation' && (
+                  <div className="space-y-8">
+                    {/* Navigation Templates Overview */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">Navigation Templates</h3>
+                          <p className="text-sm text-gray-400 mt-1">Configure header navigation styles for this site</p>
+                        </div>
+                        <Link
+                          href="/admin/navigation"
+                          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                          <Settings className="w-4 h-4" />
+                          Manage All Templates
+                        </Link>
+                      </div>
+
+                      {navTemplates.length === 0 ? (
+                        <div className="bg-gray-800 rounded-xl border border-gray-700 p-8 text-center">
+                          <Navigation className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                          <p className="text-gray-400 mb-4">No navigation templates found</p>
+                          <Link
+                            href="/admin/navigation"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Create Templates
+                          </Link>
+                        </div>
+                      ) : (
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {navTemplates.slice(0, 6).map((template: any) => (
+                            <div
+                              key={template.id}
+                              className="bg-gray-800 rounded-xl border border-gray-700 p-4 hover:border-gray-600 transition-colors"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div>
+                                  <h4 className="font-medium text-white">{template.name}</h4>
+                                  <p className="text-xs text-gray-500 mt-0.5">{template.description || template.base_type}</p>
+                                </div>
+                                {template.is_system && (
+                                  <span className="px-1.5 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded">System</span>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                <span className={`px-2 py-0.5 rounded text-xs ${template.config?.showNavLinks ? 'bg-green-500/10 text-green-400' : 'bg-gray-700 text-gray-500'}`}>
+                                  {template.config?.showNavLinks ? 'Nav' : 'No Nav'}
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-xs ${template.config?.showAudioTrack ? 'bg-green-500/10 text-green-400' : 'bg-gray-700 text-gray-500'}`}>
+                                  {template.config?.showAudioTrack ? 'Audio' : 'No Audio'}
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-xs ${template.config?.showSocialProof ? 'bg-green-500/10 text-green-400' : 'bg-gray-700 text-gray-500'}`}>
+                                  {template.config?.showSocialProof ? 'Social' : 'No Social'}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Site Default Navigation Settings */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-4">Site Navigation Defaults</h3>
+                      <div className="bg-gray-800 rounded-xl border border-gray-700 divide-y divide-gray-700">
+                        <div className="flex items-center justify-between p-4">
+                          <div>
+                            <p className="font-medium text-white">Default Page Navigation</p>
+                            <p className="text-sm text-gray-500">Used for regular site pages (Home, About, etc.)</p>
+                          </div>
+                          <select
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer bg-blue-500/10 border-blue-500/30 text-blue-400`}
+                            defaultValue="global"
+                          >
+                            <option value="global">Full Nav</option>
+                            <option value="direct-response">No Nav Links</option>
+                            <option value="minimal">Logo Only</option>
+                            <option disabled>───────────</option>
+                            <option value="__create_new__">+ Create New Nav...</option>
+                          </select>
+                        </div>
+                        <div className="flex items-center justify-between p-4">
+                          <div>
+                            <p className="font-medium text-white">Default Article Navigation</p>
+                            <p className="text-sm text-gray-500">Used for individual article pages</p>
+                          </div>
+                          <select
+                            value={pageConfig.defaultArticleNavMode || 'direct-response'}
+                            onChange={(e) => {
+                              if (e.target.value === '__create_new__') {
+                                router.push('/admin/navigation');
+                                return;
+                              }
+                              const newConfig = { ...pageConfig, defaultArticleNavMode: e.target.value };
+                              setPageConfig(newConfig);
+                              fetch(`/api/sites/${id}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ ...site, page_config: newConfig }),
+                              });
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer ${
+                              pageConfig.defaultArticleNavMode === 'direct-response' || !pageConfig.defaultArticleNavMode
+                                ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+                                : pageConfig.defaultArticleNavMode === 'minimal'
+                                ? 'bg-gray-500/10 border-gray-500/30 text-gray-400'
+                                : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                            }`}
+                          >
+                            <option value="global">Full Nav</option>
+                            <option value="direct-response">No Nav Links</option>
+                            <option value="minimal">Logo Only</option>
+                            <option disabled>───────────</option>
+                            <option value="__create_new__">+ Create New Nav...</option>
+                          </select>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-3">
+                        Individual pages and articles can override these defaults in their respective editors.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Appearance */}
                 {settingsSubTab === 'appearance' && (
                   <div className="space-y-8">
@@ -1986,10 +2121,43 @@ export default function SiteDashboard() {
           {/* PAGES TAB */}
           {activeTab === 'pages' && (
             <div className="space-y-6">
+              {/* Header with Sub-tabs */}
               <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-white">Page Management</h2>
-                  <p className="text-gray-400 text-sm mt-1">{visiblePageCount} pages in navigation</p>
+                <div className="flex items-center gap-6">
+                  <div className="flex border-b border-gray-700">
+                    <button
+                      onClick={() => setPagesSubTab('pages')}
+                      className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all ${
+                        pagesSubTab === 'pages'
+                          ? 'border-primary-500 text-white'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      <Layers className="w-4 h-4" />
+                      Pages
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${
+                        pagesSubTab === 'pages' ? 'bg-primary-500/20 text-primary-400' : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        {visiblePageCount}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setPagesSubTab('navigation')}
+                      className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all ${
+                        pagesSubTab === 'navigation'
+                          ? 'border-primary-500 text-white'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      <Navigation className="w-4 h-4" />
+                      Navigation
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${
+                        pagesSubTab === 'navigation' ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        {navTemplates.length}
+                      </span>
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   {saveSuccess && (
@@ -2008,6 +2176,9 @@ export default function SiteDashboard() {
                 </div>
               </div>
 
+              {/* PAGES SUB-TAB */}
+              {pagesSubTab === 'pages' && (
+              <>
               {/* Visible Pages - In Navigation */}
               <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
                 <div className="p-5 border-b border-gray-700">
@@ -2089,7 +2260,13 @@ export default function SiteDashboard() {
                         {/* Nav Mode Badge */}
                         <select
                           value={page.navMode || 'global'}
-                          onChange={(e) => updatePageNavMode(page.id, e.target.value)}
+                          onChange={(e) => {
+                            if (e.target.value === '__create_new__') {
+                              router.push('/admin/navigation');
+                              return;
+                            }
+                            updatePageNavMode(page.id, e.target.value);
+                          }}
                           onClick={(e) => e.stopPropagation()}
                           className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer ${
                             page.navMode === 'direct-response'
@@ -2102,6 +2279,8 @@ export default function SiteDashboard() {
                           <option value="global">Full Nav</option>
                           <option value="direct-response">No Nav Links</option>
                           <option value="minimal">Logo Only</option>
+                          <option disabled>───────────</option>
+                          <option value="__create_new__">+ Create New Nav...</option>
                         </select>
 
                         {/* Hide button */}
@@ -2129,6 +2308,76 @@ export default function SiteDashboard() {
                       <p>No visible pages. Show some pages from the hidden list below.</p>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Article Pages Section - Between Visible and Hidden */}
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                <div className="p-5 border-b border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">Individual Article Pages</h3>
+                      <p className="text-sm text-gray-400 mt-1">Navigation settings for all article pages on this site</p>
+                    </div>
+                    <Link
+                      href={`/admin/sites/${id}/articles`}
+                      className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Manage Articles
+                    </Link>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">{articles.length} Articles</p>
+                        <p className="text-xs text-gray-500">
+                          {articles.filter((a: any) => a.published).length} published, {articles.filter((a: any) => !a.published).length} drafts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-400">Default Nav:</span>
+                      <select
+                        value={pageConfig.defaultArticleNavMode || 'direct-response'}
+                        onChange={(e) => {
+                          if (e.target.value === '__create_new__') {
+                            router.push('/admin/navigation');
+                            return;
+                          }
+                          const newConfig = { ...pageConfig, defaultArticleNavMode: e.target.value };
+                          setPageConfig(newConfig);
+                          // Auto-save
+                          fetch(`/api/sites/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ...site, page_config: newConfig }),
+                          });
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer ${
+                          pageConfig.defaultArticleNavMode === 'direct-response' || !pageConfig.defaultArticleNavMode
+                            ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+                            : pageConfig.defaultArticleNavMode === 'minimal'
+                            ? 'bg-gray-500/10 border-gray-500/30 text-gray-400'
+                            : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                        }`}
+                      >
+                        <option value="global">Full Nav</option>
+                        <option value="direct-response">No Nav Links</option>
+                        <option value="minimal">Logo Only</option>
+                        <option disabled>───────────</option>
+                        <option value="__create_new__">+ Create New Nav...</option>
+                      </select>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-4">
+                    Individual articles can override this in the article editor. "No Nav Links" is recommended for better conversion.
+                  </p>
                 </div>
               </div>
 
@@ -2198,63 +2447,139 @@ export default function SiteDashboard() {
                 </div>
               )}
 
-              {/* Article Pages Section */}
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-                <div className="p-5 border-b border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">Individual Article Pages</h3>
-                      <p className="text-sm text-gray-400 mt-1">Navigation settings for all article pages on this site</p>
+              </>
+              )}
+
+              {/* NAVIGATION SUB-TAB */}
+              {pagesSubTab === 'navigation' && (
+              <>
+                {/* Site Navigation Templates */}
+                <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                  <div className="p-5 border-b border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Navigation Templates</h3>
+                        <p className="text-sm text-gray-400 mt-1">Configure header navigation styles for this site</p>
+                      </div>
+                      <Link
+                        href="/admin/navigation"
+                        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Manage All Templates
+                      </Link>
                     </div>
-                    <Link
-                      href={`/admin/sites/${id}/articles`}
-                      className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      Manage Articles
-                    </Link>
+                  </div>
+                  <div className="p-5">
+                    {navTemplates.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Navigation className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                        <p className="text-gray-400 mb-4">No navigation templates found</p>
+                        <Link
+                          href="/admin/navigation"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Create Templates
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {navTemplates.map((template: any) => (
+                          <div
+                            key={template.id}
+                            className="bg-gray-750 rounded-xl border border-gray-600 p-4 hover:border-gray-500 transition-colors"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <h4 className="font-medium text-white">{template.name}</h4>
+                                <p className="text-xs text-gray-500 mt-0.5">{template.description || template.base_type}</p>
+                              </div>
+                              {template.is_system && (
+                                <span className="px-1.5 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded">System</span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap gap-1.5 mb-3">
+                              <span className={`px-2 py-0.5 rounded text-xs ${template.config?.showNavLinks ? 'bg-green-500/10 text-green-400' : 'bg-gray-700 text-gray-500'}`}>
+                                {template.config?.showNavLinks ? 'Nav Links' : 'No Links'}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded text-xs ${template.config?.showAudioTrack ? 'bg-green-500/10 text-green-400' : 'bg-gray-700 text-gray-500'}`}>
+                                {template.config?.showAudioTrack ? 'Audio' : 'No Audio'}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded text-xs ${template.config?.showSocialProof ? 'bg-green-500/10 text-green-400' : 'bg-gray-700 text-gray-500'}`}>
+                                {template.config?.showSocialProof ? 'Social' : 'No Social'}
+                              </span>
+                            </div>
+                            <span className={`inline-block px-2 py-1 rounded text-xs border ${
+                              template.base_type === 'global' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                              template.base_type === 'direct-response' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                              'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                            }`}>
+                              {template.base_type === 'global' ? 'Full Nav' : template.base_type === 'direct-response' ? 'Direct Response' : 'Minimal'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-purple-400" />
-                      </div>
+
+                {/* Site Default Navigation */}
+                <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                  <div className="p-5 border-b border-gray-700">
+                    <h3 className="text-lg font-semibold text-white">Site Default Navigation</h3>
+                    <p className="text-sm text-gray-400 mt-1">Set the default navigation template for this site</p>
+                  </div>
+                  <div className="p-5 space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-750 rounded-lg">
                       <div>
-                        <p className="text-sm font-medium text-white">{articles.length} Articles</p>
-                        <p className="text-xs text-gray-500">
-                          {articles.filter((a: any) => a.published).length} published, {articles.filter((a: any) => !a.published).length} drafts
-                        </p>
+                        <p className="font-medium text-white">Default Page Navigation</p>
+                        <p className="text-sm text-gray-500">Used for regular site pages (Home, About, etc.)</p>
                       </div>
+                      <select
+                        className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
+                        defaultValue="global"
+                      >
+                        <option value="global">Full Nav</option>
+                        <option value="direct-response">No Nav Links</option>
+                        <option value="minimal">Logo Only</option>
+                        <option disabled>───────────</option>
+                        <option value="__create_new__">+ Create New Nav...</option>
+                      </select>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-400">Default Nav:</span>
+                    <div className="flex items-center justify-between p-4 bg-gray-750 rounded-lg">
+                      <div>
+                        <p className="font-medium text-white">Default Article Navigation</p>
+                        <p className="text-sm text-gray-500">Used for individual article pages</p>
+                      </div>
                       <select
                         value={pageConfig.defaultArticleNavMode || 'direct-response'}
                         onChange={(e) => {
+                          if (e.target.value === '__create_new__') {
+                            router.push('/admin/navigation');
+                            return;
+                          }
                           const newConfig = { ...pageConfig, defaultArticleNavMode: e.target.value };
                           setPageConfig(newConfig);
-                          // Auto-save
                           fetch(`/api/sites/${id}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ ...site, page_config: newConfig }),
                           });
                         }}
-                        className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
                       >
-                        <option value="direct-response">No Nav Links</option>
                         <option value="global">Full Nav</option>
+                        <option value="direct-response">No Nav Links</option>
                         <option value="minimal">Logo Only</option>
+                        <option disabled>───────────</option>
+                        <option value="__create_new__">+ Create New Nav...</option>
                       </select>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-4">
-                    Individual articles can override this in the article editor. "No Nav Links" is recommended for better conversion.
-                  </p>
                 </div>
-              </div>
+              </>
+              )}
             </div>
           )}
 
