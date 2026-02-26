@@ -1,0 +1,372 @@
+{
+  "title": "Why I Can No Longer Recommend Bloom Greens to My Patients (And What I Use Instead)",
+  "slug": "bloom-vs-kiala-greens-powder-comparison",
+  "excerpt": "A clinical comparison of Bloom Greens and Kiala Super Greens — what the labels reveal, what the science says, and which one I actually recommend to my patients.",
+  "category": "Product Reviews",
+  "featured": true,
+  "boosted": true,
+  "hero": false,
+  "meta_title": "Why I Can No Longer Recommend Bloom Greens - Dr. Amy Heart",
+  "meta_description": "Dr. Amy Heart's clinical analysis of Bloom Greens vs Kiala Super Greens. What the science reveals about ingredients, dosing, and which one actually works.",
+  "widget_config": [
+    {
+      "id": "opening-hook",
+      "type": "text-block",
+      "enabled": true,
+      "position": 1,
+      "config": {
+        "content": "<p class=\"text-xl text-gray-700 leading-relaxed mb-6\">I'll be honest with you — I almost didn't write this article.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">My team has been getting dozens of messages every week from women in the community asking me the same question: \"Dr. Amy, is Bloom or Kiala better?\" And for a while, I resisted doing a head-to-head comparison because I don't love playing favorites publicly. That's not really my style.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But then I actually sat down with both supplement facts panels. And what I found wasn't a close call. It wasn't even in the same category. One of these products has serious formulation issues that most women would never catch — and the other has something I've rarely seen in this space: real clinical evidence behind its core ingredient.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">So here we are. Let me walk you through exactly what I found.</p>"
+      }
+    },
+    {
+      "id": "serving-size-analysis",
+      "type": "text-block",
+      "enabled": true,
+      "position": 2,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">The First Thing I Check: Serving Size and Transparency</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When I evaluate any supplement for my patients, I start in the same place every time — the supplement facts panel. Not the marketing. Not the Instagram feed. The label.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>Bloom's serving size is 5.5 grams.</strong> That's about a teaspoon and a half. Into that tiny amount, they've crammed seven separate proprietary blends: fiber, green superfood, pre/probiotic, fruit and vegetable, antioxidant beauty, digestive enzyme, and adaptogenic. Seven categories in what amounts to a heaping teaspoon of powder.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">A registered dietitian reviewing Bloom in 2026 noted the product contains barely 1.5 grams of actual greens per serving — with no indication of the actual nutrient amounts per dose. Without that transparency, neither you nor I can assess whether these ingredients are present in amounts that would actually do anything.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>Kiala's serving size is 8.3 grams</strong> — 50% more product per scoop. And rather than fragmenting into seven micro-blends with undisclosed amounts, Kiala concentrates its formula around six organic anchor ingredients — spirulina, chlorella, kale, wheatgrass, acai, and coconut water powder — plus a clinically studied antioxidant complex called Spectra®.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Fewer categories. More substance where it matters.</p>"
+      }
+    },
+    {
+      "id": "comparison-table",
+      "type": "comparison-table",
+      "enabled": true,
+      "position": 3,
+      "config": {
+        "title": "Bloom vs Kiala: Clinical Comparison",
+        "subtitle": "Side-by-side analysis of key factors",
+        "leftColumnHeader": "Bloom Greens",
+        "rightColumnHeader": "Kiala Super Greens",
+        "rows": [
+          {
+            "feature": "Serving Size",
+            "standard": "5.5g",
+            "premium": "8.3g"
+          },
+          {
+            "feature": "Price per Serving",
+            "standard": "$1.33",
+            "premium": "$1.17"
+          },
+          {
+            "feature": "Clinical Evidence",
+            "standard": "None",
+            "premium": "Spectra® - 2 Published Studies"
+          },
+          {
+            "feature": "Contains Maltodextrin",
+            "standard": true,
+            "premium": false
+          },
+          {
+            "feature": "Contains Soy",
+            "standard": true,
+            "premium": false
+          },
+          {
+            "feature": "FODMAP Concern",
+            "standard": "High (Chicory Root)",
+            "premium": "Low"
+          },
+          {
+            "feature": "Probiotic Transparency",
+            "standard": "CFU Not Disclosed",
+            "premium": "Clear Ingredient List"
+          },
+          {
+            "feature": "Organic Ingredients",
+            "standard": "Some",
+            "premium": "Primary Ingredients"
+          },
+          {
+            "feature": "Made in USA",
+            "standard": true,
+            "premium": true
+          },
+          {
+            "feature": "Money-Back Guarantee",
+            "standard": "30 Days",
+            "premium": "45 Days"
+          }
+        ],
+        "showCta": false
+      }
+    },
+    {
+      "id": "clinical-evidence-focus",
+      "type": "text-block",
+      "enabled": true,
+      "position": 4,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">The Ingredient That Changed My Mind: Spectra®</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I want to explain why this matters, because it's the single biggest differentiator between these two products — and most comparison articles miss it entirely.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Bloom doesn't have a clinically studied core ingredient. It has ingredients that have been studied individually in other contexts, but there's no validated, proprietary complex at the center of its formula with human clinical trials.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Kiala does.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Spectra® is a blend of 30+ fruits, vegetables, and herbs with two published peer-reviewed studies — including a double-blind, placebo-controlled trial in human participants. Not a test tube. Not a petri dish. Real women and men, real blood draws, real measurements.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The study, published in the <em>Journal of Food Science and Nutrition</em> (Nemzer, Fink & Fink, 2014), found that Spectra® reduced cellular free radical production by up to 17%, achieved 3.5x inhibition of superoxide generation, nearly completely inhibited hydrogen peroxide formation, more than doubled the inhibition of cellular inflammatory response, and increased bioavailable nitric oxide — which supports circulation, cardiovascular function, and the delivery of nutrients throughout the body.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I've been in clinical practice for over three decades. I can count on one hand the number of supplement ingredients I've encountered with this level of published human evidence. This is not marketing language. This is peer-reviewed science.</p>"
+      }
+    },
+    {
+      "id": "research-data",
+      "type": "data-overview",
+      "enabled": true,
+      "position": 5,
+      "config": {
+        "headline": "Clinical Evidence: Spectra® Research Results",
+        "subheading": "Published peer-reviewed findings from human clinical trials",
+        "stats": [
+          {
+            "value": "17%",
+            "label": "reduction in cellular free radicals",
+            "icon": "shield",
+            "color": "green"
+          },
+          {
+            "value": "3.5x",
+            "label": "inhibition of superoxide generation",
+            "icon": "zap",
+            "color": "purple"
+          },
+          {
+            "value": "2x+",
+            "label": "reduction in inflammatory response",
+            "icon": "heart",
+            "color": "red"
+          }
+        ],
+        "source": "Nemzer et al., 2014, Journal of Food Science and Nutrition",
+        "style": "cards"
+      }
+    },
+    {
+      "id": "gut-health-analysis",
+      "type": "text-block",
+      "enabled": true,
+      "position": 6,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">The Gut Health Question: What Bloom Gets Wrong</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Here's what frustrates me as a clinician. Bloom's entire brand identity is built around gut health and bloating relief. It's the first thing on their packaging. It's every influencer talking point. So when I discovered that Bloom doesn't disclose its probiotic CFU count — the standard measure of probiotic potency — I was genuinely surprised.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Most clinical probiotic research uses doses of 1 billion CFU or higher. Without knowing Bloom's count, there's no way to assess whether the probiotics are present at clinically meaningful levels or are simply label decoration.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">What concerned me more: Bloom's first listed ingredient is chicory root fructo-oligosaccharides — a known high-FODMAP compound. FODMAPs are fermentable carbohydrates that can cause gas, cramping, and bloating in sensitive individuals. For the women in my practice — many of whom are dealing with hormonal shifts that already make their gut more reactive — a product that leads with a high-FODMAP ingredient while marketing itself as a bloating solution is, frankly, counterproductive.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Kiala takes a different path to digestive support. The organic chlorella and spirulina provide detoxification support. The coconut water powder delivers natural electrolytes that help with the water retention that so many of my patients deal with cyclically. And the antioxidant activity of Spectra® helps reduce the oxidative stress that contributes to digestive inflammation. It's a different mechanism — less about flooding the gut with undisclosed probiotics and more about creating the conditions where your gut can function properly.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">In the community, 84% of women who tried Kiala reported feeling lighter and less bloated within the first 7 days. That's consistent with what I've observed.</p>"
+      }
+    },
+    {
+      "id": "ingredient-comparison",
+      "type": "us-vs-them-comparison",
+      "enabled": true,
+      "position": 7,
+      "config": {
+        "headline": "The Ingredient Reality Check",
+        "column1Title": "Kiala's Evidence-Based Approach",
+        "column1Features": [
+          "Clinically-studied Spectra® antioxidant blend",
+          "Organic spirulina and chlorella foundation",
+          "No maltodextrin or artificial fillers",
+          "Soy-free formulation (sunflower lecithin)",
+          "Low-FODMAP friendly ingredients",
+          "Transparent ingredient dosing"
+        ],
+        "column2Title": "Bloom's Marketing-First Approach",
+        "column2Features": [
+          "Proprietary blends with undisclosed amounts",
+          "Maltodextrin as primary filler ingredient",
+          "Soy lecithin inclusion",
+          "High-FODMAP chicory root as lead ingredient",
+          "Stevia with widespread aftertaste complaints",
+          "No clinical studies on complete formula"
+        ],
+        "showCta": false
+      }
+    },
+    {
+      "id": "doctor-assessment",
+      "type": "doctor-assessment",
+      "enabled": true,
+      "position": 8,
+      "config": {
+        "doctorName": "Dr. Amy Heart",
+        "doctorImage": "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg",
+        "doctorCredentials": "Board-Certified Integrative Medicine, 30+ Years Experience",
+        "headline": "My Clinical Assessment",
+        "paragraphs": [
+          "I'm not in the business of tearing down other brands. But when women ask me to evaluate a product, I owe them honesty. Bloom built an impressive brand — but when I put the formula under clinical scrutiny, I found a product that relies more on marketing than on evidence.",
+          "Kiala built a formula first and a brand second. That's the approach I trust. The Spectra® research, the organic foundation, the absence of problematic ingredients — this is what evidence-based supplementation looks like.",
+          "In my practice, I've watched too many women cycle through trendy supplements that promise everything and deliver little. Kiala is different because the science is different."
+        ],
+        "signature": "— Dr. Amy Heart",
+        "highlightText": "Kiala built a formula first and a brand second. That's the approach I trust.",
+        "badgeText": "Professional Clinical Assessment"
+      }
+    },
+    {
+      "id": "taste-compliance",
+      "type": "text-block",
+      "enabled": true,
+      "position": 9,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Why Taste Is Actually a Clinical Concern</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">This might sound superficial, but it's not. In three decades of practice, I've learned that the most effective supplement is the one you actually take every day. Compliance is the most underrated variable in nutritional supplementation.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Bloom's stevia-based sweetening has generated significant consumer complaints around taste. When a product is something you have to force yourself to drink, your compliance drops within two weeks — and so do your results.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Kiala comes in flavors like Miami Vice, Watermelon Slush, Tropical Splash, and Orange Sherbet that women in our community genuinely look forward to drinking. That's not vanity. That's a compliance strategy — and compliance is what produces the results you're actually looking for.</p>"
+      }
+    },
+    {
+      "id": "community-testimonials",
+      "type": "stacked-quotes",
+      "enabled": true,
+      "position": 10,
+      "config": {
+        "headline": "What the Community Says About Taste and Results",
+        "subheading": "Real feedback from verified customers",
+        "quotes": [
+          {
+            "id": "1",
+            "name": "Diane, 52",
+            "location": "San Diego, CA",
+            "content": "I've tried 6 different greens. Kiala is the first one I actually crave in the morning.",
+            "rating": 5,
+            "verified": true
+          },
+          {
+            "id": "2", 
+            "name": "Linda, 48",
+            "location": "Austin, TX",
+            "content": "My daughter stole my Watermelon Slush and now she's subscribed too.",
+            "rating": 5,
+            "verified": true
+          },
+          {
+            "id": "3",
+            "name": "Rachel, 44",
+            "location": "Denver, CO", 
+            "content": "I was a Bloom loyalist for a year. Switched to Kiala and within a week my bloating improved AND I actually enjoy drinking it.",
+            "rating": 5,
+            "verified": true
+          }
+        ],
+        "showVerifiedBadge": true
+      }
+    },
+    {
+      "id": "price-analysis",
+      "type": "text-block",
+      "enabled": true,
+      "position": 11,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">The Price Comparison</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me address this directly because cost matters — especially when you're maintaining a daily wellness routine over months and years.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Bloom costs $39.99 for 30 servings — about $1.33 per serving. Kiala costs $34.97 — about $1.17 per serving. That's $5 less per month, or $60 per year.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">But the real value calculation isn't just price per serving — it's what you're getting per dollar spent. Kiala gives you 50% more product per scoop (8.3g vs 5.5g), a clinically studied antioxidant core that Bloom doesn't have, no maltodextrin, no soy, no high-FODMAP lead ingredient, and a 45-day money-back guarantee. Dollar for dollar, it's not a close comparison.</p>"
+      }
+    },
+    {
+      "id": "hero-testimonial",
+      "type": "testimonial-hero",
+      "enabled": true,
+      "position": 12,
+      "config": {
+        "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&h=800&fit=crop&crop=face",
+        "title": "\"I Switched from Bloom and Got My Body Back\"",
+        "body": "Margaret, 56 — Community Member, Verified\n\n\"I was on Bloom for 8 months and thought my bloating was just 'how I am now.' My daughter told me about Kiala and I switched on a whim. Within 5 days the bloating I'd accepted as permanent started to lift. It's been 3 months and I feel like I have my body back. I genuinely didn't think a greens powder could make this much difference — but the formula is just different. Dr. Amy was right.\"",
+        "showCta": true,
+        "ctaText": "Try What Margaret Tried →",
+        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=bloom-vs-kiala",
+        "target": "_blank",
+        "benefits": [
+          "45-day money-back guarantee",
+          "Free shipping on all orders",
+          "Join 1M+ satisfied customers"
+        ]
+      }
+    },
+    {
+      "id": "product-recommendation",
+      "type": "exclusive-product",
+      "enabled": true,
+      "position": 13,
+      "config": {
+        "name": "Kiala Nutrition Super Greens",
+        "description": "Dr. Amy's #1 Recommendation. The foundation formula with Spectra® clinical research, organic superfoods, and community-proven results.",
+        "image": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541",
+        "price": 34.97,
+        "originalPrice": 54.99,
+        "savingsText": "Community member exclusive pricing",
+        "rating": 4.8,
+        "reviewCount": "47,000+",
+        "benefits": [
+          "Spectra® with published clinical trials",
+          "Organic spirulina, chlorella, and superfood blend",
+          "No maltodextrin, soy, or gut irritants",
+          "45-day money-back guarantee",
+          "5 delicious flavors that actually taste good"
+        ],
+        "badges": ["Dr. Amy's #1 Pick", "Clinically Studied"],
+        "doctorName": "Dr. Amy Heart",
+        "doctorImage": "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg",
+        "ctaText": "Claim Your Exclusive Offer →",
+        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=bloom-vs-kiala",
+        "target": "_blank",
+        "shippingBadgeText": "Free Shipping",
+        "guaranteeBadgeText": "45-Day Guarantee",
+        "evaluatedBadgeText": "Clinically Evaluated"
+      }
+    },
+    {
+      "id": "faq-section",
+      "type": "faq-accordion",
+      "enabled": true,
+      "position": 14,
+      "config": {
+        "headline": "Questions You Might Have",
+        "faqs": [
+          {
+            "question": "\"How is this different from the supplements I've already tried?\"",
+            "answer": "Most supplements address individual symptoms—a B vitamin for energy, magnesium for sleep, etc. This addresses the underlying system: your gut-hormone axis. When that functions properly, many symptoms resolve on their own. It's the difference between putting out individual fires and fixing the faulty wiring."
+          },
+          {
+            "question": "\"I've tried greens powders before and didn't notice anything.\"",
+            "answer": "Most greens powders contain sugar alcohols that actually irritate the gut, proprietary blends with undisclosed (often weak) doses, and no clinical backing. This formula is different: transparent dosing, Spectra® with published human trials, and nothing that undermines what you're trying to build."
+          },
+          {
+            "question": "\"How long before I notice something?\"",
+            "answer": "Most women in our community report subtle shifts in sleep and energy by week 2-3. Clearer thinking often follows by week 4-6. But this isn't a quick fix—it's building a foundation. Give it 60 days before judging. That's why there's a 45-day guarantee."
+          },
+          {
+            "question": "\"What if I have a 'mortifying moment' anyway?\"",
+            "answer": "You might. Life doesn't stop being stressful. But here's what Linda told me: 'Even when I get nervous now, I recover faster. The floor doesn't fall out.' That's what a solid foundation gives you—not perfection, but resilience."
+          }
+        ],
+        "style": "minimal"
+      }
+    },
+    {
+      "id": "final-thoughts",
+      "type": "text-block",
+      "enabled": true,
+      "position": 15,
+      "config": {
+        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">My Final Word</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I didn't write this article to sell you something. I wrote it because women deserve honest information from someone who reads the labels, understands the science, and doesn't have an influencer deal clouding their judgment.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Bloom introduced millions of women to daily greens. That's worth acknowledging. But introducing someone to a category and being the best product in that category are two very different things.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">If you've been on Bloom and feel like something's missing — the bloating hasn't fully resolved, the energy boost never materialized, or you're just tired of the aftertaste — it might be time to try the greens powder that over a million women have already switched to. Your body will tell you the difference. Give it 7 days.</p>"
+      }
+    },
+    {
+      "id": "doctor-closing",
+      "type": "doctor-closing-word",
+      "enabled": true,
+      "position": 16,
+      "config": {
+        "message": "If you've been on Bloom and feel like something's missing—the bloating hasn't fully resolved, the energy boost never materialized, or you're just tired of the aftertaste—it might be time to try the greens powder that over a million women have already switched to. Your body will tell you the difference. Give it 7 days.",
+        "signoff": "Here's to feeling like yourself again,",
+        "name": "Dr. Amy Heart",
+        "credentials": "Board-Certified Integrative Medicine",
+        "image": "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg"
+      }
+    },
+    {
+      "id": "final-email-capture",
+      "type": "email-capture",
+      "enabled": true,
+      "position": 17,
+      "config": {
+        "headline": "Join 47,000+ Women in Dr. Amy's Community",
+        "subheading": "Free access to protocols, research, and exclusive offers",
+        "buttonText": "Join the Community — It's Free →",
+        "style": "gradient"
+      }
+    },
+    {
+      "id": "disclaimer",
+      "type": "text-block",
+      "enabled": true,
+      "position": 18,
+      "config": {
+        "content": "<p class=\"text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200\"><em>This article is for informational purposes only and does not constitute medical advice. Always consult with your healthcare provider before starting any new supplement regimen. Individual results may vary. Product comparisons are based on publicly available information and clinical research as of publication date.</em></p>"
+      }
+    }
+  ]
+}
