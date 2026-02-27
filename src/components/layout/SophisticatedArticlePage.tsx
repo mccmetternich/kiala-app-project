@@ -200,6 +200,21 @@ export default function SophisticatedArticlePage({
                 </TrackedLink>
               </nav>
 
+              {/* Hero Image - positioned after breadcrumb, before content */}
+              {extractedHeroImage && (
+                <div className="mb-8">
+                  <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative rounded-lg shadow-lg">
+                    <img
+                      src={extractedHeroImage}
+                      alt={articlePage.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Subtle overlay for better text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10"></div>
+                  </div>
+                </div>
+              )}
+
               {/* Article Category & Meta */}
               <div className="space-y-6">
                 <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -256,23 +271,8 @@ export default function SophisticatedArticlePage({
           </div>
         </header>
 
-        {/* Hero Image Section - Enhanced with overlay and better aspect ratio */}
-        {extractedHeroImage && (
-          <section className="relative">
-            <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative">
-              <img
-                src={extractedHeroImage}
-                alt={articlePage.title}
-                className="w-full h-full object-cover"
-              />
-              {/* Subtle overlay for better text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10"></div>
-            </div>
-          </section>
-        )}
-
         {/* Article Content - Sophisticated Typography */}
-        <section className={`${extractedHeroImage ? 'pt-8 lg:pt-12' : 'pt-4 lg:pt-6'} pb-16 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white`}>
+        <section className="pt-4 lg:pt-6 pb-16 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               
