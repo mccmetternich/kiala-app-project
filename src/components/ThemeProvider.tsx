@@ -65,12 +65,12 @@ function generatePalette(baseColor: string): Record<string, string> {
   };
 }
 
-// Generic default colors (neutral theme for fallback)
+// Sophisticated default colors (elegant Goop-inspired palette)
 const DEFAULT_COLORS = {
-  primary: '#1e40af',    // Blue
-  secondary: '#059669',  // Green  
-  accent: '#dc2626',     // Red
-  trust: '#0369a1',      // Dark blue
+  primary: '#2c2c2c',    // Deep charcoal
+  secondary: '#f8f6f3',  // Warm cream
+  accent: '#9ca3af',     // Soft gray
+  trust: '#6b7280',      // Medium gray
 };
 
 export default function ThemeProvider({ children, site }: ThemeProviderProps) {
@@ -138,8 +138,8 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
 
     // Trust colors (single values)
     vars.push(`--color-trust-green: ${themeColors.trust};`);
-    vars.push(`--color-trust-blue: #1e40af;`);
-    vars.push(`--color-trust-gold: #d97706;`);
+    vars.push(`--color-trust-blue: #6b7280;`);
+    vars.push(`--color-trust-gold: #9ca3af;`);
 
     // Font families
     vars.push(`--font-heading: '${themeFonts.heading}', system-ui, sans-serif;`);

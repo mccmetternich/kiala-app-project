@@ -236,4 +236,23 @@
   .sophisticated-content a {
     @apply text-accent-700 hover:text-accent-800 underline transition-colors;
   }
+
+  /* Scrolling animations for dynamic copy bar */
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+
+  .animate-scroll-delayed {
+    animation: scroll 30s linear infinite;
+    animation-delay: 15s;
+  }
 }

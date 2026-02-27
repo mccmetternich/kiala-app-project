@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, Sparkles, CheckCircle, Users, Book, Heart } from 'lucide-react';
+import { ArrowRight, Sparkles, CheckCircle, Users, Book, Heart, TrendingUp, Zap } from 'lucide-react';
 import TrackedLink from '@/components/TrackedLink';
 import EmailCapture from '@/widgets/EmailCapture';
 
@@ -13,20 +13,45 @@ interface SophisticatedHomepageProps {
 export default function SophisticatedHomepage({ site, siteId }: SophisticatedHomepageProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [scrollY, setScrollY] = useState(0);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const brand = site?.brand || {};
   const settings = site?.settings || {};
 
+  // Scroll-based animations
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-secondary-50">
-      {/* Hero Section - Goop-inspired minimal elegance */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-white via-secondary-50 to-secondary-100">
+      {/* Hero Section - Dynamic and engaging */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-secondary-50 to-secondary-100 min-h-screen flex items-center">
+        {/* Animated background elements */}
         <div 
-          className="absolute inset-0 opacity-40" 
+          className="absolute inset-0 opacity-30" 
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f7f3f0' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f7f3f0' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            transform: `translateY(${scrollY * 0.3}px)`
           }}
         ></div>
+        
+        {/* Floating elements for visual interest */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-accent-200 to-accent-300 rounded-full opacity-20 animate-pulse-slow"></div>
+        <div className="absolute bottom-40 left-10 w-24 h-24 bg-gradient-to-br from-secondary-300 to-secondary-400 rounded-full opacity-15 animate-bounce-subtle"></div>
+        
+        {/* Scrolling text elements */}
+        <div className="absolute top-1/3 left-0 overflow-hidden whitespace-nowrap">
+          <div 
+            className="inline-block text-6xl font-light text-accent-200 opacity-10 transform"
+            style={{ transform: `translateX(${-scrollY * 0.5}px)` }}
+          >
+            WELLNESS • SCIENCE • ELEGANCE • TRANSFORMATION • 
+          </div>
+        </div>
         
         <div className="relative container mx-auto px-4 py-16 sm:py-20 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
@@ -73,18 +98,27 @@ export default function SophisticatedHomepage({ site, siteId }: SophisticatedHom
                 </TrackedLink>
               </div>
 
-              {/* Trust Indicators - Mobile Optimized */}
+              {/* Trust Indicators - Enhanced with animation */}
               <div className="grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-8 pt-8">
-                <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-semibold text-primary-900">47.5K+</div>
+                <div className="text-center group">
+                  <div className="text-xl sm:text-2xl font-semibold text-primary-900 group-hover:text-accent-700 transition-colors duration-300 flex items-center justify-center gap-1">
+                    47.5K+
+                    <TrendingUp className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </div>
                   <div className="text-xs sm:text-sm text-gray-600 uppercase tracking-wider">Women Empowered</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-semibold text-primary-900">12</div>
+                <div className="text-center group">
+                  <div className="text-xl sm:text-2xl font-semibold text-primary-900 group-hover:text-accent-700 transition-colors duration-300 flex items-center justify-center gap-1">
+                    12
+                    <Sparkles className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </div>
                   <div className="text-xs sm:text-sm text-gray-600 uppercase tracking-wider">Years Experience</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-semibold text-primary-900">98%</div>
+                <div className="text-center group">
+                  <div className="text-xl sm:text-2xl font-semibold text-primary-900 group-hover:text-accent-700 transition-colors duration-300 flex items-center justify-center gap-1">
+                    98%
+                    <Zap className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </div>
                   <div className="text-xs sm:text-sm text-gray-600 uppercase tracking-wider">Client Satisfaction</div>
                 </div>
               </div>
@@ -118,6 +152,80 @@ export default function SophisticatedHomepage({ site, siteId }: SophisticatedHom
         </div>
       </section>
 
+      {/* Scrolling Copy Bar - Visual Activity */}
+      <div className="relative bg-primary-900 overflow-hidden py-4">
+        <div className="flex animate-scroll whitespace-nowrap">
+          <div className="flex items-center space-x-8 text-white/80 text-sm uppercase tracking-wider">
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-accent-400" />
+              Evidence-Based Protocols
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Heart className="w-4 h-4 text-rose-400" />
+              Holistic Wellness Approach
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-400" />
+              47,500+ Women Transformed
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              98% Success Rate
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Book className="w-4 h-4 text-purple-400" />
+              Science-Backed Methods
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-yellow-400" />
+              Personalized Protocols
+            </span>
+            <span className="text-accent-300">•</span>
+          </div>
+        </div>
+        
+        {/* Duplicate for seamless loop */}
+        <div className="flex animate-scroll-delayed whitespace-nowrap absolute top-0 left-full">
+          <div className="flex items-center space-x-8 text-white/80 text-sm uppercase tracking-wider py-4">
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-accent-400" />
+              Evidence-Based Protocols
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Heart className="w-4 h-4 text-rose-400" />
+              Holistic Wellness Approach
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-400" />
+              47,500+ Women Transformed
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              98% Success Rate
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Book className="w-4 h-4 text-purple-400" />
+              Science-Backed Methods
+            </span>
+            <span className="text-accent-300">•</span>
+            <span className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-yellow-400" />
+              Personalized Protocols
+            </span>
+            <span className="text-accent-300">•</span>
+          </div>
+        </div>
+      </div>
+
       {/* Philosophy Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
@@ -136,25 +244,41 @@ export default function SophisticatedHomepage({ site, siteId }: SophisticatedHom
                 {
                   icon: <Book className="w-8 h-8" />,
                   title: "Evidence-Based",
-                  description: "Every recommendation is backed by peer-reviewed research and clinical experience."
+                  description: "Every recommendation is backed by peer-reviewed research and clinical experience.",
+                  color: "from-blue-100 to-blue-200",
+                  hoverColor: "from-blue-200 to-blue-300"
                 },
                 {
                   icon: <Heart className="w-8 h-8" />,
                   title: "Holistic Approach", 
-                  description: "We consider your entire wellbeing—mind, body, and spirit—in our protocols."
+                  description: "We consider your entire wellbeing—mind, body, and spirit—in our protocols.",
+                  color: "from-rose-100 to-rose-200",
+                  hoverColor: "from-rose-200 to-rose-300"
                 },
                 {
                   icon: <Users className="w-8 h-8" />,
                   title: "Community-Driven",
-                  description: "Join a sophisticated community of women committed to intentional living."
+                  description: "Join a sophisticated community of women committed to intentional living.",
+                  color: "from-emerald-100 to-emerald-200",
+                  hoverColor: "from-emerald-200 to-emerald-300"
                 }
               ].map((item, index) => (
-                <div key={index} className="elegant-card text-center space-y-4">
-                  <div className="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto text-accent-700">
+                <div 
+                  key={index} 
+                  className="elegant-card text-center space-y-4 group cursor-pointer transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                  onMouseEnter={() => setHoveredCard(index)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <div className={`w-16 h-16 bg-gradient-to-br ${hoveredCard === index ? item.hoverColor : item.color} rounded-full flex items-center justify-center mx-auto text-accent-700 transition-all duration-300 group-hover:scale-110 shadow-lg`}>
                     {item.icon}
                   </div>
-                  <h3 className="goop-heading text-xl">{item.title}</h3>
+                  <h3 className="goop-heading text-xl group-hover:text-accent-700 transition-colors">{item.title}</h3>
                   <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                  
+                  {/* Hover effect indicator */}
+                  <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 mt-4">
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-accent-500 to-accent-600 mx-auto"></div>
+                  </div>
                 </div>
               ))}
             </div>

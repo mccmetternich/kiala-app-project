@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Search, Filter, Calendar, Clock, ArrowRight, Star } from 'lucide-react';
 import TrackedLink from '@/components/TrackedLink';
+import TagCloud from '@/components/TagCloud';
 
 interface SophisticatedArticlesProps {
   articles: any[];
@@ -12,21 +13,35 @@ interface SophisticatedArticlesProps {
 
 export default function SophisticatedArticles({ articles, site, siteId }: SophisticatedArticlesProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const brand = site?.brand || {};
   const settings = site?.settings || {};
-
-  // Get unique categories from articles
-  const categories = ['all', ...new Set(articles.map(article => article.category).filter(Boolean))];
 
   // Filter articles
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          article.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || article.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesTag = selectedTag === null || article.category === selectedTag;
+    return matchesSearch && matchesTag;
   });
+
+  // Format date properly
+  const formatArticleDate = (dateString: string | Date) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Recently Published';
+      }
+      return date.toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric', 
+        year: 'numeric' 
+      });
+    } catch {
+      return 'Recently Published';
+    }
+  };
 
   // Get featured article (first article or one marked as featured)
   const featuredArticle = articles.find(article => article.featured) || articles[0];
@@ -35,7 +50,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section */}
-      <section className="py-16 lg:py-24 sophisticated-gradient border-b border-secondary-200/50">
+      <section className="py-12 lg:py-16 sophisticated-gradient border-b border-gray-300">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             
@@ -55,32 +70,17 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
               </p>
             </div>
 
-            {/* Search and Filter */}
-            <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-              <div className="relative flex-1">
+            {/* Search */}
+            <div className="max-w-md mx-auto">
+              <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search wellness insights..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="goop-input w-full pl-10"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-colors bg-white/90 backdrop-blur-sm"
                 />
-              </div>
-              
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="goop-input pl-10 pr-8 appearance-none cursor-pointer"
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category === 'all' ? 'All Topics' : category}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
 
@@ -93,11 +93,11 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
 
       {/* Featured Article */}
       {featuredArticle && (
-        <section className="py-16 lg:py-20 bg-white border-b border-secondary-100">
+        <section className="py-8 lg:py-12 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="goop-heading text-3xl lg:text-4xl mb-4">
+              <div className="text-center mb-8">
+                <h2 className="goop-heading text-3xl lg:text-4xl mb-2">
                   Featured <span className="italic">Insight</span>
                 </h2>
               </div>
@@ -108,7 +108,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                 widgetType="featured-article"
                 widgetName={featuredArticle.title}
               >
-                <div className="grid lg:grid-cols-2 gap-12 items-center p-8 border border-secondary-200/40 rounded-lg hover:border-accent-200/60 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-white via-secondary-50/30 to-white">
+                <div className="grid lg:grid-cols-2 gap-12 items-center p-8 border border-secondary-200/70 rounded-lg hover:border-accent-200/80 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-white via-secondary-50/30 to-white">
                   <div className="aspect-[5/4] relative overflow-hidden bg-secondary-100">
                     <img
                       src={featuredArticle.image || "https://images.unsplash.com/photo-1560707303-3df363006833?w=600&h=480&fit=crop"}
@@ -128,7 +128,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                         </span>
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          <span>{new Date(featuredArticle.published_date || featuredArticle.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                          <span>{formatArticleDate(featuredArticle.published_date || featuredArticle.createdAt)}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
@@ -157,20 +157,27 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
         </section>
       )}
 
-      {/* Articles Grid */}
-      <section className="py-16 lg:py-20 bg-gradient-to-b from-secondary-50/30 via-white to-secondary-50/20">
+      {/* Articles Grid with Tag Cloud */}
+      <section className="py-12 lg:py-16 bg-gradient-to-b from-secondary-50/30 via-white to-secondary-50/20">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             
-            {otherArticles.length > 0 && (
-              <div className="text-center mb-12">
-                <h2 className="goop-heading text-3xl lg:text-4xl">
-                  All <span className="italic">Articles</span>
-                </h2>
-              </div>
-            )}
+            <div className="text-center mb-8">
+              <h2 className="goop-heading text-3xl lg:text-4xl">
+                All <span className="italic">Articles</span>
+              </h2>
+              <p className="text-lg text-gray-600 mt-4">
+                {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''} 
+                {selectedTag && <span> in <em>{selectedTag}</em></span>}
+              </p>
+            </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Two Column Layout */}
+            <div className="grid lg:grid-cols-4 gap-8">
+              
+              {/* Articles Grid - Left Side */}
+              <div className="lg:col-span-3">
+                <div className="grid md:grid-cols-2 gap-8">
               {otherArticles.map((article) => (
                 <TrackedLink
                   key={article.id}
@@ -179,7 +186,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                   widgetType="article-card"
                   widgetName={article.title}
                 >
-                  <article className="goop-card h-full border border-secondary-200/30 hover:border-accent-200/50 transition-all duration-300 hover:shadow-xl">
+                  <article className="goop-card h-full border border-secondary-200/60 hover:border-accent-200/80 transition-all duration-300 hover:shadow-xl">
                     <div className="aspect-[4/3] bg-secondary-100 mb-6 overflow-hidden">
                       <img
                         src={article.image || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop'}
@@ -198,7 +205,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                         </span>
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          <span>{new Date(article.published_date || article.createdAt).toLocaleDateString()}</span>
+                          <span>{formatArticleDate(article.published_date || article.createdAt)}</span>
                         </div>
                       </div>
                       
@@ -210,7 +217,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                         {article.excerpt || 'Explore sophisticated wellness insights...'}
                       </p>
                       
-                      <div className="flex items-center justify-between pt-4 border-t border-secondary-200">
+                      <div className="flex items-center justify-between pt-4 border-t border-secondary-300">
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <Clock className="w-3 h-3" />
                           <span>{article.read_time || 5} min read</span>
@@ -236,7 +243,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                   <button
                     onClick={() => {
                       setSearchTerm('');
-                      setSelectedCategory('all');
+                      setSelectedTag(null);
                     }}
                     className="goop-button-secondary"
                   >
@@ -246,11 +253,20 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
               </div>
             )}
           </div>
+          
+          {/* Tag Cloud - Right Side */}
+          <div className="lg:col-span-1">
+            <TagCloud
+              articles={articles}
+              selectedTag={selectedTag}
+              onTagSelect={setSelectedTag}
+            />
+          </div>
         </div>
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-16 lg:py-20 sophisticated-gradient border-t border-secondary-200/50">
+      <section className="py-16 lg:py-20 sophisticated-gradient border-t border-secondary-300">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center space-y-8">
             <div className="space-y-6">

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Bell, Play, Pause } from 'lucide-react';
 import { Site, NavigationTemplateConfig } from '@/types';
 import Badge from '../ui/Badge';
@@ -40,6 +41,7 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
   const [progress, setProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const pathname = usePathname();
 
   // Feature flags from navConfig (with defaults for global mode)
   const showNavLinks = navConfig?.showNavLinks ?? true;
@@ -90,6 +92,20 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
   };
 
   const navItems = getNavItems();
+  
+  // Check if navigation item is active
+  const isNavItemActive = (href: string) => {
+    // Remove domain if present to compare just the path
+    const linkPath = href.replace(/^https?:\/\/[^\/]+/, '');
+    
+    // Handle homepage
+    if (linkPath === '/' || linkPath === '') {
+      return pathname === '/';
+    }
+    
+    // Handle other paths - check if current path starts with the nav path
+    return pathname.startsWith(linkPath);
+  };
 
   // Track scroll for collapsed header on mobile
   useEffect(() => {
@@ -185,7 +201,11 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                 <Link
                   key={index}
                   href={item.href}
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                  className={`font-medium transition-all duration-200 px-3 py-2 rounded-lg ${
+                    isNavItemActive(item.href)
+                      ? 'text-primary-600 bg-primary-50 shadow-sm'
+                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
+                  }`}
                 >
                   {item.label}
                 </Link>
@@ -358,7 +378,11 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                   <Link
                     key={index}
                     href={item.href}
-                    className="block py-2 px-3 text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
+                    className={`block py-2 px-3 rounded-lg font-medium transition-all duration-200 ${
+                      isNavItemActive(item.href)
+                        ? 'text-white bg-white/20 shadow-md'
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
