@@ -380,17 +380,17 @@
   /* Fix border colors in multi-column sections */
   .sophisticated-content .border-l-4.border-red-500,
   .sophisticated-widgets .border-l-4.border-red-500 {
-    @apply border-l-4 border-primary-500 !important;
+    @apply border-primary-500 !important;
   }
 
   .sophisticated-content .border-l-4.border-blue-500,
   .sophisticated-widgets .border-l-4.border-blue-500 {
-    @apply border-l-4 border-accent-500 !important;
+    @apply border-accent-500 !important;
   }
 
   .sophisticated-content .border-l-4.border-green-500,
   .sophisticated-widgets .border-l-4.border-green-500 {
-    @apply border-l-4 border-secondary-400 !important;
+    @apply border-secondary-400 !important;
   }
 
   /* Improve spacing between headings and content */
