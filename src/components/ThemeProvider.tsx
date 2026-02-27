@@ -65,12 +65,12 @@ function generatePalette(baseColor: string): Record<string, string> {
   };
 }
 
-// Default colors (Dr. Amy's current theme - PRESERVE THESE)
+// Generic default colors (neutral theme for fallback)
 const DEFAULT_COLORS = {
-  primary: '#ec4899',    // Pink/Magenta
-  secondary: '#9333ea',  // Purple
-  accent: '#ef4444',     // Red
-  trust: '#059669',      // Green
+  primary: '#1e40af',    // Blue
+  secondary: '#059669',  // Green  
+  accent: '#dc2626',     // Red
+  trust: '#0369a1',      // Dark blue
 };
 
 export default function ThemeProvider({ children, site }: ThemeProviderProps) {
@@ -94,10 +94,10 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
     const themeSettings = settings.theme || {};
 
     return {
-      primary: themeSettings.primaryColor || DEFAULT_COLORS.primary,
-      secondary: themeSettings.secondaryColor || DEFAULT_COLORS.secondary,
-      accent: themeSettings.accentColor || DEFAULT_COLORS.accent,
-      trust: themeSettings.trustColor || DEFAULT_COLORS.trust,
+      primary: themeSettings.colors?.primary || settings.primaryColor || themeSettings.primaryColor || DEFAULT_COLORS.primary,
+      secondary: themeSettings.colors?.secondary || settings.secondaryColor || themeSettings.secondaryColor || DEFAULT_COLORS.secondary,
+      accent: themeSettings.colors?.accent || settings.accentColor || themeSettings.accentColor || DEFAULT_COLORS.accent,
+      trust: themeSettings.colors?.trust || settings.trustColor || themeSettings.trustColor || DEFAULT_COLORS.trust,
     };
   }, [site.theme, site.settings]);
 

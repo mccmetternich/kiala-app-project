@@ -136,8 +136,8 @@ export default function CredibilitySidebar({
               </div>
             </div>
             
-            <h3 className="text-xl font-bold text-gray-900 mb-1">{doctor?.name?.startsWith('Dr.') ? doctor.name : `Dr. ${doctor?.name || 'Heart'}`}</h3>
-            <p className="text-primary-600 font-medium text-sm mb-3">Women's Health Authority</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">{doctor?.name || 'Health Authority'}</h3>
+            <p className="text-primary-600 font-medium text-sm mb-3">{doctor?.tagline || 'Health & Wellness Authority'}</p>
             
             <div className="flex flex-wrap gap-1 justify-center mb-3">
               {Array.isArray(doctor?.credentials) ? doctor.credentials.slice(0, 3).map((credential, index) => (
@@ -145,17 +145,24 @@ export default function CredibilitySidebar({
                   {credential}
                 </span>
               )) : (
-                <>
-                  <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">MD</span>
-                  <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">PhD</span>
-                  <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">FACS</span>
-                </>
+                doctor?.credentials ? (
+                  doctor.credentials.slice(0, 3).map((credential, index) => (
+                    <span key={index} className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">
+                      {credential}
+                    </span>
+                  ))
+                ) : (
+                  <>
+                    <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">Evidence-Based</span>
+                    <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">Research</span>
+                  </>
+                )
               )}
             </div>
 
             <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-4">
               <Award className="w-4 h-4 text-accent-500" />
-              <span className="font-medium">{doctor?.yearsExperience || 15}+ years helping women</span>
+              <span className="font-medium">{doctor?.yearsExperience || 15}+ years of expertise</span>
             </div>
 
             {/* Audio Player */}
