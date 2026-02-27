@@ -216,7 +216,7 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
 
       {/* Mobile Header - Single sticky container */}
       <div className="md:hidden sticky top-0 z-50">
-        <div className="bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 shadow-lg">
+        <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 shadow-lg">
           {/* Announcement Banner - smoothly collapses */}
           <div className={`overflow-hidden transition-all duration-300 ease-out ${isScrolled ? 'max-h-0' : 'max-h-12'}`}>
             <Link
@@ -278,9 +278,9 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                       className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-all flex-shrink-0"
                     >
                       {isPlaying ? (
-                        <Pause className="w-4 h-4 text-purple-600" />
+                        <Pause className="w-4 h-4 text-primary-600" />
                       ) : (
-                        <Play className="w-4 h-4 text-purple-600 ml-0.5" />
+                        <Play className="w-4 h-4 text-primary-600 ml-0.5" />
                       )}
                     </button>
                     <div className="flex-1 mx-3 bg-white/30 rounded-full h-1.5">
@@ -324,9 +324,9 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                         className="w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-all flex-shrink-0"
                       >
                         {isPlaying ? (
-                          <Pause className="w-3.5 h-3.5 text-purple-600" />
+                          <Pause className="w-3.5 h-3.5 text-primary-600" />
                         ) : (
-                          <Play className="w-3.5 h-3.5 text-purple-600 ml-0.5" />
+                          <Play className="w-3.5 h-3.5 text-primary-600 ml-0.5" />
                         )}
                       </button>
                       <div className="flex-1 mx-2 bg-white/30 rounded-full h-1">
@@ -352,7 +352,7 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
 
           {/* Mobile Menu Dropdown */}
           <div className={`overflow-hidden transition-all duration-300 ease-out ${isMenuOpen ? 'max-h-80' : 'max-h-0'}`}>
-            <div className="bg-purple-700/95 backdrop-blur-sm border-t border-white/10">
+            <div className="bg-primary-700/95 backdrop-blur-sm border-t border-white/10">
               <div className="px-4 py-4 space-y-2">
                 {navItems.map((item, index) => (
                   <Link
@@ -367,7 +367,7 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                 <div className="pt-2">
                   <a
                     href={getSiteUrl('/#newsletter')}
-                    className="block w-full bg-white text-purple-600 text-sm py-3 text-center rounded-lg font-bold"
+                    className="block w-full bg-white text-primary-600 text-sm py-3 text-center rounded-lg font-bold"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Join Community

@@ -18,7 +18,7 @@ interface ExitIntentPopupProps {
 
 export default function ExitIntentPopup({
   siteId,
-  doctorName = "Dr. Heart",
+  doctorName = "Our Team",
   headline = "Wait! Don't Leave Empty-Handed",
   subheadline = "Get instant access to my most popular health guide - absolutely free.",
   incentive = "The Complete Hormone Balance Guide",
@@ -216,7 +216,7 @@ export default function ExitIntentPopup({
                 </div>
 
                 <p className="text-sm text-gray-600 mb-4">
-                  {doctorName}'s personal guide includes:
+                  This expert guide includes:
                 </p>
 
                 <ul className="space-y-2">

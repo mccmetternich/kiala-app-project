@@ -77,7 +77,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold mb-4">
-              Stay Updated with Dr. {getDoctorName()}
+              Stay Updated with {site.brand?.name || getDoctorName()}
             </h3>
             <p className="text-primary-100 mb-6">
               Get weekly wellness insights, exclusive tips, and be the first to know about new research.
@@ -89,7 +89,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
                 <span className="font-medium">{message}</span>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex gap-2 max-w-md mx-auto">
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
                 <input
                   type="email"
                   value={email}
@@ -102,7 +102,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="bg-white text-primary-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors disabled:opacity-50"
+                  className="bg-white text-primary-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors disabled:opacity-50 w-full sm:w-auto"
                 >
                   {status === 'loading' ? 'Joining...' : 'Subscribe'}
                 </button>
@@ -126,15 +126,15 @@ export default function SiteFooter({ site }: SiteFooterProps) {
           {/* About - Enhanced with mission */}
           <div className="md:col-span-2">
             <h4 className="font-semibold text-gray-900 mb-4">
-              About Dr. {getDoctorName()}
+              About {site.brand?.name || getDoctorName()}
             </h4>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">
-              {site.brand?.bio || `Dr. ${getDoctorName()} is on a mission to help women over 40 reclaim their vitality and transform their lives through science-backed wellness protocols. With years of experience and a deep understanding of women's unique health challenges, she provides practical, evidence-based guidance that actually works.`}
+              {site.brand?.bio || `${site.brand?.name || getDoctorName()} is dedicated to helping women over 40 reclaim their vitality and transform their lives through evidence-based wellness protocols. With years of experience and a deep understanding of women's unique health challenges, providing practical, science-backed guidance that actually works.`}
             </p>
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-primary-500" />
-                <span>Medically reviewed</span>
+                <span>{site.theme?.style === 'medical' ? 'Medically reviewed' : 'Evidence-based'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary-500" />
@@ -206,7 +206,7 @@ export default function SiteFooter({ site }: SiteFooterProps) {
                 Terms of Service
               </Link>
               <span className="text-gray-400">
-                © 2024 Dr. {getDoctorName()}
+                © 2024 {site.brand?.name || getDoctorName()}
               </span>
             </div>
           </div>

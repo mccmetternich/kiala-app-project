@@ -19,7 +19,7 @@ interface CommunityPopupProps {
 export default function CommunityPopup({
   siteId,
   triggerDelay = 5000,
-  doctorName = "Dr. Heart",
+  doctorName = "Our",
   communityName = "Wellness Community",
   memberCount = 47284,
   benefits = [

@@ -189,7 +189,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
                 widgetType="text-block"
                 widgetId={widget.id}
                 widgetName="Text Block"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
               >
                 {widget.config.ctaText}
               </TrackedLink>
@@ -769,7 +769,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
                 widgetType="hero-image"
                 widgetId={widget.id}
                 widgetName={widget.config.headline || 'Hero Image'}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
               >
                 {widget.config.ctaText}
               </TrackedLink>

@@ -240,7 +240,7 @@ function WidgetComponent({
 
 function ProfileHeroWidget({ config, brand, settings }: any) {
   return (
-    <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 rounded-3xl overflow-hidden shadow-xl border border-gray-100">
+    <div className="bg-gradient-to-br from-primary-50 via-secondary-50 to-accent-50 rounded-3xl overflow-hidden shadow-xl border border-gray-100">
       <div className="grid md:grid-cols-2 gap-0">
         {/* Left: Large Profile Image */}
         <div className="relative h-80 md:h-auto md:min-h-[500px]">
@@ -249,13 +249,13 @@ function ProfileHeroWidget({ config, brand, settings }: any) {
             alt={config.name || brand.name}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20 md:to-purple-50/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20 md:to-primary-50/80" />
         </div>
 
         {/* Right: Content */}
         <div className="p-8 lg:p-12 flex flex-col justify-center">
           <div className="mb-6">
-            <p className="text-purple-600 font-semibold text-sm uppercase tracking-wide mb-2">About</p>
+            <p className="text-primary-600 font-semibold text-sm uppercase tracking-wide mb-2">About</p>
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
               Meet {config.name || brand.name}
             </h1>
@@ -277,7 +277,7 @@ function ProfileHeroWidget({ config, brand, settings }: any) {
 
           {/* Quote */}
           <blockquote className="relative mb-8">
-            <div className="absolute -top-2 -left-2 text-5xl text-purple-200 font-serif">"</div>
+            <div className="absolute -top-2 -left-2 text-5xl text-primary-200 font-serif">"</div>
             <p className="text-lg text-gray-700 italic leading-relaxed pl-6">
               {config.quote || brand.quote}
             </p>
@@ -363,7 +363,7 @@ function LeadMagnetFormWidget({ config, brand, settings, siteId }: any) {
 
   if (status === 'success') {
     return (
-      <div className="bg-gradient-to-br from-primary-50 to-purple-50 rounded-2xl p-8 border border-primary-100 shadow-lg">
+      <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-2xl p-8 border border-primary-100 shadow-lg">
         <div className="max-w-2xl mx-auto text-center py-6">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
@@ -388,7 +388,7 @@ function LeadMagnetFormWidget({ config, brand, settings, siteId }: any) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-purple-50 rounded-2xl p-8 border border-primary-100 shadow-lg">
+    <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-2xl p-8 border border-primary-100 shadow-lg">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
@@ -399,7 +399,7 @@ function LeadMagnetFormWidget({ config, brand, settings, siteId }: any) {
             {config.headline || 'Get Your Free Guide'}
           </h3>
           <p className="text-gray-700 leading-relaxed">
-            {config.subheading || `Get instant access to ${brand?.name || "Dr. Amy"}'s most popular health guide - absolutely free.`}
+            {config.subheading || `Get instant access to ${brand?.name || "our"} most popular health guide - absolutely free.`}
           </p>
         </div>
 
