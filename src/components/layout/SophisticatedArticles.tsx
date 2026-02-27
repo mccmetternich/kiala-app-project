@@ -35,7 +35,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section */}
-      <section className="py-16 lg:py-24 bg-gradient-to-br from-secondary-50 via-white to-secondary-100">
+      <section className="py-16 lg:py-24 sophisticated-gradient border-b border-secondary-200/50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             
@@ -93,7 +93,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
 
       {/* Featured Article */}
       {featuredArticle && (
-        <section className="py-16 bg-white">
+        <section className="py-16 lg:py-20 bg-white border-b border-secondary-100">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
@@ -108,12 +108,15 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                 widgetType="featured-article"
                 widgetName={featuredArticle.title}
               >
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="grid lg:grid-cols-2 gap-12 items-center p-8 border border-secondary-200/40 rounded-lg hover:border-accent-200/60 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-white via-secondary-50/30 to-white">
                   <div className="aspect-[5/4] relative overflow-hidden bg-secondary-100">
                     <img
                       src={featuredArticle.image || "https://images.unsplash.com/photo-1560707303-3df363006833?w=600&h=480&fit=crop"}
                       alt={featuredArticle.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=480&fit=crop';
+                      }}
                     />
                   </div>
                   
@@ -155,7 +158,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
       )}
 
       {/* Articles Grid */}
-      <section className="py-16 bg-secondary-50/30">
+      <section className="py-16 lg:py-20 bg-gradient-to-b from-secondary-50/30 via-white to-secondary-50/20">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             
@@ -176,12 +179,15 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
                   widgetType="article-card"
                   widgetName={article.title}
                 >
-                  <article className="goop-card h-full">
+                  <article className="goop-card h-full border border-secondary-200/30 hover:border-accent-200/50 transition-all duration-300 hover:shadow-xl">
                     <div className="aspect-[4/3] bg-secondary-100 mb-6 overflow-hidden">
                       <img
-                        src={article.image || `https://images.unsplash.com/photo-${1560707303 + Math.floor(Math.random() * 1000)}?w=400&h=300&fit=crop`}
+                        src={article.image || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop'}
                         alt={article.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop';
+                        }}
                       />
                     </div>
                     
@@ -244,7 +250,7 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-16 sophisticated-gradient">
+      <section className="py-16 lg:py-20 sophisticated-gradient border-t border-secondary-200/50">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center space-y-8">
             <div className="space-y-6">
@@ -256,15 +262,17 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
               </p>
             </div>
 
-            <TrackedLink
-              href="#newsletter"
-              className="goop-button inline-flex items-center gap-3"
-              widgetType="newsletter-cta"
-              widgetName="join-newsletter"
-            >
-              <span>Join Our Circle</span>
-              <ArrowRight className="w-5 h-5" />
-            </TrackedLink>
+            <div className="relative">
+              <TrackedLink
+                href="#newsletter"
+                className="goop-button inline-flex items-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300"
+                widgetType="newsletter-cta"
+                widgetName="join-newsletter"
+              >
+                <span>Join Our Circle</span>
+                <ArrowRight className="w-5 h-5" />
+              </TrackedLink>
+            </div>
           </div>
         </div>
       </section>

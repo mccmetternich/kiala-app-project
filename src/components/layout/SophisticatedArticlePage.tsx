@@ -70,7 +70,7 @@ export default function SophisticatedArticlePage({
     >
       <article className="min-h-screen bg-white">
         {/* Hero Section with sophisticated styling */}
-        <header className="relative py-16 lg:py-24 bg-gradient-to-br from-secondary-50 via-white to-secondary-100 overflow-hidden">
+        <header className="relative py-16 lg:py-24 sophisticated-gradient overflow-hidden border-b border-secondary-200/50">
           {/* Subtle pattern overlay */}
           <div 
             className="absolute inset-0 opacity-30" 
@@ -164,7 +164,7 @@ export default function SophisticatedArticlePage({
         )}
 
         {/* Article Content - Sophisticated Typography */}
-        <section className="py-16 lg:py-24">
+        <section className="py-16 lg:py-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               
@@ -179,7 +179,7 @@ export default function SophisticatedArticlePage({
               </div>
 
               {/* Article Footer */}
-              <footer className="mt-16 pt-12 border-t border-secondary-200">
+              <footer className="mt-16 pt-12 border-t border-secondary-200/60 bg-gradient-to-br from-secondary-50/30 via-white to-secondary-50/20 rounded-lg p-8 -mx-8">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                   <div className="text-sm text-gray-600">
                     <p>Published by <span className="font-medium text-gray-900">{brand.name}</span></p>
@@ -188,7 +188,7 @@ export default function SophisticatedArticlePage({
                   
                   <TrackedLink
                     href={`/site/${site.subdomain}/articles`}
-                    className="goop-button-secondary inline-flex items-center gap-2"
+                    className="goop-button-secondary inline-flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300"
                     widgetType="article-footer"
                     widgetName="more-articles"
                   >
