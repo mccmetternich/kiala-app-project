@@ -85,31 +85,25 @@ export default function SophisticatedArticlePage({
 
   // Extract hero image from widget config
   const extractedHeroImage = (() => {
-    // First check if heroImage prop was passed
-    if (heroImage) return heroImage;
-    
-    // Then try to get from article widget_config
-    if (article?.widget_config) {
-      const heroWidget = article.widget_config.find((w: any) => w.type === 'hero-story' && w.enabled);
-      if (heroWidget?.config?.image) {
-        return heroWidget.config.image;
-      }
-    }
-    
-    // Try to get from article content if it's JSON
-    if (articleContent?.content && typeof articleContent.content === 'string') {
-      try {
-        const parsed = JSON.parse(articleContent.content);
-        if (parsed.widget_config) {
-          const heroWidget = parsed.widget_config.find((w: any) => w.type === 'hero-story' && w.enabled);
-          if (heroWidget?.config?.image) {
-            return heroWidget.config.image;
-          }
+    try {
+      // First check if heroImage prop was passed
+      if (heroImage) return heroImage;
+      
+      // Then try to get from article widget_config
+      if (article?.widget_config && Array.isArray(article.widget_config)) {
+        const heroWidget = article.widget_config.find((w: any) => 
+          w && w.type === 'hero-story' && w.enabled && w.config?.image
+        );
+        if (heroWidget?.config?.image) {
+          return heroWidget.config.image;
         }
-      } catch {}
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error extracting hero image:', error);
+      return null;
     }
-    
-    return null;
   })();
 
   return (

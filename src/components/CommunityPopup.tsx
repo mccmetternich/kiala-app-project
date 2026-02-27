@@ -19,8 +19,8 @@ interface CommunityPopupProps {
 export default function CommunityPopup({
   siteId,
   triggerDelay = 5000,
-  doctorName = "Our",
-  communityName = "Wellness Community",
+  doctorName = "Our", // eslint-disable-line @typescript-eslint/no-unused-vars
+  communityName = "Wellness Community", // eslint-disable-line @typescript-eslint/no-unused-vars
   memberCount = 47284,
   benefits = [
     "Weekly health tips & protocols",
