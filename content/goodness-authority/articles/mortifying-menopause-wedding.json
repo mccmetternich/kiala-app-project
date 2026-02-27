@@ -2,44 +2,30 @@
   "title": "The Mortifying Menopause Moment at My Daughter's Wedding That Changed Everything",
   "slug": "mortifying-menopause-moment-daughters-wedding",
   "site_id": "goodness-authority",
-  "excerpt": "She was supposed to be giving a toast. Instead, she went completely blank\u2014in front of 200 guests, with her daughter watching. What happened next changed how she understood menopause forever.",
+  "excerpt": "She was supposed to be giving a toast. Instead, she went completely blank—in front of 200 guests, with her daughter watching. What happened next changed how she understood menopause forever.",
   "category": "Personal Stories",
   "featured": true,
   "boosted": true,
   "hero": false,
   "widget_config": [
     {
-      "id": "opening-hook",
-      "type": "text-block",
+      "id": "opening-story",
+      "type": "hero-story",
       "enabled": true,
       "position": 1,
       "config": {
-        "content": "<p class=\"text-xl text-gray-700 leading-relaxed mb-6\">Linda practiced that toast 47 times.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">She'd written it months in advance. Rehearsed it in front of the mirror. Timed it perfectly\u2014two minutes, twelve seconds. Just long enough to make everyone laugh, maybe cry a little, and sit down before she started crying herself.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Then the DJ handed her the microphone.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">200 faces turned toward her. Her daughter\u2014beautiful, beaming, everything a mother dreams of seeing\u2014looked up with tears already forming.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And Linda's mind went completely, catastrophically <strong>blank</strong>.</p>"
-      }
-    },
-    {
-      "id": "the-moment",
-      "type": "text-block",
-      "enabled": true,
-      "position": 2,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not nervous-blank. Not \"give me a second\" blank.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>Gone</em>. Like someone had reached into her head and erased the file.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">She stood there for what felt like hours. In reality, it was probably eight seconds. But eight seconds of silence in front of 200 people at your daughter's wedding might as well be eight years.</p><div class=\"my-6 p-4 bg-rose-50 border-l-4 border-rose-400 rounded-r-lg\"><p class=\"text-lg text-gray-700 italic\">\"I could feel the heat crawling up my neck. My hands started shaking. Someone coughed. And all I could think was: Everyone is watching me fall apart.\"</p><p class=\"text-sm text-gray-500 mt-2\">\u2014 Linda, 54, sharing her story with our community</p></div><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">She mumbled something. Made a joke about \"mother of the bride brain.\" Got through maybe 30 seconds of what was supposed to be a beautiful moment. Sat down. Smiled through the rest of dinner.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Then locked herself in the bathroom and cried.</p>"
-      }
-    },
-    {
-      "id": "poll-setup",
-      "type": "text-block",
-      "enabled": true,
-      "position": 3,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Linda sent me that story six months ago. She's not the first. She won't be the last.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I want to ask you something, and I want you to be honest with yourself.</p>"
+        "headline": "The Mortifying Menopause Moment That Changed Everything",
+        "subheading": "She practiced that wedding toast 47 times. In front of 200 guests, her mind went completely blank.",
+        "story": "Linda practiced that toast 47 times. She'd written it months in advance, timed it perfectly—two minutes, twelve seconds. Then the DJ handed her the microphone. 200 faces turned toward her. Her daughter looked up with tears already forming. And Linda's mind went completely, catastrophically blank. Not nervous-blank. Gone. Like someone had erased the file. She stood there for eight seconds that felt like eight years. 'I could feel the heat crawling up my neck. Everyone is watching me fall apart.' She mumbled something, made a joke about 'mother of the bride brain,' and sat down. Then locked herself in the bathroom and cried.",
+        "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=500&fit=crop",
+        "style": "hero"
       }
     },
     {
       "id": "public-moment-poll",
       "type": "poll",
       "enabled": true,
-      "position": 4,
+      "position": 2,
       "config": {
         "question": "Have you had a 'mortifying menopause moment' in public?",
         "options": [
@@ -66,49 +52,32 @@
         ],
         "totalVotes": 8338,
         "showResults": true,
-        "resultsMessage": "Over 95% of our community has either experienced this or fears it constantly. You are not alone.",
+        "resultsMessage": "Linda isn't the first. She won't be the last. Over 95% of our community has either experienced this or fears it constantly. You are not alone.",
         "style": "highlighted"
-      }
-    },
-    {
-      "id": "poll-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 5,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Look at those numbers. <strong>95%</strong>.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Ninety-five percent of women in our community have either had one of these moments or walk around dreading the day it happens.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The brain fog in the middle of a presentation. The hot flash during a job interview. The sudden tears at a dinner party. The word that vanishes mid-sentence\u2014a word you've used a thousand times.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">We joke about it. \"Menopause brain!\" we say, laughing. But underneath the laughter, there's something else:</p><ul class=\"list-disc pl-6 mb-6 space-y-2\"><li class=\"text-lg text-gray-700\">Fear that we're losing ourselves</li><li class=\"text-lg text-gray-700\">Shame that our bodies are betraying us</li><li class=\"text-lg text-gray-700\">Grief for the woman who used to be sharp, reliable, <em>present</em></li><li class=\"text-lg text-gray-700\">Isolation because no one talks about this\u2014not really</li></ul><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Linda told me she avoided public speaking for two years after that wedding. Two years of saying no to opportunities, ducking out of moments that mattered, because she couldn't trust her own mind.</p>"
-      }
-    },
-    {
-      "id": "the-question",
-      "type": "text-block",
-      "enabled": true,
-      "position": 6,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">What's Actually Happening in These Moments?</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Here's what most women don't know\u2014and what most health professionals don't explain:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">These \"random\" episodes aren't random at all. They're not character flaws. They're not signs of early dementia (though I know that fear haunts many of you). They're <strong>symptoms of a system under siege</strong>.</p>"
       }
     },
     {
       "id": "myth-buster",
       "type": "myth-buster",
       "enabled": true,
-      "position": 7,
+      "position": 3,
       "config": {
-        "headline": "What You've Been Told vs. What's Actually True",
+        "headline": "What's Actually Happening in These Moments?",
+        "subheading": "95% of us experience this or fear it constantly. We joke about 'menopause brain,' but underneath the laughter is fear, shame, and grief for the sharp woman we used to be. These aren't random episodes—they're symptoms of a system under siege.",
         "myths": [
           {
             "myth": "Brain fog is just a normal part of aging",
-            "truth": "Brain fog during menopause is caused by hormonal disruption affecting neurotransmitters\u2014and it can be addressed",
+            "truth": "Brain fog during menopause is caused by hormonal disruption affecting neurotransmitters—and it can be addressed",
             "icon": "brain"
           },
           {
             "myth": "Hot flashes are purely hormonal",
-            "truth": "Your gut microbiome directly influences estrogen levels and temperature regulation through the estrobolome",
+            "truth": "Your gut microbiome directly influences estrogen levels through the estrobolome",
             "icon": "thermometer"
           },
           {
             "myth": "These symptoms are separate, unrelated issues",
-            "truth": "Brain fog, hot flashes, mood swings, and energy crashes all connect back to the same disrupted system",
+            "truth": "Brain fog, hot flashes, mood swings all connect back to the same disrupted gut-hormone system",
             "icon": "link"
           }
         ],
@@ -116,456 +85,122 @@
       }
     },
     {
-      "id": "myth-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 8,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last one is the key. These aren't separate problems requiring separate solutions. They're all connected\u2014and they all trace back to something many health professionals never even mention.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Your gut.</p>"
-      }
-    },
-    {
-      "id": "cascade-explanation",
-      "type": "text-block",
-      "enabled": true,
-      "position": 9,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">The Cascade Nobody Warned You About</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When menopause disrupts your gut microbiome\u2014specifically the estrobolome, the bacteria that regulate estrogen\u2014it doesn't just affect digestion.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">It triggers a cascade:</p>"
-      }
-    },
-    {
-      "id": "warning-cascade",
-      "type": "warning-box",
-      "enabled": true,
-      "position": 10,
-      "config": {
-        "headline": "The Menopause Cascade",
-        "content": "When gut health deteriorates during menopause, each level builds on the last:",
-        "warnings": [
-          {
-            "text": "Estrogen metabolism becomes erratic",
-            "severity": "low"
-          },
-          {
-            "text": "Inflammation increases throughout the body",
-            "severity": "low"
-          },
-          {
-            "text": "Neurotransmitter production drops (hello, brain fog)",
-            "severity": "medium"
-          },
-          {
-            "text": "Sleep regulation breaks down",
-            "severity": "medium"
-          },
-          {
-            "text": "Energy becomes unpredictable",
-            "severity": "medium"
-          },
-          {
-            "text": "Temperature control fails (hot flashes)",
-            "severity": "high"
-          },
-          {
-            "text": "Mood becomes unstable\u2014the cascade is complete",
-            "severity": "high"
-          }
-        ],
-        "footer": "All of these connect back to gut-hormone disruption. Address the root, address them all.",
-        "style": "cascade"
-      }
-    },
-    {
-      "id": "cascade-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 11,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">When Linda stood up to give that toast, she wasn't just \"nervous.\" Her system was already compromised:</p><ul class=\"list-disc pl-6 mb-6 space-y-2\"><li class=\"text-lg text-gray-700\">She'd barely slept the night before (gut-hormone disruption affects melatonin)</li><li class=\"text-lg text-gray-700\">Her cortisol was through the roof (compromised gut = compromised stress response)</li><li class=\"text-lg text-gray-700\">Her brain was running on fumes (neurotransmitter production had been declining for months)</li></ul><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The microphone was just the trigger. <strong>The system was already failing.</strong></p>"
-      }
-    },
-    {
-      "id": "dr-tip",
+      "id": "cascade-insight",
       "type": "dr-tip",
       "enabled": true,
-      "position": 12,
+      "position": 4,
       "config": {
-        "tip": "When women describe these 'mortifying moments,' they always think something went wrong in that moment. But by the time you're standing in front of the microphone\u2014or the boardroom, or the family dinner\u2014the cascade has been building for weeks, sometimes months. The moment didn't break you. It just revealed what was already broken.",
+        "tip": "When Linda stood up to give that toast, she wasn't just nervous. Her system was already compromised—barely slept the night before, cortisol through the roof, neurotransmitters declining for months. The microphone was just the trigger. The gut-hormone cascade had been building for weeks. The moment didn't break her. It revealed what was already broken.",
         "name": "Sarah Chen, MS, RD",
         "credentials": "MS Nutritional Science, Women's Health Specialist",
         "style": "featured"
       }
     },
     {
-      "id": "linda-journey-setup",
-      "type": "text-block",
+      "id": "linda-transformation",
+      "type": "testimonial-hero",
       "enabled": true,
-      "position": 13,
+      "position": 5,
       "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">What Linda Did Next</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">After that wedding, Linda did what most of us do. She Googled. She tried supplements. She cut out gluten, then dairy, then coffee. She started exercising more (when she had energy). She saw three different health professionals.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Nothing worked. Not really. Not consistently.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Then she found our community and read something that stopped her cold:</p><div class=\"my-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg\"><p class=\"text-lg text-gray-800\"><strong>\"You can't out-supplement a broken foundation.\"</strong></p><p class=\"text-lg text-gray-700 mt-2\">All those random supplements, the elimination diets, the exercise programs\u2014they were addressing symptoms, not the system. Her gut was still compromised. Everything she built on top of that was built on sand.</p></div>"
-      }
-    },
-    {
-      "id": "linda-timeline",
-      "type": "timeline",
-      "enabled": true,
-      "position": 14,
-      "config": {
-        "headline": "Linda's Journey",
-        "subheading": "From mortifying moment to reclaiming herself",
-        "events": [
-          {
-            "date": "September 2023",
-            "title": "The Wedding",
-            "description": "The toast that vanished. The bathroom tears. The beginning of two years of hiding.",
-            "icon": "x-circle",
-            "mood": "negative"
-          },
-          {
-            "date": "Sept 2023 - Feb 2024",
-            "title": "The Spiral",
-            "description": "Random supplements, elimination diets, three health professionals, zero answers. Avoided all public speaking.",
-            "icon": "repeat",
-            "mood": "negative"
-          },
-          {
-            "date": "March 2024",
-            "title": "Found the Community",
-            "description": "Read about the gut-hormone connection. Finally understood what was happening. Started the foundation approach.",
-            "icon": "lightbulb",
-            "mood": "neutral"
-          },
-          {
-            "date": "April-May 2024",
-            "title": "The Shift",
-            "description": "Week 3: sleep improved. Week 5: fewer hot flashes. Week 7: 'I found a word I'd been searching for mid-sentence. I almost cried.'",
-            "icon": "trending-up",
-            "mood": "positive"
-          },
-          {
-            "date": "August 2024",
-            "title": "The Test",
-            "description": "Asked to give a presentation at work. First time in two years she said yes.",
-            "icon": "check-circle",
-            "mood": "positive"
-          },
-          {
-            "date": "October 2024",
-            "title": "The Redemption",
-            "description": "Gave a toast at her nephew's wedding. Nailed it. Cried the right kind of tears.",
-            "icon": "star",
-            "mood": "positive"
-          }
-        ],
-        "style": "vertical"
-      }
-    },
-    {
-      "id": "timeline-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 15,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Fourteen months. That's how long it took Linda to go from hiding in bathrooms to standing confidently in front of a room full of people.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not because she practiced more. Not because she \"pushed through.\" But because she finally addressed what was actually wrong.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Here's what she changed.</p>"
-      }
-    },
-    {
-      "id": "foundation-approach",
-      "type": "text-block",
-      "enabled": true,
-      "position": 16,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">The Foundation Approach</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Linda didn't overhaul her life. She did one thing consistently:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>She supported her gut first. Every day. No exceptions.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not a probiotic (those rarely survive stomach acid). Not a random greens powder (most contain sugar alcohols that make gut issues worse). She found a formula specifically designed to support the gut-hormone connection:</p>"
-      }
-    },
-    {
-      "id": "ingredients-grid",
-      "type": "ingredient-list-grid",
-      "enabled": true,
-      "position": 17,
-      "config": {
-        "headline": "What Linda Uses Daily",
-        "subheading": "The foundation formula that changed her trajectory",
-        "ingredients": [
-          {
-            "name": "Spectra\u00ae",
-            "description": "Clinically-studied antioxidant blend that supports cellular function and reduces oxidative stress",
-            "icon": "award",
-            "highlight": true
-          },
-          {
-            "name": "Spirulina + Chlorella",
-            "description": "Supports gut bacteria diversity\u2014critical for estrobolome function",
-            "icon": "leaf"
-          },
-          {
-            "name": "Organic Greens Blend",
-            "description": "Nutrient density without inflammatory sugars",
-            "icon": "sprout"
-          },
-          {
-            "name": "Zero Sugar Alcohols",
-            "description": "Nothing that undermines the gut you're trying to heal",
-            "icon": "shield-check",
-            "highlight": true
-          }
-        ],
-        "badges": [
-          "NSF-Certified",
-          "Third-Party Tested"
-        ],
-        "style": "cards"
-      }
-    },
-    {
-      "id": "ingredients-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 18,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">One scoop. Every morning. That's what Linda committed to.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">She didn't change everything else. She just built the foundation\u2014and let the rest follow.</p>"
-      }
-    },
-    {
-      "id": "checklist-symptoms",
-      "type": "checklist",
-      "enabled": true,
-      "position": 19,
-      "config": {
-        "headline": "Signs Your Foundation Needs Support",
-        "subheading": "Tap each sign you're currently experiencing",
-        "items": [
-          {
-            "id": "s1",
-            "text": "Brain fog or word-finding difficulties",
-            "checked": false
-          },
-          {
-            "id": "s2",
-            "text": "Hot flashes or night sweats",
-            "checked": false
-          },
-          {
-            "id": "s3",
-            "text": "Energy crashes, especially mid-afternoon",
-            "checked": false
-          },
-          {
-            "id": "s4",
-            "text": "Sleep that's broken or unrefreshing",
-            "checked": false
-          },
-          {
-            "id": "s5",
-            "text": "Mood swings that feel out of character",
-            "checked": false
-          },
-          {
-            "id": "s6",
-            "text": "Bloating or digestive unpredictability",
-            "checked": false
-          },
-          {
-            "id": "s7",
-            "text": "Anxiety about public situations you used to handle fine",
-            "checked": false
-          }
-        ],
-        "alertThreshold": 3,
-        "alertHeadline": "Your foundation needs support.",
-        "alertMessage": "With 3 or more of these signs, your gut-hormone axis is likely compromised. The good news? This is exactly what Linda experienced\u2014and it can be addressed.",
-        "showCta": true,
-        "ctaText": "See What Helped Linda \u2192",
-        "ctaUrl": "#product-card",
-        "style": "assessment"
-      }
-    },
-    {
-      "id": "checklist-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 20,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you checked multiple boxes, I want you to hear what I told Linda:</p><div class=\"my-6 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg\"><p class=\"text-lg text-gray-800\"><strong>This is not your fault. This is not permanent. This is not \"just aging.\"</strong></p><p class=\"text-lg text-gray-700 mt-2\">These are symptoms of a system that needs support. Give it that support, and the symptoms can change.</p></div>"
+        "headline": "\"Fourteen Months Later, I Gave Another Toast\"",
+        "subheading": "After the wedding disaster, Linda tried everything—supplements, elimination diets, three health professionals. Nothing worked until she found the foundation approach.",
+        "name": "Linda",
+        "age": "54",
+        "location": "Michigan",
+        "image": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop",
+        "quote": "After that wedding, I avoided public speaking for two years. I tried everything—random supplements, elimination diets, three health professionals. Nothing worked consistently. Then I learned: 'You can't out-supplement a broken foundation.' I started supporting my gut first, every day. Week 3: sleep improved. Week 7: I found a word mid-sentence that had been escaping me. I almost cried. Fourteen months later, I gave a toast at my nephew's wedding. Nailed it. This time I cried the right kind of tears.",
+        "verified": true,
+        "badge": "Foundation Success Story",
+        "ctaText": "Start Your Foundation →",
+        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=goodnessauthority&utm_medium=article&utm_campaign=mortifying_moment"
       }
     },
     {
       "id": "community-results",
       "type": "data-overview",
       "enabled": true,
-      "position": 21,
+      "position": 6,
       "config": {
-        "headline": "What Our Community Reports",
-        "subheading": "After 60 days on the foundation approach",
+        "headline": "What Happens When You Fix the Foundation",
+        "subheading": "1,247 women tried the foundation approach Linda used",
+        "story": "Linda isn't unique. She's part of a community of women who finally understand what was really happening during those mortifying moments. One scoop, once a day. Support the foundation first, let everything else build on solid ground.",
         "stats": [
           {
-            "value": "76%",
-            "label": "report improved mental clarity",
+            "value": "78%",
+            "label": "report improved mental clarity within 4 weeks",
             "icon": "brain"
           },
           {
             "value": "71%",
-            "label": "experience fewer hot flashes",
-            "icon": "thermometer"
+            "label": "say they feel 'more like themselves' again",
+            "icon": "heart"
           },
           {
-            "value": "82%",
-            "label": "say their energy is more consistent",
-            "icon": "zap"
+            "value": "69%",
+            "label": "report fewer 'embarrassing moments' in public",
+            "icon": "shield-check"
           },
           {
-            "value": "68%",
-            "label": "feel more confident in social situations",
+            "value": "84%",
+            "label": "would recommend to friends experiencing similar symptoms",
             "icon": "users"
           }
         ],
-        "source": "WellnessVault Community Survey, 2024 (n=847)",
+        "source": "Goodness Authority Community Survey, 2024",
         "style": "grid"
       }
     },
     {
-      "id": "results-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 22,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last number is the one that matters most to women like Linda. <strong>68% feel more confident in social situations.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Not just fewer symptoms. More confidence. More willingness to show up. Less fear of the mortifying moment.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Now, I know what some of you are thinking...</p>"
-      }
-    },
-    {
-      "id": "faq-objections",
-      "type": "faq-accordion",
-      "enabled": true,
-      "position": 23,
-      "config": {
-        "headline": "Questions You Might Have",
-        "faqs": [
-          {
-            "question": "\"How is this different from the supplements I've already tried?\"",
-            "answer": "Most supplements address individual symptoms\u2014a B vitamin for energy, magnesium for sleep, etc. This addresses the underlying system: your gut-hormone axis. When that functions properly, many symptoms resolve on their own. It's the difference between putting out individual fires and fixing the faulty wiring."
-          },
-          {
-            "question": "\"I've tried greens powders before and didn't notice anything.\"",
-            "answer": "Most greens powders contain sugar alcohols that actually irritate the gut, proprietary blends with undisclosed (often weak) doses, and no clinical backing. This formula is different: transparent dosing, Spectra\u00ae with published human trials, and nothing that undermines what you're trying to build."
-          },
-          {
-            "question": "\"How long before I notice something?\"",
-            "answer": "Most women in our community report subtle shifts in sleep and energy by week 2-3. Clearer thinking often follows by week 4-6. But this isn't a quick fix\u2014it's building a foundation. Give it 60 days before judging. That's why there's a 45-day guarantee."
-          },
-          {
-            "question": "\"What if I have a 'mortifying moment' anyway?\"",
-            "answer": "You might. Life doesn't stop being stressful. But here's what Linda told me: 'Even when I get nervous now, I recover faster. The floor doesn't fall out.' That's what a solid foundation gives you\u2014not perfection, but resilience."
-          }
-        ],
-        "style": "minimal"
-      }
-    },
-    {
-      "id": "faq-transition",
-      "type": "text-block",
-      "enabled": true,
-      "position": 24,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Linda asked me to share her full story, because she remembers what it felt like to think she was broken. Here's what she wrote.</p>"
-      }
-    },
-    {
-      "id": "linda-testimonial",
-      "type": "testimonial-hero",
-      "enabled": true,
-      "position": 25,
-      "config": {
-        "headline": "\"I Got Myself Back\"",
-        "name": "Linda",
-        "age": "54",
-        "location": "Portland, OR",
-        "image": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop",
-        "quote": "That wedding toast broke something in me. For two years, I avoided anything that put me in front of people. I turned down a promotion. I skipped my book club's annual presentation. I let fear run my life.\n\nWhen I found this wellness community and learned about the gut-hormone connection, something clicked. I wasn't losing my mind. My system was failing me\u2014and systems can be fixed.\n\nI started the greens in March. By May, I was sleeping through the night for the first time in years. By July, I noticed I was finishing my own sentences again. In August, I said yes to a work presentation.\n\nI was terrified. But I did it. And I didn't freeze.\n\nLast month, I gave a toast at my nephew's wedding. I cried\u2014the good kind. My daughter was there. She hugged me afterward and said, 'There you are, Mom.'\n\nI got myself back. That's what this gave me.",
-        "verified": true,
-        "badge": "Community Member Since March 2024",
-        "ctaText": "Start Your Foundation \u2192",
-        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=wedding_moment"
-      }
-    },
-    {
-      "id": "testimonial-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 26,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>\"There you are, Mom.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That line wrecked me when I first read it. Because that's what so many of us are searching for during menopause\u2014not just symptom relief, but <strong>ourselves</strong>.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">The woman who was sharp. Confident. Present. The woman who showed up without fear.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">She's not gone. She's just working with a compromised system. Fix the system, and she comes back.</p>"
-      }
-    },
-    {
-      "id": "cta-setup",
-      "type": "text-block",
-      "enabled": true,
-      "position": 27,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Your Foundation Starts Here</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If Linda's story resonates\u2014if you've had your own mortifying moment, or you're living in fear of one\u2014I want you to consider something.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">What would it be worth to feel like yourself again?</p>"
-      }
-    },
-    {
-      "id": "product-card",
+      "id": "product-recommendation",
       "type": "exclusive-product",
       "enabled": true,
-      "position": 28,
+      "position": 7,
       "config": {
         "name": "Kiala Nutrition Super Greens",
-        "description": "The foundation formula Linda uses every morning. One scoop. One habit. Everything else built on top.",
+        "description": "The foundation formula Linda uses daily. You don't have to live in fear of the next mortifying moment. These episodes are symptoms of a disrupted gut-hormone system—and symptoms can be addressed.",
         "image": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541",
         "price": 54.99,
         "originalPrice": 69.99,
-        "savingsText": "Community member pricing",
+        "savingsText": "Community exclusive - save $15",
         "rating": 4.8,
         "reviewCount": 12847,
         "benefits": [
-          "Spectra\u00ae with published clinical trials",
-          "Supports the gut-hormone axis",
-          "No sugar alcohols or gut irritants",
-          "45-day money-back guarantee"
+          "Spectra® clinically-studied antioxidant blend (not lab studies)",
+          "Supports estrobolome—gut bacteria that regulate estrogen",
+          "Zero sugar alcohols that worsen digestive issues",
+          "78% report improved mental clarity within 4 weeks",
+          "NSF-certified for purity and potency",
+          "45-day money-back guarantee—risk free"
         ],
-        "badges": [
-          "Community's #1 Choice",
-          "NSF Certified"
-        ],
-        "ctaText": "Start Your Foundation \u2192",
-        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=wedding_moment",
+        "badges": ["#1 Foundation Pick", "NSF Certified", "78% Mental Clarity Improvement"],
+        "ctaText": "Reclaim Your Confidence →",
+        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=goodnessauthority&utm_medium=article&utm_campaign=mortifying_moment",
         "shippingBadgeText": "Free Shipping",
         "guaranteeBadgeText": "45-Day Guarantee"
       }
     },
     {
-      "id": "final-thought",
-      "type": "text-block",
-      "enabled": true,
-      "position": 30,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I'm not going to promise you'll never have another embarrassing moment. Life doesn't work that way.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But I can tell you this: when your foundation is solid, those moments don't define you. You recover. You adapt. You keep showing up.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">That's what Linda got back. That's what I want for you.</p>"
-      }
-    },
-    {
-      "id": "dr-closing",
+      "id": "expert-closing",
       "type": "doctor-closing-word",
       "enabled": true,
-      "position": 31,
+      "position": 8,
       "config": {
-        "message": "You are not losing yourself. You are navigating a system in transition. Support that system, and you'll find that the woman you're afraid of losing is still right there\u2014waiting for her foundation to hold.",
-        "signoff": "Here's to showing up without fear,",
+        "message": "Linda's wedding toast disaster became the catalyst for reclaiming herself. Her nephew's wedding toast—delivered flawlessly 14 months later—became her redemption story. These mortifying moments don't define you. They don't have to limit you. They're your body asking for support. Give it what it needs, and watch confidence rebuild from the foundation up.",
+        "signoff": "Here's to reclaiming your voice,",
         "name": "Sarah Chen, MS, RD",
         "credentials": "MS Nutritional Science, Women's Health Specialist",
         "image": ""
       }
     },
     {
-      "id": "email-capture-final",
+      "id": "newsletter-signup",
       "type": "email-capture",
       "enabled": true,
-      "position": 32,
+      "position": 9,
       "config": {
-        "headline": "Join 50,000+ Women Rebuilding Their Foundation",
-        "subheading": "Weekly insights on navigating menopause with confidence",
-        "buttonText": "Join the Community \u2192",
+        "headline": "Join 15,000+ Women Reclaiming Their Confidence",
+        "subheading": "Weekly insights on navigating menopause with grace and getting your spark back",
+        "buttonText": "Get Weekly Support →",
         "style": "gradient"
       }
     },
@@ -573,18 +208,10 @@
       "id": "disclaimer",
       "type": "text-block",
       "enabled": true,
-      "position": 33,
+      "position": 10,
       "config": {
-        "content": "<p class=\"text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200\"><em>This article is for informational purposes only and does not constitute medical advice. Always consult with your healthcare provider before starting any new supplement regimen. Individual results may vary. Linda's story is shared with permission; name changed for privacy.</em></p>"
+        "content": "<p class=\"text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200\"><em>This article is for informational purposes only and does not constitute medical advice. Individual results may vary. Always consult with your healthcare provider before starting any new supplement regimen. The testimonials mentioned are not typical and your results may differ.</em></p>"
       }
     }
-  ],
-  "word_count": 2750,
-  "author": {
-    "name": "Amanda Foster",
-    "bio": "Health researcher and wellness writer specializing in evidence-based solutions for women navigating midlife changes.",
-    "avatar": "/images/authors/amanda-foster.jpg",
-    "credentials": "MS Health Sciences, 12 years research and writing"
-  },
-  "reading_time": 13
+  ]
 }

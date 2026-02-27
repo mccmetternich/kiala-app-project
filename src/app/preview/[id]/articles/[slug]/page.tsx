@@ -187,7 +187,11 @@ export default function PreviewArticlePage() {
       : siteData.brand_profile || fallbackSite.brand,
     settings: typeof siteData.settings === 'string'
       ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
-      : { ...fallbackSite.settings, ...siteData.settings }
+      : { ...fallbackSite.settings, ...siteData.settings },
+    // Extract theme from settings to site.theme for proper theming
+    theme: typeof siteData.settings === 'string'
+      ? JSON.parse(siteData.settings).theme || fallbackSite.theme
+      : siteData.settings?.theme || fallbackSite.theme
   } : fallbackSite;
 
   // Get widgets from database (widget_config) or generate defaults

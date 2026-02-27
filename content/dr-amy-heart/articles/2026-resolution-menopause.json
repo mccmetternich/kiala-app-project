@@ -9,27 +9,22 @@
   "widget_config": [
     {
       "id": "opening-hook",
-      "type": "text-block",
+      "type": "hero-story",
       "enabled": true,
       "position": 1,
       "config": {
-        "content": "<p class=\"text-xl text-gray-700 leading-relaxed mb-4\">Every January, I watch the same thing happen.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Women in my practice walk in with their lists. Lose 20 pounds. Sleep better. Get my energy back. Feel like myself again.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">By February, most have quietly abandoned all of it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I used to think they just needed better strategies. More accountability. A different approach.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I was wrong.</p>"
-      }
-    },
-    {
-      "id": "poll-setup",
-      "type": "text-block",
-      "enabled": true,
-      "position": 2,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Before I explain what I've learned, I want to ask you something. Be honest.</p>"
+        "headline": "2026 Is My Year: The One Resolution That Actually Works",
+        "subheading": "Every January, I watch the same thing happen. Women make resolutions. By February, they've abandoned them. But 2026 can be different—if you start in the right place.",
+        "story": "Every January, I watch the same thing happen. Women in my practice walk in with their lists. Lose 20 pounds. Sleep better. Get my energy back. Feel like myself again. By February, most have quietly abandoned all of it. I used to think they just needed better strategies. More accountability. A different approach. I was wrong.",
+        "image": "https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=800&h=500&fit=crop",
+        "style": "hero"
       }
     },
     {
       "id": "opening-poll",
       "type": "poll",
       "enabled": true,
-      "position": 3,
+      "position": 2,
       "config": {
         "question": "How many Januarys have you made the same resolution?",
         "options": [
@@ -44,22 +39,14 @@
       }
     },
     {
-      "id": "poll-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 4,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you picked that last option, I need you to hear something.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>This isn't a willpower problem.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The women in my practice who've been fighting this battle for years? They're not weak. They're not lazy. They're some of the most determined, disciplined people I know.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">They've raised families. Built careers. Held everything together when it felt like the world was falling apart. These women don't lack motivation.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">So why does a simple resolution—eat better, move more, lose weight—collapse by Valentine's Day?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Look at the numbers.</p>"
-      }
-    },
-    {
       "id": "resolution-stats",
       "type": "data-overview",
       "enabled": true,
-      "position": 5,
+      "position": 3,
       "config": {
-        "headline": "The Resolution Reality",
-        "subheading": "Why traditional goals fail after 45",
+        "headline": "Why Resolutions Fail After Menopause",
+        "subheading": "The problem isn't willpower—it's biology working against you",
+        "story": "If you picked 6+ years, this isn't a willpower problem. The women in my practice who've been fighting this battle aren't weak or lazy—they're determined women who've built careers and raised families. So why does a simple resolution collapse by Valentine's Day?",
         "stats": [
           { "value": "73%", "label": "of resolutions fail by February", "icon": "calendar", "source": "Journal of Clinical Psychology" },
           { "value": "92%", "label": "have failed completely by March", "icon": "trending-down", "source": "University of Scranton Research" },
@@ -69,22 +56,13 @@
       }
     },
     {
-      "id": "stats-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 6,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">8%. That's it. And here's what bothers me about that statistic:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">We've been told the problem is <em>us</em>. Not enough discipline. Not enough commitment. Not trying hard enough.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But what if the problem was never us?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">What if we've been trying to build a house on a foundation that's already cracked?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Take this quick assessment. I want you to see something.</p>"
-      }
-    },
-    {
       "id": "sabotage-checker",
       "type": "symptoms-checker",
       "enabled": true,
-      "position": 7,
+      "position": 4,
       "config": {
         "headline": "What's Really Sabotaging Your Resolutions?",
-        "subheading": "Check all that apply to you",
+        "subheading": "8% success rate isn't about willpower—it's about building on a broken foundation. Take this assessment to see what's actually happening.",
         "symptoms": [
           { "id": "q1", "text": "You start strong but crash by week 2-3" },
           { "id": "q2", "text": "Cravings derail you even when you're 'motivated'" },
@@ -95,44 +73,26 @@
         ],
         "minSymptoms": 3,
         "conclusionHeadline": "Your gut-hormone axis may be compromised",
-        "conclusionText": "If you checked 3 or more, your biology may be working against your resolutions. Keep reading to understand why—and what to do about it.",
+        "conclusionText": "Menopause has fundamentally altered how you metabolize food, regulate energy, and manage stress. Your estrobolome—gut bacteria that regulates estrogen—is disrupted. You're not failing your resolutions. Your biology is sabotaging them before you start.",
         "showCta": false
-      }
-    },
-    {
-      "id": "quiz-reveal",
-      "type": "text-block",
-      "enabled": true,
-      "position": 8,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">If you checked 3 or more boxes, here's what's actually happening inside your body:</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Menopause has fundamentally altered how you metabolize food. How you regulate energy. How you manage stress. Even how your brain processes motivation and reward.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And at the center of all of it—controlling more than you'd ever imagine—is your gut.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Specifically, something called the <strong>estrobolome</strong>: the collection of gut bacteria that regulates estrogen in your body. When menopause disrupts this system, your willpower is fighting a battle it literally cannot win.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">You're not failing your resolutions. <strong>Your biology is sabotaging them before you even start.</strong></p>"
-      }
-    },
-    {
-      "id": "comparison-setup",
-      "type": "text-block",
-      "enabled": true,
-      "position": 9,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Two Paths Forward</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Every woman who sits in my office faces the same fork in the road. Here's what each path looks like:</p>"
       }
     },
     {
       "id": "approach-comparison",
       "type": "comparison-table",
       "enabled": true,
-      "position": 10,
+      "position": 5,
       "config": {
-        "headline": "Your Two Choices for 2026",
+        "headline": "Two Paths Forward for 2026",
+        "subheading": "Every woman faces the same choice. Which path will you take?",
         "leftColumn": {
           "header": "Try Harder (Again)",
           "subheader": "The path you've walked before",
           "items": [
             { "text": "Set ambitious goals again this January", "icon": "x-circle", "negative": true },
-            { "text": "Push through the exhaustion with willpower", "icon": "x-circle", "negative": true },
-            { "text": "Fight your cravings every single day", "icon": "x-circle", "negative": true },
-            { "text": "Force yourself to exercise even when depleted", "icon": "x-circle", "negative": true },
-            { "text": "Blame yourself again when it doesn't stick", "icon": "x-circle", "negative": true }
+            { "text": "Push through exhaustion with willpower", "icon": "x-circle", "negative": true },
+            { "text": "Fight cravings every single day", "icon": "x-circle", "negative": true },
+            { "text": "Blame yourself when it doesn't stick", "icon": "x-circle", "negative": true }
           ],
           "result": "Same cycle, same result by March"
         },
@@ -140,10 +100,9 @@
           "header": "Fix the Foundation First",
           "subheader": "A different starting point",
           "items": [
-            { "text": "Support your gut-hormone axis before setting goals", "icon": "check-circle", "positive": true },
-            { "text": "Wait for energy to return before pushing harder", "icon": "check-circle", "positive": true },
-            { "text": "Let cravings naturally diminish as your gut heals", "icon": "check-circle", "positive": true },
-            { "text": "Add movement when your body actually wants it", "icon": "check-circle", "positive": true },
+            { "text": "Support your gut-hormone axis first", "icon": "check-circle", "positive": true },
+            { "text": "Wait for energy to return naturally", "icon": "check-circle", "positive": true },
+            { "text": "Let cravings diminish as gut heals", "icon": "check-circle", "positive": true },
             { "text": "Build habits on a foundation that holds", "icon": "check-circle", "positive": true }
           ],
           "result": "83% still on track after 60 days"
@@ -152,344 +111,61 @@
       }
     },
     {
-      "id": "comparison-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 11,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">The difference isn't motivation. It's not discipline. It's not wanting it badly enough.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">The difference is <em>where you start</em>.</p>"
-      }
-    },
-    {
-      "id": "dr-tip-aha",
+      "id": "dr-tip-foundation",
       "type": "dr-tip",
       "enabled": true,
-      "position": 12,
+      "position": 6,
       "config": {
-        "tip": "You're not undisciplined. You're not lazy. You've been building resolutions on a broken foundation. Fix the foundation, and everything else becomes possible.",
+        "tip": "The difference isn't motivation or discipline. It's where you start. You're not undisciplined—you've been building resolutions on a broken foundation. Fix the foundation, and everything else becomes possible.",
         "name": "Dr. Amy Heart",
         "credentials": "MD, PhD - Women's Health",
         "style": "featured"
       }
     },
     {
-      "id": "timeline-setup",
-      "type": "text-block",
+      "id": "testimonial-christine",
+      "type": "testimonial-hero",
       "enabled": true,
-      "position": 13,
+      "position": 7,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Let me show you what's actually happening when a resolution fails. Not the story we tell ourselves—the real sequence.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">See if this sounds familiar.</p>"
-      }
-    },
-    {
-      "id": "failure-cascade-warning",
-      "type": "warning-box",
-      "enabled": true,
-      "position": 13.5,
-      "config": {
-        "headline": "Why Resolutions Fail After 45",
-        "content": "Each stage makes the next one inevitable:",
-        "warnings": [
-          { "text": "Gut-hormone axis is already compromised", "severity": "low" },
-          { "text": "Energy reserves deplete faster than they replenish", "severity": "low" },
-          { "text": "Cravings spike from unstable blood sugar", "severity": "medium" },
-          { "text": "Willpower exhausts—you're fighting biology", "severity": "medium" },
-          { "text": "The quiet quit happens—guilt and shame follow", "severity": "high" }
-        ],
-        "footer": "The cycle repeats every January. Until you address the foundation.",
-        "style": "cascade"
-      }
-    },
-    {
-      "id": "timeline-failure",
-      "type": "timeline",
-      "enabled": true,
-      "position": 14,
-      "config": {
-        "headline": "The Resolution Failure Arc",
-        "subheading": "Sound familiar?",
-        "events": [
-          {
-            "date": "January 1",
-            "title": "Peak Motivation",
-            "description": "You're excited. This is YOUR year. You meal prep, buy new workout clothes, set alarms.",
-            "icon": "rocket",
-            "mood": "positive"
-          },
-          {
-            "date": "Week 2",
-            "title": "The First Cracks",
-            "description": "Energy dips. One skipped workout. 'I'll make it up tomorrow.'",
-            "icon": "alert-circle",
-            "mood": "neutral"
-          },
-          {
-            "date": "Week 3",
-            "title": "The Crash",
-            "description": "Exhaustion wins. Cravings return with vengeance. The couch feels inevitable.",
-            "icon": "trending-down",
-            "mood": "negative"
-          },
-          {
-            "date": "February",
-            "title": "The Quiet Quit",
-            "description": "No dramatic moment. Just... stopping. And trying not to think about it.",
-            "icon": "x-circle",
-            "mood": "negative"
-          },
-          {
-            "date": "March-December",
-            "title": "The Shame Loop",
-            "description": "Guilt. Self-blame. 'I'll try again next year.' The cycle continues.",
-            "icon": "repeat",
-            "mood": "negative"
-          }
-        ],
-        "style": "vertical"
-      }
-    },
-    {
-      "id": "timeline-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 15,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I've heard this story hundreds of times. The details change—gym memberships, meal plans, walking goals—but the arc is always the same.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">And every single time, the woman sitting across from me thinks it's her fault.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">It's not. It was never her fault. <strong>The timeline was broken before she started.</strong></p>"
-      }
-    },
-    {
-      "id": "breaking-cycle",
-      "type": "text-block",
-      "enabled": true,
-      "position": 16,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">What If You Just... Stopped?</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not stopped trying. Stopped fighting your biology.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">What if your only resolution was to fix the foundation first?</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">One thing. One habit. Let your body cooperate instead of resist.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I spent most of last year looking for the simplest way to give my patients that foundation. Something they'd actually stick with—because compliance matters more than perfection.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I wasn't looking at greens powders. I'd dismissed most of them years ago—proprietary blends, weak doses, sugar alcohols that irritate the very gut you're trying to support.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">But one formula kept crossing my desk. Colleagues mentioned it. Patients asked about it. And when I finally looked at the research behind Spectra®, I realized this wasn't like the others.</p>"
-      }
-    },
-    {
-      "id": "ingredients-grid",
-      "type": "ingredient-list-grid",
-      "enabled": true,
-      "position": 17,
-      "config": {
-        "headline": "The Foundation Formula",
-        "subheading": "What actually supports the gut-hormone connection",
-        "ingredients": [
-          {
-            "name": "Spectra®",
-            "description": "The only antioxidant blend with published human clinical trials—not just lab studies",
-            "icon": "award",
-            "highlight": true
-          },
-          {
-            "name": "Organic Spirulina + Chlorella",
-            "description": "Supports beneficial gut bacteria diversity—the microbiome support your estrobolome needs",
-            "icon": "leaf"
-          },
-          {
-            "name": "Organic Greens Blend",
-            "description": "Nutrient density without the sugar that feeds the wrong bacteria",
-            "icon": "sprout"
-          },
-          {
-            "name": "No Sugar Alcohols",
-            "description": "Nothing that undermines the gut you're trying to support—unlike most greens powders",
-            "icon": "shield-check",
-            "highlight": true
-          }
-        ],
-        "badges": ["NSF-Certified", "FDA-Inspected Facility"],
-        "style": "cards"
-      }
-    },
-    {
-      "id": "ingredients-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 18,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><strong>One scoop. Once a day.</strong> That's the entire ask.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Not a 47-step protocol. Not a complete lifestyle overhaul. Just one simple habit that supports everything else.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">I asked my community if they'd be willing to make this their \"one resolution\" for 2024 and track their results. The response surprised me.</p>"
-      }
-    },
-    {
-      "id": "community-poll-results",
-      "type": "poll",
-      "enabled": true,
-      "position": 19,
-      "config": {
-        "question": "Community members who tried the 'foundation first' approach reported:",
-        "options": [
-          { "id": "energy", "label": "More consistent energy by week 3", "votes": 478, "percentage": 78 },
-          { "id": "habits", "label": "Other healthy habits became easier", "votes": 435, "percentage": 71 },
-          { "id": "stuck", "label": "Still taking it daily after 60 days", "votes": 508, "percentage": 83 }
-        ],
-        "totalVotes": 612,
-        "showResults": true,
-        "resultsMessage": "Compare that 83% to the 8% who succeed with traditional resolutions.",
-        "source": "Dr. Amy Heart Community Challenge, 2024",
-        "style": "results-only"
-      }
-    },
-    {
-      "id": "poll-results-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 20,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That last number is the one that matters. <strong>83% still consistent at 60 days.</strong></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Sticking with something through February. Through the excuses. Through the days when motivation disappears.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">That's when real change becomes possible. And it happened because they stopped fighting their biology and started supporting it.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Here's what that actually looks like in real life.</p>"
-      }
-    },
-    {
-      "id": "before-after-christine",
-      "type": "before-after-side-by-side",
-      "enabled": true,
-      "position": 21,
-      "config": {
-        "headline": "Christine Stopped Fighting",
+        "headline": "\"What If You Just... Stopped Fighting?\"",
+        "subheading": "What if your only resolution was to fix the foundation first? One thing. One habit. Let your body cooperate instead of resist.",
         "name": "Christine",
         "age": "52",
         "location": "Ohio",
-        "beforeImage": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop",
-        "afterImage": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
-        "beforeStats": [
-          { "label": "Old Pattern", "value": "Gym 5x/week in Jan" },
-          { "label": "By March", "value": "Zero workouts" },
-          { "label": "Feeling", "value": "Failure, guilt" }
-        ],
-        "afterStats": [
-          { "label": "New Approach", "value": "Just the greens" },
-          { "label": "By April", "value": "Walking daily" },
-          { "label": "Feeling", "value": "Sustainable, calm" }
-        ],
-        "testimonial": "This year I just did the greens. That's it. But my energy stayed steady enough that I actually wanted to move more. I'm still walking daily. It's April and I haven't quit.",
-        "timeframe": "8 weeks",
+        "image": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
+        "quote": "This year I just did the greens. That's it. But my energy stayed steady enough that I actually wanted to move more. I'm still walking daily. It's April and I haven't quit. For the first time in years, I don't feel like I'm fighting myself.",
         "verified": true,
-        "style": "cards"
-      }
-    },
-    {
-      "id": "christine-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 22,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Christine's story captures exactly what I hoped would happen. She didn't white-knuckle her way through a resolution. She fixed the foundation, and better choices followed naturally.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>\"I actually wanted to move more.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">That's the difference. Not forcing yourself. Wanting to.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Now, I know what you might be thinking...</p>"
-      }
-    },
-    {
-      "id": "faq-objections",
-      "type": "faq-accordion",
-      "enabled": true,
-      "position": 23,
-      "config": {
-        "headline": "You Might Be Thinking...",
-        "faqs": [
-          {
-            "question": "\"I've tried greens powders before. They didn't work.\"",
-            "answer": "Most greens powders are proprietary blends with weak doses and sugar alcohols that actually irritate the gut. This formula is different: transparent dosing, Spectra® with published clinical trials, and nothing that undermines the gut you're trying to support. 83% of our community members are still taking it after 60 days—that's not typical for any supplement."
-          },
-          {
-            "question": "\"Isn't this just another quick fix?\"",
-            "answer": "Actually, it's the opposite. Quick fixes promise dramatic results fast. This is about building a foundation so that everything else you try actually has a chance to work. It's the slow, unsexy approach—but it's the one that sticks."
-          },
-          {
-            "question": "\"I should be able to do this with just diet and exercise.\"",
-            "answer": "You absolutely could—if you had the energy to cook perfectly and exercise consistently. But that's the catch-22: you need the foundation to have the energy to build the foundation. Sometimes you need a bridge to get there."
-          },
-          {
-            "question": "\"What if it doesn't work for me?\"",
-            "answer": "45-day money-back guarantee. If you don't notice a difference, you get your money back. But more importantly: what's the cost of another year of the same cycle?"
-          }
-        ],
-        "style": "minimal"
-      }
-    },
-    {
-      "id": "faq-transition",
-      "type": "text-block",
-      "enabled": true,
-      "position": 24,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I hear these objections every week. They're valid. They come from years of disappointment.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">But there's one story I want to share in full, because Barbara said something that stuck with me for weeks.</p>"
-      }
-    },
-    {
-      "id": "barbara-hero",
-      "type": "testimonial-hero",
-      "enabled": true,
-      "position": 25,
-      "config": {
-        "headline": "\"For the First Time in Six Years, I Don't Feel Like I've Failed\"",
-        "name": "Barbara",
-        "age": "56",
-        "location": "Dallas, TX",
-        "image": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop",
-        "quote": "I've made the same resolution every year since I turned 50: lose weight, get healthy, feel like myself again.\n\nEvery year I'd fail by February and spend the rest of the year feeling like a failure.\n\nThis year, Dr. Amy told me to forget all that. Just do one thing: support your gut first. Everything else later.\n\nIt's been three months. I haven't 'transformed.' But I have energy. I'm not bloated. I sleep through most nights. And for the first time in six years, I don't feel like I've failed.\n\nThat's what this gave me. Not a miracle. Just a foundation that finally holds.",
-        "verified": true,
-        "badge": "Verified Community Member",
-        "ctaText": "Make 2026 Different →",
+        "badge": "Foundation-First Success",
+        "ctaText": "Start Your Foundation →",
         "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=2026_resolution"
       }
     },
     {
-      "id": "barbara-reaction",
-      "type": "text-block",
+      "id": "foundation-data",
+      "type": "data-overview",
       "enabled": true,
-      "position": 26,
+      "position": 8,
       "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\"><em>\"For the first time in six years, I don't feel like I've failed.\"</em></p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That's what this is really about. Not transformation. Not miracles. Just finally breaking the cycle of shame that comes with another abandoned resolution.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Barbara didn't need to lose 20 pounds to feel successful. She needed to stop feeling like a failure. And that happened because she finally started in the right place.</p>"
-      }
-    },
-    {
-      "id": "checklist-setup",
-      "type": "text-block",
-      "enabled": true,
-      "position": 27,
-      "config": {
-        "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Your One Resolution for 2026</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">If you're ready to try something different this year, here's what I want you to do.</p>"
-      }
-    },
-    {
-      "id": "checklist-resolution",
-      "type": "checklist",
-      "enabled": true,
-      "position": 28,
-      "config": {
-        "headline": "Your One Resolution Checklist",
-        "subheading": "Check each commitment you're ready to make",
-        "items": [
-          { "id": "c1", "text": "Stop blaming yourself for past failures", "checked": false },
-          { "id": "c2", "text": "Accept that menopause changed the rules", "checked": false },
-          { "id": "c3", "text": "Commit to ONE thing: support your gut", "checked": false },
-          { "id": "c4", "text": "Give it 60 days before judging", "checked": false },
-          { "id": "c5", "text": "Let other healthy habits follow naturally", "checked": false }
+        "headline": "The Foundation-First Results",
+        "subheading": "What happened when 612 women tried the 'one simple habit' approach",
+        "story": "I spent last year looking for the simplest way to give my patients a foundation. One scoop of the right greens formula—with Spectra® clinical research, no sugar alcohols, and gut-supporting spirulina. One habit that supports everything else.",
+        "stats": [
+          { "value": "83%", "label": "still taking it daily after 60 days", "icon": "calendar", "source": "Dr. Amy Heart Community Challenge" },
+          { "value": "78%", "label": "reported consistent energy by week 3", "icon": "battery", "source": "Community Survey 2024" },
+          { "value": "71%", "label": "said other healthy habits became easier", "icon": "trending-up", "source": "60-day follow-up" }
         ],
-        "alertThreshold": 3,
-        "alertHeadline": "You're ready for a different kind of year.",
-        "alertMessage": "With 3+ commitments checked, you're already approaching this differently than before. That's the first step.",
-        "showCta": true,
-        "ctaText": "Start Your Foundation →",
-        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=2026_resolution",
-        "style": "interactive"
-      }
-    },
-    {
-      "id": "checklist-reaction",
-      "type": "text-block",
-      "enabled": true,
-      "position": 29,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">That's it. No 47-step plan. No complete lifestyle overhaul. No gym membership that becomes a monument to guilt by March.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">Just one thing that makes everything else possible.</p>"
+        "style": "grid"
       }
     },
     {
       "id": "product-card",
       "type": "exclusive-product",
       "enabled": true,
-      "position": 30,
+      "position": 9,
       "config": {
         "name": "Kiala Nutrition Super Greens",
-        "description": "The foundation formula that supports everything else. One scoop. Once a day. That's the entire ask.",
+        "description": "Your one resolution for 2026: support your foundation first. One scoop, once a day—that's the entire ask. No 47-step plan, no lifestyle overhaul, just one thing that makes everything else possible.",
         "image": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541",
         "price": 54.99,
         "originalPrice": 69.99,
@@ -497,34 +173,26 @@
         "rating": 4.8,
         "reviewCount": 12847,
         "benefits": [
-          "Spectra® clinically-studied antioxidant blend",
-          "Supports gut-hormone axis during menopause",
-          "No sugar alcohols to undermine your progress",
-          "45-day money-back guarantee"
+          "Spectra® clinically-studied antioxidant blend (not just lab studies)",
+          "Supports gut-hormone axis during menopause transition", 
+          "No sugar alcohols that undermine gut health",
+          "NSF-certified, FDA-inspected facility",
+          "45-day money-back guarantee—risk-free"
         ],
-        "badges": ["#1 Foundation Pick", "NSF Certified"],
-        "ctaText": "Start Your Foundation →",
+        "badges": ["#1 Foundation Pick", "NSF Certified", "83% Still Taking After 60 Days"],
+        "ctaText": "Make 2026 Different →",
         "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=dramyheart&utm_medium=article&utm_campaign=2026_resolution",
         "shippingBadgeText": "Free Shipping",
         "guaranteeBadgeText": "45-Day Guarantee"
       }
     },
     {
-      "id": "final-thought",
-      "type": "text-block",
-      "enabled": true,
-      "position": 32,
-      "config": {
-        "content": "<p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I'm not going to promise this fixes everything. Menopause is complex. Your body is unique. And I've been in medicine long enough to know that nothing works for everyone.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">But I've also watched too many women blame themselves for failed resolutions when the real problem was a broken foundation.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">You're not undisciplined. You're not lazy. You've just been building on sand.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\"><strong>2026 can be different.</strong> Not because of willpower. Because you finally start in the right place.</p>"
-      }
-    },
-    {
       "id": "dr-closing",
       "type": "doctor-closing-word",
       "enabled": true,
-      "position": 33,
+      "position": 10,
       "config": {
-        "message": "You deserve a year where the habits stick. Where your body cooperates. Where you stop fighting and start building. This could be that year.",
+        "message": "I'm not promising this fixes everything—menopause is complex. But I've watched too many women blame themselves for failed resolutions when the real problem was a broken foundation. You're not undisciplined. You've just been building on sand. 2026 can be different—not because of willpower, but because you finally start in the right place.",
         "signoff": "Here's to a foundation that holds,",
         "name": "Dr. Amy Heart",
         "credentials": "Board-Certified Integrative Medicine",
@@ -535,7 +203,7 @@
       "id": "email-capture-final",
       "type": "email-capture",
       "enabled": true,
-      "position": 34,
+      "position": 11,
       "config": {
         "headline": "Join 50,000+ Women Making 2026 Different",
         "subheading": "Weekly support for building a foundation that actually holds",
@@ -547,7 +215,7 @@
       "id": "disclaimer",
       "type": "text-block",
       "enabled": true,
-      "position": 35,
+      "position": 12,
       "config": {
         "content": "<p class=\"text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200\"><em>This article is for informational purposes only and does not constitute medical advice. Always consult with your healthcare provider before starting any new supplement regimen. Individual results may vary.</em></p>"
       }

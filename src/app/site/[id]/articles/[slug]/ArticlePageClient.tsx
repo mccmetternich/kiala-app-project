@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import ArticleTemplate from '@/components/ArticleTemplate';
+import SophisticatedArticlePage from '@/components/layout/SophisticatedArticlePage';
 import { Site, Page, Widget } from '@/types';
 import { generateDefaultWidgetConfig, parseWidgetConfig } from '@/lib/article-widget-defaults';
 import { TrackingProvider } from '@/contexts/TrackingContext';
@@ -190,7 +191,11 @@ export default function ArticlePageClient() {
       : siteData.brand_profile || fallbackSite.brand,
     settings: typeof siteData.settings === 'string'
       ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
-      : { ...fallbackSite.settings, ...siteData.settings }
+      : { ...fallbackSite.settings, ...siteData.settings },
+    // Extract theme from settings to site.theme for proper theming
+    theme: typeof siteData.settings === 'string'
+      ? JSON.parse(siteData.settings).theme || fallbackSite.theme
+      : siteData.settings?.theme || fallbackSite.theme
   } : fallbackSite;
 
   // Get widgets from database (widget_config) or generate defaults
@@ -215,7 +220,7 @@ export default function ArticlePageClient() {
     });
   })();
 
-  // Create page object for ArticleTemplate
+  // Create page object for ArticleTemplate (widget-based layout)
   const articlePage: Page = {
     id: article.id,
     slug: article.slug,
@@ -237,6 +242,51 @@ export default function ArticlePageClient() {
     publishedAt: new Date(article.published_at || article.created_at)
   };
 
+  // Create simplified page object for SophisticatedArticlePage (direct content)
+  const sophisticatedArticlePage: Page = {
+    id: article.id,
+    slug: article.slug,
+    title: article.title,
+    type: 'article',
+    content: article.content, // Use raw article content directly
+    seo: {
+      title: `${article.title} | ${transformedSite.name}`,
+      description: article.excerpt || 'Read this insightful health article.',
+      keywords: [article.category || 'health']
+    },
+    published: true,
+    publishedAt: new Date(article.published_at || article.created_at)
+  };
+
+  // Debug logging
+  console.log('🔍 ArticlePageClient Debug:', {
+    siteId,
+    siteSubdomain: siteData?.subdomain,
+    siteName: siteData?.name,
+    shouldUseSophisticated: siteId === 'goodness-authority',
+    transformedSiteName: transformedSite?.name
+  });
+
+  // Use sophisticated layout for Goodness Authority
+  if (siteId === 'goodness-authority') {
+    console.log('✅ Using SophisticatedArticlePage for Goodness Authority');
+    return (
+      <TrackingProvider config={article.tracking_config} siteName={transformedSite.name} articleSlug={article.slug}>
+        <SophisticatedArticlePage
+          site={transformedSite}
+          articlePage={sophisticatedArticlePage}
+          views={article.views}
+          readTime={typeof article.read_time === 'string' ? parseInt(article.read_time) : article.read_time}
+          heroImage={article.image}
+          article={article}
+        />
+      </TrackingProvider>
+    );
+  }
+
+  console.log('❌ Using default ArticleTemplate layout for:', siteId);
+
+  // Default medical authority layout with sidebar
   return (
     <TrackingProvider config={article.tracking_config} siteName={transformedSite.name} articleSlug={article.slug}>
       <SiteLayout
@@ -258,7 +308,7 @@ export default function ArticlePageClient() {
           page={articlePage}
           site={transformedSite}
           views={article.views}
-          readTime={article.read_time}
+          readTime={typeof article.read_time === 'string' ? parseInt(article.read_time) : article.read_time}
           heroImage={article.image}
         />
       </SiteLayout>

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import ArticleGrid from '@/widgets/ArticleGrid';
+import SophisticatedArticles from '@/components/layout/SophisticatedArticles';
 import { Site } from '@/types';
 import { getCommunityCount, formatCountShort } from '@/lib/format-community-count';
 
@@ -155,11 +156,34 @@ export default function DynamicArticlesPage() {
     settings: typeof siteData.settings === 'string'
       ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
       : { ...fallbackSite.settings, ...siteData.settings },
+    // Extract theme from settings to site.theme for proper theming
+    theme: typeof siteData.settings === 'string'
+      ? JSON.parse(siteData.settings).theme || fallbackSite.theme
+      : siteData.settings?.theme || fallbackSite.theme,
     page_config: typeof siteData.page_config === 'string'
       ? JSON.parse(siteData.page_config || '{}')
       : siteData.page_config || {}
   } : fallbackSite;
 
+  // Use sophisticated layout for Goodness Authority
+  if (siteId === 'goodness-authority') {
+    return (
+      <SiteLayout
+        site={transformedSite}
+        showSidebar={false}
+        pageSlug="/articles"
+        fullWidth={true}
+      >
+        <SophisticatedArticles 
+          articles={articles}
+          site={transformedSite} 
+          siteId={siteId}
+        />
+      </SiteLayout>
+    );
+  }
+
+  // Default layout for other sites
   return (
     <SiteLayout
       site={transformedSite}

@@ -1,53 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /*
- * Theme CSS Variables - Default values (Dr. Amy's theme)
+ * Theme CSS Variables - Neutral defaults for Goop-inspired elegance
  * These are overridden per-tenant by ThemeProvider component
  * IMPORTANT: Do not remove these defaults - they ensure consistent rendering
  */
 :root {
-  /* Primary - Pink/Magenta (Dr. Amy default) */
-  --color-primary-50: #fdf2f7;
-  --color-primary-100: #fce7f0;
-  --color-primary-200: #fbcfe1;
-  --color-primary-300: #f9a8cd;
-  --color-primary-400: #f472b1;
-  --color-primary-500: #ec4899;
-  --color-primary-600: #db2777;
-  --color-primary-700: #be185d;
-  --color-primary-800: #9d174d;
-  --color-primary-900: #831843;
+  /* Primary - Sophisticated Charcoal */
+  --color-primary-50: #f8f8f8;
+  --color-primary-100: #f0f0f0;
+  --color-primary-200: #e4e4e4;
+  --color-primary-300: #d1d1d1;
+  --color-primary-400: #b4b4b4;
+  --color-primary-500: #9a9a9a;
+  --color-primary-600: #6b6b6b;
+  --color-primary-700: #4a4a4a;
+  --color-primary-800: #2d2d2d;
+  --color-primary-900: #1a1a1a;
 
-  /* Secondary - Purple */
-  --color-secondary-50: #faf5ff;
-  --color-secondary-100: #f3e8ff;
-  --color-secondary-200: #e9d5ff;
-  --color-secondary-300: #d8b4fe;
-  --color-secondary-400: #c084fc;
-  --color-secondary-500: #9333ea;
-  --color-secondary-600: #7c3aed;
-  --color-secondary-700: #6b21a8;
-  --color-secondary-800: #581c87;
-  --color-secondary-900: #4c1d95;
+  /* Secondary - Warm Cream */
+  --color-secondary-50: #fdfdfc;
+  --color-secondary-100: #faf9f7;
+  --color-secondary-200: #f7f3f0;
+  --color-secondary-300: #f0ebe6;
+  --color-secondary-400: #e8dfd7;
+  --color-secondary-500: #ddd0c4;
+  --color-secondary-600: #c9b8a8;
+  --color-secondary-700: #b09d8a;
+  --color-secondary-800: #8f7a65;
+  --color-secondary-900: #6d5a47;
 
-  /* Accent - Red */
-  --color-accent-50: #fef2f2;
-  --color-accent-100: #fee2e2;
-  --color-accent-200: #fecaca;
-  --color-accent-300: #fca5a5;
-  --color-accent-400: #f87171;
-  --color-accent-500: #ef4444;
-  --color-accent-600: #dc2626;
-  --color-accent-700: #b91c1c;
-  --color-accent-800: #991b1b;
-  --color-accent-900: #7f1d1d;
+  /* Accent - Sophisticated Gold */
+  --color-accent-50: #fefdf8;
+  --color-accent-100: #fdf9e7;
+  --color-accent-200: #faf1c4;
+  --color-accent-300: #f5e596;
+  --color-accent-400: #efd666;
+  --color-accent-500: #e6c547;
+  --color-accent-600: #d4a574;
+  --color-accent-700: #b8935f;
+  --color-accent-800: #9c7a4a;
+  --color-accent-900: #7a5f39;
 
   /* Trust Colors */
   --color-trust-blue: #1e40af;
   --color-trust-green: #059669;
-  --color-trust-gold: #d97706;
+  --color-trust-gold: #8b7355;
+  
+  /* Font families */
+  --font-heading: 'EB Garamond', 'Times New Roman', serif;
+  --font-body: 'Source Sans Pro', system-ui, sans-serif;
 }
 
 @layer base {
@@ -124,6 +130,35 @@
   .admin-content .admin-card {
     @apply bg-gray-800 border-gray-700 text-gray-200;
   }
+
+  /* Goop-inspired sophisticated components */
+  .goop-card {
+    @apply bg-white rounded-none shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300;
+  }
+
+  .goop-button {
+    @apply bg-primary-900 hover:bg-primary-800 text-white font-normal py-4 px-8 rounded-none uppercase tracking-wider text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-700 focus:ring-offset-2;
+  }
+
+  .goop-button-secondary {
+    @apply bg-transparent hover:bg-primary-50 text-primary-900 font-normal py-4 px-8 rounded-none uppercase tracking-wider text-sm border border-primary-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-700 focus:ring-offset-2;
+  }
+
+  .goop-input {
+    @apply border-0 border-b border-gray-300 rounded-none bg-transparent px-0 py-3 text-gray-900 placeholder-gray-500 focus:ring-0 focus:border-primary-900 transition-all duration-200;
+  }
+
+  .goop-heading {
+    @apply font-heading font-normal text-primary-900 tracking-wide;
+  }
+
+  .elegant-card {
+    @apply bg-secondary-50 bg-opacity-50 border border-secondary-200 rounded-sm p-6 sm:p-8 hover:shadow-md transition-all duration-300;
+  }
+
+  .sophisticated-gradient {
+    background: linear-gradient(135deg, #f7f3f0 0%, #ffffff 50%, #f7f3f0 100%);
+  }
 }
 
 @layer utilities {
@@ -145,5 +180,60 @@
 
   .trust-gradient {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+  }
+
+  /* Sophisticated Article Content Typography */
+  .sophisticated-content {
+    @apply text-gray-800 leading-relaxed;
+  }
+
+  .sophisticated-content h1,
+  .sophisticated-content h2,
+  .sophisticated-content h3,
+  .sophisticated-content h4,
+  .sophisticated-content h5,
+  .sophisticated-content h6 {
+    @apply font-heading font-normal text-primary-900 leading-tight mb-6;
+  }
+
+  .sophisticated-content h1 {
+    @apply text-3xl sm:text-4xl;
+  }
+
+  .sophisticated-content h2 {
+    @apply text-2xl sm:text-3xl mt-12;
+  }
+
+  .sophisticated-content h3 {
+    @apply text-xl sm:text-2xl mt-10;
+  }
+
+  .sophisticated-content p {
+    @apply mb-6 text-lg leading-relaxed text-gray-700;
+  }
+
+  .sophisticated-content blockquote {
+    @apply border-l-4 border-accent-600 pl-6 italic text-xl text-gray-600 my-8;
+  }
+
+  .sophisticated-content ul,
+  .sophisticated-content ol {
+    @apply mb-6 pl-6 space-y-2;
+  }
+
+  .sophisticated-content li {
+    @apply text-lg text-gray-700 leading-relaxed;
+  }
+
+  .sophisticated-content strong {
+    @apply font-semibold text-primary-900;
+  }
+
+  .sophisticated-content em {
+    @apply italic;
+  }
+
+  .sophisticated-content a {
+    @apply text-accent-700 hover:text-accent-800 underline transition-colors;
   }
 }

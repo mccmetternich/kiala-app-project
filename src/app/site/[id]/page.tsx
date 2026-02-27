@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import PageWidgetRenderer from '@/components/PageWidgetRenderer';
+import SophisticatedHomepage from '@/components/layout/SophisticatedHomepage';
 import { Site, Page, PageType } from '@/types';
 import { getCommunityCount } from '@/lib/format-community-count';
 
@@ -154,7 +155,11 @@ export default function SiteHomePage() {
       : siteData.brand_profile || fallbackSite.brand,
     settings: typeof siteData.settings === 'string'
       ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
-      : { ...fallbackSite.settings, ...siteData.settings }
+      : { ...fallbackSite.settings, ...siteData.settings },
+    // Extract theme from settings to site.theme for proper theming
+    theme: typeof siteData.settings === 'string'
+      ? JSON.parse(siteData.settings).theme || fallbackSite.theme
+      : siteData.settings?.theme || fallbackSite.theme
   } : fallbackSite;
 
   // Parse page content
@@ -162,6 +167,24 @@ export default function SiteHomePage() {
     ? JSON.parse(page.content) 
     : page.content;
 
+  // Use sophisticated layout for Goodness Authority
+  if (siteId === 'goodness-authority') {
+    return (
+      <SiteLayout
+        site={transformedSite}
+        showSidebar={false}
+        pageSlug="index"
+        fullWidth={true}
+      >
+        <SophisticatedHomepage 
+          site={transformedSite} 
+          siteId={siteId}
+        />
+      </SiteLayout>
+    );
+  }
+
+  // Default layout for other sites
   return (
     <SiteLayout
       site={transformedSite}
