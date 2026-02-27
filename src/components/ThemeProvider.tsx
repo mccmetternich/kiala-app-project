@@ -148,6 +148,16 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
     return vars.join('\n    ');
   }, [palettes, themeColors, themeFonts]);
 
+  // Debug logging for Goodness Authority
+  if (site.subdomain === 'goodness-authority') {
+    console.log('🎨 ThemeProvider Debug for Goodness Authority:', {
+      siteSubdomain: site.subdomain,
+      themeColors,
+      primaryPalette: palettes.primary,
+      cssVariables: cssVariables.substring(0, 200) + '...'
+    });
+  }
+
   return (
     <>
       <style jsx global>{`
