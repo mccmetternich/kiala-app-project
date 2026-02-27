@@ -54,7 +54,8 @@ export default function SophisticatedArticlePage({
     articleContentPreview: typeof article?.content === 'string' ? article.content.substring(0, 100) : 'non-string or missing',
     rawArticle: !!article,
     hasWidgetConfig: !!article?.widget_config,
-    widgetConfigLength: article?.widget_config?.length
+    widgetConfigLength: article?.widget_config?.length,
+    fullArticle: article // Show full article data to debug
   });
   
   const brand = site?.brand || {};
@@ -92,8 +93,8 @@ export default function SophisticatedArticlePage({
         heroImageProp: heroImage,
         hasArticle: !!article,
         hasWidgetConfig: !!article?.widget_config,
-        isArrayConfig: Array.isArray(article?.widget_config),
-        widgetConfig: article?.widget_config
+        widgetConfigType: typeof article?.widget_config,
+        widgetConfigRaw: article?.widget_config
       });
       
       // First check if heroImage prop was passed
@@ -103,19 +104,51 @@ export default function SophisticatedArticlePage({
       }
       
       // Then try to get from article widget_config
-      if (article?.widget_config && Array.isArray(article.widget_config)) {
-        console.log('🔍 Searching widget_config:', article.widget_config);
-        const heroWidget = article.widget_config.find((w: any) => {
-          console.log('Checking widget:', w);
-          return w && w.type === 'hero-story' && w.enabled && w.config?.image;
+      let widgetConfig = article?.widget_config;
+      
+      // If widget_config is a JSON string, parse it
+      if (typeof widgetConfig === 'string') {
+        try {
+          widgetConfig = JSON.parse(widgetConfig);
+          console.log('📝 Parsed widget_config from JSON string:', widgetConfig);
+        } catch (e) {
+          console.log('❌ Failed to parse widget_config JSON:', e);
+          return null;
+        }
+      }
+      
+      // Also check if it's already an array
+      if (!Array.isArray(widgetConfig) && widgetConfig) {
+        console.log('❌ widget_config exists but is not an array:', typeof widgetConfig);
+        return null;
+      }
+      
+      if (Array.isArray(widgetConfig)) {
+        console.log('🔍 Searching widget_config array with', widgetConfig.length, 'widgets');
+        const heroWidget = widgetConfig.find((w: any) => {
+          const isHeroType = w && w.type === 'hero-story';
+          const isEnabled = w && w.enabled !== false; // Default to enabled if not specified
+          const hasImage = w && w.config && w.config.image;
+          
+          console.log('Checking widget:', {
+            type: w?.type,
+            enabled: w?.enabled,
+            hasConfig: !!w?.config,
+            hasImage: !!w?.config?.image,
+            image: w?.config?.image
+          });
+          
+          return isHeroType && isEnabled && hasImage;
         });
         
         if (heroWidget?.config?.image) {
           console.log('✅ Found hero image from widget:', heroWidget.config.image);
           return heroWidget.config.image;
         } else {
-          console.log('❌ No hero widget found or missing image');
+          console.log('❌ No valid hero widget found with image');
         }
+      } else {
+        console.log('❌ widget_config is null or not an array after parsing');
       }
       
       console.log('❌ No hero image found');
@@ -143,7 +176,7 @@ export default function SophisticatedArticlePage({
       
       <article className="min-h-screen bg-secondary-50">
         {/* Hero Section with sophisticated styling */}
-        <header className="relative pt-16 lg:pt-24 pb-8 lg:pb-12 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
+        <header className="relative pt-16 lg:pt-24 pb-2 lg:pb-6 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
           {/* Subtle pattern overlay */}
           <div 
             className="absolute inset-0 opacity-30" 
