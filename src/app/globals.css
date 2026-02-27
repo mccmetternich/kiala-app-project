@@ -197,32 +197,51 @@
   }
 
   .sophisticated-content h1 {
-    @apply text-3xl sm:text-4xl;
+    @apply text-3xl sm:text-4xl mb-8;
   }
 
   .sophisticated-content h2 {
-    @apply text-2xl sm:text-3xl mt-12;
+    @apply text-2xl sm:text-3xl mt-16 mb-8 pb-4 border-b border-secondary-200;
   }
 
   .sophisticated-content h3 {
-    @apply text-xl sm:text-2xl mt-10;
+    @apply text-xl sm:text-2xl mt-12 mb-6 text-primary-800;
+  }
+
+  .sophisticated-content h4 {
+    @apply text-lg sm:text-xl mt-10 mb-5 text-primary-700 font-medium;
   }
 
   .sophisticated-content p {
-    @apply mb-6 text-lg leading-relaxed text-gray-700;
+    @apply mb-8 text-lg leading-relaxed text-gray-700 max-w-none;
   }
 
   .sophisticated-content blockquote {
-    @apply border-l-4 border-accent-600 pl-6 italic text-xl text-gray-600 my-8;
+    @apply border-l-4 border-accent-600 bg-gradient-to-r from-accent-50 to-white pl-8 pr-6 py-6 my-10 italic text-xl text-gray-700 rounded-r-lg shadow-sm;
   }
 
   .sophisticated-content ul,
   .sophisticated-content ol {
-    @apply mb-6 pl-6 space-y-2;
+    @apply mb-8 pl-0 space-y-3 bg-gradient-to-r from-secondary-50 to-white p-6 rounded-lg shadow-sm border border-secondary-200;
   }
 
   .sophisticated-content li {
-    @apply text-lg text-gray-700 leading-relaxed;
+    @apply text-lg text-gray-700 leading-relaxed pl-6 relative;
+  }
+
+  .sophisticated-content ul li::before {
+    content: "•";
+    @apply absolute left-0 text-accent-600 font-bold text-xl;
+  }
+
+  .sophisticated-content ol li::before {
+    counter-increment: list-counter;
+    content: counter(list-counter) ".";
+    @apply absolute left-0 text-accent-600 font-bold;
+  }
+
+  .sophisticated-content ol {
+    counter-reset: list-counter;
   }
 
   .sophisticated-content strong {
@@ -254,5 +273,55 @@
   .animate-scroll-delayed {
     animation: scroll 30s linear infinite;
     animation-delay: 15s;
+  }
+
+  /* Sophisticated widget styling for article content - Universal widget enhancement */
+  .sophisticated-widgets > div[class*="bg-"],
+  .sophisticated-widgets > div[class*="border-"],
+  .sophisticated-widgets .widget-container {
+    @apply my-8 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  /* Specific widget styling improvements */
+  .sophisticated-widgets > div {
+    @apply my-8;
+  }
+
+  /* Enhanced spacing and visual hierarchy for all widgets */
+  .sophisticated-widgets > * + * {
+    @apply mt-10;
+  }
+
+  /* Improve borders and shadows on existing widgets */
+  .sophisticated-widgets [class*="bg-gradient-to"],
+  .sophisticated-widgets [class*="rounded-"] {
+    @apply shadow-sm;
+  }
+
+  .sophisticated-widgets [class*="border"][class*="bg-"] {
+    @apply shadow-md hover:shadow-lg transition-shadow duration-300;
+  }
+
+  .sophisticated-widgets blockquote {
+    @apply border-l-4 border-accent-600 bg-gradient-to-r from-accent-50 to-white pl-8 pr-6 py-6 my-8 rounded-r-lg shadow-sm;
+  }
+
+  /* Enhanced typography within widgets */
+  .sophisticated-widgets h3,
+  .sophisticated-widgets h4 {
+    @apply goop-heading text-primary-900 mb-4;
+  }
+
+  .sophisticated-widgets p {
+    @apply text-gray-700 leading-relaxed;
+  }
+
+  .sophisticated-widgets ul,
+  .sophisticated-widgets ol {
+    @apply space-y-2 text-gray-700;
+  }
+
+  .sophisticated-widgets li {
+    @apply leading-relaxed;
   }
 }

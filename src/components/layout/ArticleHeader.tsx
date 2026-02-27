@@ -79,7 +79,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
     <header className="bg-white shadow-md sticky top-0 z-50">
       {/* Desktop: Original Validation Banner - only if social proof enabled */}
       {showSocialProof && (
-        <div className="hidden md:block bg-gradient-to-r from-primary-500 to-purple-500 text-white py-3 px-4">
+        <div className="hidden md:block bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4">
           <div className="max-w-7xl mx-auto flex items-center justify-center text-sm">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -110,7 +110,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
                     className="w-12 h-12 rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-lg">
                       {brand?.name ? brand.name.split(' ').map(n => n[0]).join('') : 'DR'}
                     </span>
@@ -134,7 +134,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
                   <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
                   <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
                   <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="" />
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-500 text-white rounded-full border-2 border-white flex items-center justify-center text-xs font-bold shadow-sm">
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-full border-2 border-white flex items-center justify-center text-xs font-bold shadow-sm">
                     {communityCount.short}
                   </div>
                 </div>
@@ -148,7 +148,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
       {/* Mobile: Elegant Compact Header */}
       <div className="md:hidden">
         {/* Single sticky header that transforms on scroll */}
-        <div className="sticky top-0 z-[60] bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 shadow-lg">
+        <div className="sticky top-0 z-[60] bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 shadow-lg">
           {/* Smooth transition between expanded and collapsed */}
           <div className={`transition-all duration-300 ease-out overflow-hidden ${isScrolled ? 'max-h-14' : 'max-h-40'}`}>
             <div className="px-4 py-3">
@@ -182,9 +182,9 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
                       className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-all flex-shrink-0"
                     >
                       {isPlaying ? (
-                        <Pause className="w-4 h-4 text-purple-600" />
+                        <Pause className="w-4 h-4 text-primary-600" />
                       ) : (
-                        <Play className="w-4 h-4 text-purple-600 ml-0.5" />
+                        <Play className="w-4 h-4 text-primary-600 ml-0.5" />
                       )}
                     </button>
                     <div
@@ -228,9 +228,9 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
                         className="w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-all flex-shrink-0"
                       >
                         {isPlaying ? (
-                          <Pause className="w-3.5 h-3.5 text-purple-600" />
+                          <Pause className="w-3.5 h-3.5 text-primary-600" />
                         ) : (
-                          <Play className="w-3.5 h-3.5 text-purple-600 ml-0.5" />
+                          <Play className="w-3.5 h-3.5 text-primary-600 ml-0.5" />
                         )}
                       </button>
                       <div
@@ -251,12 +251,12 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
 
           {/* Social Validation Bumper - only in expanded view, if social proof enabled */}
           {showSocialProof && (
-            <div className={`bg-purple-700/90 text-white px-4 transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 py-0' : 'max-h-10 py-2'}`}>
+            <div className={`bg-primary-700/90 text-white px-4 transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 py-0' : 'max-h-10 py-2'}`}>
               <div className="flex items-center justify-center gap-2">
                 <div className="flex -space-x-1.5">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
-                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-purple-600" alt="" />
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-primary-600" alt="" />
+                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-primary-600" alt="" />
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-primary-600" alt="" />
                 </div>
                 <span className="font-medium text-xs">{communityCount.full} women trust {brand?.name || 'Dr. Amy'}</span>
                 <div className="flex items-center gap-0.5">

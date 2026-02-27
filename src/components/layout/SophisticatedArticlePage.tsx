@@ -68,9 +68,9 @@ export default function SophisticatedArticlePage({
       isArticle={true}
       fullWidth={true}
     >
-      <article className="min-h-screen bg-white">
+      <article className="min-h-screen bg-secondary-50">
         {/* Hero Section with sophisticated styling */}
-        <header className="relative py-16 lg:py-24 sophisticated-gradient overflow-hidden border-b border-secondary-200/50">
+        <header className="relative py-16 lg:py-24 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
           {/* Subtle pattern overlay */}
           <div 
             className="absolute inset-0 opacity-30" 
@@ -166,12 +166,12 @@ export default function SophisticatedArticlePage({
         {/* Article Content - Sophisticated Typography */}
         <section className="py-16 lg:py-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               
-              {/* Article Body with sophisticated typography */}
+              {/* Article Body with sophisticated typography and enhanced widgets */}
               <div className="prose prose-lg prose-stone max-w-none">
                 <div 
-                  className="sophisticated-content"
+                  className="sophisticated-content sophisticated-widgets space-y-8"
                   dangerouslySetInnerHTML={{ 
                     __html: articleContent?.content || articlePage.content || 'Article content loading...' 
                   }} 

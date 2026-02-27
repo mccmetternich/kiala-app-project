@@ -47,7 +47,7 @@ export default function ArticleFooter({ site }: ArticleFooterProps) {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-primary-50 to-purple-50 border-t border-primary-100 py-6 mt-8">
+    <footer className="bg-gradient-to-br from-primary-50 to-secondary-100 border-t border-primary-100 py-6 mt-8">
       <div className="container mx-auto px-4">
         <div className="max-w-lg mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
