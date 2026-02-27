@@ -29,7 +29,7 @@ export default function SophisticatedArticlePage({
     articleTitle: articlePage?.title,
     brandName: site?.brand?.name,
     articlePageContent: typeof articlePage?.content,
-    articleContentPreview: article?.content?.substring(0, 100),
+    articleContentPreview: typeof article?.content === 'string' ? article.content.substring(0, 100) : 'non-string or missing',
     rawArticle: !!article
   });
   
@@ -52,7 +52,7 @@ export default function SophisticatedArticlePage({
         return parsed;
       } catch {
         // If JSON parsing fails, treat as raw HTML content
-        console.log('✅ Using raw page content:', articlePage.content.substring(0, 100));
+        console.log('✅ Using raw page content:', typeof articlePage.content === 'string' ? articlePage.content.substring(0, 100) : 'non-string content');
         return { content: articlePage.content };
       }
     }
