@@ -52,8 +52,9 @@ export default function SophisticatedArticlePage({
         return parsed;
       } catch {
         // If JSON parsing fails, treat as raw HTML content
-        console.log('✅ Using raw page content:', typeof articlePage.content === 'string' ? articlePage.content.substring(0, 100) : 'non-string content');
-        return { content: articlePage.content };
+        const content = articlePage.content;
+        console.log('✅ Using raw page content:', typeof content === 'string' ? content.substring(0, 100) : 'non-string content');
+        return { content: content };
       }
     }
     
