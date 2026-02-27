@@ -128,9 +128,10 @@ export default function EditPage() {
 
   const loadData = async () => {
     try {
-      const response = await fetch(`/api/sites/${siteId}`);
-      if (response.ok) {
-        const data = await response.json();
+      // Load site data
+      const siteResponse = await fetch(`/api/sites/${siteId}`);
+      if (siteResponse.ok) {
+        const data = await siteResponse.json();
         const siteData = data.site;
 
         // Parse JSON fields
@@ -145,25 +146,33 @@ export default function EditPage() {
         const pages = (savedPages && savedPages.length > 0) ? savedPages : DEFAULT_PAGES;
         const config = { ...siteData.page_config, pages };
         setPageConfig(config);
+      }
 
-        // Find the current page
-        const page = pages.find((p: any) => p.id === pageId);
-        if (page) {
-          setCurrentPage(page);
-          const pageWidgets = page.widgets || [];
-          const pageSeoTitle = page.seoTitle || page.title || '';
-          const pageSeoDescription = page.seoDescription || '';
-          setWidgets(pageWidgets);
-          setSeoTitle(pageSeoTitle);
-          setSeoDescription(pageSeoDescription);
-          // Store initial state for change detection
-          setInitialState({
-            widgets: JSON.stringify(pageWidgets),
-            seoTitle: pageSeoTitle,
-            seoDescription: pageSeoDescription
-          });
-          setHasUnsavedChanges(false);
-        }
+      // Load the actual database page by ID
+      const pageResponse = await fetch(`/api/pages/${pageId}`);
+      if (pageResponse.ok) {
+        const pageData = await pageResponse.json();
+        setCurrentPage(pageData);
+        
+        // Parse page content to get widgets
+        const content = typeof pageData.content === 'string' ? JSON.parse(pageData.content) : pageData.content;
+        const pageWidgets = content?.widgets || [];
+        const pageSeoTitle = pageData.title || '';
+        const pageSeoDescription = `${pageData.title} page` || '';
+        
+        setWidgets(pageWidgets);
+        setSeoTitle(pageSeoTitle);
+        setSeoDescription(pageSeoDescription);
+        
+        // Store initial state for change detection
+        setInitialState({
+          widgets: JSON.stringify(pageWidgets),
+          seoTitle: pageSeoTitle,
+          seoDescription: pageSeoDescription
+        });
+        setHasUnsavedChanges(false);
+      } else {
+        console.error('Page not found:', pageId);
       }
     } catch (error) {
       console.error('Error loading page:', error);
@@ -173,29 +182,25 @@ export default function EditPage() {
   };
 
   const handleSave = async () => {
-    if (!pageConfig || !currentPage) return;
+    if (!currentPage) return;
 
     setSaving(true);
     try {
-      // Update the current page in the page config
-      const updatedPages = pageConfig.pages.map((p: any) =>
-        p.id === pageId
-          ? { ...p, widgets, seoTitle, seoDescription }
-          : p
-      );
+      // Update the database page
+      const updatedContent = {
+        widgets: widgets
+      };
 
-      const response = await fetch(`/api/sites/${siteId}`, {
+      const response = await fetch(`/api/pages/${pageId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...site,
-          page_config: { ...pageConfig, pages: updatedPages }
+          title: seoTitle,
+          content: JSON.stringify(updatedContent)
         }),
       });
 
       if (response.ok) {
-        // Update local state
-        setPageConfig({ ...pageConfig, pages: updatedPages });
         // Reset initial state to current state
         setInitialState({
           widgets: JSON.stringify(widgets),
@@ -203,6 +208,8 @@ export default function EditPage() {
           seoDescription
         });
         setHasUnsavedChanges(false);
+      } else {
+        console.error('Failed to save page');
       }
     } catch (error) {
       console.error('Error saving page:', error);
