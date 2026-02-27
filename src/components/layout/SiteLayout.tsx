@@ -44,6 +44,7 @@ interface SiteLayoutProps {
   navMode?: NavMode;    // New: Explicit nav mode control (overrides isArticle)
   navConfig?: NavigationTemplateConfig;  // Direct template config (highest priority)
   pageSlug?: string;    // Current page slug to look up config
+  fullWidth?: boolean;  // Skip container styling for sophisticated layouts
 }
 
 export default function SiteLayout({
@@ -55,7 +56,8 @@ export default function SiteLayout({
   isArticle = false,
   navMode,
   navConfig,
-  pageSlug
+  pageSlug,
+  fullWidth = false
 }: SiteLayoutProps) {
   // Determine effective nav mode
   // Priority: explicit navMode prop > page_config lookup > isArticle legacy > default
@@ -150,27 +152,32 @@ export default function SiteLayout({
       )}
       
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          {showSidebar ? (
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              <div className="lg:col-span-3">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  {children}
+        {fullWidth ? (
+          // Full-width mode for sophisticated layouts - no containers or padding
+          children
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            {showSidebar ? (
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-3">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    {children}
+                  </div>
+                </div>
+                {/* Sidebar hidden on mobile for articles - shown via collapsed header instead */}
+                <div className={`lg:col-span-1 ${isArticle ? 'hidden lg:block' : ''}`}>
+                  <div className="sticky top-8">
+                    {sidebar}
+                  </div>
                 </div>
               </div>
-              {/* Sidebar hidden on mobile for articles - shown via collapsed header instead */}
-              <div className={`lg:col-span-1 ${isArticle ? 'hidden lg:block' : ''}`}>
-                <div className="sticky top-8">
-                  {sidebar}
-                </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                {children}
               </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              {children}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </main>
       
       {useArticleFooter ? <ArticleFooter site={site} /> : <SiteFooter site={site} />}
