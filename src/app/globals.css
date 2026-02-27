@@ -80,7 +80,25 @@
   }
 
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-primary-600 font-semibold py-3 px-6 rounded-lg border-2 border-primary-600 transition-all duration-150 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 active:scale-95;
+    background-color: white;
+    color: #2c2c2c;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: 2px solid #2c2c2c;
+    transition: all 0.15s ease-in-out;
+    outline: none;
+    transform: translateY(0);
+  }
+  .btn-secondary:hover {
+    background-color: #f9fafb;
+    transform: translateY(-2px);
+  }
+  .btn-secondary:focus {
+    box-shadow: 0 0 0 2px #2c2c2c, 0 0 0 4px rgba(44, 44, 44, 0.1);
+  }
+  .btn-secondary:active {
+    transform: scale(0.95);
   }
 
   .widget-container {
@@ -155,7 +173,14 @@
 
   /* Goop-inspired sophisticated components */
   .goop-card {
-    @apply bg-white rounded-none shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300;
+    background-color: white;
+    border-radius: 0;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    border: 1px solid #f3f4f6;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  .goop-card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
   }
 
   .goop-button {
@@ -450,15 +475,35 @@
 
   /* Enhanced visual definition for content sections */
   .sophisticated-content > div[class*="grid"] {
-    @apply border border-secondary-200 rounded-xl p-6 shadow-sm my-8 bg-white;
+    border: 1px solid #f8f6f3;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background-color: white;
   }
 
-  .sophisticated-content .grid.md\\:grid-cols-2 {
-    @apply gap-6 p-6 bg-gradient-to-br from-white to-secondary-50 border border-secondary-200 rounded-xl shadow-md my-10;
+  .sophisticated-content .grid[class*="grid-cols-2"] {
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, white, #f8f6f3);
+    border: 1px solid #f8f6f3;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
   }
 
-  .sophisticated-content .grid.md\\:grid-cols-3 {
-    @apply gap-4 p-6 bg-gradient-to-br from-white to-accent-50 border-2 border-accent-200 rounded-xl shadow-lg my-10;
+  .sophisticated-content .grid[class*="grid-cols-3"] {
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, white, #f8f6f3);
+    border: 2px solid #c9a96e;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
   }
 
   /* Enhanced borders for warning/info boxes */
@@ -521,24 +566,24 @@
   }
 
   /* Three-column supplement sections - elegant card layout */
-  .sophisticated-content .grid.md\\:grid-cols-3 > .bg-white {
+  .sophisticated-content .grid[class*="grid-cols-3"] > .bg-white {
     @apply p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-secondary-200;
   }
 
-  .sophisticated-content .grid.md\\:grid-cols-3 h4 {
+  .sophisticated-content .grid[class*="grid-cols-3"] h4 {
     @apply text-primary-700 font-semibold text-lg mb-3 border-b border-secondary-200 pb-2;
   }
 
   /* Two-column timing sections - elegant side-by-side */
-  .sophisticated-content .grid.md\\:grid-cols-2 > div {
+  .sophisticated-content .grid[class*="grid-cols-2"] > div {
     @apply p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-secondary-200;
   }
 
-  .sophisticated-content .grid.md\\:grid-cols-2 h3 {
+  .sophisticated-content .grid[class*="grid-cols-2"] h3 {
     @apply text-xl font-bold text-primary-800 mb-6 flex items-center gap-3;
   }
 
-  .sophisticated-content .grid.md\\:grid-cols-2 h3::before {
+  .sophisticated-content .grid[class*="grid-cols-2"] h3::before {
     content: "→";
     @apply text-accent-500 text-2xl font-bold;
   }
