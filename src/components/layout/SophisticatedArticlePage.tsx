@@ -143,7 +143,7 @@ export default function SophisticatedArticlePage({
       
       <article className="min-h-screen bg-secondary-50">
         {/* Hero Section with sophisticated styling */}
-        <header className="relative py-16 lg:py-24 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
+        <header className="relative pt-16 lg:pt-24 pb-8 lg:pb-12 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
           {/* Subtle pattern overlay */}
           <div 
             className="absolute inset-0 opacity-30" 
@@ -239,7 +239,7 @@ export default function SophisticatedArticlePage({
         )}
 
         {/* Article Content - Sophisticated Typography */}
-        <section className={`${extractedHeroImage ? 'pt-6 lg:pt-8' : 'pt-2 lg:pt-4'} pb-16 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white`}>
+        <section className={`${extractedHeroImage ? 'pt-8 lg:pt-12' : 'pt-4 lg:pt-6'} pb-16 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white`}>
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               
