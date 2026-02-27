@@ -81,7 +81,7 @@ export default function SophisticatedArticlePage({
                     </span>
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
-                      {formatDate(articlePage.created_at || new Date())}
+                      {formatDate(articlePage.publishedAt || new Date())}
                     </span>
                   </div>
                 </div>
