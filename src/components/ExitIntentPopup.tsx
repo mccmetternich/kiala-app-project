@@ -142,87 +142,87 @@ export default function ExitIntentPopup({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn">
-        {/* Close Button - More prominent */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-2xl bg-white rounded-none shadow-2xl overflow-hidden animate-scaleIn border border-secondary-200">
+        {/* Close Button - Sophisticated styling */}
         <button
           onClick={handleClose}
-          className="absolute top-3 right-3 md:top-4 md:right-4 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg border border-gray-200 text-gray-600 hover:text-gray-900 transition-all z-20"
-          aria-label="Close popup"
+          className="absolute top-4 right-4 p-2 bg-white hover:bg-secondary-50 rounded-none border border-secondary-200 text-primary-700 hover:text-primary-900 transition-all z-20 shadow-sm"
+          aria-label="Close"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5" />
         </button>
 
         {/* Success State */}
         {status === 'success' ? (
-          <div className="p-12 text-center bg-gradient-to-br from-green-50 to-emerald-50">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+          <div className="p-12 text-center bg-secondary-50">
+            <div className="w-16 h-16 bg-accent-100 rounded-none flex items-center justify-center mx-auto mb-6 border border-accent-200">
+              <CheckCircle className="w-8 h-8 text-accent-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
-              {leadMagnetPdfUrl ? 'Your Guide is Ready!' : 'You\'re All Set!'}
+            <h3 className="text-2xl font-normal text-primary-900 mb-4 font-heading">
+              {leadMagnetPdfUrl ? 'Your Guide Awaits' : 'Welcome to Our Community'}
             </h3>
-            <p className="text-gray-600 mb-4">{message}</p>
+            <p className="text-primary-700 mb-6 leading-relaxed">{message}</p>
             {leadMagnetPdfUrl ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <a
                   href={leadMagnetPdfUrl}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-colors"
+                  className="inline-flex items-center gap-3 bg-primary-900 hover:bg-primary-800 text-white px-8 py-4 rounded-none font-normal transition-all uppercase tracking-wide text-sm border border-primary-900"
                 >
-                  <Gift className="w-5 h-5" />
-                  <span>Download Your Free Guide</span>
+                  <Gift className="w-4 h-4" />
+                  <span>Access Your Guide</span>
                 </a>
-                <p className="text-sm text-gray-500">Your download should start automatically</p>
+                <p className="text-sm text-primary-600">Download begins automatically</p>
               </div>
             ) : (
-              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-                <Gift className="w-4 h-4" />
-                <span>Welcome to the community!</span>
+              <div className="inline-flex items-center gap-2 bg-accent-50 text-accent-700 px-6 py-3 rounded-none text-sm font-normal border border-accent-200">
+                <Heart className="w-4 h-4" />
+                <span>You're part of our community</span>
               </div>
             )}
           </div>
         ) : (
           <div className="grid md:grid-cols-2">
             {/* Left Side - Visual */}
-            <div className="bg-gradient-to-br from-red-500 via-primary-600 to-primary-700 text-white p-8 flex flex-col justify-center">
+            <div className="bg-primary-900 text-white p-8 flex flex-col justify-center border-r border-secondary-200">
               <div className="mb-6">
-                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4">
-                  <AlertCircle className="w-7 h-7" />
+                <div className="w-12 h-12 bg-accent-600 rounded-none flex items-center justify-center mb-6 border border-accent-500">
+                  <AlertCircle className="w-6 h-6" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">{headline}</h2>
-                <p className="text-white/90">{subheadline}</p>
+                <h2 className="text-2xl md:text-3xl font-normal mb-4 font-heading">{headline}</h2>
+                <p className="text-secondary-100 leading-relaxed">{subheadline}</p>
               </div>
 
               {/* Urgency Banner */}
-              <div className="bg-white/10 rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-2 text-accent-300 mb-2">
+              <div className="bg-accent-50 text-primary-900 rounded-none p-4 border border-accent-200">
+                <div className="flex items-center gap-2 text-accent-700 mb-2">
                   <Clock className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Limited Time Offer</span>
+                  <span className="text-sm font-normal">Limited Availability</span>
                 </div>
-                <p className="text-sm text-white/80">{urgencyText}</p>
+                <p className="text-sm text-primary-700">{urgencyText}</p>
               </div>
             </div>
 
             {/* Right Side - Form */}
-            <div className="p-8">
+            <div className="p-8 bg-secondary-50">
               {/* What You'll Get */}
               <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Gift className="w-5 h-5 text-primary-500" />
-                  <h3 className="font-bold text-gray-900">Get "{incentive}"</h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <Gift className="w-5 h-5 text-accent-600" />
+                  <h3 className="font-normal text-primary-900 font-heading">"{incentive}"</h3>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-4">
-                  This expert guide includes:
+                <p className="text-sm text-primary-600 mb-4 leading-relaxed">
+                  This comprehensive guide includes:
                 </p>
 
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                      <Heart className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-3 text-sm text-primary-700 leading-relaxed">
+                      <Heart className="w-4 h-4 text-accent-600 mt-0.5 flex-shrink-0" />
                       <span>{benefit}</span>
                     </li>
                   ))}
@@ -230,27 +230,27 @@ export default function ExitIntentPopup({
               </div>
 
               {/* Email Form */}
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900"
+                  placeholder="Your email address"
+                  className="w-full px-4 py-3 rounded-none border border-secondary-300 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-primary-900 bg-white"
                   disabled={status === 'loading'}
                 />
 
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-gradient-to-r from-red-500 to-primary-600 hover:from-red-600 hover:to-primary-700 text-white py-3 rounded-xl font-bold text-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
+                  className="w-full bg-primary-900 hover:bg-primary-800 text-white py-4 rounded-none font-normal text-base transition-all disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-wide border border-primary-900"
                 >
                   {status === 'loading' ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
-                      <Gift className="w-5 h-5" />
-                      Send My Free Guide
+                      <Gift className="w-4 h-4" />
+                      Send My Guide
                     </>
                   )}
                 </button>
@@ -263,14 +263,14 @@ export default function ExitIntentPopup({
               {/* No Thanks Link */}
               <button
                 onClick={handleClose}
-                className="w-full mt-4 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                className="w-full mt-4 text-sm text-primary-600 hover:text-primary-800 transition-colors border-t border-secondary-200 pt-4"
               >
-                No thanks, I don't want free health tips
+                No thank you, I'll continue reading
               </button>
 
               {/* Trust Note */}
-              <p className="text-center text-xs text-gray-500 mt-4">
-                Your email is safe. No spam, ever.
+              <p className="text-center text-xs text-primary-600 mt-4">
+                Your privacy is sacred. No spam, ever.
               </p>
             </div>
           </div>

@@ -83,6 +83,35 @@ export default function SophisticatedArticlePage({
     return { content: 'Article content not available' };
   })();
 
+  // Extract hero image from widget config
+  const extractedHeroImage = (() => {
+    // First check if heroImage prop was passed
+    if (heroImage) return heroImage;
+    
+    // Then try to get from article widget_config
+    if (article?.widget_config) {
+      const heroWidget = article.widget_config.find((w: any) => w.type === 'hero-story' && w.enabled);
+      if (heroWidget?.config?.image) {
+        return heroWidget.config.image;
+      }
+    }
+    
+    // Try to get from article content if it's JSON
+    if (articleContent?.content && typeof articleContent.content === 'string') {
+      try {
+        const parsed = JSON.parse(articleContent.content);
+        if (parsed.widget_config) {
+          const heroWidget = parsed.widget_config.find((w: any) => w.type === 'hero-story' && w.enabled);
+          if (heroWidget?.config?.image) {
+            return heroWidget.config.image;
+          }
+        }
+      } catch {}
+    }
+    
+    return null;
+  })();
+
   return (
     <SiteLayout
       site={site}
@@ -162,7 +191,7 @@ export default function SophisticatedArticlePage({
                 )}
 
                 {/* Author Attribution */}
-                <div className="flex items-center gap-4 pt-6 border-t border-secondary-300 mt-8">
+                <div className="flex items-center gap-4 pt-4 border-t border-secondary-300 mt-6">
                   {brand.aboutImage && (
                     <img
                       src={brand.aboutImage}
@@ -181,11 +210,11 @@ export default function SophisticatedArticlePage({
         </header>
 
         {/* Hero Image Section - Enhanced with overlay and better aspect ratio */}
-        {heroImage && (
+        {extractedHeroImage && (
           <section className="relative">
             <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative">
               <img
-                src={heroImage}
+                src={extractedHeroImage}
                 alt={articlePage.title}
                 className="w-full h-full object-cover"
               />
@@ -194,33 +223,9 @@ export default function SophisticatedArticlePage({
             </div>
           </section>
         )}
-        
-        {/* If no direct hero image, check for hero-story widget in content */}
-        {!heroImage && articleContent?.content && articleContent.content.includes('hero-story') && (
-          <section className="relative">
-            <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative bg-gradient-to-br from-secondary-100 to-accent-100">
-              <img
-                src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=1200&h=600&fit=crop"
-                alt={articlePage.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/15"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white px-8">
-                  <h2 className="text-3xl lg:text-5xl font-bold mb-4 text-shadow-lg">
-                    {articlePage.title}
-                  </h2>
-                  <p className="text-lg lg:text-xl opacity-90 max-w-2xl mx-auto">
-                    {article?.excerpt || 'Discover the science behind afternoon energy crashes'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* Article Content - Sophisticated Typography */}
-        <section className="pt-8 pb-16 lg:pt-12 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
+        <section className="pt-6 pb-16 lg:pt-8 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               

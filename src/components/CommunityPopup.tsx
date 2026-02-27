@@ -124,78 +124,78 @@ export default function CommunityPopup({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn max-h-[90vh] overflow-y-auto">
-        {/* Close Button - More prominent */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 bg-black/40 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-lg bg-white rounded-none shadow-2xl overflow-hidden animate-scaleIn max-h-[90vh] overflow-y-auto border border-secondary-200">
+        {/* Close Button - Sophisticated styling */}
         <button
           onClick={handleClose}
-          className="absolute top-3 right-3 md:top-4 md:right-4 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg border border-gray-200 text-gray-600 hover:text-gray-900 transition-all z-20"
-          aria-label="Close popup"
+          className="absolute top-4 right-4 p-2 bg-white hover:bg-secondary-50 rounded-none border border-secondary-200 text-primary-700 hover:text-primary-900 transition-all z-20 shadow-sm"
+          aria-label="Close"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5" />
         </button>
 
         {/* Success State */}
         {status === 'success' ? (
-          <div className="p-8 text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+          <div className="p-8 md:p-12 text-center bg-secondary-50">
+            <div className="w-16 h-16 bg-accent-100 rounded-none flex items-center justify-center mx-auto mb-6 border border-accent-200">
+              <CheckCircle className="w-8 h-8 text-accent-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
-              {leadMagnetPdfUrl ? 'Welcome! Your Guide is Ready!' : 'Welcome to the Family!'}
+            <h3 className="text-2xl font-normal text-primary-900 mb-4 font-heading">
+              {leadMagnetPdfUrl ? 'Your Guide Awaits' : 'Welcome to Our Community'}
             </h3>
-            <p className="text-gray-600 mb-4">{message}</p>
+            <p className="text-primary-700 mb-6 leading-relaxed">{message}</p>
             {leadMagnetPdfUrl ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <a
                   href={leadMagnetPdfUrl}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-colors"
+                  className="inline-flex items-center gap-3 bg-primary-900 hover:bg-primary-800 text-white px-8 py-4 rounded-none font-normal transition-all uppercase tracking-wide text-sm border border-primary-900"
                 >
-                  <Gift className="w-5 h-5" />
-                  <span>Download Your Free Guide</span>
+                  <Gift className="w-4 h-4" />
+                  <span>Access Your Guide</span>
                 </a>
-                <p className="text-sm text-gray-500">Your download should start automatically</p>
+                <p className="text-sm text-primary-600">Download begins automatically</p>
               </div>
             ) : (
-              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-                <Gift className="w-4 h-4" />
-                <span>Welcome to the community!</span>
+              <div className="inline-flex items-center gap-2 bg-accent-50 text-accent-700 px-6 py-3 rounded-none text-sm font-normal border border-accent-200">
+                <Heart className="w-4 h-4" />
+                <span>You're part of our community</span>
               </div>
             )}
           </div>
         ) : (
           <>
-            {/* Header with gradient - more compact on mobile */}
-            <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 text-white p-5 pb-8 md:p-8 md:pb-12">
-              <div className="flex items-center gap-2 text-primary-100 text-sm mb-2 md:mb-4">
+            {/* Header - sophisticated styling */}
+            <div className="bg-secondary-50 border-b border-secondary-200 p-6 md:p-8">
+              <div className="flex items-center gap-2 text-primary-600 text-sm mb-4">
                 <Sparkles className="w-4 h-4" />
-                <span>Join {memberCount.toLocaleString()}+ members</span>
+                <span>Join {memberCount.toLocaleString()}+ women</span>
               </div>
 
-              <h2 className="text-xl md:text-3xl font-bold mb-2 md:mb-3 pr-8">
-                Join {doctorName}'s {communityName}
+              <h2 className="text-2xl md:text-3xl font-normal text-primary-900 mb-3 pr-8 font-heading">
+                Join Our Community
               </h2>
 
-              <p className="text-primary-100 text-sm md:text-base">
-                Get exclusive health tips, protocols, and community support from women just like you.
+              <p className="text-primary-700 text-base leading-relaxed">
+                Exclusive wellness insights, evidence-based protocols, and community support for sophisticated women.
               </p>
             </div>
 
-            {/* Content - more compact on mobile */}
-            <div className="px-5 pb-5 md:px-8 md:pb-8 -mt-4 md:-mt-6">
+            {/* Content */}
+            <div className="px-6 pb-6 md:px-8 md:pb-8">
               {/* Benefits Card */}
-              <div className="bg-gray-50 rounded-xl p-4 md:p-5 mb-4 md:mb-6 border border-gray-100 shadow-sm">
-                <h4 className="font-semibold text-gray-900 mb-2 md:mb-3 flex items-center gap-2 text-sm md:text-base">
-                  <Heart className="w-4 h-4 text-primary-500" />
+              <div className="bg-white rounded-none p-5 md:p-6 mb-6 border border-secondary-200 shadow-sm">
+                <h4 className="font-normal text-primary-900 mb-4 flex items-center gap-2 text-base font-heading">
+                  <Heart className="w-4 h-4 text-accent-600" />
                   Member Benefits
                 </h4>
-                <ul className="space-y-1.5 md:space-y-2">
+                <ul className="space-y-3">
                   {benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start gap-2 text-xs md:text-sm text-gray-700">
-                      <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-secondary-500 mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-3 text-sm text-primary-700 leading-relaxed">
+                      <CheckCircle className="w-4 h-4 text-accent-600 mt-0.5 flex-shrink-0" />
                       <span>{benefit}</span>
                     </li>
                   ))}
@@ -204,39 +204,39 @@ export default function CommunityPopup({
 
               {/* Incentive Banner */}
               {incentive && (
-                <div className="bg-gradient-to-r from-accent-50 to-accent-100 rounded-xl p-3 md:p-4 mb-4 md:mb-6 border border-accent-200 flex items-center gap-3">
-                  <div className="w-8 h-8 md:w-10 md:h-10 bg-accent-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Gift className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                <div className="bg-accent-50 rounded-none p-4 md:p-5 mb-6 border border-accent-200 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-accent-600 rounded-none flex items-center justify-center flex-shrink-0">
+                    <Gift className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 text-xs md:text-sm">Free Gift When You Join</p>
-                    <p className="text-accent-700 text-xs md:text-sm">{incentive}</p>
+                    <p className="font-normal text-primary-900 text-sm">Welcome Gift</p>
+                    <p className="text-accent-700 text-sm">{incentive}</p>
                   </div>
                 </div>
               )}
 
               {/* Email Form */}
-              <form onSubmit={handleSubmit} className="space-y-2 md:space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4 mb-6">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="w-full px-4 py-2.5 md:py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 text-sm md:text-base"
+                  placeholder="Your email address"
+                  className="w-full px-4 py-3 rounded-none border border-secondary-300 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-primary-900 text-base bg-white"
                   disabled={status === 'loading'}
                 />
 
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white py-2.5 md:py-3 rounded-xl font-bold text-base md:text-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25"
+                  className="w-full bg-primary-900 hover:bg-primary-800 text-white py-4 rounded-none font-normal text-base transition-all disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-wide border border-primary-900"
                 >
                   {status === 'loading' ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
-                      <Users className="w-5 h-5" />
-                      Join the Community
+                      <Users className="w-4 h-4" />
+                      Join Our Community
                     </>
                   )}
                 </button>
@@ -246,22 +246,22 @@ export default function CommunityPopup({
                 )}
               </form>
 
-              {/* Social Proof - hidden on very small screens */}
-              <div className="mt-4 md:mt-6 flex items-center justify-center gap-2 md:gap-3">
-                <div className="flex -space-x-2">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
-                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=32&h=32&fit=crop&crop=face" alt="" className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white" />
+              {/* Social Proof */}
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="flex -space-x-1">
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-none border-2 border-white shadow-sm" />
+                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-none border-2 border-white shadow-sm" />
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-none border-2 border-white shadow-sm" />
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=32&h=32&fit=crop&crop=face" alt="" className="w-8 h-8 rounded-none border-2 border-white shadow-sm" />
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">
-                  <span className="font-semibold text-gray-900">{memberCount.toLocaleString()}</span> women joined this month
+                <p className="text-sm text-primary-600">
+                  <span className="font-normal text-primary-900">{memberCount.toLocaleString()}</span> women joined this month
                 </p>
               </div>
 
               {/* Privacy Note */}
-              <p className="text-center text-xs text-gray-500 mt-3 md:mt-4">
-                No spam, ever. Unsubscribe anytime.
+              <p className="text-center text-xs text-primary-600 border-t border-secondary-200 pt-4">
+                Your privacy is sacred. No spam, ever. Unsubscribe anytime.
               </p>
             </div>
           </>
