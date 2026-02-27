@@ -84,11 +84,27 @@
   }
 
   .widget-container {
-    @apply bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-8 mb-8 border border-gray-100;
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.2s ease-in-out;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #f3f4f6;
+  }
+  .widget-container:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
   }
 
   .admin-card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200;
+    background-color: white;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.2s ease-in-out;
+  }
+  .admin-card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
   }
 
   .loading-skeleton {
@@ -112,7 +128,13 @@
   }
 
   .countdown-timer {
-    @apply bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-lg font-bold text-lg;
+    background: linear-gradient(to right, #ef4444, #f97316);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 
   .social-proof-avatar {
@@ -171,7 +193,10 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+    background: linear-gradient(to right, #2c2c2c, #f8f6f3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
   }
 
   .hero-gradient {
@@ -217,12 +242,35 @@
   }
 
   .sophisticated-content blockquote {
-    @apply border-l-4 border-accent-600 bg-gradient-to-r from-accent-50 to-white pl-8 pr-6 py-6 my-10 italic text-xl text-gray-700 rounded-r-lg shadow-sm;
+    border-left: 4px solid #c9a96e;
+    background: linear-gradient(to right, #f8f6f3, white);
+    padding-left: 2rem;
+    padding-right: 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    color: #374151;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   }
 
   .sophisticated-content ul,
   .sophisticated-content ol {
-    @apply mb-8 pl-0 space-y-3 bg-gradient-to-r from-secondary-50 to-white p-6 rounded-lg shadow-sm border border-secondary-200;
+    margin-bottom: 2rem;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: linear-gradient(to right, #f8f6f3, white);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    border: 1px solid #f8f6f3;
   }
 
   .sophisticated-content li {
@@ -303,7 +351,17 @@
   }
 
   .sophisticated-widgets blockquote {
-    @apply border-l-4 border-accent-600 bg-gradient-to-r from-accent-50 to-white pl-8 pr-6 py-6 my-8 rounded-r-lg shadow-sm;
+    border-left: 4px solid #c9a96e;
+    background: linear-gradient(to right, #f8f6f3, white);
+    padding-left: 2rem;
+    padding-right: 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   }
 
   /* Enhanced typography within widgets */
@@ -333,7 +391,7 @@
 
   .sophisticated-content .border-blue-500,
   .sophisticated-widgets .border-blue-500 {
-    @apply border-accent-500 !important;
+    border-color: rgb(var(--color-accent-500)) !important;
   }
 
   .sophisticated-content .bg-green-50,
@@ -343,7 +401,7 @@
 
   .sophisticated-content .border-green-500,
   .sophisticated-widgets .border-green-500 {
-    @apply border-secondary-400 !important;
+    border-color: rgb(var(--color-secondary-400)) !important;
   }
 
   .sophisticated-content .bg-purple-50,
@@ -356,41 +414,26 @@
     @apply bg-accent-50 !important;
   }
 
-  /* Fix multi-color gradients with theme-consistent alternatives */
-  .sophisticated-content .bg-gradient-to-r.from-red-50.via-blue-50.to-green-50,
-  .sophisticated-widgets .bg-gradient-to-r.from-red-50.via-blue-50.to-green-50 {
-    @apply bg-gradient-to-r from-primary-50 via-accent-50 to-secondary-100 !important;
-  }
-
-  .sophisticated-content .bg-gradient-to-r.from-blue-100.to-purple-100,
-  .sophisticated-widgets .bg-gradient-to-r.from-blue-100.to-purple-100 {
-    @apply bg-gradient-to-r from-accent-100 to-primary-100 !important;
-  }
-
-  .sophisticated-content .bg-gradient-to-r.from-green-100.to-teal-100,
-  .sophisticated-widgets .bg-gradient-to-r.from-green-100.to-teal-100 {
-    @apply bg-gradient-to-r from-secondary-100 to-accent-100 !important;
-  }
-
-  .sophisticated-content .bg-gradient-to-r.from-yellow-100.to-orange-100,
-  .sophisticated-widgets .bg-gradient-to-r.from-yellow-100.to-orange-100 {
-    @apply bg-gradient-to-r from-accent-100 to-secondary-100 !important;
+  /* Theme-consistent color overrides - simplified approach */
+  .sophisticated-content,
+  .sophisticated-widgets {
+    /* Override problematic color combinations with CSS custom properties */
   }
 
   /* Fix border colors in multi-column sections */
-  .sophisticated-content .border-l-4.border-red-500,
-  .sophisticated-widgets .border-l-4.border-red-500 {
-    @apply border-primary-500 !important;
+  .sophisticated-content [class*="border-red-"],
+  .sophisticated-widgets [class*="border-red-"] {
+    border-color: rgb(var(--color-primary-500)) !important;
   }
 
-  .sophisticated-content .border-l-4.border-blue-500,
-  .sophisticated-widgets .border-l-4.border-blue-500 {
-    @apply border-accent-500 !important;
+  .sophisticated-content [class*="border-blue-"],
+  .sophisticated-widgets [class*="border-blue-"] {
+    border-color: rgb(var(--color-accent-500)) !important;
   }
 
-  .sophisticated-content .border-l-4.border-green-500,
-  .sophisticated-widgets .border-l-4.border-green-500 {
-    @apply border-secondary-400 !important;
+  .sophisticated-content [class*="border-green-"],
+  .sophisticated-widgets [class*="border-green-"] {
+    border-color: rgb(var(--color-secondary-400)) !important;
   }
 
   /* Improve spacing between headings and content */
@@ -420,11 +463,15 @@
 
   /* Enhanced borders for warning/info boxes */
   .sophisticated-content .bg-red-50 {
-    @apply border border-red-200 shadow-sm rounded-lg !important;
+    border: 1px solid rgb(var(--color-secondary-300)) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
   }
 
   .sophisticated-content .bg-yellow-50 {
-    @apply border border-yellow-200 shadow-sm rounded-lg !important;
+    border: 1px solid rgb(var(--color-secondary-300)) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
   }
 
   .sophisticated-content .border-red-200,
@@ -435,7 +482,12 @@
 
   /* Better visual hierarchy for nested content */
   .sophisticated-content .bg-white.rounded-lg {
-    @apply shadow-sm hover:shadow-md transition-shadow duration-200 border border-secondary-200;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    border: 1px solid #f8f6f3;
+    transition: box-shadow 0.2s ease-in-out;
+  }
+  .sophisticated-content .bg-white.rounded-lg:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
   }
 
   /* Floating elements and visual interest */
@@ -502,12 +554,18 @@
     display: block;
     width: 60px;
     height: 2px;
-    @apply bg-gradient-to-r from-accent-400 to-transparent mt-6 mb-4;
+    background: linear-gradient(to right, #c9a96e, transparent);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   /* Enhance nested lists within columns */
   .sophisticated-content .grid ul {
-    @apply bg-gradient-to-br from-secondary-50 to-white border border-secondary-200 rounded-lg p-4 shadow-sm;
+    background: linear-gradient(135deg, #f8f6f3, white);
+    border: 1px solid #f8f6f3;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   }
 
   .sophisticated-content .grid li {
@@ -526,6 +584,7 @@
 
   /* Floating action elements */
   .sophisticated-content .bg-gradient-to-r:hover {
-    @apply transform scale-105 transition-transform duration-200;
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
   }
 }
