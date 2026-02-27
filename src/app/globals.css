@@ -324,4 +324,208 @@
   .sophisticated-widgets li {
     @apply leading-relaxed;
   }
+
+  /* Override hardcoded colors in article content with theme colors */
+  .sophisticated-content .bg-blue-50,
+  .sophisticated-widgets .bg-blue-50 {
+    @apply bg-accent-50 !important;
+  }
+
+  .sophisticated-content .border-blue-500,
+  .sophisticated-widgets .border-blue-500 {
+    @apply border-accent-500 !important;
+  }
+
+  .sophisticated-content .bg-green-50,
+  .sophisticated-widgets .bg-green-50 {
+    @apply bg-secondary-100 !important;
+  }
+
+  .sophisticated-content .border-green-500,
+  .sophisticated-widgets .border-green-500 {
+    @apply border-secondary-400 !important;
+  }
+
+  .sophisticated-content .bg-purple-50,
+  .sophisticated-widgets .bg-purple-50 {
+    @apply bg-primary-50 !important;
+  }
+
+  .sophisticated-content .bg-pink-50,
+  .sophisticated-widgets .bg-pink-50 {
+    @apply bg-accent-50 !important;
+  }
+
+  /* Fix multi-color gradients with theme-consistent alternatives */
+  .sophisticated-content .bg-gradient-to-r.from-red-50.via-blue-50.to-green-50,
+  .sophisticated-widgets .bg-gradient-to-r.from-red-50.via-blue-50.to-green-50 {
+    @apply bg-gradient-to-r from-primary-50 via-accent-50 to-secondary-100 !important;
+  }
+
+  .sophisticated-content .bg-gradient-to-r.from-blue-100.to-purple-100,
+  .sophisticated-widgets .bg-gradient-to-r.from-blue-100.to-purple-100 {
+    @apply bg-gradient-to-r from-accent-100 to-primary-100 !important;
+  }
+
+  .sophisticated-content .bg-gradient-to-r.from-green-100.to-teal-100,
+  .sophisticated-widgets .bg-gradient-to-r.from-green-100.to-teal-100 {
+    @apply bg-gradient-to-r from-secondary-100 to-accent-100 !important;
+  }
+
+  .sophisticated-content .bg-gradient-to-r.from-yellow-100.to-orange-100,
+  .sophisticated-widgets .bg-gradient-to-r.from-yellow-100.to-orange-100 {
+    @apply bg-gradient-to-r from-accent-100 to-secondary-100 !important;
+  }
+
+  /* Fix border colors in multi-column sections */
+  .sophisticated-content .border-l-4.border-red-500,
+  .sophisticated-widgets .border-l-4.border-red-500 {
+    @apply border-l-4 border-primary-500 !important;
+  }
+
+  .sophisticated-content .border-l-4.border-blue-500,
+  .sophisticated-widgets .border-l-4.border-blue-500 {
+    @apply border-l-4 border-accent-500 !important;
+  }
+
+  .sophisticated-content .border-l-4.border-green-500,
+  .sophisticated-widgets .border-l-4.border-green-500 {
+    @apply border-l-4 border-secondary-400 !important;
+  }
+
+  /* Improve spacing between headings and content */
+  .sophisticated-content h2 + p,
+  .sophisticated-content h3 + p,
+  .sophisticated-content h4 + p {
+    @apply mt-0 mb-4;
+  }
+
+  .sophisticated-content p + ul,
+  .sophisticated-content p + ol {
+    @apply mt-2;
+  }
+
+  /* Enhanced visual definition for content sections */
+  .sophisticated-content > div[class*="grid"] {
+    @apply border border-secondary-200 rounded-xl p-6 shadow-sm my-8 bg-white;
+  }
+
+  .sophisticated-content .grid.md\\:grid-cols-2 {
+    @apply gap-6 p-6 bg-gradient-to-br from-white to-secondary-50 border border-secondary-200 rounded-xl shadow-md my-10;
+  }
+
+  .sophisticated-content .grid.md\\:grid-cols-3 {
+    @apply gap-4 p-6 bg-gradient-to-br from-white to-accent-50 border-2 border-accent-200 rounded-xl shadow-lg my-10;
+  }
+
+  /* Enhanced borders for warning/info boxes */
+  .sophisticated-content .bg-red-50 {
+    @apply border border-red-200 shadow-sm rounded-lg !important;
+  }
+
+  .sophisticated-content .bg-yellow-50 {
+    @apply border border-yellow-200 shadow-sm rounded-lg !important;
+  }
+
+  .sophisticated-content .border-red-200,
+  .sophisticated-content .border-yellow-200,
+  .sophisticated-content .border-blue-200 {
+    @apply border-secondary-300 !important;
+  }
+
+  /* Better visual hierarchy for nested content */
+  .sophisticated-content .bg-white.rounded-lg {
+    @apply shadow-sm hover:shadow-md transition-shadow duration-200 border border-secondary-200;
+  }
+
+  /* Floating elements and visual interest */
+  .sophisticated-content h2 {
+    position: relative;
+  }
+
+  .sophisticated-content h2::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    @apply bg-accent-400 rounded-full;
+  }
+
+  /* Enhanced visual spacing for sections */
+  .sophisticated-content > h2 {
+    @apply mt-20 pt-8 border-t border-secondary-200;
+  }
+
+  .sophisticated-content > h2:first-child {
+    @apply mt-0 pt-0 border-t-0;
+  }
+
+  /* Sophisticated multi-column layouts */
+  .sophisticated-content .grid {
+    @apply transition-all duration-300 hover:shadow-lg;
+  }
+
+  /* Three-column supplement sections - elegant card layout */
+  .sophisticated-content .grid.md\\:grid-cols-3 > .bg-white {
+    @apply p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-secondary-200;
+  }
+
+  .sophisticated-content .grid.md\\:grid-cols-3 h4 {
+    @apply text-primary-700 font-semibold text-lg mb-3 border-b border-secondary-200 pb-2;
+  }
+
+  /* Two-column timing sections - elegant side-by-side */
+  .sophisticated-content .grid.md\\:grid-cols-2 > div {
+    @apply p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-secondary-200;
+  }
+
+  .sophisticated-content .grid.md\\:grid-cols-2 h3 {
+    @apply text-xl font-bold text-primary-800 mb-6 flex items-center gap-3;
+  }
+
+  .sophisticated-content .grid.md\\:grid-cols-2 h3::before {
+    content: "→";
+    @apply text-accent-500 text-2xl font-bold;
+  }
+
+  /* Visual separators between major sections */
+  .sophisticated-content h2[id] {
+    @apply scroll-mt-20;
+  }
+
+  /* Add elegant dividers */
+  .sophisticated-content h2 + p::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 2px;
+    @apply bg-gradient-to-r from-accent-400 to-transparent mt-6 mb-4;
+  }
+
+  /* Enhance nested lists within columns */
+  .sophisticated-content .grid ul {
+    @apply bg-gradient-to-br from-secondary-50 to-white border border-secondary-200 rounded-lg p-4 shadow-sm;
+  }
+
+  .sophisticated-content .grid li {
+    @apply relative pl-6 mb-2;
+  }
+
+  .sophisticated-content .grid li::before {
+    content: "✓";
+    @apply absolute left-0 top-0 text-accent-600 font-bold text-lg;
+  }
+
+  /* Reading experience enhancements */
+  .sophisticated-content {
+    @apply selection:bg-accent-100 selection:text-accent-900;
+  }
+
+  /* Floating action elements */
+  .sophisticated-content .bg-gradient-to-r:hover {
+    @apply transform scale-105 transition-transform duration-200;
+  }
 }

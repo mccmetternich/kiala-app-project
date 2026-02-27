@@ -1,8 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Site, Page } from '@/types';
 import SiteLayout from '@/components/layout/SiteLayout';
-import { Calendar, Clock, Eye, Share2, ArrowLeft, Sparkles } from 'lucide-react';
+import { Calendar, Clock, Eye, Share2, ArrowLeft, Sparkles, ArrowUp } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import TrackedLink from '@/components/TrackedLink';
 
@@ -23,6 +24,27 @@ export default function SophisticatedArticlePage({
   heroImage,
   article
 }: SophisticatedArticlePageProps) {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  
+  // Scroll progress tracking and back to top visibility
+  useEffect(() => {
+    const updateScrollProgress = () => {
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (scrollPx / winHeightPx) * 100;
+      setScrollProgress(scrolled);
+      setShowBackToTop(scrollPx > 300);
+    };
+
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrollProgress);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   console.log('🎨 SophisticatedArticlePage RENDERING:', {
     siteName: site?.name,
     siteSubdomain: site?.subdomain,
@@ -68,6 +90,14 @@ export default function SophisticatedArticlePage({
       isArticle={true}
       fullWidth={true}
     >
+      {/* Reading Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-secondary-200 z-50">
+        <div 
+          className="h-full bg-gradient-to-r from-accent-500 to-primary-500 transition-all duration-150 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      
       <article className="min-h-screen bg-secondary-50">
         {/* Hero Section with sophisticated styling */}
         <header className="relative py-16 lg:py-24 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
@@ -132,12 +162,12 @@ export default function SophisticatedArticlePage({
                 )}
 
                 {/* Author Attribution */}
-                <div className="flex items-center gap-4 pt-6 border-t border-secondary-200">
+                <div className="flex items-center gap-4 pt-6 border-t border-secondary-300 mt-8">
                   {brand.aboutImage && (
                     <img
                       src={brand.aboutImage}
                       alt={brand.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-accent-200"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-accent-300 shadow-sm"
                     />
                   )}
                   <div>
@@ -150,21 +180,47 @@ export default function SophisticatedArticlePage({
           </div>
         </header>
 
-        {/* Hero Image Section */}
+        {/* Hero Image Section - Enhanced with overlay and better aspect ratio */}
         {heroImage && (
           <section className="relative">
-            <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden">
+            <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative">
               <img
                 src={heroImage}
                 alt={articlePage.title}
                 className="w-full h-full object-cover"
               />
+              {/* Subtle overlay for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10"></div>
+            </div>
+          </section>
+        )}
+        
+        {/* If no direct hero image, check for hero-story widget in content */}
+        {!heroImage && articleContent?.content && articleContent.content.includes('hero-story') && (
+          <section className="relative">
+            <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative bg-gradient-to-br from-secondary-100 to-accent-100">
+              <img
+                src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=1200&h=600&fit=crop"
+                alt={articlePage.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/15"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white px-8">
+                  <h2 className="text-3xl lg:text-5xl font-bold mb-4 text-shadow-lg">
+                    {articlePage.title}
+                  </h2>
+                  <p className="text-lg lg:text-xl opacity-90 max-w-2xl mx-auto">
+                    {article?.excerpt || 'Discover the science behind afternoon energy crashes'}
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
         )}
 
         {/* Article Content - Sophisticated Typography */}
-        <section className="py-16 lg:py-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
+        <section className="pt-8 pb-16 lg:pt-12 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               
@@ -203,6 +259,17 @@ export default function SophisticatedArticlePage({
         </section>
 
       </article>
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-40 bg-gradient-to-r from-accent-500 to-primary-500 hover:from-accent-600 hover:to-primary-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+          aria-label="Back to top"
+        >
+          <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+        </button>
+      )}
     </SiteLayout>
   );
 }
