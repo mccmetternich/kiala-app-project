@@ -406,10 +406,7 @@ export default function EditPage() {
             </button>
 
             <a
-              href={currentPage.enabled && site?.domain
-                ? `https://${site.domain}${currentPage.slug === 'index' ? '' : `/${currentPage.slug}`}`
-                : `https://kiala-app-project.vercel.app/site/${site?.subdomain || siteId}${currentPage.slug === 'index' ? '' : `/${currentPage.slug}`}`
-              }
+              href={`https://kiala-app-project.vercel.app/site/${site?.subdomain || siteId}${currentPage.slug === 'index' ? '' : `/${currentPage.slug}`}`}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
