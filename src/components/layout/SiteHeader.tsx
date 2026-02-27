@@ -152,7 +152,7 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
 
         {/* Desktop: Main Navigation */}
         <nav className="bg-white border-b-2 border-gray-100">
-          <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href={homeUrl} className="flex items-center gap-3">
@@ -179,8 +179,8 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="flex items-center gap-8">
+            {/* Desktop Navigation - Left aligned after logo */}
+            <div className="flex items-center gap-8 flex-1 justify-start ml-8">
               {navItems.map((item, index) => (
                 <Link
                   key={index}
@@ -200,7 +200,7 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                   <img src={WOMEN_AVATARS[4]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
                   <img src={WOMEN_AVATARS[5]} className="w-6 h-6 rounded-full border-2 border-white" alt="" />
                 </div>
-                <span>{communityCount.short} members</span>
+                <span className="text-primary-700 font-medium">{communityCount.short} members</span>
               </div>
               <a
                 href={getSiteUrl('/#newsletter')}
