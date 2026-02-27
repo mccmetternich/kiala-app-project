@@ -27,24 +27,38 @@ export default function SophisticatedArticlePage({
     siteName: site?.name,
     siteSubdomain: site?.subdomain,
     articleTitle: articlePage?.title,
-    brandName: site?.brand?.name
+    brandName: site?.brand?.name,
+    articlePageContent: typeof articlePage?.content,
+    articleContentPreview: article?.content?.substring(0, 100),
+    rawArticle: !!article
   });
   
   const brand = site?.brand || {};
   
-  // Parse article content - handle both JSON content objects and direct HTML content
+  // Parse article content - prioritize raw article content over page content
   const articleContent = (() => {
+    // First, try to use the raw article content (most reliable)
+    if (article?.content && typeof article.content === 'string' && article.content.length > 0) {
+      console.log('✅ Using raw article content:', article.content.substring(0, 100));
+      return { content: article.content };
+    }
+    
+    // Then try articlePage.content
     if (typeof articlePage.content === 'string') {
       // Try to parse as JSON first (for JSON content objects)
       try {
         const parsed = JSON.parse(articlePage.content);
+        console.log('✅ Using parsed JSON content:', parsed);
         return parsed;
       } catch {
         // If JSON parsing fails, treat as raw HTML content
+        console.log('✅ Using raw page content:', articlePage.content.substring(0, 100));
         return { content: articlePage.content };
       }
     }
-    return articlePage.content;
+    
+    console.log('❌ No content found, returning fallback');
+    return { content: 'Article content not available' };
   })();
 
   return (
