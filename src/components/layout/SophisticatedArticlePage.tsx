@@ -12,6 +12,7 @@ interface SophisticatedArticlePageProps {
   views?: number;
   readTime?: number;
   heroImage?: string;
+  article?: any; // Add article for direct access to category, excerpt etc.
 }
 
 export default function SophisticatedArticlePage({
@@ -19,14 +20,25 @@ export default function SophisticatedArticlePage({
   articlePage,
   views,
   readTime,
-  heroImage
+  heroImage,
+  article
 }: SophisticatedArticlePageProps) {
   const brand = site?.brand || {};
   
-  // Parse article content if it's a string
-  const articleContent = typeof articlePage.content === 'string' 
-    ? JSON.parse(articlePage.content) 
-    : articlePage.content;
+  // Parse article content - handle both JSON content objects and direct HTML content
+  const articleContent = (() => {
+    if (typeof articlePage.content === 'string') {
+      // Try to parse as JSON first (for JSON content objects)
+      try {
+        const parsed = JSON.parse(articlePage.content);
+        return parsed;
+      } catch {
+        // If JSON parsing fails, treat as raw HTML content
+        return { content: articlePage.content };
+      }
+    }
+    return articlePage.content;
+  })();
 
   return (
     <SiteLayout
@@ -64,10 +76,10 @@ export default function SophisticatedArticlePage({
               {/* Article Category & Meta */}
               <div className="space-y-6">
                 <div className="flex flex-wrap items-center gap-4 text-sm">
-                  {articleContent?.category && (
+                  {(article?.category || articleContent?.category) && (
                     <span className="inline-flex items-center gap-2 bg-accent-100 text-accent-800 px-3 py-1.5 rounded-full font-medium tracking-wide">
                       <Sparkles className="w-3.5 h-3.5" />
-                      {articleContent.category}
+                      {article?.category || articleContent?.category}
                     </span>
                   )}
                   <div className="flex items-center gap-4 text-gray-600">
@@ -92,9 +104,9 @@ export default function SophisticatedArticlePage({
                 </h1>
 
                 {/* Article Excerpt/Subtitle */}
-                {articleContent?.excerpt && (
+                {(article?.excerpt || articleContent?.excerpt) && (
                   <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl">
-                    {articleContent.excerpt}
+                    {article?.excerpt || articleContent?.excerpt}
                   </p>
                 )}
 
