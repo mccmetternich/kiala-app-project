@@ -81,16 +81,23 @@ export default function ArticlePageClient() {
       if (!siteId || !slug) return;
 
       try {
+        console.log('Loading article:', { siteId, slug });
+        
         // Use combined endpoint to fetch site + article in a single request (eliminates waterfall)
         const response = await fetch(`/api/public/article?subdomain=${siteId}&slug=${slug}`);
+        console.log('API response status:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('API response data:', data);
 
           if (data.site) {
             setSiteData(data.site);
+            console.log('Site data loaded:', data.site.name);
 
             if (data.article) {
               setArticle(data.article);
+              console.log('Article data loaded:', data.article.title);
 
               // Increment view count (fire-and-forget)
               fetch(`/api/articles/${data.article.id}/view`, {
@@ -104,18 +111,22 @@ export default function ArticlePageClient() {
                 content_ids: [data.article.id],
                 content_category: data.article.category || 'Health'
               });
+            } else {
+              console.log('No article found in response');
             }
           } else {
-            // Site not found or not published
+            console.log('No site found in response');
             setSiteData(null);
           }
         } else {
+          console.error('API response not ok:', response.status, await response.text());
           setSiteData(null);
         }
       } catch (error) {
         console.error('Error loading article:', error);
         setSiteData(null);
       } finally {
+        console.log('Setting loading to false');
         setLoading(false);
       }
     }
