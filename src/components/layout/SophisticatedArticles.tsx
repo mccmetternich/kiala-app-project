@@ -263,7 +263,9 @@ export default function SophisticatedArticles({ articles, site, siteId }: Sophis
             />
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
       {/* Newsletter CTA */}
       <section className="py-16 lg:py-20 sophisticated-gradient border-t border-secondary-300">
