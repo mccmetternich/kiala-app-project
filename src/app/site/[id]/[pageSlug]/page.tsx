@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
 import PageWidgetRenderer from '@/components/PageWidgetRenderer';
-import { Site, Page } from '@/types';
+import { Site, Page, PageType } from '@/types';
 import { getCommunityCount } from '@/lib/format-community-count';
 
 // Fallback site data
@@ -155,12 +155,22 @@ export default function DynamicPage() {
     ? JSON.parse(page.content) 
     : page.content;
 
+  // Determine page type based on slug
+  const getPageType = (slug: string): PageType => {
+    if (slug === 'index') return 'homepage';
+    if (slug === 'about') return 'about';
+    if (slug === 'top-picks') return 'top-picks';
+    if (slug === 'success-stories') return 'success-stories';
+    if (slug === 'contact') return 'contact';
+    return 'about'; // fallback for custom pages
+  };
+
   // Create page object for rendering
   const pageData: Page = {
     id: page.id,
     slug: page.slug,
     title: page.title,
-    type: 'page',
+    type: getPageType(page.slug),
     content: pageContent,
     seo: {
       title: `${page.title} | ${transformedSite.name}`,
