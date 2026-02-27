@@ -52,7 +52,9 @@ export default function SophisticatedArticlePage({
     brandName: site?.brand?.name,
     articlePageContent: typeof articlePage?.content,
     articleContentPreview: typeof article?.content === 'string' ? article.content.substring(0, 100) : 'non-string or missing',
-    rawArticle: !!article
+    rawArticle: !!article,
+    hasWidgetConfig: !!article?.widget_config,
+    widgetConfigLength: article?.widget_config?.length
   });
   
   const brand = site?.brand || {};
@@ -86,19 +88,37 @@ export default function SophisticatedArticlePage({
   // Extract hero image from widget config
   const extractedHeroImage = (() => {
     try {
+      console.log('🖼️ Hero Image Debug:', {
+        heroImageProp: heroImage,
+        hasArticle: !!article,
+        hasWidgetConfig: !!article?.widget_config,
+        isArrayConfig: Array.isArray(article?.widget_config),
+        widgetConfig: article?.widget_config
+      });
+      
       // First check if heroImage prop was passed
-      if (heroImage) return heroImage;
+      if (heroImage) {
+        console.log('✅ Using heroImage prop:', heroImage);
+        return heroImage;
+      }
       
       // Then try to get from article widget_config
       if (article?.widget_config && Array.isArray(article.widget_config)) {
-        const heroWidget = article.widget_config.find((w: any) => 
-          w && w.type === 'hero-story' && w.enabled && w.config?.image
-        );
+        console.log('🔍 Searching widget_config:', article.widget_config);
+        const heroWidget = article.widget_config.find((w: any) => {
+          console.log('Checking widget:', w);
+          return w && w.type === 'hero-story' && w.enabled && w.config?.image;
+        });
+        
         if (heroWidget?.config?.image) {
+          console.log('✅ Found hero image from widget:', heroWidget.config.image);
           return heroWidget.config.image;
+        } else {
+          console.log('❌ No hero widget found or missing image');
         }
       }
       
+      console.log('❌ No hero image found');
       return null;
     } catch (error) {
       console.error('Error extracting hero image:', error);
@@ -219,7 +239,7 @@ export default function SophisticatedArticlePage({
         )}
 
         {/* Article Content - Sophisticated Typography */}
-        <section className="pt-6 pb-16 lg:pt-8 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white">
+        <section className={`${extractedHeroImage ? 'pt-6 lg:pt-8' : 'pt-2 lg:pt-4'} pb-16 lg:pb-24 bg-gradient-to-b from-white via-secondary-50/20 to-white`}>
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               
