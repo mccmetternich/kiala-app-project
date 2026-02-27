@@ -203,8 +203,13 @@ export default function DynamicPage() {
         </div>
 
         <PageWidgetRenderer
-          page={pageData}
-          site={transformedSite}
+          widgets={pageContent?.widgets || []}
+          siteId={siteId}
+          siteData={transformedSite}
+          pageContext={{
+            pageType: getPageType(page.slug),
+            subdomain: siteId
+          }}
         />
       </div>
     </SiteLayout>
