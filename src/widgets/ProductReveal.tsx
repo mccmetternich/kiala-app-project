@@ -160,7 +160,7 @@ export default function ProductReveal({
 
             {/* Rating badge - directly under image */}
             <div className="mt-4">
-              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-primary-100"
+              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-primary-100">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
