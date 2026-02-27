@@ -140,23 +140,17 @@ export default function CredibilitySidebar({
             <p className="text-primary-600 font-medium text-sm mb-3">{doctor?.tagline || 'Health & Wellness Authority'}</p>
             
             <div className="flex flex-wrap gap-1 justify-center mb-3">
-              {Array.isArray(doctor?.credentials) ? doctor.credentials.slice(0, 3).map((credential, index) => (
-                <span key={index} className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">
-                  {credential}
-                </span>
-              )) : (
-                doctor?.credentials ? (
-                  doctor.credentials.slice(0, 3).map((credential, index) => (
-                    <span key={index} className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">
-                      {credential}
-                    </span>
-                  ))
-                ) : (
-                  <>
-                    <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">Evidence-Based</span>
-                    <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">Research</span>
-                  </>
-                )
+              {Array.isArray(doctor?.credentials) ? (
+                doctor.credentials!.slice(0, 3).map((credential, index) => (
+                  <span key={index} className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">
+                    {credential}
+                  </span>
+                ))
+              ) : (
+                <>
+                  <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">Evidence-Based</span>
+                  <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs font-semibold">Research</span>
+                </>
               )}
             </div>
 
@@ -168,11 +162,11 @@ export default function CredibilitySidebar({
             {/* Audio Player */}
             {audioTrackUrl && (
               <div className="mb-4">
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-purple-200">
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-primary-200">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={togglePlayPause}
-                      className="w-10 h-10 bg-purple-300 hover:bg-purple-400 rounded-full flex items-center justify-center transition-colors shadow-md"
+                      className="w-10 h-10 bg-primary-300 hover:bg-primary-400 rounded-full flex items-center justify-center transition-colors shadow-md"
                     >
                       {isPlaying ? (
                         <Pause className="w-5 h-5 text-white" />
@@ -185,7 +179,7 @@ export default function CredibilitySidebar({
                       <div className="text-xs text-gray-600 mb-1 text-left">✨ My Personal Message</div>
                       <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
                         <div 
-                          className="bg-purple-300 h-full transition-all duration-100 ease-linear"
+                          className="bg-primary-300 h-full transition-all duration-100 ease-linear"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
