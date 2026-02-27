@@ -115,7 +115,7 @@ export default function ScrollingThumbnails({
   const displayColumns = [...displayColumnsData, ...displayColumnsData];
 
   return (
-    <div className="my-8 overflow-hidden bg-gradient-to-r from-primary-50 via-white to-purple-50 rounded-2xl py-8">
+    <div className="my-8 overflow-hidden bg-gradient-to-r from-primary-50 via-white to-accent-50 rounded-2xl py-8">
       {/* Header */}
       {headline && (
         <h2 className="text-center text-2xl md:text-3xl font-bold text-gray-900 mb-6">
@@ -127,7 +127,7 @@ export default function ScrollingThumbnails({
       <div className="relative overflow-hidden">
         {/* Gradient Overlays for fade effect */}
         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-primary-50 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-purple-50 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-accent-50 to-transparent z-10 pointer-events-none" />
 
         {/* Scrolling Content */}
         <div
@@ -175,7 +175,7 @@ export default function ScrollingThumbnails({
             widgetType="scrolling-thumbnails"
             widgetId={widgetId}
             widgetName={headline}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             {ctaText}
           </TrackedLink>

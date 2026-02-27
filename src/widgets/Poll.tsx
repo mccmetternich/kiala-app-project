@@ -115,8 +115,8 @@ export default function Poll({
       {/* Header */}
       <div className={`rounded-t-2xl px-6 py-5 ${
         isHighlighted
-          ? 'bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500'
-          : 'bg-gradient-to-r from-primary-500 to-purple-500'
+          ? 'bg-gradient-to-r from-accent-500 via-accent-600 to-primary-500'
+          : 'bg-gradient-to-r from-primary-500 to-accent-500'
       }`}>
         <div className="flex items-start gap-3">
           <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
@@ -139,7 +139,7 @@ export default function Poll({
 
       {/* Body */}
       <div className={`rounded-b-2xl bg-white border-2 border-t-0 shadow-xl overflow-hidden ${
-        isHighlighted ? 'border-purple-200' : 'border-primary-200'
+        isHighlighted ? 'border-accent-200' : 'border-primary-200'
       }`}>
         <div className="p-6">
           {/* Options */}
@@ -165,7 +165,7 @@ export default function Poll({
                     isSelected
                       ? 'ring-2 ring-primary-500 shadow-lg'
                       : isWinner
-                        ? 'ring-2 ring-emerald-400'
+                        ? 'ring-2 ring-accent-400'
                         : ''
                   } ${
                     isHovered && !hasVoted
@@ -178,9 +178,9 @@ export default function Poll({
                     <div
                       className={`absolute inset-y-0 left-0 transition-all duration-700 ease-out ${
                         isSelected
-                          ? 'bg-gradient-to-r from-primary-200 to-purple-200'
+                          ? 'bg-gradient-to-r from-primary-200 to-accent-200'
                           : isWinner
-                            ? 'bg-gradient-to-r from-emerald-100 to-green-100'
+                            ? 'bg-gradient-to-r from-accent-100 to-accent-200'
                             : 'bg-gray-100'
                       }`}
                       style={{ width: `${percentage}%` }}
@@ -196,19 +196,19 @@ export default function Poll({
                         </div>
                       )}
                       {hasVoted && isWinner && !isSelected && (
-                        <div className="p-1 bg-emerald-500 rounded-full">
+                        <div className="p-1 bg-accent-500 rounded-full">
                           <TrendingUp className="w-5 h-5 text-white" />
                         </div>
                       )}
                       <span className={`font-semibold text-base md:text-lg ${
                         isSelected ? 'text-primary-900' :
-                        isWinner ? 'text-emerald-900' :
+                        isWinner ? 'text-accent-900' :
                         'text-gray-800'
                       }`}>
                         {option.label}
                       </span>
                       {isWinner && hasVoted && (
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full uppercase">
+                        <span className="px-2 py-0.5 bg-accent-100 text-accent-700 text-xs font-bold rounded-full uppercase">
                           Most Common
                         </span>
                       )}
@@ -217,7 +217,7 @@ export default function Poll({
                       <div className="flex items-center gap-3">
                         <span className={`text-xl font-bold ${
                           isSelected ? 'text-primary-700' :
-                          isWinner ? 'text-emerald-700' :
+                          isWinner ? 'text-accent-700' :
                           'text-gray-700'
                         }`}>
                           {percentage}%
@@ -242,15 +242,15 @@ export default function Poll({
           {hasVoted && processedResultsMessage && (
             <div className={`mt-6 p-5 rounded-xl border-2 ${
               isHighlighted
-                ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200'
-                : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'
+                ? 'bg-gradient-to-r from-accent-50 to-primary-50 border-accent-200'
+                : 'bg-gradient-to-r from-primary-50 to-accent-50 border-primary-200'
             }`}>
               <div className="flex items-start gap-3">
                 <Sparkles className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                  isHighlighted ? 'text-purple-500' : 'text-amber-500'
+                  isHighlighted ? 'text-accent-500' : 'text-primary-500'
                 }`} />
                 <p className={`text-base font-medium ${
-                  isHighlighted ? 'text-purple-800' : 'text-amber-800'
+                  isHighlighted ? 'text-accent-800' : 'text-primary-800'
                 }`}>
                   {processedResultsMessage}
                 </p>
@@ -275,7 +275,7 @@ export default function Poll({
               widgetType="poll"
               widgetId={pollId}
               widgetName={question}
-              className="mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-rose-500 via-pink-500 to-orange-500 hover:from-rose-600 hover:via-pink-600 hover:to-orange-600 text-white"
+              className="mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-primary-500 via-accent-500 to-accent-600 hover:from-primary-600 hover:via-accent-600 hover:to-accent-700 text-white"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />

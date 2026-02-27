@@ -103,7 +103,7 @@ export default function ExclusiveProductCard({
   return (
     <div className="my-8">
       {/* Dr. Recommendation Header */}
-      <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 text-white rounded-t-2xl p-3 md:p-4">
+      <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-600 text-white rounded-t-2xl p-3 md:p-4">
         {/* Mobile Layout */}
         <div className="md:hidden">
           <div className="flex items-center gap-2 mb-2">
@@ -183,7 +183,7 @@ export default function ExclusiveProductCard({
           <div className="relative bg-gradient-to-br from-gray-50 to-primary-50 p-4">
             {/* Community Exclusive badge */}
             <div className="absolute top-4 left-4 z-10">
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
+              <div className="bg-gradient-to-r from-accent-600 to-primary-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 COMMUNITY EXCLUSIVE
               </div>
@@ -226,7 +226,7 @@ export default function ExclusiveProductCard({
             </div>
 
             {/* Pricing */}
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-3 mb-4 border border-amber-200">
+            <div className="bg-gradient-to-r from-accent-50 to-secondary-50 rounded-xl p-3 mb-4 border border-accent-200">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-baseline gap-2">
@@ -237,7 +237,7 @@ export default function ExclusiveProductCard({
                     {savingsText || `You save $${savings} (${Math.round((savings/originalPrice)*100)}% off)`}
                   </p>
                 </div>
-                <div className="bg-red-500 text-white px-3 py-1.5 rounded-lg font-bold text-xs animate-pulse">
+                <div className="bg-primary-500 text-white px-3 py-1.5 rounded-lg font-bold text-xs animate-pulse">
                   LIMITED TIME
                 </div>
               </div>
@@ -250,7 +250,7 @@ export default function ExclusiveProductCard({
               widgetType="exclusive-product-card"
               widgetName={name}
               value={price}
-              className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-5 rounded-xl text-base transition-all shadow-lg hover:shadow-xl text-center"
+              className="block w-full bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-5 rounded-xl text-base transition-all shadow-lg hover:shadow-xl text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />
@@ -314,7 +314,7 @@ export default function ExclusiveProductCard({
           <div className="relative bg-gradient-to-br from-gray-50 to-primary-50 p-6">
             {/* Community Exclusive badge */}
             <div className="absolute top-4 left-4 z-10">
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
+              <div className="bg-gradient-to-r from-accent-600 to-primary-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 COMMUNITY EXCLUSIVE
               </div>
@@ -345,7 +345,7 @@ export default function ExclusiveProductCard({
               <div className="mt-6 bg-white rounded-xl p-5 shadow-md border border-gray-100 relative">
                 {/* Quote icon */}
                 <div className="absolute -top-3 left-4">
-                  <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-2 shadow-lg">
+                  <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-full p-2 shadow-lg">
                     <Quote className="w-4 h-4 text-white" />
                   </div>
                 </div>
@@ -396,7 +396,7 @@ export default function ExclusiveProductCard({
             </div>
 
             {/* Pricing */}
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 mb-6 border border-amber-200">
+            <div className="bg-gradient-to-r from-accent-50 to-secondary-50 rounded-xl p-4 mb-6 border border-accent-200">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-baseline gap-2">
@@ -407,7 +407,7 @@ export default function ExclusiveProductCard({
                     {savingsText || `You save $${savings} (${Math.round((savings/originalPrice)*100)}% off)`}
                   </p>
                 </div>
-                <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold animate-pulse">
+                <div className="bg-primary-500 text-white px-4 py-2 rounded-lg font-bold animate-pulse">
                   LIMITED TIME
                 </div>
               </div>
@@ -420,7 +420,7 @@ export default function ExclusiveProductCard({
               widgetType="exclusive-product-card"
               widgetName={name}
               value={price}
-              className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+              className="block w-full bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />

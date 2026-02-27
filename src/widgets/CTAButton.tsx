@@ -101,7 +101,7 @@ export default function CTAButton({
                   {[...Array(5)].map((_, idx) => (
                     <Star
                       key={idx}
-                      className={`w-4 h-4 ${idx < socialProofStars ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                      className={`w-4 h-4 ${idx < socialProofStars ? 'text-primary-400 fill-primary-400' : 'text-gray-300'}`}
                     />
                   ))}
                 </div>
@@ -123,7 +123,7 @@ export default function CTAButton({
               className={`inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl ${
                 style === 'secondary'
                   ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                  : 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white'
+                  : 'bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white'
               }`}
             >
               {finalCtaText}
@@ -138,9 +138,9 @@ export default function CTAButton({
             {badges.map((badge, idx) => (
               <span
                 key={idx}
-                className="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 text-sm font-medium rounded-full border border-green-100"
+                className="inline-flex items-center px-3 py-1.5 bg-accent-50 text-accent-700 text-sm font-medium rounded-full border border-accent-100"
               >
-                <svg className="w-4 h-4 mr-1.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 mr-1.5 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 {badge}

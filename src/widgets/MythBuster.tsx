@@ -49,7 +49,7 @@ export default function MythBuster({
       <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 md:p-8 border border-gray-200 shadow-lg">
         {headline && (
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-primary-500 to-purple-500 rounded-xl">
+            <div className="p-2 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl">
               <Scale className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-xl font-bold text-gray-900">{headline}</h3>
@@ -67,14 +67,14 @@ export default function MythBuster({
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <div className="flex items-start gap-3 mb-3">
-                <div className="p-1.5 bg-rose-100 rounded-full">
-                  <XCircle className="w-4 h-4 text-rose-500" />
+                <div className="p-1.5 bg-primary-100 rounded-full">
+                  <XCircle className="w-4 h-4 text-primary-500" />
                 </div>
                 <p className="text-gray-500 line-through text-base">{item.myth}</p>
               </div>
               <div className="flex items-start gap-3 ml-0.5">
-                <div className="p-1.5 bg-emerald-100 rounded-full">
-                  <CheckCircle className="w-4 h-4 text-emerald-500" />
+                <div className="p-1.5 bg-accent-100 rounded-full">
+                  <CheckCircle className="w-4 h-4 text-accent-500" />
                 </div>
                 <p className="text-gray-900 font-semibold text-base">{item.truth}</p>
               </div>
@@ -88,7 +88,7 @@ export default function MythBuster({
               href={ctaUrl}
               widgetType="myth-buster"
               widgetName={headline || 'Myth vs. Reality'}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function MythBuster({
     return (
       <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
         {headline && (
-          <div className="bg-gradient-to-r from-primary-500 to-purple-500 px-6 py-5">
+          <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-5">
             <div className="flex items-center gap-3">
               <Scale className="w-6 h-6 text-white" />
               <div>
@@ -124,11 +124,11 @@ export default function MythBuster({
               <div className="grid md:grid-cols-2 gap-4">
                 <div className={`rounded-xl p-5 transition-all duration-300 ${
                   hoveredIndex === idx
-                    ? 'bg-gradient-to-br from-rose-100 to-pink-100 shadow-md'
-                    : 'bg-gradient-to-br from-rose-50 to-pink-50'
+                    ? 'bg-gradient-to-br from-primary-100 to-accent-100 shadow-md'
+                    : 'bg-gradient-to-br from-primary-50 to-accent-50'
                 }`}>
-                  <div className="flex items-center gap-2 text-rose-700 font-semibold text-sm mb-3">
-                    <div className="p-1.5 bg-rose-200 rounded-full">
+                  <div className="flex items-center gap-2 text-primary-700 font-semibold text-sm mb-3">
+                    <div className="p-1.5 bg-primary-200 rounded-full">
                       <XCircle className="w-4 h-4" />
                     </div>
                     <span className="uppercase tracking-wide">What You've Been Told</span>
@@ -137,11 +137,11 @@ export default function MythBuster({
                 </div>
                 <div className={`rounded-xl p-5 transition-all duration-300 ${
                   hoveredIndex === idx
-                    ? 'bg-gradient-to-br from-emerald-100 to-teal-100 shadow-md'
-                    : 'bg-gradient-to-br from-emerald-50 to-teal-50'
+                    ? 'bg-gradient-to-br from-accent-100 to-accent-200 shadow-md'
+                    : 'bg-gradient-to-br from-accent-50 to-accent-100'
                 }`}>
-                  <div className="flex items-center gap-2 text-emerald-700 font-semibold text-sm mb-3">
-                    <div className="p-1.5 bg-emerald-200 rounded-full">
+                  <div className="flex items-center gap-2 text-accent-700 font-semibold text-sm mb-3">
+                    <div className="p-1.5 bg-accent-200 rounded-full">
                       <CheckCircle className="w-4 h-4" />
                     </div>
                     <span className="uppercase tracking-wide">What's Actually True</span>
@@ -159,7 +159,7 @@ export default function MythBuster({
               href={ctaUrl}
               widgetType="myth-buster"
               widgetName={headline || 'Myth vs. Reality'}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
@@ -174,7 +174,7 @@ export default function MythBuster({
   return (
     <div className="my-8">
       {headline && (
-        <div className="bg-gradient-to-r from-primary-500 to-purple-500 rounded-t-2xl px-6 py-5">
+        <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-t-2xl px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
               <Scale className="w-6 h-6 text-white" />
@@ -200,21 +200,21 @@ export default function MythBuster({
                 {/* Myth side - Rose/Pink theme */}
                 <div className={`p-6 transition-all duration-300 ${
                   hoveredIndex === idx
-                    ? 'bg-gradient-to-br from-rose-100 via-pink-100 to-rose-50'
-                    : 'bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50/50'
+                    ? 'bg-gradient-to-br from-primary-100 via-accent-100 to-primary-50'
+                    : 'bg-gradient-to-br from-primary-50 via-accent-50 to-primary-50/50'
                 }`}>
                   <div className="flex items-center gap-2 mb-4">
                     <div className={`p-2 rounded-full transition-all duration-300 ${
-                      hoveredIndex === idx ? 'bg-rose-300 shadow-md' : 'bg-rose-200'
+                      hoveredIndex === idx ? 'bg-primary-300 shadow-md' : 'bg-primary-200'
                     }`}>
-                      <XCircle className="w-5 h-5 text-rose-700" />
+                      <XCircle className="w-5 h-5 text-primary-700" />
                     </div>
-                    <span className="text-sm font-bold text-rose-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-primary-700 uppercase tracking-wider">
                       What You've Been Told
                     </span>
                   </div>
                   <p className={`text-lg leading-relaxed transition-all duration-300 ${
-                    hoveredIndex === idx ? 'text-rose-800' : 'text-gray-700'
+                    hoveredIndex === idx ? 'text-primary-800' : 'text-gray-700'
                   }`}>
                     "{item.myth}"
                   </p>
@@ -228,25 +228,25 @@ export default function MythBuster({
                 {/* Truth side - Emerald/Teal theme */}
                 <div className={`p-6 border-t md:border-t-0 md:border-l border-gray-200 transition-all duration-300 ${
                   hoveredIndex === idx
-                    ? 'bg-gradient-to-br from-emerald-100 via-teal-100 to-emerald-50'
-                    : 'bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-50/50'
+                    ? 'bg-gradient-to-br from-accent-100 via-accent-200 to-accent-50'
+                    : 'bg-gradient-to-br from-accent-50 via-accent-100 to-accent-50/50'
                 }`}>
                   <div className="flex items-center gap-2 mb-4">
                     <div className={`p-2 rounded-full transition-all duration-300 ${
-                      hoveredIndex === idx ? 'bg-emerald-300 shadow-md' : 'bg-emerald-200'
+                      hoveredIndex === idx ? 'bg-accent-300 shadow-md' : 'bg-accent-200'
                     }`}>
                       {item.icon && iconMap[item.icon] ? (
-                        <span className="text-emerald-700">{iconMap[item.icon]}</span>
+                        <span className="text-accent-700">{iconMap[item.icon]}</span>
                       ) : (
-                        <CheckCircle className="w-5 h-5 text-emerald-700" />
+                        <CheckCircle className="w-5 h-5 text-accent-700" />
                       )}
                     </div>
-                    <span className="text-sm font-bold text-emerald-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-accent-700 uppercase tracking-wider">
                       What's Actually True
                     </span>
                   </div>
                   <p className={`text-lg leading-relaxed font-semibold transition-all duration-300 ${
-                    hoveredIndex === idx ? 'text-emerald-800' : 'text-gray-800'
+                    hoveredIndex === idx ? 'text-accent-800' : 'text-gray-800'
                   }`}>
                     {item.truth}
                   </p>
@@ -262,7 +262,7 @@ export default function MythBuster({
               href={ctaUrl}
               widgetType="myth-buster"
               widgetName={headline || 'Myth vs. Reality'}
-              className="block w-full text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="block w-full text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span className="flex items-center justify-center gap-2">
                 <Sparkles className="w-5 h-5" />

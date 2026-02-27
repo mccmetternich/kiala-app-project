@@ -75,7 +75,7 @@ export default function NewsletterSignup({
   };
 
   return (
-    <div id="newsletter" className="bg-gradient-to-br from-primary-600 via-primary-700 to-purple-800 rounded-3xl p-8 lg:p-12 my-12 text-white shadow-2xl scroll-mt-24">
+    <div id="newsletter" className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-3xl p-8 lg:p-12 my-12 text-white shadow-2xl scroll-mt-24">
       <div className="max-w-4xl mx-auto">
         {/* Social Proof Header */}
         <div className="flex flex-col lg:flex-row items-center justify-center gap-6 mb-8">
@@ -91,7 +91,7 @@ export default function NewsletterSignup({
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start gap-1 mb-1">
               {[1,2,3,4,5].map((star) => (
-                <Star key={star} className="w-5 h-5 fill-current text-yellow-400" />
+                <Star key={star} className="w-5 h-5 fill-current text-primary-400" />
               ))}
               <span className="ml-2 font-semibold">4.9/5</span>
             </div>
@@ -132,7 +132,7 @@ export default function NewsletterSignup({
           <div
             className={`max-w-xl mx-auto mb-6 p-4 rounded-xl text-center ${
               status === 'success'
-                ? 'bg-green-500/30 border border-green-300'
+                ? 'bg-accent-500/30 border border-accent-300'
                 : status === 'error'
                 ? 'bg-red-500/30 border border-red-300'
                 : ''

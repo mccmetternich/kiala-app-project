@@ -74,7 +74,7 @@ export default function ProductReveal({
     <div className="my-12">
       {/* Header Section */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-100 to-accent-100 text-primary-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
           <Sparkles className="w-4 h-4" />
           {badge}
         </div>
@@ -83,12 +83,12 @@ export default function ProductReveal({
       </div>
 
       {/* Main Reveal Card */}
-      <div className="bg-white rounded-3xl shadow-2xl border border-purple-100/50 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-2xl border border-primary-100/50 overflow-hidden">
         {/* Decorative top border */}
-        <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500" />
+        <div className="h-1.5 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500" />
 
         {/* Doctor Endorsement Strip - At Top */}
-        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 p-5 md:p-6">
+        <div className="bg-gradient-to-r from-primary-600 via-primary-700 to-accent-600 p-5 md:p-6">
           <div className="flex flex-col md:flex-row items-center gap-4 max-w-4xl mx-auto">
             <div className="flex items-center gap-4 flex-shrink-0">
               <div className="relative">
@@ -101,10 +101,10 @@ export default function ProductReveal({
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <BadgeCheck className="w-5 h-5 text-amber-300" />
+                  <BadgeCheck className="w-5 h-5 text-primary-300" />
                   <span className="font-bold text-white">{doctorName}</span>
                 </div>
-                <p className="text-purple-200 text-sm">Board-Certified • Women's Health</p>
+                <p className="text-primary-200 text-sm">Board-Certified • Women's Health</p>
               </div>
             </div>
             <div className="flex-1">
@@ -117,10 +117,10 @@ export default function ProductReveal({
 
         <div className="md:grid md:grid-cols-[55%_45%] gap-0">
           {/* Product Image Side - Larger allocation */}
-          <div className="relative bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 p-4 md:p-4">
+          <div className="relative bg-gradient-to-br from-primary-50/80 via-white to-accent-50/80 p-4 md:p-4">
             {/* Badge with #1 - positioned top-left of image */}
             <div className="absolute top-6 left-6 md:top-6 md:left-6 z-10">
-              <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl px-4 py-2.5 shadow-xl flex items-center gap-2">
+              <div className="bg-gradient-to-br from-accent-500 to-primary-600 rounded-2xl px-4 py-2.5 shadow-xl flex items-center gap-2">
                 <Award className="w-5 h-5 text-white" />
                 <span className="text-white font-black text-lg">#1</span>
               </div>
@@ -144,8 +144,8 @@ export default function ProductReveal({
                     onClick={() => setSelectedImageIndex(idx)}
                     className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${
                       selectedImageIndex === idx
-                        ? 'border-purple-500 ring-2 ring-purple-200 scale-105'
-                        : 'border-gray-200 hover:border-purple-300'
+                        ? 'border-primary-500 ring-2 ring-primary-200 scale-105'
+                        : 'border-gray-200 hover:border-primary-300'
                     }`}
                   >
                     <img
@@ -160,12 +160,12 @@ export default function ProductReveal({
 
             {/* Rating badge - directly under image */}
             <div className="mt-4">
-              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-purple-100">
+              <div className="flex items-center justify-center gap-3 bg-white rounded-xl px-4 py-3 shadow-lg border border-primary-100"
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
-                      className={`w-5 h-5 ${star <= Math.floor(rating) ? 'fill-amber-400 text-amber-400' : 'fill-amber-400/30 text-amber-400/30'}`}
+                      className={`w-5 h-5 ${star <= Math.floor(rating) ? 'fill-primary-400 text-primary-400' : 'fill-primary-400/30 text-primary-400/30'}`}
                     />
                   ))}
                 </div>
@@ -178,8 +178,8 @@ export default function ProductReveal({
             {/* Social Proof Stats - hidden on mobile, shown on desktop */}
             <div className="hidden md:grid grid-cols-3 gap-2 mt-4">
               {socialProofStats.map((stat, idx) => (
-                <div key={idx} className="text-center bg-gradient-to-b from-purple-50 to-white rounded-xl p-3 border border-purple-100/50">
-                  <div className="text-lg md:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.value}</div>
+                <div key={idx} className="text-center bg-gradient-to-b from-primary-50 to-white rounded-xl p-3 border border-primary-100/50">
+                  <div className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">{stat.value}</div>
                   <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
                 </div>
               ))}
@@ -187,7 +187,7 @@ export default function ProductReveal({
           </div>
 
           {/* Content Side - Tighter padding */}
-          <div className="p-5 md:p-6 bg-gradient-to-b from-white to-purple-50/30">
+          <div className="p-5 md:p-6 bg-gradient-to-b from-white to-primary-50/30">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{productName}</h3>
             <p className="text-gray-600 mb-6 leading-relaxed">{productDescription}</p>
 
@@ -195,8 +195,8 @@ export default function ProductReveal({
             <div className="space-y-3 mb-6">
               {keyBenefits.map((benefit, idx) => (
                 <div key={idx} className="flex items-start gap-3">
-                  <div className="p-1 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full mt-0.5 shadow-sm">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
+                  <div className="p-1 bg-gradient-to-br from-accent-100 to-accent-200 rounded-full mt-0.5 shadow-sm">
+                    <CheckCircle className="w-4 h-4 text-accent-600" />
                   </div>
                   <span className="text-gray-700">{benefit}</span>
                 </div>
@@ -209,7 +209,7 @@ export default function ProductReveal({
               target={target}
               widgetType="product-reveal"
               widgetName={productName}
-              className="block w-full bg-gradient-to-r from-purple-600 via-purple-600 to-pink-600 hover:from-purple-700 hover:via-purple-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+              className="block w-full bg-gradient-to-r from-primary-600 via-primary-600 to-accent-600 hover:from-primary-700 hover:via-primary-700 hover:to-accent-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 {ctaText}
@@ -219,7 +219,7 @@ export default function ProductReveal({
 
             {/* Community Exclusive Badge */}
             {communityExclusive && (
-              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-purple-700">
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-primary-700">
                 <ShieldCheck className="w-4 h-4" />
                 <span className="font-medium">{communityExclusiveText}</span>
               </div>
@@ -228,8 +228,8 @@ export default function ProductReveal({
             {/* Social Proof Stats - mobile only, shown at bottom */}
             <div className="grid md:hidden grid-cols-3 gap-2 mt-6">
               {socialProofStats.map((stat, idx) => (
-                <div key={idx} className="text-center bg-gradient-to-b from-purple-50 to-white rounded-xl p-3 border border-purple-100/50">
-                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stat.value}</div>
+                <div key={idx} className="text-center bg-gradient-to-b from-primary-50 to-white rounded-xl p-3 border border-primary-100/50">
+                  <div className="text-lg font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">{stat.value}</div>
                   <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
                 </div>
               ))}

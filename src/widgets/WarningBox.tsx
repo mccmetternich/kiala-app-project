@@ -54,17 +54,17 @@ export default function WarningBox({
         pulse: '',
       },
       medium: {
-        bg: isHovered ? 'bg-gradient-to-r from-rose-100 to-pink-100' : 'bg-gradient-to-r from-rose-50 to-pink-50',
-        border: 'border-rose-300',
-        icon: <AlertCircle className="w-5 h-5 text-rose-600" />,
-        text: 'text-rose-900',
+        bg: isHovered ? 'bg-gradient-to-r from-primary-100 to-accent-100' : 'bg-gradient-to-r from-primary-50 to-accent-50',
+        border: 'border-primary-300',
+        icon: <AlertCircle className="w-5 h-5 text-primary-600" />,
+        text: 'text-primary-900',
         pulse: '',
       },
       low: {
-        bg: isHovered ? 'bg-gradient-to-r from-pink-100 to-purple-100' : 'bg-gradient-to-r from-pink-50 to-purple-50',
-        border: 'border-pink-300',
-        icon: <Info className="w-5 h-5 text-pink-600" />,
-        text: 'text-pink-900',
+        bg: isHovered ? 'bg-gradient-to-r from-accent-100 to-primary-100' : 'bg-gradient-to-r from-accent-50 to-primary-50',
+        border: 'border-accent-300',
+        icon: <Info className="w-5 h-5 text-accent-600" />,
+        text: 'text-accent-900',
         pulse: '',
       },
     };
@@ -83,17 +83,17 @@ export default function WarningBox({
         };
       case 'info':
         return {
-          bg: 'bg-gradient-to-r from-blue-100 via-indigo-100 to-blue-50',
-          border: 'border-blue-300',
-          iconBg: 'bg-blue-500',
-          text: 'text-blue-900',
+          bg: 'bg-gradient-to-r from-primary-100 via-accent-100 to-primary-50',
+          border: 'border-primary-300',
+          iconBg: 'bg-primary-500',
+          text: 'text-primary-900',
         };
       case 'cascade':
         return {
-          bg: 'bg-gradient-to-r from-rose-100 via-red-100 to-orange-100',
-          border: 'border-rose-300',
-          iconBg: 'bg-rose-500',
-          text: 'text-rose-900',
+          bg: 'bg-gradient-to-r from-primary-100 via-accent-100 to-accent-200',
+          border: 'border-primary-300',
+          iconBg: 'bg-primary-500',
+          text: 'text-primary-900',
         };
       default: // amber/default
         return {
@@ -111,7 +111,7 @@ export default function WarningBox({
     return (
       <div className="my-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-rose-500 via-red-500 to-orange-500 rounded-t-2xl px-6 py-5">
+        <div className="bg-gradient-to-r from-primary-500 via-accent-500 to-accent-600 rounded-t-2xl px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur animate-pulse">
@@ -119,7 +119,7 @@ export default function WarningBox({
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white">{headline}</h3>
-                {content && <p className="text-rose-100 mt-1">{content}</p>}
+                {content && <p className="text-primary-100 mt-1">{content}</p>}
               </div>
             </div>
             <button
@@ -132,7 +132,7 @@ export default function WarningBox({
         </div>
 
         {/* Content Area */}
-        <div className={`bg-white shadow-xl border-2 border-t-0 border-rose-200 rounded-b-2xl overflow-hidden transition-all duration-500 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`bg-white shadow-xl border-2 border-t-0 border-primary-200 rounded-b-2xl overflow-hidden transition-all duration-500 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="p-4 md:p-6">
             {/* Body text */}
             {body && (
@@ -182,8 +182,8 @@ export default function WarningBox({
                         {/* Level indicator - on the left */}
                         <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm md:text-base font-bold ${
                           warning.severity === 'high' ? 'bg-red-200 text-red-800' :
-                          warning.severity === 'low' ? 'bg-pink-200 text-pink-800' :
-                          'bg-rose-200 text-rose-800'
+                          warning.severity === 'low' ? 'bg-accent-200 text-accent-800' :
+                          'bg-primary-200 text-primary-800'
                         }`}>
                           {idx + 1}
                         </div>
@@ -223,7 +223,7 @@ export default function WarningBox({
                   href={ctaUrl}
                   widgetType="warning-box"
                   widgetName={headline}
-                  className="block w-full text-center bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="block w-full text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="flex items-center justify-center gap-2">
                     {ctaText}
@@ -241,20 +241,20 @@ export default function WarningBox({
   // Container styles for other variants
   const containerStyles = {
     default: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300',
-    urgent: 'bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 border-red-300',
-    info: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300',
+    urgent: 'bg-gradient-to-br from-red-50 via-primary-50 to-accent-50 border-red-300',
+    info: 'bg-gradient-to-br from-primary-50 to-accent-50 border-primary-300',
   };
 
   const headerStyles = {
     default: 'from-amber-500 to-yellow-500',
-    urgent: 'from-red-500 to-rose-500',
-    info: 'from-blue-500 to-indigo-500',
+    urgent: 'from-red-500 to-primary-500',
+    info: 'from-primary-500 to-accent-500',
   };
 
   const iconBgStyles = {
     default: 'bg-amber-100 text-amber-600',
     urgent: 'bg-red-100 text-red-600',
-    info: 'bg-blue-100 text-blue-600',
+    info: 'bg-primary-100 text-primary-600',
   };
 
   const footerStyles = getFooterStyles();

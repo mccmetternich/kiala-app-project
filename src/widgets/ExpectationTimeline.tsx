@@ -122,7 +122,7 @@ export default function ExpectationTimeline({
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden my-8 border border-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white p-5">
+      <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-5">
         <h2 className="text-2xl font-bold mb-1">{headline}</h2>
         <p className="text-primary-100">{subheading}</p>
       </div>
@@ -131,7 +131,7 @@ export default function ExpectationTimeline({
       <div className="p-5 md:p-6">
         <div className="relative">
           {/* Vertical Line - Desktop */}
-          <div className="absolute left-7 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 via-purple-500 to-primary-400 hidden md:block rounded-full"></div>
+          <div className="absolute left-7 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-400 hidden md:block rounded-full"></div>
 
           {/* Timeline Steps */}
           <div className="space-y-5">
@@ -152,9 +152,9 @@ export default function ExpectationTimeline({
                     <div className="flex-shrink-0 flex items-center gap-4 md:gap-0">
                       <div className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${
                         index === 0 ? 'bg-gradient-to-br from-primary-500 to-primary-600' :
-                        index === 1 ? 'bg-gradient-to-br from-purple-500 to-purple-600' :
-                        index === 2 ? 'bg-gradient-to-br from-primary-400 to-purple-500' :
-                        'bg-gradient-to-br from-purple-400 to-primary-500'
+                        index === 1 ? 'bg-gradient-to-br from-accent-500 to-accent-600' :
+                        index === 2 ? 'bg-gradient-to-br from-primary-400 to-accent-500' :
+                        'bg-gradient-to-br from-accent-400 to-primary-500'
                       } text-white`}>
                         <Icon className="w-6 h-6" />
                       </div>
@@ -175,7 +175,7 @@ export default function ExpectationTimeline({
 
                       {/* Subtitle / Ingredients line */}
                       {step.subtitle && (
-                        <p className="text-xs text-purple-600 font-medium mb-2 tracking-wide">{step.subtitle}</p>
+                        <p className="text-xs text-accent-600 font-medium mb-2 tracking-wide">{step.subtitle}</p>
                       )}
 
                       {/* Description as a highlighted tagline */}
@@ -205,7 +205,7 @@ export default function ExpectationTimeline({
 
                       {/* Progress indicator for last step */}
                       {isLast && (
-                        <div className="mt-3 p-3 bg-gradient-to-r from-primary-50 to-purple-50 rounded-lg border border-primary-200">
+                        <div className="mt-3 p-3 bg-gradient-to-r from-primary-50 to-accent-50 rounded-lg border border-primary-200">
                           <div className="flex items-center gap-2 text-primary-700 font-medium">
                             <Sparkles className="w-5 h-5" />
                             <span>Complete Transformation Achieved!</span>
@@ -237,7 +237,7 @@ export default function ExpectationTimeline({
 
         {/* Summary Stats - Only shown if showStats is true */}
         {showStats && (
-          <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl">
+          <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-primary-50 to-primary-50 rounded-xl">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary-600">{weeksTotal}</div>
               <div className="text-sm text-gray-600">{stat1Label}</div>
@@ -260,7 +260,7 @@ export default function ExpectationTimeline({
             target={target}
             widgetType="expectation-timeline"
             widgetName={headline}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
           >
             {ctaText}
           </TrackedLink>

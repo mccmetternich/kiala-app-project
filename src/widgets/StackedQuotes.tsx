@@ -153,7 +153,7 @@ export default function StackedQuotes({
                     className="w-10 h-10 rounded-full object-cover border-2 border-white shadow"
                   />
                   {quote.verified && showVerifiedBadge && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center border-2 border-white">
                       <CheckCircle className="w-2.5 h-2.5 text-white" />
                     </div>
                   )}
@@ -177,7 +177,7 @@ export default function StackedQuotes({
                       </div>
                     )}
                     {quote.result && (
-                      <span className="bg-green-100 text-green-700 text-[10px] px-1.5 py-0.5 rounded font-medium">
+                      <span className="bg-accent-100 text-accent-700 text-[10px] px-1.5 py-0.5 rounded font-medium">
                         {quote.result}
                       </span>
                     )}
@@ -192,7 +192,7 @@ export default function StackedQuotes({
               {quote.verified && showVerifiedBadge && (
                 <div className="mt-1.5">
                   <span className="inline-flex items-center gap-1 text-[10px] text-gray-500">
-                    <CheckCircle className="w-3 h-3 text-green-500" />
+                    <CheckCircle className="w-3 h-3 text-accent-500" />
                     Verified Member
                   </span>
                 </div>
@@ -211,7 +211,7 @@ export default function StackedQuotes({
                       className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-lg"
                     />
                     {quote.verified && showVerifiedBadge && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-accent-500 rounded-full flex items-center justify-center border-2 border-white">
                         <CheckCircle className="w-4 h-4 text-white" />
                       </div>
                     )}
@@ -228,7 +228,7 @@ export default function StackedQuotes({
                         </span>
                       )}
                       {quote.result && (
-                        <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                        <span className="bg-accent-100 text-accent-700 text-xs px-2 py-0.5 rounded-full font-medium">
                           {quote.result}
                         </span>
                       )}
@@ -261,7 +261,7 @@ export default function StackedQuotes({
               {quote.verified && showVerifiedBadge && (
                 <div className="mt-4 pl-20">
                   <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
-                    <CheckCircle className="w-3 h-3 text-green-500" />
+                    <CheckCircle className="w-3 h-3 text-accent-500" />
                     Verified Member
                   </span>
                 </div>
@@ -273,7 +273,7 @@ export default function StackedQuotes({
 
       {/* Bottom CTA - Email Signup (only show if enabled) */}
       {showEmailCapture && (
-        <div className="text-center mt-8 bg-gradient-to-br from-primary-50 to-purple-50 rounded-xl p-8 border border-primary-100">
+        <div className="text-center mt-8 bg-gradient-to-br from-primary-50 to-primary-50 rounded-xl p-8 border border-primary-100">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Mail className="w-5 h-5 text-primary-600" />
             <span className="text-gray-700 font-medium">Join Our Wellness Community</span>

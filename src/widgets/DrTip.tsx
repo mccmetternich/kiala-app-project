@@ -20,7 +20,7 @@ interface DrTipProps {
 
 export default function DrTip({
   tip,
-  name = 'Dr. Amy Heart',
+  name = 'Wellness Expert',
   credentials,
   image,
   style = 'default',
@@ -35,12 +35,12 @@ export default function DrTip({
   if (style === 'minimal') {
     return (
       <div
-        className="flex items-start gap-4 p-5 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+        className="flex items-start gap-4 p-5 bg-gradient-to-r from-secondary-50 to-accent-50 rounded-xl border border-secondary-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className={`p-2 rounded-full transition-all duration-300 ${isHovered ? 'bg-pink-200 shadow-md' : 'bg-pink-100'}`}>
-          <Lightbulb className="w-5 h-5 text-pink-600" />
+        <div className={`p-2 rounded-full transition-all duration-300 ${isHovered ? 'bg-accent-200 shadow-md' : 'bg-accent-100'}`}>
+          <Lightbulb className="w-5 h-5 text-accent-600" />
         </div>
         <div className="flex-1">
           <p className="text-gray-700 text-base leading-relaxed">{tip}</p>
@@ -49,7 +49,7 @@ export default function DrTip({
               <img
                 src={image}
                 alt={name}
-                className="w-8 h-8 rounded-full object-cover border-2 border-pink-200 shadow-sm"
+                className="w-8 h-8 rounded-full object-cover border-2 border-secondary-200 shadow-sm"
               />
             )}
             <p className="text-sm font-medium text-gray-600">— {name}</p>
@@ -62,20 +62,20 @@ export default function DrTip({
   if (style === 'highlighted') {
     return (
       <div
-        className="my-8 relative bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 rounded-2xl p-6 md:p-8 border-2 border-purple-200 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
+        className="my-8 relative bg-gradient-to-br from-secondary-50 via-accent-50 to-primary-50 rounded-2xl p-6 md:p-8 border-2 border-secondary-200 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Decorative quote mark */}
-        <div className="absolute -top-6 -left-6 text-purple-200/40">
+        <div className="absolute -top-6 -left-6 text-secondary-200/40">
           <Quote className="w-32 h-32" />
         </div>
 
         <div className="relative">
           {/* Badge */}
-          <div className={`inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1.5 rounded-full text-sm font-bold mb-5 shadow-lg transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}>
+          <div className={`inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-4 py-1.5 rounded-full text-sm font-bold mb-5 shadow-lg transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}>
             <Sparkles className="w-4 h-4" />
-            <span>Dr.'s Insight</span>
+            <span>Expert Insight</span>
           </div>
 
           {/* Tip content */}
@@ -92,7 +92,7 @@ export default function DrTip({
                   alt={name}
                   className="w-14 h-14 rounded-full object-cover border-3 border-white shadow-lg"
                 />
-                <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1">
+                <div className="absolute -bottom-1 -right-1 bg-primary-500 rounded-full p-1">
                   <BadgeCheck className="w-4 h-4 text-white" />
                 </div>
               </div>
@@ -100,7 +100,7 @@ export default function DrTip({
             <div>
               <p className="font-bold text-gray-900 text-lg">{name}</p>
               {credentials && (
-                <p className="text-sm text-purple-700">{credentials}</p>
+                <p className="text-sm text-primary-700">{credentials}</p>
               )}
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function DrTip({
               target={target}
               widgetType="dr-tip"
               widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
-              className="inline-flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
@@ -128,7 +128,7 @@ export default function DrTip({
     return (
       <div className="my-8">
         {/* Header bar */}
-        <div className="bg-gradient-to-r from-primary-500 via-purple-500 to-pink-500 rounded-t-2xl px-6 py-4">
+        <div className="bg-gradient-to-r from-primary-500 via-primary-600 to-accent-500 rounded-t-2xl px-6 py-4">
           <div className="flex items-center gap-2 text-white">
             <Sparkles className="w-5 h-5" />
             <span className="font-bold">Expert Insight</span>
@@ -151,7 +151,7 @@ export default function DrTip({
                       alt={name}
                       className="w-24 h-24 md:w-28 md:h-28 rounded-2xl object-cover border-4 border-primary-100 shadow-xl"
                     />
-                    <div className="absolute bottom-1 right-1 md:-bottom-2 md:-right-2 bg-gradient-to-r from-primary-500 to-purple-500 rounded-full p-1.5 md:p-2 shadow-lg">
+                    <div className="absolute bottom-1 right-1 md:-bottom-2 md:-right-2 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full p-1.5 md:p-2 shadow-lg">
                       <BadgeCheck className="w-4 h-4 md:w-5 md:h-5 text-white" />
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export default function DrTip({
                   target={target}
                   widgetType="dr-tip"
                   widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
-                  className="block w-full text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="block w-full text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="flex items-center justify-center gap-2">
                     {ctaText}
@@ -207,7 +207,7 @@ export default function DrTip({
   // Default style - enhanced with avatar and professional pink/purple theme
   return (
     <div
-      className="my-8 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300"
+      className="my-8 bg-gradient-to-br from-secondary-50 via-accent-50 to-primary-50 rounded-2xl p-6 border-2 border-secondary-200 shadow-lg hover:shadow-xl transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -221,29 +221,29 @@ export default function DrTip({
                 alt={name}
                 className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
               />
-              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full p-1">
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full p-1">
                 <Lightbulb className="w-3 h-3 text-white" />
               </div>
             </div>
           )}
           {!image && (
-            <div className={`flex-shrink-0 p-3 rounded-full transition-all duration-300 ${isHovered ? 'bg-pink-200 shadow-md' : 'bg-pink-100'}`}>
-              <Lightbulb className="w-6 h-6 text-pink-600" />
+            <div className={`flex-shrink-0 p-3 rounded-full transition-all duration-300 ${isHovered ? 'bg-accent-200 shadow-md' : 'bg-accent-100'}`}>
+              <Lightbulb className="w-6 h-6 text-accent-600" />
             </div>
           )}
         </div>
 
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs font-bold text-pink-700 uppercase tracking-wider bg-pink-100 px-3 py-1 rounded-full">
-              Dr.'s Tip
+            <span className="text-xs font-bold text-accent-700 uppercase tracking-wider bg-accent-100 px-3 py-1 rounded-full">
+              Expert Tip
             </span>
           </div>
           <p className="text-lg text-gray-800 leading-relaxed font-medium">{tip}</p>
           <div className="flex items-center gap-2 mt-4">
             <span className="text-sm font-semibold text-gray-700">— {name}</span>
             {credentials && (
-              <span className="text-sm text-pink-700 font-medium">• {credentials}</span>
+              <span className="text-sm text-accent-700 font-medium">• {credentials}</span>
             )}
           </div>
 
@@ -254,7 +254,7 @@ export default function DrTip({
               target={target}
               widgetType="dr-tip"
               widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
-              className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />

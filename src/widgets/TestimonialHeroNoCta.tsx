@@ -41,7 +41,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
   widgetId
 }: TestimonialHeroNoCtaProps) {
   return (
-    <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-purple-50 rounded-2xl overflow-hidden shadow-xl">
+    <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-primary-50 rounded-2xl overflow-hidden shadow-xl">
       <div className="grid md:grid-cols-2 gap-0">
         {/* Left - Large Image */}
         <div className="relative h-64 md:h-auto">
@@ -75,7 +75,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                 widgetType="testimonial-hero-no-cta"
                 widgetId={widgetId}
                 widgetName={title}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 {ctaText}
               </TrackedLink>
@@ -94,7 +94,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                     className="w-14 h-14 rounded-full object-cover border-2 border-primary-200 shadow-md"
                   />
                 ) : (
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
                     {authorName ? authorName.charAt(0).toUpperCase() : 'C'}
                   </div>
                 )}
@@ -107,7 +107,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                       {authorAge && <span className="text-gray-600 font-normal">, {authorAge}</span>}
                     </span>
                     {showVerifiedBadge && (
-                      <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
+                      <span className="inline-flex items-center gap-1 bg-accent-100 text-accent-700 text-xs font-semibold px-2 py-1 rounded-full">
                         <BadgeCheck className="w-3.5 h-3.5" />
                         Verified Member
                       </span>

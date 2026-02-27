@@ -99,7 +99,7 @@ export default function TopTenList({
       return <Star className="w-6 h-6 fill-current text-primary-400" />;
     }
     return (
-      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
+      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
         {index + 1}
       </div>
     );
@@ -108,7 +108,7 @@ export default function TopTenList({
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden my-8 border border-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white p-5">
+      <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-5">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-5 h-5" />
           <span className="text-primary-100 text-sm font-medium">EXPERT PROTOCOL</span>
@@ -163,7 +163,7 @@ export default function TopTenList({
             href={ctaUrl}
             widgetType="top-ten-list"
             widgetName={headline || 'Top Ten List'}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl text-center"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl text-center"
           >
             {ctaText}
           </TrackedLink>

@@ -85,7 +85,7 @@ export default function IngredientListGrid({
         target={target}
         widgetType="ingredient-list-grid"
         widgetName={headline || 'Ingredient List'}
-        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         {ctaText}
         <ArrowRight className="w-5 h-5" />
@@ -121,8 +121,8 @@ export default function IngredientListGrid({
                     className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-lg font-bold text-green-600">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-100 to-accent-200 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-bold text-accent-600">
                       {ingredient.name.charAt(0)}
                     </span>
                   </div>
@@ -138,13 +138,13 @@ export default function IngredientListGrid({
 
         {/* Additional Ingredients Callout - Simple Style */}
         {showAdditional && additionalCount > 0 && (
-          <div className="mt-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+          <div className="mt-6 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-4 border border-primary-100">
             <div className="flex items-center justify-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-full">
-                <Plus className="w-5 h-5 text-purple-600" />
+              <div className="p-2 bg-primary-100 rounded-full">
+                <Plus className="w-5 h-5 text-primary-600" />
               </div>
-              <p className="text-purple-800 font-medium">
-                <span className="text-2xl font-bold text-purple-700">+{additionalCount}</span> {additionalText}
+              <p className="text-primary-800 font-medium">
+                <span className="text-2xl font-bold text-primary-700">+{additionalCount}</span> {additionalText}
               </p>
             </div>
           </div>
@@ -159,7 +159,7 @@ export default function IngredientListGrid({
   return (
     <div className="my-8">
       {/* Gradient Banner */}
-      <div className="bg-gradient-to-r from-primary-500 via-purple-500 to-primary-600 text-white py-4 px-6 rounded-t-2xl">
+      <div className="bg-gradient-to-r from-primary-500 via-primary-500 to-primary-600 text-white py-4 px-6 rounded-t-2xl">
         <div className="flex items-center justify-center gap-2 text-lg font-bold">
           <Sparkles className="w-5 h-5" />
           <span>{bannerText}</span>
@@ -192,7 +192,7 @@ export default function IngredientListGrid({
                       className="w-16 h-16 rounded-full object-cover border-2 border-primary-200 shadow-md"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-100 to-purple-100 flex items-center justify-center border-2 border-primary-200 shadow-md">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-100 to-primary-100 flex items-center justify-center border-2 border-primary-200 shadow-md">
                       <span className="text-2xl font-bold text-primary-600">
                         {ingredient.name.charAt(0)}
                       </span>
@@ -216,17 +216,17 @@ export default function IngredientListGrid({
 
         {/* Additional Ingredients Callout */}
         {showAdditional && additionalCount > 0 && (
-          <div className="mt-8 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-2xl p-6 border border-purple-200">
+          <div className="mt-8 bg-gradient-to-r from-primary-100 via-accent-100 to-primary-100 rounded-2xl p-6 border border-primary-200">
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
-              <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg">
+              <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full shadow-lg">
                 <Plus className="w-7 h-7 text-white" />
               </div>
               <div>
-                <p className="text-lg md:text-xl text-purple-900">
-                  <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">+{additionalCount}</span>
+                <p className="text-lg md:text-xl text-primary-900">
+                  <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">+{additionalCount}</span>
                   <span className="font-semibold ml-2">more</span>
                 </p>
-                <p className="text-purple-700 font-medium">{additionalText}</p>
+                <p className="text-primary-700 font-medium">{additionalText}</p>
               </div>
             </div>
           </div>

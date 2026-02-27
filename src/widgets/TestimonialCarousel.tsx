@@ -62,7 +62,7 @@ export default function TestimonialCarousel({
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-6 h-6 ${i < current.rating! ? 'text-yellow-400' : 'text-gray-300'}`}
+                  className={`w-6 h-6 ${i < current.rating! ? 'text-primary-400' : 'text-gray-300'}`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -123,7 +123,7 @@ export default function TestimonialCarousel({
               widgetType="testimonial-carousel"
               widgetId={widgetId}
               widgetName="Testimonial Carousel"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
             </TrackedLink>

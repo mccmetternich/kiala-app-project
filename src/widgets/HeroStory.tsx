@@ -39,7 +39,7 @@ export default function HeroStory({
   image,
   ctaText = 'Read Full Article',
   ctaLink = '#',
-  author = 'Dr. Amy Heart',
+  author = 'Health Authority',
   authorImage,
   likes = 1247,
   views = 8934,
@@ -91,7 +91,7 @@ export default function HeroStory({
                   <span className="font-medium text-gray-800">{likes.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm">
-                  <MessageCircle className="w-4 h-4 text-blue-500" />
+                  <MessageCircle className="w-4 h-4 text-primary-500" />
                   <span className="font-medium text-gray-800">{comments}</span>
                 </div>
               </div>

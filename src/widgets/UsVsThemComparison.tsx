@@ -79,10 +79,10 @@ export default function UsVsThemComparison({
       {/* Two Column Comparison */}
       <div className="grid md:grid-cols-2 gap-6 md:gap-8">
         {/* Column 1 - The Good (Kiala) - Pink/Purple Theme */}
-        <div className="relative bg-gradient-to-br from-primary-50 via-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-primary-200 shadow-lg">
+        <div className="relative bg-gradient-to-br from-primary-50 via-primary-50 to-accent-50 rounded-2xl p-6 border-2 border-primary-200 shadow-lg">
           {/* Satisfaction Badge */}
           <div className="absolute -top-3 -left-3 z-10">
-            <div className="bg-gradient-to-r from-primary-500 via-purple-500 to-primary-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+            <div className="bg-gradient-to-r from-primary-500 via-accent-500 to-primary-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5" />
               {satisfactionBadge}
             </div>
@@ -111,7 +111,7 @@ export default function UsVsThemComparison({
                 key={index}
                 className="flex items-start gap-3 bg-white/70 rounded-lg p-3 shadow-sm"
               >
-                <div className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-primary-400 via-purple-500 to-primary-600 rounded-full flex items-center justify-center shadow-md">
+                <div className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-primary-400 via-accent-500 to-primary-600 rounded-full flex items-center justify-center shadow-md">
                   <Check className="w-4 h-4 text-white stroke-[3]" />
                 </div>
                 <span className="text-gray-800 font-medium leading-tight pt-0.5">
@@ -168,7 +168,7 @@ export default function UsVsThemComparison({
             widgetType="us-vs-them"
             widgetId={`us-vs-them-${column1Title?.substring(0, 15)}`}
             widgetName={`${column1Title} vs ${column2Title}`}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
           >
             {finalCtaText}
           </TrackedLink>

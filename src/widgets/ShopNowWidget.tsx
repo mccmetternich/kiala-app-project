@@ -220,7 +220,7 @@ export default function ShopNowWidget({
 
   // Dr Header Component (like ExclusiveProductCard) - with avatar and countdown only
   const DrHeader = () => (
-    <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 text-white rounded-t-2xl p-3 md:p-4">
+    <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-600 text-white rounded-t-2xl p-3 md:p-4">
       {/* Mobile Layout */}
       <div className="md:hidden">
         <div className="flex items-center justify-between">
@@ -234,14 +234,14 @@ export default function ShopNowWidget({
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
-                <BadgeCheck className="w-4 h-4 text-amber-300 flex-shrink-0" />
+                <BadgeCheck className="w-4 h-4 text-primary-300 flex-shrink-0" />
                 <span className="font-bold text-sm truncate">{doctorName}'s #1 Pick</span>
               </div>
               <p className="text-primary-100 text-xs">Personally vetted & recommended</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-2 py-1 rounded-full">
-            <Clock className="w-3 h-3 text-amber-300" />
+            <Clock className="w-3 h-3 text-primary-300" />
             <span className="text-xs font-semibold">
               {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
             </span>
@@ -261,14 +261,14 @@ export default function ShopNowWidget({
           )}
           <div>
             <div className="flex items-center gap-2">
-              <BadgeCheck className="w-5 h-5 text-amber-300" />
+              <BadgeCheck className="w-5 h-5 text-primary-300" />
               <span className="font-bold">{doctorName}'s #1 Pick</span>
             </div>
             <p className="text-primary-100 text-sm">Personally vetted & recommended</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
-          <Clock className="w-3.5 h-3.5 text-amber-300" />
+          <Clock className="w-3.5 h-3.5 text-primary-300" />
           <span className="text-xs font-semibold">
             {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
           </span>
@@ -284,7 +284,7 @@ export default function ShopNowWidget({
       <div className="flex items-center gap-2 justify-center md:justify-start flex-wrap">
         <div className="flex">
           {[1,2,3,4,5].map((star) => (
-            <Star key={star} className={`w-5 h-5 ${star <= 4 ? 'fill-current text-amber-400' : 'fill-amber-400/70 text-amber-400/70'}`} />
+            <Star key={star} className={`w-5 h-5 ${star <= 4 ? 'fill-current text-primary-400' : 'fill-primary-400/70 text-primary-400/70'}`} />
           ))}
         </div>
         <span className="font-bold text-gray-900">4.7</span>
@@ -364,7 +364,7 @@ export default function ShopNowWidget({
             <div key={rowIdx} className="grid grid-cols-2 gap-3">
               {row.map((benefit, colIdx) => benefit && (
                 <div key={colIdx} className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-accent-500 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700 text-sm">{benefit}</span>
                 </div>
               ))}
@@ -424,25 +424,25 @@ export default function ShopNowWidget({
               selectedOption === option.id
                 ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200'
                 : optionBadgeText
-                  ? 'border-purple-300 bg-purple-50/50'
+                  ? 'border-accent-300 bg-accent-50/50'
                   : 'border-gray-200 hover:border-gray-300'
             }`}
           >
             {/* Mobile: Badges at top - both badge and savings on one line */}
             <div className="absolute -top-2.5 right-3 flex items-center gap-1.5 md:hidden">
               {optionBadgeText && (
-                <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+                <span className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
                   {optionBadgeText}
                 </span>
               )}
-              <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+              <span className="bg-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
                 Save ${totalSavings}
               </span>
             </div>
             {/* Desktop: Only the badge ribbon at top */}
             {optionBadgeText && (
               <div className="absolute -top-2.5 right-3 hidden md:block">
-                <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                <span className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                   {optionBadgeText}
                 </span>
               </div>
@@ -469,7 +469,7 @@ export default function ShopNowWidget({
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-gray-900">{option.label}</span>
                   {/* Desktop only: savings badge inline */}
-                  <span className="hidden md:inline-block bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">Save ${totalSavings}</span>
+                  <span className="hidden md:inline-block bg-accent-100 text-accent-700 text-xs font-medium px-2 py-0.5 rounded-full">Save ${totalSavings}</span>
                 </div>
               </div>
               <div className="text-right">
@@ -510,17 +510,17 @@ export default function ShopNowWidget({
         widgetId={`shop-now-${selectedOption}`}
         widgetName={`${productName} - ${currentOption.label}`}
         value={currentOption.price}
-        className="block w-full bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        className="block w-full bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
       >
         {ctaText} ${currentOption.price}
       </TrackedLink>
       <div className="flex items-center justify-center gap-4 md:gap-6 mt-4 text-gray-500 text-xs md:text-sm flex-wrap">
         <div className="flex items-center gap-1">
-          <Shield className="w-4 h-4 text-green-600" />
+          <Shield className="w-4 h-4 text-accent-600" />
           <span>{guaranteeText}</span>
         </div>
         <div className="flex items-center gap-1">
-          <Truck className="w-4 h-4 text-blue-600" />
+          <Truck className="w-4 h-4 text-primary-600" />
           <span>Fast Delivery</span>
         </div>
       </div>
@@ -550,9 +550,9 @@ export default function ShopNowWidget({
             <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                <Star key={star} className="w-3 h-3 fill-current text-primary-400" />
               ))}
-              <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
+              <span className="text-xs text-accent-600 font-medium ml-1">Verified Buyer</span>
             </div>
           </div>
         </div>

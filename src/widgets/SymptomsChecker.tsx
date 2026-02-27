@@ -78,7 +78,7 @@ export default function SymptomsChecker({
       {/* Main Card */}
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white p-5">
+        <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-5">
           <div className="flex items-center gap-2 mb-2">
             <AlertCircle className="w-6 h-6" />
             <h2 className="text-2xl font-bold">{headline}</h2>
@@ -135,7 +135,7 @@ export default function SymptomsChecker({
 
         {/* Conclusion Section - Shows when enough symptoms are checked */}
         {showConclusion && (
-          <div className="border-t border-gray-200 bg-gradient-to-br from-primary-50 to-purple-50 p-5">
+          <div className="border-t border-gray-200 bg-gradient-to-br from-primary-50 to-accent-50 p-5">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-6 h-6 text-primary-600" />
@@ -148,7 +148,7 @@ export default function SymptomsChecker({
                     href={computedCtaUrl}
                     widgetType="symptoms-checker"
                     widgetName={headline}
-                    className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+                    className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
                   >
                     {ctaText}
                   </TrackedLink>

@@ -52,7 +52,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
   widgetId
 }: TestimonialHeroProps) {
   return (
-    <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-purple-50 rounded-2xl overflow-hidden shadow-xl">
+    <div className="my-8 bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl overflow-hidden shadow-xl">
       <div className="grid md:grid-cols-2 gap-0">
         {/* Left - Large Image */}
         <div className="relative h-64 md:h-auto">
@@ -85,7 +85,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
               widgetType="testimonial-hero"
               widgetId={widgetId}
               widgetName={title}
-              className="block w-full md:w-auto md:inline-block text-center bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-6"
+              className="block w-full md:w-auto md:inline-block text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-6"
             >
               {ctaText}
             </TrackedLink>
@@ -103,7 +103,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                   key={index}
                   className="flex items-center gap-2 text-gray-600 text-sm"
                 >
-                  <Icon className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  <Icon className="w-4 h-4 text-accent-600 flex-shrink-0" />
                   <span>{text}</span>
                 </div>
               );

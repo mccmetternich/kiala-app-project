@@ -58,7 +58,7 @@ export default function BeforeAfterSideBySide({
         target={target}
         widgetType="before-after-side-by-side"
         widgetName={`Before/After: ${name || headline}`}
-        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
       >
         {ctaText}
       </TrackedLink>
@@ -88,7 +88,7 @@ export default function BeforeAfterSideBySide({
               <img src={afterImage} alt="After" className="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-              <span className="inline-block bg-green-600 text-white text-sm font-bold px-3 py-1 rounded">
+              <span className="inline-block bg-accent-600 text-white text-sm font-bold px-3 py-1 rounded">
                 {afterLabel}
               </span>
             </div>
@@ -137,13 +137,13 @@ export default function BeforeAfterSideBySide({
             <div className="aspect-square relative">
               <img src={afterImage} alt="After" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute top-4 left-4">
-                <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                <span className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
                   {afterLabel}
                 </span>
               </div>
               {timeframe && (
                 <div className="absolute top-4 right-4">
-                  <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                  <span className="bg-primary-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
                     {timeframe}
                   </span>
                 </div>
@@ -194,7 +194,7 @@ export default function BeforeAfterSideBySide({
     <div className="my-8">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 to-purple-600 text-white p-6 text-center">
+        <div className="bg-gradient-to-r from-primary-600 to-accent-600 text-white p-6 text-center">
           <h3 className="text-2xl font-bold mb-1">{headline}</h3>
           {verified && (
             <div className="flex items-center justify-center gap-2 text-primary-100">
@@ -240,13 +240,13 @@ export default function BeforeAfterSideBySide({
                   <img src={afterImage} alt="After" className="absolute inset-0 w-full h-full object-cover" />
                 </div>
                 <div className="absolute top-4 left-4">
-                  <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-sm font-bold px-4 py-2 rounded-lg">
+                  <span className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-bold px-4 py-2 rounded-lg">
                     {afterLabel}
                   </span>
                 </div>
                 {timeframe && (
                   <div className="absolute bottom-4 right-4">
-                    <span className="bg-amber-500 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-lg">
+                    <span className="bg-primary-500 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-lg">
                       {timeframe}
                     </span>
                   </div>
@@ -274,7 +274,7 @@ export default function BeforeAfterSideBySide({
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 {[1,2,3,4,5].map(i => (
-                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                  <Star key={i} className="w-5 h-5 fill-primary-400 text-primary-400" />
                 ))}
               </div>
               {name && (
@@ -297,7 +297,7 @@ export default function BeforeAfterSideBySide({
               target={target}
               widgetType="before-after-side-by-side"
               widgetName={`Before/After: ${name || headline}`}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
             >
               {ctaText}
             </TrackedLink>

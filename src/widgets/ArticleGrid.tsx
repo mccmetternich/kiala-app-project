@@ -30,11 +30,11 @@ interface ArticleGridProps {
 // Helper to determine badge type
 function getArticleBadge(article: Article) {
   if (article.trending) return { label: 'TRENDING', icon: TrendingUp, color: 'bg-red-500' };
-  if (article.featured) return { label: 'HOT', icon: Flame, color: 'bg-orange-500' };
+  if (article.featured) return { label: 'HOT', icon: Flame, color: 'bg-primary-500' };
   // Check if article is less than 7 days old
   if (article.created_at) {
     const daysSinceCreation = Math.floor((Date.now() - new Date(article.created_at).getTime()) / (1000 * 60 * 60 * 24));
-    if (daysSinceCreation < 7) return { label: 'NEW', icon: Sparkles, color: 'bg-green-500' };
+    if (daysSinceCreation < 7) return { label: 'NEW', icon: Sparkles, color: 'bg-accent-500' };
   }
   return null;
 }
@@ -75,7 +75,7 @@ function EmailCaptureTile({ siteId }: { siteId?: string }) {
   };
 
   return (
-    <div className="md:col-span-2 bg-gradient-to-br from-primary-500 via-primary-600 to-purple-700 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+    <div className="md:col-span-2 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
       <div className="p-8 text-white">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -92,8 +92,8 @@ function EmailCaptureTile({ siteId }: { siteId?: string }) {
         </p>
 
         {status === 'success' ? (
-          <div className="flex items-center gap-3 bg-green-500/30 rounded-lg p-4">
-            <CheckCircle className="w-6 h-6 text-green-300" />
+          <div className="flex items-center gap-3 bg-accent-500/30 rounded-lg p-4">
+            <CheckCircle className="w-6 h-6 text-accent-300" />
             <span className="font-medium">You're in! Check your inbox.</span>
           </div>
         ) : (
@@ -186,11 +186,11 @@ export default function ArticleGrid({
           // Render product tile
           if (article.isProductTile) {
             return (
-              <div key="product-tile" className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl shadow-lg overflow-hidden border-2 border-pink-200 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+              <div key="product-tile" className="bg-gradient-to-br from-accent-50 to-secondary-50 rounded-xl shadow-lg overflow-hidden border-2 border-accent-200 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
                 <div className="p-6">
-                  <div className="inline-flex items-center gap-2 bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-bold mb-4">
+                  <div className="inline-flex items-center gap-2 bg-accent-100 text-accent-800 px-3 py-1 rounded-full text-sm font-bold mb-4">
                     <span>⭐</span>
-                    Dr. Heart's Top Pick
+                    Top Pick
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">
                     Complete Hormone Reset Kit
@@ -199,12 +199,12 @@ export default function ArticleGrid({
                     My #1 recommended 3-step system for naturally balancing hormones and boosting metabolism after 40.
                   </p>
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl font-bold text-pink-600">$97</span>
+                    <span className="text-2xl font-bold text-accent-600">$97</span>
                     <span className="text-lg text-gray-500 line-through">$197</span>
                   </div>
                   <a
                     href={getSiteUrl('/top-picks')}
-                    className="block w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
+                    className="block w-full bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
                   >
                     Learn More →
                   </a>

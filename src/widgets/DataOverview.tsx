@@ -66,10 +66,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 // Pink/Lavender color palette for brand consistency
 const colorMap: Record<string, { bg: string; light: string; text: string; border: string }> = {
   red: { bg: 'from-primary-500 to-primary-600', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
-  blue: { bg: 'from-purple-500 to-purple-600', light: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' },
-  green: { bg: 'from-primary-400 to-purple-500', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
+  blue: { bg: 'from-accent-500 to-accent-600', light: 'bg-primary-50', text: 'text-accent-600', border: 'border-primary-200' },
+  green: { bg: 'from-primary-400 to-accent-500', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
   amber: { bg: 'from-amber-500 to-amber-600', light: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200' },
-  purple: { bg: 'from-purple-500 to-purple-600', light: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' },
+  purple: { bg: 'from-accent-500 to-accent-600', light: 'bg-primary-50', text: 'text-accent-600', border: 'border-primary-200' },
   pink: { bg: 'from-primary-500 to-primary-600', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' }
 };
 
@@ -97,7 +97,7 @@ export default function DataOverview({
         widgetType="data-overview"
         widgetId={widgetId}
         widgetName={headline}
-        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         {ctaText}
       </TrackedLink>
@@ -114,7 +114,7 @@ export default function DataOverview({
         <div className="flex flex-wrap justify-center gap-8">
           {stats.map((stat, idx) => (
             <div key={idx} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">
                 {stat.value}
               </div>
               <div className="text-gray-300 mt-1">{stat.label}</div>
@@ -133,7 +133,7 @@ export default function DataOverview({
 
   if (style === 'inline') {
     return (
-      <div className="my-8 bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl p-6 border border-primary-100">
+      <div className="my-8 bg-gradient-to-r from-primary-50 to-primary-50 rounded-xl p-6 border border-primary-100">
         <h3 className="text-xl font-bold text-gray-900 text-center mb-4">{headline}</h3>
         <div className="flex flex-wrap justify-center gap-6 text-center">
           {stats.map((stat, idx) => (

@@ -89,11 +89,11 @@ export default function SpecialOfferWidget({
   return (
     <div className="my-8 relative">
       {/* Animated border */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-purple-500 to-primary-600 rounded-2xl opacity-75 blur animate-pulse"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-accent-500 to-primary-600 rounded-2xl opacity-75 blur animate-pulse"></div>
 
       <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-primary-400">
         {/* Top banner */}
-        <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white p-3 flex items-center justify-center gap-3">
+        <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-3 flex items-center justify-center gap-3">
           <Gift className="w-5 h-5 animate-bounce" />
           <span className="font-bold uppercase tracking-wide">{headline}</span>
           <Gift className="w-5 h-5 animate-bounce" />
@@ -106,7 +106,7 @@ export default function SpecialOfferWidget({
               <Users className="w-4 h-4" />
               <span><strong>{recentRedemptions.toLocaleString()}</strong> women joined today</span>
             </div>
-            <div className="flex items-center gap-2 text-purple-700 font-medium">
+            <div className="flex items-center gap-2 text-accent-700 font-medium">
               <TrendingUp className="w-4 h-4" />
               <span>{urgencyMessage.replace('{spots}', spotsRemaining.toString())}</span>
             </div>
@@ -124,7 +124,7 @@ export default function SpecialOfferWidget({
                     alt={subheading}
                     className="w-full h-auto object-cover"
                   />
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-primary-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                     {savingsPercent}% OFF
                   </div>
                 </div>
@@ -169,7 +169,7 @@ export default function SpecialOfferWidget({
           </div>
 
           {/* Pricing */}
-          <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl p-6 mb-6 text-center">
+          <div className="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-6 mb-6 text-center">
             <div className="flex items-center justify-center gap-4 mb-2">
               <span className="text-3xl text-gray-400 line-through">${originalPrice}</span>
               <span className="text-5xl font-bold text-primary-600">${salePrice}</span>
@@ -189,7 +189,7 @@ export default function SpecialOfferWidget({
               widgetId={widgetId || `special-offer-${subheading?.substring(0, 20)}`}
               widgetName={subheading || 'Special Offer'}
               value={salePrice}
-              className="block w-full md:w-auto md:inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
+              className="block w-full md:w-auto md:inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
             >
               {ctaText}
               <ArrowRight className="w-6 h-6 hidden md:inline" />
@@ -214,7 +214,7 @@ export default function SpecialOfferWidget({
         </div>
 
         {/* Bottom urgency bar */}
-        <div className="bg-gradient-to-r from-primary-600 to-purple-600 text-white py-2 px-4 text-center text-sm font-medium">
+        <div className="bg-gradient-to-r from-primary-600 to-accent-600 text-white py-2 px-4 text-center text-sm font-medium">
           <span className="animate-pulse">⚡</span> {spotsRemaining} people are viewing this offer right now
         </div>
       </div>

@@ -15,7 +15,7 @@ interface EmailCaptureProps {
   siteId: string;
   source?: string;
   tags?: string[];
-  style?: 'default' | 'compact' | 'featured';
+  style?: 'default' | 'compact' | 'featured' | 'sophisticated';
   showNameField?: boolean;
   incentive?: string;
 }
@@ -129,6 +129,73 @@ export default function EmailCapture({
           </button>
         </form>
         {status === 'error' && <p className="text-red-600 text-xs mt-2">{message}</p>}
+      </div>
+    );
+  }
+
+  if (style === 'sophisticated') {
+    return (
+      <div className="elegant-card bg-secondary-50/30 border border-secondary-200 text-center max-w-2xl mx-auto">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="goop-heading text-2xl lg:text-3xl">{headline}</h3>
+            <p className="text-gray-600 leading-relaxed text-lg">{subheading}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {showNameField && (
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your first name"
+                className="goop-input w-full"
+                disabled={status === 'loading'}
+              />
+            )}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                className="goop-input flex-1"
+                required
+                disabled={status === 'loading'}
+              />
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="goop-button disabled:opacity-50 whitespace-nowrap"
+              >
+                {status === 'loading' ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  finalButtonText
+                )}
+              </button>
+            </div>
+          </form>
+
+          {status === 'error' && (
+            <p className="text-red-600 text-sm">{message}</p>
+          )}
+
+          {incentive && (
+            <div className="bg-accent-50 border border-accent-200 p-4 rounded-sm">
+              <div className="flex items-center justify-center gap-2 text-accent-800">
+                <Gift className="w-4 h-4" />
+                <span className="text-sm font-medium">{incentive}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500">
+            <span>✓ Curated Content Only</span>
+            <span>✓ Unsubscribe Anytime</span>
+            <span>✓ No Spam, Ever</span>
+          </div>
+        </div>
       </div>
     );
   }

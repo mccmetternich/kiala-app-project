@@ -92,7 +92,7 @@ export default function ReviewGrid({
                   key={star}
                   className={`w-5 h-5 ${
                     star <= review.rating
-                      ? 'fill-amber-400 text-amber-400'
+                      ? 'fill-primary-400 text-primary-400'
                       : 'fill-gray-200 text-gray-200'
                   }`}
                 />
@@ -111,7 +111,7 @@ export default function ReviewGrid({
               <div className="flex items-center gap-2">
                 <span className="font-bold text-gray-900 text-lg">{review.name}</span>
                 {review.verified && (
-                  <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                  <span className="inline-flex items-center gap-1 bg-accent-100 text-accent-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                     <BadgeCheck className="w-3.5 h-3.5" />
                     Verified
                   </span>
@@ -148,7 +148,7 @@ export default function ReviewGrid({
             widgetType="review-grid"
             widgetId={widgetId || `review-grid-${headline?.substring(0, 20)}`}
             widgetName={headline || ctaText || 'Review Grid'}
-            className="inline-block bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+            className="inline-block bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
           >
             {ctaText}
           </TrackedLink>

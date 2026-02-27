@@ -101,13 +101,13 @@ export default function DoctorClosingWord({
               <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
                 {displayBadge1 && (
                   <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-3 py-2">
-                    <Shield className="w-4 h-4 text-green-600" />
+                    <Shield className="w-4 h-4 text-accent-600" />
                     <span>{badge1Text}</span>
                   </div>
                 )}
                 {displayBadge2 && (
                   <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-3 py-2">
-                    <CheckCircle className="w-4 h-4 text-purple-600" />
+                    <CheckCircle className="w-4 h-4 text-primary-600" />
                     <span>{badge2Text}</span>
                   </div>
                 )}
@@ -125,7 +125,7 @@ export default function DoctorClosingWord({
                 className="w-24 h-24 rounded-2xl border-4 border-white shadow-xl object-cover"
               />
               <div className="mt-3 flex flex-col items-center gap-2">
-                <div className="flex items-center gap-1 text-green-600 text-xs font-medium">
+                <div className="flex items-center gap-1 text-accent-600 text-xs font-medium">
                   <CheckCircle className="w-4 h-4" />
                   <span>Verified</span>
                 </div>
@@ -169,13 +169,13 @@ export default function DoctorClosingWord({
                   <div className="flex flex-wrap gap-2">
                     {displayBadge1 && (
                       <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
-                        <Shield className="w-4 h-4 text-green-600" />
+                        <Shield className="w-4 h-4 text-accent-600" />
                         <span>{badge1Text}</span>
                       </div>
                     )}
                     {displayBadge2 && (
                       <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 rounded-lg px-4 py-2">
-                        <CheckCircle className="w-4 h-4 text-purple-600" />
+                        <CheckCircle className="w-4 h-4 text-primary-600" />
                         <span>{badge2Text}</span>
                       </div>
                     )}

@@ -47,7 +47,7 @@ export default function BeforeAfterComparison({
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden my-8 border border-gray-100">
       {/* Header with real person badge - Pink/Lavender theme */}
-      <div className="bg-gradient-to-r from-primary-500 to-purple-500 text-white px-6 py-3 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Star className="w-5 h-5 fill-current" />
           <span className="font-bold">REAL MEMBER TRANSFORMATION</span>
@@ -80,7 +80,7 @@ export default function BeforeAfterComparison({
                 alt="After transformation"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute top-4 right-4 bg-gradient-to-r from-primary-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+              <div className="absolute top-4 right-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                 AFTER
               </div>
             </div>
@@ -128,7 +128,7 @@ export default function BeforeAfterComparison({
             </div>
 
             {/* Result highlight - Pink/Lavender theme */}
-            <div className="bg-gradient-to-r from-primary-50 to-purple-50 border-l-4 border-primary-500 p-4 rounded-r-lg mb-4">
+            <div className="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 p-4 rounded-r-lg mb-4">
               <div className="text-sm text-primary-700 font-medium mb-1">TRANSFORMATION RESULT</div>
               <div className="text-xl font-bold text-gray-900">{result}</div>
               <div className="text-sm text-gray-600 mt-1">In just {timeframe}</div>
@@ -162,7 +162,7 @@ export default function BeforeAfterComparison({
                 target={target}
                 widgetType="before-after-comparison"
                 widgetName={`Before/After: ${name} - ${result}`}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
               >
                 {ctaText}
                 <ArrowRight className="w-5 h-5" />

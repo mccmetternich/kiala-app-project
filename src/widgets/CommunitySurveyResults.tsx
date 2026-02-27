@@ -54,7 +54,7 @@ export default function CommunitySurveyResults({
         target={target}
         widgetType="community-survey-results"
         widgetName={headline}
-        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         {ctaText}
         <ArrowRight className="w-5 h-5" />
@@ -67,10 +67,10 @@ export default function CommunitySurveyResults({
 
   if (style === 'compact') {
     return (
-      <div className="my-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+      <div className="my-8 bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-6 border border-primary-100">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-100 rounded-xl">
-            <Users className="w-5 h-5 text-purple-600" />
+          <div className="p-2 bg-primary-100 rounded-xl">
+            <Users className="w-5 h-5 text-primary-600" />
           </div>
           <div>
             <h3 className="font-bold text-gray-900">{headline}</h3>
@@ -80,7 +80,7 @@ export default function CommunitySurveyResults({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {results.map((result, idx) => (
             <div key={idx} className="text-center">
-              <div className={`text-3xl font-bold ${result.highlighted ? 'text-purple-700' : 'text-gray-900'}`}>
+              <div className={`text-3xl font-bold ${result.highlighted ? 'text-primary-700' : 'text-gray-900'}`}>
                 {result.percentage}%
               </div>
               <div className="text-xs text-gray-600 mt-1">{result.label}</div>
@@ -96,20 +96,20 @@ export default function CommunitySurveyResults({
     return (
       <div className="my-12">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 rounded-t-2xl px-6 py-5">
+        <div className="bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 rounded-t-2xl px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-xl md:text-2xl font-bold text-white">{headline}</h3>
-              <p className="text-purple-100">{subheading}</p>
+              <p className="text-accent-100">{subheading}</p>
             </div>
           </div>
         </div>
 
         {/* Results Grid */}
-        <div className="bg-white rounded-b-2xl border-2 border-t-0 border-purple-200 shadow-xl overflow-hidden">
+        <div className="bg-white rounded-b-2xl border-2 border-t-0 border-primary-200 shadow-xl overflow-hidden">
           <div className="p-6">
             <div className="grid md:grid-cols-2 gap-4">
               {results.map((result, idx) => (
@@ -117,21 +117,21 @@ export default function CommunitySurveyResults({
                   key={idx}
                   className={`p-5 rounded-xl border-2 transition-all ${
                     result.highlighted
-                      ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300 shadow-md'
-                      : 'bg-gray-50 border-gray-100 hover:border-purple-200'
+                      ? 'bg-gradient-to-r from-primary-50 to-accent-50 border-primary-300 shadow-md'
+                      : 'bg-gray-50 border-gray-100 hover:border-primary-200'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`text-4xl font-bold ${result.highlighted ? 'text-purple-700' : 'text-gray-900'}`}>
+                    <span className={`text-4xl font-bold ${result.highlighted ? 'text-primary-700' : 'text-gray-900'}`}>
                       {result.percentage}%
                     </span>
                     {result.highlighted && (
-                      <div className="p-1.5 bg-purple-100 rounded-full">
-                        <Award className="w-5 h-5 text-purple-600" />
+                      <div className="p-1.5 bg-primary-100 rounded-full">
+                        <Award className="w-5 h-5 text-primary-600" />
                       </div>
                     )}
                   </div>
-                  <p className={`text-sm ${result.highlighted ? 'text-purple-800 font-medium' : 'text-gray-600'}`}>
+                  <p className={`text-sm ${result.highlighted ? 'text-primary-800 font-medium' : 'text-gray-600'}`}>
                     {result.label}
                   </p>
                 </div>
@@ -169,7 +169,7 @@ export default function CommunitySurveyResults({
     <div className="my-8">
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 text-purple-700 mb-2">
+        <div className="inline-flex items-center gap-2 text-primary-700 mb-2">
           <TrendingUp className="w-5 h-5" />
           <span className="font-semibold text-sm uppercase tracking-wide">Survey Results</span>
         </div>
@@ -183,14 +183,14 @@ export default function CommunitySurveyResults({
           {results.map((result, idx) => (
             <div
               key={idx}
-              className={`p-5 ${result.highlighted ? 'bg-purple-50' : ''}`}
+              className={`p-5 ${result.highlighted ? 'bg-primary-50' : ''}`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1">
-                  <div className={`p-1.5 rounded-full ${result.highlighted ? 'bg-purple-200' : 'bg-gray-100'}`}>
-                    <CheckCircle className={`w-4 h-4 ${result.highlighted ? 'text-purple-700' : 'text-gray-500'}`} />
+                  <div className={`p-1.5 rounded-full ${result.highlighted ? 'bg-primary-200' : 'bg-gray-100'}`}>
+                    <CheckCircle className={`w-4 h-4 ${result.highlighted ? 'text-primary-700' : 'text-gray-500'}`} />
                   </div>
-                  <span className={`${result.highlighted ? 'font-semibold text-purple-900' : 'text-gray-700'}`}>
+                  <span className={`${result.highlighted ? 'font-semibold text-primary-900' : 'text-gray-700'}`}>
                     {result.label}
                   </span>
                 </div>
@@ -198,11 +198,11 @@ export default function CommunitySurveyResults({
                   {/* Progress bar */}
                   <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden hidden md:block">
                     <div
-                      className={`h-full rounded-full ${result.highlighted ? 'bg-purple-500' : 'bg-gray-400'}`}
+                      className={`h-full rounded-full ${result.highlighted ? 'bg-primary-500' : 'bg-gray-400'}`}
                       style={{ width: `${result.percentage}%` }}
                     />
                   </div>
-                  <span className={`text-xl font-bold ${result.highlighted ? 'text-purple-700' : 'text-gray-900'}`}>
+                  <span className={`text-xl font-bold ${result.highlighted ? 'text-primary-700' : 'text-gray-900'}`}>
                     {result.percentage}%
                   </span>
                 </div>
@@ -214,7 +214,7 @@ export default function CommunitySurveyResults({
         {/* Footer */}
         <div className="px-5 py-4 bg-gray-50 border-t border-gray-100">
           {highlightText && (
-            <p className="text-sm text-purple-800 font-medium mb-3 bg-purple-100 px-3 py-2 rounded-lg">
+            <p className="text-sm text-primary-800 font-medium mb-3 bg-primary-100 px-3 py-2 rounded-lg">
               {highlightText}
             </p>
           )}

@@ -96,7 +96,7 @@ export default function Checklist({
     if (isCelebratory && percentage >= 100) return 'from-emerald-500 to-teal-500';
     if (percentage >= 100) return 'from-red-500 to-rose-500';
     if (percentage >= 66) return 'from-orange-500 to-amber-500';
-    return 'from-primary-500 to-purple-500';
+    return 'from-primary-500 to-accent-500';
   };
 
   return (
@@ -120,8 +120,8 @@ export default function Checklist({
       {/* Header */}
       <div className={`px-6 py-5 ${
         isAssessment
-          ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500'
-          : 'bg-gradient-to-r from-primary-500 to-purple-500'
+          ? 'bg-gradient-to-r from-rose-500 via-accent-500 to-accent-500'
+          : 'bg-gradient-to-r from-primary-500 to-accent-500'
       }`}>
         <div className="flex items-start gap-3">
           <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
@@ -176,20 +176,20 @@ export default function Checklist({
                     isClickable ? 'cursor-pointer hover:shadow-md hover:scale-[1.01]' : 'cursor-default'
                   } ${isChecked
                     ? (isAssessment
-                        ? 'bg-gradient-to-r from-rose-50 to-pink-50 border-2 border-rose-300 shadow-md'
+                        ? 'bg-gradient-to-r from-rose-50 to-accent-50 border-2 border-rose-300 shadow-md'
                         : isCelebratory
                           ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 shadow-md'
-                          : 'bg-gradient-to-r from-primary-50 to-purple-50 border-2 border-primary-300 shadow-md')
+                          : 'bg-gradient-to-r from-primary-50 to-accent-50 border-2 border-primary-300 shadow-md')
                     : 'bg-gray-50 border-2 border-gray-100 hover:border-gray-200'
                   }`}
                 >
                   <div className={`flex-shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                     isChecked
                       ? (isAssessment
-                          ? 'bg-gradient-to-r from-rose-500 to-pink-500 border-rose-500 shadow-lg'
+                          ? 'bg-gradient-to-r from-rose-500 to-accent-500 border-rose-500 shadow-lg'
                           : isCelebratory
                             ? 'bg-gradient-to-r from-emerald-500 to-teal-500 border-emerald-500 shadow-lg'
-                            : 'bg-gradient-to-r from-primary-500 to-purple-500 border-primary-500 shadow-lg')
+                            : 'bg-gradient-to-r from-primary-500 to-accent-500 border-primary-500 shadow-lg')
                       : 'border-gray-300 bg-white'
                   }`}>
                     {isChecked && (
@@ -242,7 +242,7 @@ export default function Checklist({
             <div className={`p-6 ${
               isCelebratory
                 ? 'bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50'
-                : 'bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50'
+                : 'bg-gradient-to-br from-rose-50 via-accent-50 to-orange-50'
             }`}>
               <p className="text-lg text-gray-800 leading-relaxed mb-4 font-medium">
                 {alertMessage}

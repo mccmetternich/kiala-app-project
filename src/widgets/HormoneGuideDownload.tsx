@@ -72,9 +72,9 @@ export default function HormoneGuideDownload({
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100 shadow-lg my-8">
+    <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8 border border-primary-100 shadow-lg my-8">
       <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
+        <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
           <span>🎁</span>
           Free Community Resource
         </div>
@@ -87,7 +87,7 @@ export default function HormoneGuideDownload({
 
         <div className="bg-white rounded-xl p-6 shadow-lg mb-8 max-w-md mx-auto">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-accent-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-2xl text-white">📖</span>
             </div>
             <div className="text-left">
@@ -97,19 +97,19 @@ export default function HormoneGuideDownload({
           </div>
           <div className="space-y-2 text-sm text-gray-600 text-left">
             <div className="flex items-center gap-2">
-              <span className="text-green-500">✓</span>
+              <span className="text-accent-500">✓</span>
               7-Day Meal Plan Templates
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-green-500">✓</span>
+              <span className="text-accent-500">✓</span>
               Supplement Timing Guide
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-green-500">✓</span>
+              <span className="text-accent-500">✓</span>
               Hormone Testing Checklist
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-green-500">✓</span>
+              <span className="text-accent-500">✓</span>
               Weekly Email Support
             </div>
           </div>
@@ -122,13 +122,13 @@ export default function HormoneGuideDownload({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
               disabled={status === 'loading'}
             />
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg disabled:opacity-50"
+              className="bg-gradient-to-r from-primary-500 to-accent-600 hover:from-primary-600 hover:to-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg disabled:opacity-50"
             >
               {status === 'loading' ? 'Sending...' : finalButtonText}
             </button>
