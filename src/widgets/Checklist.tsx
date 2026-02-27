@@ -172,8 +172,8 @@ export default function Checklist({
                 <button
                   onClick={() => toggleItem(item.id)}
                   disabled={!isClickable}
-                  className={`w-full flex items-start gap-4 p-4 rounded-xl text-left transition-all duration-300 ${
-                    isClickable ? 'cursor-pointer hover:shadow-md hover:scale-[1.01]' : 'cursor-default'
+                  className={`w-full flex items-start gap-4 p-4 rounded-xl text-left transition-shadow duration-300 ${
+                    isClickable ? 'cursor-pointer hover:shadow-md' : 'cursor-default'
                   } ${isChecked
                     ? (isAssessment
                         ? 'bg-gradient-to-r from-rose-50 to-accent-50 border-2 border-rose-300 shadow-md'

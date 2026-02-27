@@ -122,7 +122,7 @@ export default function NewsletterSignup({
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="bg-white text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="bg-white text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
           >
             {status === 'loading' ? 'Joining...' : finalButtonText}
           </button>

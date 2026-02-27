@@ -306,7 +306,7 @@ export default function ShopNowWidget({
         <img
           src={images[selectedImage]?.url}
           alt={images[selectedImage]?.alt}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 select-none pointer-events-none"
+          className="w-full h-full object-cover select-none pointer-events-none"
           draggable={false}
         />
         {/* Swipe indicator dots for mobile */}
@@ -328,10 +328,10 @@ export default function ShopNowWidget({
           <button
             key={idx}
             onClick={() => setSelectedImage(idx)}
-            className={`flex-shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+            className={`flex-shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden border-2 transition-colors duration-200 ${
               selectedImage === idx
-                ? 'border-primary-500 ring-2 ring-primary-200 scale-105'
-                : 'border-gray-200 hover:border-primary-300 hover:scale-105 hover:shadow-md'
+                ? 'border-primary-500 ring-2 ring-primary-200'
+                : 'border-gray-200 hover:border-primary-300'
             }`}
           >
             <img

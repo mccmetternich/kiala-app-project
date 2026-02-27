@@ -316,10 +316,10 @@ export default function SophisticatedArticlePage({
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 bg-gradient-to-r from-accent-500 to-primary-500 hover:from-accent-600 hover:to-primary-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+          className="fixed bottom-8 right-8 z-40 bg-gradient-to-r from-accent-500 to-primary-500 hover:from-accent-600 hover:to-primary-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-colors duration-300 group"
           aria-label="Back to top"
         >
-          <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+          <ArrowUp className="w-5 h-5" />
         </button>
       )}
     </SiteLayout>

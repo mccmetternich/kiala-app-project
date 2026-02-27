@@ -186,7 +186,7 @@ export default function ArticleGrid({
           // Render product tile
           if (article.isProductTile) {
             return (
-              <div key="product-tile" className="bg-gradient-to-br from-accent-50 to-secondary-50 rounded-xl shadow-lg overflow-hidden border-2 border-accent-200 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+              <div key="product-tile" className="bg-gradient-to-br from-accent-50 to-secondary-50 rounded-xl shadow-lg overflow-hidden border-2 border-accent-200 hover:shadow-xl transition-shadow duration-300">
                 <div className="p-6">
                   <div className="inline-flex items-center gap-2 bg-accent-100 text-accent-800 px-3 py-1 rounded-full text-sm font-bold mb-4">
                     <span>⭐</span>
@@ -224,7 +224,7 @@ export default function ArticleGrid({
             <a
               key={article.id}
               href={getSiteUrl(`/articles/${article.slug}`)}
-              className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-300 block"
+              className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 block"
             >
               <div className="relative">
                 <img
@@ -276,8 +276,8 @@ export default function ArticleGrid({
                   <p className="mt-2 text-gray-600 text-sm line-clamp-2">{article.excerpt}</p>
                 )}
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="text-primary-600 font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                    Read More <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  <span className="text-primary-600 font-semibold text-sm inline-flex items-center gap-1">
+                    Read More <span>→</span>
                   </span>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
                     <Eye className="w-3 h-3" />

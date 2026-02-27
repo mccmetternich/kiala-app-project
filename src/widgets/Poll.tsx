@@ -157,10 +157,10 @@ export default function Poll({
                   onMouseEnter={() => setHoveredOption(option.id)}
                   onMouseLeave={() => setHoveredOption(null)}
                   disabled={hasVoted}
-                  className={`w-full text-left relative overflow-hidden rounded-xl transition-all duration-300 ${
+                  className={`w-full text-left relative overflow-hidden rounded-xl transition-shadow duration-300 ${
                     hasVoted
                       ? 'cursor-default'
-                      : 'cursor-pointer hover:shadow-lg hover:scale-[1.01]'
+                      : 'cursor-pointer hover:shadow-lg'
                   } ${
                     isSelected
                       ? 'ring-2 ring-primary-500 shadow-lg'

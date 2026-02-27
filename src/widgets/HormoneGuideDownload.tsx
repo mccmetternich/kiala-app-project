@@ -128,7 +128,7 @@ export default function HormoneGuideDownload({
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="bg-gradient-to-r from-primary-500 to-accent-600 hover:from-primary-600 hover:to-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg disabled:opacity-50"
+              className="bg-gradient-to-r from-primary-500 to-accent-600 hover:from-primary-600 hover:to-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50"
             >
               {status === 'loading' ? 'Sending...' : finalButtonText}
             </button>
