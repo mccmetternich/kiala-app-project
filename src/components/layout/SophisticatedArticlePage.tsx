@@ -23,6 +23,13 @@ export default function SophisticatedArticlePage({
   heroImage,
   article
 }: SophisticatedArticlePageProps) {
+  console.log('🎨 SophisticatedArticlePage RENDERING:', {
+    siteName: site?.name,
+    siteSubdomain: site?.subdomain,
+    articleTitle: articlePage?.title,
+    brandName: site?.brand?.name
+  });
+  
   const brand = site?.brand || {};
   
   // Parse article content - handle both JSON content objects and direct HTML content
