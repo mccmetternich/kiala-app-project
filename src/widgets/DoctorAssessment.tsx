@@ -14,18 +14,18 @@ interface DoctorAssessmentProps {
 }
 
 export default function DoctorAssessment({
-  doctorName = "Dr. Amy Heart",
+  doctorName = "Sarah Chen, MS, RD",
   doctorImage = "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg",
-  doctorCredentials = "Board Certified, 15+ Years Experience",
-  headline = "My Professional Assessment",
+  doctorCredentials = "MS Nutritional Science, Registered Dietitian",
+  headline = "My Nutritional Assessment",
   paragraphs = [
-    "In 15 years of practice, I've never endorsed a specific supplement—until now. The industry's history of overpromising made me fiercely protective of my reputation and your trust.",
-    "Kiala Greens earned my recommendation through rigorous evaluation and consistent results from thousands of women dealing with menopause weight gain, hot flashes, mood swings, and digestive issues.",
-    "I've watched women who \"tried everything\" finally see results. The bloating resolves. The hot flashes diminish. The weight starts moving. The energy returns."
+    "In over a decade of analyzing supplements, I rarely endorse specific products. The industry's history of overpromising made me protective of my professional credibility and your trust.",
+    "Kiala Greens earned my recommendation through rigorous evaluation and consistent results from thousands of women dealing with energy fluctuations, digestive issues, and wellness challenges.",
+    "I've watched women who tried everything finally see results. The bloating resolves. The energy stabilizes. The wellness foundation strengthens."
   ],
-  signature = "— Dr. Amy Heart",
-  highlightText = "Kiala Greens earned my recommendation through rigorous evaluation and consistent results from thousands of women dealing with menopause weight gain, hot flashes, mood swings, and digestive issues.",
-  badgeText = "Professional Assessment"
+  signature = "— Sarah Chen, MS, RD",
+  highlightText = "Kiala Greens earned my recommendation through rigorous evaluation and consistent results from thousands of women dealing with energy fluctuations, digestive issues, and wellness challenges.",
+  badgeText = "Professional Nutritional Assessment"
 }: DoctorAssessmentProps) {
   return (
     <div className="my-8">

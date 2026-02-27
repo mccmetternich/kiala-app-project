@@ -44,8 +44,6 @@ const fallbackSite: Site = {
     navigation: [
       { label: 'Home', url: '/', type: 'internal' },
       { label: 'Articles', url: '/articles', type: 'internal' },
-      { label: 'My Top Picks', url: '/top-picks', type: 'internal' },
-      { label: 'Success Stories', url: '/success-stories', type: 'internal' },
       { label: 'About', url: '/about', type: 'internal' }
     ],
     footer: {

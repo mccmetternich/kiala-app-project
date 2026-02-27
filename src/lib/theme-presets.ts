@@ -124,6 +124,29 @@ export const themePresets: ThemePreset[] = [
     },
   },
   {
+    id: 'wellness-core',
+    name: 'WellnessCore Editorial',
+    description: 'Modern editorial magazine style with sophisticated green-blue palette',
+    category: 'wellness',
+    colors: {
+      primary: '#16a34a',      // Modern green for trust and health
+      secondary: '#0369a1',    // Professional blue for authority
+      accent: '#dc2626',       // Red for alerts/warnings
+      trust: '#059669',        // Emerald for trustworthiness
+      background: '#ffffff',   // Clean white
+      text: '#111827',         // Near black for readability
+    },
+    fonts: {
+      heading: 'Inter',        // Clean, modern sans-serif
+      body: 'Inter',          // Consistent, highly readable
+    },
+    style: 'wellness',
+    preview: {
+      gradient: 'from-green-600 to-blue-600',
+      accent: '#dc2626',
+    },
+  },
+  {
     id: 'wellness-natural',
     name: 'Natural Wellness',
     description: 'Earth tones for natural health and holistic living',

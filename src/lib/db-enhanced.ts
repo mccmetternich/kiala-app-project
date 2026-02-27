@@ -725,7 +725,7 @@ export class EnhancedQueries {
       // Delete all related data first (foreign key constraints)
       await execute('DELETE FROM articles WHERE site_id = ?', [id]);
       await execute('DELETE FROM pages WHERE site_id = ?', [id]);
-      await execute('DELETE FROM subscribers WHERE site_id = ?', [id]);
+      await execute('DELETE FROM email_subscribers WHERE site_id = ?', [id]);
       await execute('DELETE FROM site_widget_settings WHERE site_id = ?', [id]);
       await execute('DELETE FROM widget_categories WHERE site_id = ?', [id]);
 

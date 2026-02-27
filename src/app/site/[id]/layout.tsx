@@ -4,8 +4,8 @@ import db from '@/lib/db-enhanced';
 
 // Default metadata for the site - fallback only when no brand profile exists
 const defaultMetadata = {
-  title: 'Dr. Amy Heart - Women\'s Health Authority',
-  description: 'Join one of the fastest-growing communities of women over 40 discovering breakthrough research, evidence-based protocols, and transformative wellness strategies. Dr. Amy Heart shares clinically-validated insights that have helped thousands reclaim their energy, balance their hormones, and feel vibrant again.',
+  title: 'WellnessVault - Evidence-Based Wellness Content',
+  description: 'Discover evidence-based wellness insights and nutritional guidance from certified professionals. Research-backed articles on nutrition, supplements, and women\'s health from qualified nutritionists and wellness experts.',
   // No default image - will use brand images from database
   image: '',
 };

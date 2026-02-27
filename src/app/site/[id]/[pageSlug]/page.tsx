@@ -2,63 +2,113 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
 import CredibilitySidebar from '@/components/CredibilitySidebar';
-import PageBuilder from '@/components/blocks/PageBuilder';
-import { clientAPI } from '@/lib/api';
+import PageWidgetRenderer from '@/components/PageWidgetRenderer';
+import { Site, Page } from '@/types';
 import { getCommunityCount } from '@/lib/format-community-count';
 
-/**
- * Dynamic page route for custom pages
- * Handles any page slug that doesn't match hardcoded routes
- * Automatically respects site publish status (publishedOnly=true)
- */
+// Fallback site data
+const fallbackSite: Site = {
+  id: 'fallback-site',
+  name: 'Health Authority',
+  domain: 'example.com',
+  theme: {
+    name: 'Medical Authority',
+    colors: {
+      primary: '#1e40af',
+      secondary: '#059669',
+      accent: '#dc2626',
+      trust: '#0369a1',
+      background: '#fefefe',
+      text: '#374151'
+    },
+    fonts: {
+      heading: 'Playfair Display',
+      body: 'Inter'
+    },
+    style: 'medical'
+  },
+  brand: {
+    name: 'Health Authority',
+    tagline: 'Your trusted source for health information',
+    bio: 'We are a team of health experts dedicated to providing you with the most accurate and up-to-date health information.',
+    logo: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=100&h=100&fit=crop',
+    profileImage: '',
+    quote: 'True wellness comes from understanding your body\'s unique needs.'
+  },
+  settings: {
+    navigation: [
+      { label: 'Home', url: '/', type: 'internal' },
+      { label: 'Articles', url: '/articles', type: 'internal' },
+      { label: 'About', url: '/about', type: 'internal' }
+    ],
+    footer: {
+      disclaimer: 'This information is for educational purposes only.',
+      privacyPolicy: '/privacy',
+      termsOfService: '/terms',
+      contact: {
+        email: 'hello@example.com',
+        phone: '(555) 123-4567'
+      }
+    },
+    emailCapture: {
+      provider: 'convertkit',
+      apiKey: 'test-key',
+      listId: 'test-list'
+    },
+    social: {}
+  },
+  pages: [],
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
 export default function DynamicPage() {
   const params = useParams();
   const siteId = params?.id as string;
   const pageSlug = params?.pageSlug as string;
 
   const [siteData, setSiteData] = useState<any>(null);
-  const [pageData, setPageData] = useState<any>(null);
+  const [page, setPage] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     async function loadData() {
-      if (!siteId || !pageSlug) {
-        setLoading(false);
-        return;
-      }
+      if (!siteId || !pageSlug) return;
 
       try {
-        // Fetch site data (publishedOnly=true for public pages)
-        const site = await clientAPI.getSiteBySubdomain(siteId, true);
+        // Fetch site data by subdomain
+        const siteResponse = await fetch(`/api/sites?subdomain=${siteId}&publishedOnly=true`);
+        if (siteResponse.ok) {
+          const siteData = await siteResponse.json();
+          const site = siteData.site;
+          if (site) {
+            setSiteData(site);
 
-        if (!site) {
-          // Site not found or not published
-          setNotFound(true);
-          setLoading(false);
-          return;
-        }
-
-        setSiteData(site);
-
-        // Fetch the page by slug
-        const response = await fetch(`/api/pages?siteId=${site.id}&slug=${pageSlug}`);
-        if (response.ok) {
-          const pages = await response.json();
-          if (pages.length > 0 && pages[0].published) {
-            setPageData(pages[0]);
+            // Fetch page data for this site and slug
+            const pageResponse = await fetch(`/api/pages?siteId=${site.id}`);
+            if (pageResponse.ok) {
+              const pagesData = await pageResponse.json();
+              const foundPage = pagesData.find((p: any) => p.slug === pageSlug);
+              if (foundPage && foundPage.published) {
+                setPage(foundPage);
+              } else {
+                // Page not found or not published
+                setPage(null);
+              }
+            }
           } else {
-            // Page not found or not published
-            setNotFound(true);
+            setSiteData(null);
           }
         } else {
-          setNotFound(true);
+          setSiteData(null);
         }
       } catch (error) {
         console.error('Error loading page:', error);
-        setNotFound(true);
+        setSiteData(null);
+        setPage(null);
       } finally {
         setLoading(false);
       }
@@ -78,47 +128,54 @@ export default function DynamicPage() {
     );
   }
 
-  // Site or page not found - show 404
-  if (notFound || !siteData) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-6">
-          <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Page Not Found</h1>
-          <p className="text-gray-600 mb-6">
-            This page doesn't exist or is currently unavailable.
-          </p>
-          <a
-            href={`/site/${siteId}`}
-            className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
-          >
-            Go to Homepage
-          </a>
-        </div>
-      </div>
-    );
+  // Site not found or not published
+  if (!siteData) {
+    notFound();
   }
 
-  // Transform site data
-  const transformedSite = {
+  // Page not found or not published
+  if (!page) {
+    notFound();
+  }
+
+  // Transform database site data to match the Site interface
+  const transformedSite = siteData ? {
+    ...fallbackSite,
     ...siteData,
     brand: typeof siteData.brand_profile === 'string'
       ? JSON.parse(siteData.brand_profile)
-      : siteData.brand_profile,
+      : siteData.brand_profile || fallbackSite.brand,
     settings: typeof siteData.settings === 'string'
-      ? JSON.parse(siteData.settings)
-      : siteData.settings
+      ? { ...fallbackSite.settings, ...JSON.parse(siteData.settings) }
+      : { ...fallbackSite.settings, ...siteData.settings }
+  } : fallbackSite;
+
+  // Parse page content
+  const pageContent = typeof page.content === 'string' 
+    ? JSON.parse(page.content) 
+    : page.content;
+
+  // Create page object for rendering
+  const pageData: Page = {
+    id: page.id,
+    slug: page.slug,
+    title: page.title,
+    type: 'page',
+    content: pageContent,
+    seo: {
+      title: `${page.title} | ${transformedSite.name}`,
+      description: `${page.title} page for ${transformedSite.name}`,
+      keywords: [page.title.toLowerCase()]
+    },
+    published: true,
+    publishedAt: new Date(page.created_at)
   };
 
   return (
     <SiteLayout
       site={transformedSite}
       showSidebar={true}
-      pageSlug={`/${pageSlug}`}
+      pageSlug={pageSlug}
       sidebar={
         <CredibilitySidebar
           doctor={transformedSite.brand}
@@ -131,26 +188,14 @@ export default function DynamicPage() {
       }
     >
       <div className="space-y-8">
-        {/* Page Title */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{pageData?.title}</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{page.title}</h1>
         </div>
 
-        {/* Page Content - using PageBuilder for block-based content */}
-        {pageData?.widget_config ? (
-          <PageBuilder
-            pageId={pageData.id}
-            siteId={siteData.id}
-            pageType="custom"
-            isEditing={false}
-          />
-        ) : (
-          // Fallback to raw content if no widget config
-          <div
-            className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: pageData?.content || '' }}
-          />
-        )}
+        <PageWidgetRenderer
+          page={pageData}
+          site={transformedSite}
+        />
       </div>
     </SiteLayout>
   );

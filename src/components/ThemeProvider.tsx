@@ -74,8 +74,19 @@ const DEFAULT_COLORS = {
 };
 
 export default function ThemeProvider({ children, site }: ThemeProviderProps) {
-  // Extract theme colors from site settings, falling back to defaults
+  // Extract theme colors from site.theme, falling back to settings then defaults
   const themeColors = useMemo(() => {
+    // First try site.theme (proper location)
+    if (site.theme?.colors) {
+      return {
+        primary: site.theme.colors.primary || DEFAULT_COLORS.primary,
+        secondary: site.theme.colors.secondary || DEFAULT_COLORS.secondary,
+        accent: site.theme.colors.accent || DEFAULT_COLORS.accent,
+        trust: site.theme.colors.trust || DEFAULT_COLORS.trust,
+      };
+    }
+
+    // Fallback to legacy site.settings.theme
     const settings = typeof site.settings === 'string'
       ? JSON.parse(site.settings)
       : site.settings || {};
@@ -88,7 +99,7 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
       accent: themeSettings.accentColor || DEFAULT_COLORS.accent,
       trust: themeSettings.trustColor || DEFAULT_COLORS.trust,
     };
-  }, [site.settings]);
+  }, [site.theme, site.settings]);
 
   // Generate full palettes for each color
   const palettes = useMemo(() => ({
@@ -97,21 +108,30 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
     accent: generatePalette(themeColors.accent),
   }), [themeColors]);
 
+  // Extract font settings
+  const themeFonts = useMemo(() => {
+    if (site.theme?.fonts) {
+      return site.theme.fonts;
+    }
+    return {
+      heading: 'Playfair Display',
+      body: 'Inter'
+    };
+  }, [site.theme]);
+
   // Generate CSS variables string
   const cssVariables = useMemo(() => {
     const vars: string[] = [];
 
-    // Primary palette
+    // Color palettes
     Object.entries(palettes.primary).forEach(([shade, color]) => {
       vars.push(`--color-primary-${shade}: ${color};`);
     });
 
-    // Secondary palette
     Object.entries(palettes.secondary).forEach(([shade, color]) => {
       vars.push(`--color-secondary-${shade}: ${color};`);
     });
 
-    // Accent palette
     Object.entries(palettes.accent).forEach(([shade, color]) => {
       vars.push(`--color-accent-${shade}: ${color};`);
     });
@@ -121,8 +141,12 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
     vars.push(`--color-trust-blue: #1e40af;`);
     vars.push(`--color-trust-gold: #d97706;`);
 
+    // Font families
+    vars.push(`--font-heading: '${themeFonts.heading}', system-ui, sans-serif;`);
+    vars.push(`--font-body: '${themeFonts.body}', system-ui, sans-serif;`);
+
     return vars.join('\n    ');
-  }, [palettes, themeColors]);
+  }, [palettes, themeColors, themeFonts]);
 
   return (
     <>

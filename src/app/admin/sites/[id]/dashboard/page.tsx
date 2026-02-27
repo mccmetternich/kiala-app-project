@@ -106,13 +106,7 @@ export default function SiteDashboard() {
   const [pagesSubTab, setPagesSubTab] = useState<'pages' | 'navigation'>('pages');
   const [navTemplates, setNavTemplates] = useState<any[]>([]);
   const [pageConfig, setPageConfig] = useState<any>({
-    pages: [
-      { id: 'home', type: 'homepage', slug: '/', title: 'Home', navLabel: 'Home', enabled: true, showInNav: true, navOrder: 1, navMode: 'global' },
-      { id: 'articles', type: 'articles', slug: '/articles', title: 'Articles', navLabel: 'Articles', enabled: true, showInNav: true, navOrder: 2, navMode: 'global' },
-      { id: 'about', type: 'about', slug: '/about', title: 'About', navLabel: 'About', enabled: true, showInNav: true, navOrder: 3, navMode: 'global' },
-      { id: 'top-picks', type: 'top-picks', slug: '/top-picks', title: 'Top Picks', navLabel: 'Top Picks', enabled: false, showInNav: false, navOrder: 4, navMode: 'global' },
-      { id: 'success-stories', type: 'success-stories', slug: '/success-stories', title: 'Success Stories', navLabel: 'Success Stories', enabled: false, showInNav: false, navOrder: 5, navMode: 'global' },
-    ],
+    pages: [],
     defaultArticleNavMode: 'direct-response'
   });
   const [dbPages, setDbPages] = useState<any[]>([]); // Actual pages from database with widget_config
@@ -135,6 +129,39 @@ export default function SiteDashboard() {
 
       // Store database pages for widget counts
       setDbPages(pagesData || []);
+      
+      // Convert database pages to page config format for dashboard display
+      if (pagesData && pagesData.length > 0) {
+        const dbPageConfig = pagesData.map((page: any, index: number) => ({
+          id: page.id,
+          type: page.template || 'page',
+          slug: page.slug === 'index' ? '/' : `/${page.slug}`,
+          title: page.title,
+          navLabel: page.title,
+          enabled: Boolean(page.published),
+          showInNav: Boolean(page.published),
+          navOrder: index + 1,
+          navMode: 'global'
+        }));
+        
+        // Add the special articles page (always exists)
+        const articlesPage = {
+          id: 'articles',
+          type: 'articles',
+          slug: '/articles',
+          title: 'Articles',
+          navLabel: 'Articles',
+          enabled: true,
+          showInNav: true,
+          navOrder: 999,
+          navMode: 'global'
+        };
+        
+        setPageConfig({
+          pages: [...dbPageConfig, articlesPage],
+          defaultArticleNavMode: 'direct-response'
+        });
+      }
 
       if (siteResponse.site) {
         const siteData = siteResponse.site;

@@ -83,11 +83,9 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
       }
     }
 
-    // Default navigation if no config
+    // Default navigation if no config - articles only
     return [
-      { label: 'Home', href: homeUrl },
-      { label: 'Articles', href: getSiteUrl('/articles') },
-      { label: 'About', href: getSiteUrl('/about') }
+      { label: 'Articles', href: getSiteUrl('/articles') }
     ];
   };
 
@@ -140,11 +138,11 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
               </div>
               <span className="font-medium">Join {communityCount.full.replace('+', '')} women transforming their health!</span>
             </div>
-            <Link href={getSiteUrl('/articles/foods-naturally-balance-hormones')} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <Link href={getSiteUrl('/articles/bloom-vs-kiala-greens-powder-comparison')} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                 <Bell className="w-4 h-4" />
               </div>
-              <span className="font-medium">✨ New breakthrough research just published!</span>
+              <span className="font-medium">✨ New nutritional analysis just published!</span>
               <Badge variant="limited" size="sm" className="bg-accent-500 text-white border-accent-400 animate-pulse">
                 Read Now
               </Badge>
@@ -173,10 +171,10 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
               )}
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  {brand?.name || site.name || 'Dr. Heart'}
+                  {brand?.name || site.name || 'WellnessVault'}
                 </h1>
                 <p className="text-sm text-primary-600 font-medium">
-                  {brand?.tagline || 'Your 40+ Wellness Authority'}
+                  {brand?.tagline || 'Evidence-Based Wellness Content'}
                 </p>
               </div>
             </Link>
@@ -222,13 +220,13 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
           {/* Announcement Banner - smoothly collapses */}
           <div className={`overflow-hidden transition-all duration-300 ease-out ${isScrolled ? 'max-h-0' : 'max-h-12'}`}>
             <Link
-              href={getSiteUrl('/articles/foods-naturally-balance-hormones')}
+              href={getSiteUrl('/articles/bloom-vs-kiala-greens-powder-comparison')}
               className="flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-primary-500 to-primary-600"
             >
               <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
                 <Bell className="w-3 h-3 text-white" />
               </div>
-              <span className="font-medium text-xs text-white">✨ New breakthrough research!</span>
+              <span className="font-medium text-xs text-white">✨ New nutritional analysis!</span>
               <Badge variant="limited" size="sm" className="bg-accent-500 text-white border-accent-400 animate-pulse text-[10px] px-1.5 py-0.5">
                 Read Now
               </Badge>
@@ -254,13 +252,13 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                   </Link>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-bold text-sm leading-tight">
-                      {brand?.name || 'Dr. Amy'}
+                      {brand?.name || 'WellnessVault'}
                     </p>
                     <p className="text-white/70 text-xs leading-tight">
-                      {brand?.tagline || 'Your 40+ Wellness Authority'}
+                      {brand?.tagline || 'Evidence-Based Wellness Content'}
                     </p>
                     <p className="text-white font-semibold text-xs leading-tight mt-1">
-                      👋 Hi from {brand?.name || 'Dr. Amy'}
+                      👋 Welcome to {brand?.name || 'WellnessVault'}
                     </p>
                   </div>
                   {/* Hamburger Menu Button */}
@@ -310,10 +308,10 @@ export default function SiteHeader({ site, navConfig }: SiteHeaderProps) {
                     />
                     <div className="min-w-0">
                       <p className="text-white font-semibold text-xs leading-tight truncate">
-                        👋 Hi from {brand?.name || 'Dr. Amy'}
+                        👋 Welcome to {brand?.name || 'WellnessVault'}
                       </p>
                       <p className="text-white/70 text-[10px] leading-tight truncate">
-                        {brand?.tagline || 'Your 40+ Wellness Authority'}
+                        {brand?.tagline || 'Evidence-Based Wellness Content'}
                       </p>
                     </div>
                   </Link>
