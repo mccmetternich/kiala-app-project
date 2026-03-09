@@ -205,7 +205,7 @@ export const domainManager = {
         {
           type: 'A',
           name: domain.domain,
-          value: '76.76.19.61',
+          value: '216.198.79.1',
           ttl: 300
         },
         {

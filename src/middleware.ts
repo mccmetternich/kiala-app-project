@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const domainToSite: Record<string, string> = {
   'dramyheart.com': 'dr-amy',
   'www.dramyheart.com': 'dr-amy',
+  'goodnessauthority.com': 'goodness-authority',
+  'www.goodnessauthority.com': 'goodness-authority',
 };
 
 // Auth token must match what's set in the login route
