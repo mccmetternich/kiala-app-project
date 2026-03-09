@@ -52,8 +52,9 @@ export async function generateMetadata(
     ? (typeof site.settings === 'string' ? JSON.parse(site.settings) : site.settings)
     : null;
 
+  const siteName = brand?.name || site?.name || defaultMetadata.title;
   const title = brand?.name
-    ? `${brand.name} - Women's Health Authority`
+    ? `${brand.name} - ${brand.tagline || 'Wellness Authority'}`
     : defaultMetadata.title;
 
   // Priority for description: settings.metaDescription > brand.bio > default
@@ -77,19 +78,22 @@ export async function generateMetadata(
     other['facebook-domain-verification'] = analytics.metaDomainVerification;
   }
 
+  // Site-specific keywords
+  const siteKeywords = siteSettings?.metaKeywords || brand?.keywords || ['women\'s health', 'wellness', 'health authority'];
+
   return {
     title: {
       default: title,
-      template: `%s | ${brand?.name || 'Dr. Amy Heart'}`,
+      template: `%s | ${siteName}`,
     },
     description,
-    keywords: ['women\'s health', 'hormone balance', 'menopause', 'wellness', 'weight loss after 40', 'energy', 'Dr. Amy Heart'],
-    authors: [{ name: brand?.name || 'Dr. Amy Heart' }],
-    creator: brand?.name || 'Dr. Amy Heart',
+    keywords: siteKeywords,
+    authors: [{ name: siteName }],
+    creator: siteName,
     openGraph: {
       type: 'website',
       locale: 'en_US',
-      siteName: brand?.name || 'Dr. Amy Heart',
+      siteName,
       title,
       description,
       images: [
@@ -97,7 +101,7 @@ export async function generateMetadata(
           url: image,
           width: 1200,
           height: 630,
-          alt: brand?.name || 'Dr. Amy Heart',
+          alt: siteName,
         },
       ],
     },
@@ -106,7 +110,7 @@ export async function generateMetadata(
       title,
       description,
       images: [image],
-      creator: '@dramyheart',
+      creator: siteSettings?.social?.twitter || undefined,
     },
     robots: {
       index: true,
