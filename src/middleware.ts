@@ -54,6 +54,11 @@ export async function middleware(request: NextRequest) {
   // Handle custom domains
   const siteId = domainToSite[domain];
   if (siteId) {
+    // Goodness Authority: only allow article pages, 404 everything else
+    if (siteId === 'goodness-authority' && !url.pathname.startsWith('/articles/')) {
+      return new NextResponse('Not Found', { status: 404 });
+    }
+
     // Rewrite to the site page and set a cookie with the siteId
     const newUrl = url.clone();
     newUrl.pathname = `/site/${siteId}${url.pathname}`;
