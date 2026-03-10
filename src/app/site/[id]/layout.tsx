@@ -17,17 +17,14 @@ type Props = {
 
 async function getSiteData(subdomain: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
-                    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-                    'http://localhost:3000';
-
-    const response = await fetch(`${baseUrl}/api/sites?subdomain=${subdomain}`, {
-      next: { revalidate: 60 } // Cache for 60 seconds
+    // Query DB directly instead of self-referencing HTTP call
+    const result = await db.execute({
+      sql: 'SELECT * FROM sites WHERE subdomain = ?',
+      args: [subdomain]
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      return data.site;
+    if (result.rows.length > 0) {
+      return result.rows[0];
     }
   } catch (error) {
     console.error('Error fetching site data for metadata:', error);
