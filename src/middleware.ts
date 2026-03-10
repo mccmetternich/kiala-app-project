@@ -21,6 +21,15 @@ export async function middleware(request: NextRequest) {
   const domain = hostname.split(':')[0];
   const isCustomDomain = domain !== 'localhost' && !domain.includes('vercel.app');
 
+  // Block admin, manage, and internal /site/ routes on all custom domains
+  if (isCustomDomain && (
+    url.pathname.startsWith('/admin') ||
+    url.pathname.startsWith('/manage') ||
+    url.pathname.startsWith('/site/')
+  )) {
+    return new NextResponse('Not Found', { status: 404 });
+  }
+
   // Protect admin routes (except login-related)
   if (url.pathname.startsWith('/admin')) {
     const authCookie = request.cookies.get('cms_admin_auth');

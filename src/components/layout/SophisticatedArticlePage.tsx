@@ -294,15 +294,7 @@ export default function SophisticatedArticlePage({
                     <p>© 2024 {brand.name}. Evidence-based wellness content.</p>
                   </div>
                   
-                  <TrackedLink
-                    href={`/site/${site.subdomain}/articles`}
-                    className="goop-button-secondary inline-flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300"
-                    widgetType="article-footer"
-                    widgetName="more-articles"
-                  >
-                    <span>More Articles</span>
-                    <ArrowLeft className="w-4 h-4 rotate-180" />
-                  </TrackedLink>
+                  {/* More Articles link hidden until additional articles are published */}
                 </div>
               </footer>
 
