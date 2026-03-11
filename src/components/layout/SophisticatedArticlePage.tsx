@@ -61,28 +61,35 @@ export default function SophisticatedArticlePage({
   
   const brand = site?.brand || {};
   
-  // Parse article content - prioritize raw article content over page content
+  // Parse article content - prioritize widget-based content over raw HTML
   const articleContent = (() => {
-    // First, try to use the raw article content (most reliable)
-    if (article?.content && typeof article.content === 'string' && article.content.length > 0) {
-      console.log('✅ Using raw article content:', article.content.substring(0, 100));
-      return { content: article.content };
+    // First, check if articlePage.content has widgets (widget-based rendering)
+    if (articlePage.content && typeof articlePage.content === 'object' && (articlePage.content as any).widgets) {
+      console.log('✅ Using widget-based content:', (articlePage.content as any).widgets.length, 'widgets');
+      return articlePage.content as any;
     }
-    
-    // Then try articlePage.content
+
+    // Then try parsing articlePage.content as JSON string
     if (typeof articlePage.content === 'string') {
-      // Try to parse as JSON first (for JSON content objects)
       try {
         const parsed = JSON.parse(articlePage.content);
-        console.log('✅ Using parsed JSON content:', parsed);
+        if (parsed.widgets) {
+          console.log('✅ Using parsed widget content:', parsed.widgets.length, 'widgets');
+          return parsed;
+        }
         return parsed;
       } catch {
-        // If JSON parsing fails, treat as raw HTML content
         console.log('✅ Using raw page content as string');
         return { content: articlePage.content };
       }
     }
-    
+
+    // Fall back to raw article content
+    if (article?.content && typeof article.content === 'string' && article.content.length > 0) {
+      console.log('✅ Falling back to raw article content');
+      return { content: article.content };
+    }
+
     console.log('❌ No content found, returning fallback');
     return { content: 'Article content not available' };
   })();
