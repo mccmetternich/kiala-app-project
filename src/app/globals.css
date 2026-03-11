@@ -34,17 +34,17 @@
   --color-secondary-800: #8f7a65;
   --color-secondary-900: #6d5a47;
 
-  /* Accent - Sophisticated Gold */
-  --color-accent-50: #fefdf8;
-  --color-accent-100: #fdf9e7;
-  --color-accent-200: #faf1c4;
-  --color-accent-300: #f5e596;
-  --color-accent-400: #efd666;
-  --color-accent-500: #e6c547;
-  --color-accent-600: #d4a574;
-  --color-accent-700: #b8935f;
-  --color-accent-800: #9c7a4a;
-  --color-accent-900: #7a5f39;
+  /* Accent - Warm Camel & Sage */
+  --color-accent-50: #f9f6f2;
+  --color-accent-100: #f0ebe3;
+  --color-accent-200: #e2d5c7;
+  --color-accent-300: #d1bda8;
+  --color-accent-400: #c4a882;
+  --color-accent-500: #a3856e;
+  --color-accent-600: #8b7355;
+  --color-accent-700: #74604a;
+  --color-accent-800: #5c6b5e;
+  --color-accent-900: #4a554c;
 
   /* Trust Colors */
   --color-trust-blue: #1e40af;
@@ -225,11 +225,11 @@
   }
 
   .hero-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #5c6b5e 0%, #8b7355 100%);
   }
 
   .trust-gradient {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+    background: linear-gradient(135deg, #7a8b7d 0%, #a3856e 50%, #c4a882 100%);
   }
 
   /* Sophisticated Article Content Typography */
@@ -267,7 +267,7 @@
   }
 
   .sophisticated-content blockquote {
-    border-left: 4px solid #c9a96e;
+    border-left: 4px solid #a3856e;
     background: linear-gradient(to right, #f8f6f3, white);
     padding-left: 2rem;
     padding-right: 1.5rem;
@@ -376,7 +376,7 @@
   }
 
   .sophisticated-widgets blockquote {
-    border-left: 4px solid #c9a96e;
+    border-left: 4px solid #a3856e;
     background: linear-gradient(to right, #f8f6f3, white);
     padding-left: 2rem;
     padding-right: 1.5rem;
@@ -499,7 +499,7 @@
     gap: 1rem;
     padding: 1.5rem;
     background: linear-gradient(135deg, white, #f8f6f3);
-    border: 2px solid #c9a96e;
+    border: 2px solid #a3856e;
     border-radius: 0.75rem;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
     margin-top: 2.5rem;
@@ -599,7 +599,7 @@
     display: block;
     width: 60px;
     height: 2px;
-    background: linear-gradient(to right, #c9a96e, transparent);
+    background: linear-gradient(to right, #a3856e, transparent);
     margin-top: 1.5rem;
     margin-bottom: 1rem;
   }

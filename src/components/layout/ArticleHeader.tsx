@@ -88,7 +88,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
               <span className="font-semibold">Trusted by {communityCount.full} women transforming their health</span>
               <div className="flex items-center gap-1 ml-2">
                 {[1,2,3,4,5].map(i => (
-                  <Star key={i} className="w-4 h-4 fill-amber-300 text-amber-300" />
+                  <Star key={i} className="w-4 h-4 fill-accent-300 text-accent-300" />
                 ))}
               </div>
             </div>
@@ -261,7 +261,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
                 <span className="font-medium text-xs">{communityCount.full} women trust {brand?.name || 'Dr. Amy'}</span>
                 <div className="flex items-center gap-0.5">
                   {[1,2,3,4,5].map(i => (
-                    <Star key={i} className="w-3 h-3 fill-amber-300 text-amber-300" />
+                    <Star key={i} className="w-3 h-3 fill-accent-300 text-accent-300" />
                   ))}
                 </div>
               </div>

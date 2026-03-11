@@ -118,7 +118,7 @@ export default function DualOfferComparison({
         {/* Bottom note */}
         <div className="text-center mt-6">
           <p className="text-sm text-gray-500">
-            <Star className="w-4 h-4 inline text-amber-500 mr-1" />
+            <Star className="w-4 h-4 inline text-accent-500 mr-1" />
             <strong>Pro tip:</strong> 94% of members choose the Complete Kit for best results
           </p>
         </div>

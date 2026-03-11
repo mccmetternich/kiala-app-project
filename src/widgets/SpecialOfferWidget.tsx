@@ -202,7 +202,7 @@ export default function SpecialOfferWidget({
                 <span>30-Day Money Back</span>
               </div>
               <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-amber-500" />
+                <Star className="w-4 h-4 text-accent-500" />
                 <span>4.9/5 Rating</span>
               </div>
               <div className="flex items-center gap-1">

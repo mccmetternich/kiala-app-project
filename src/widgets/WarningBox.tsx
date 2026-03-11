@@ -95,12 +95,12 @@ export default function WarningBox({
           iconBg: 'bg-primary-500',
           text: 'text-primary-900',
         };
-      default: // amber/default
+      default: // warm camel/default
         return {
-          bg: 'bg-gradient-to-r from-amber-100 via-yellow-100 to-amber-50',
-          border: 'border-amber-300',
-          iconBg: 'bg-amber-500',
-          text: 'text-amber-900',
+          bg: 'bg-gradient-to-r from-accent-100 via-secondary-100 to-accent-50',
+          border: 'border-accent-300',
+          iconBg: 'bg-accent-500',
+          text: 'text-accent-900',
         };
     }
   };
@@ -240,19 +240,19 @@ export default function WarningBox({
 
   // Container styles for other variants
   const containerStyles = {
-    default: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300',
+    default: 'bg-gradient-to-br from-accent-50 to-secondary-50 border-accent-300',
     urgent: 'bg-gradient-to-br from-red-50 via-primary-50 to-accent-50 border-red-300',
     info: 'bg-gradient-to-br from-primary-50 to-accent-50 border-primary-300',
   };
 
   const headerStyles = {
-    default: 'from-amber-500 to-yellow-500',
+    default: 'from-accent-500 to-accent-600',
     urgent: 'from-red-500 to-primary-500',
     info: 'from-primary-500 to-accent-500',
   };
 
   const iconBgStyles = {
-    default: 'bg-amber-100 text-amber-600',
+    default: 'bg-accent-100 text-accent-600',
     urgent: 'bg-red-100 text-red-600',
     info: 'bg-primary-100 text-primary-600',
   };

@@ -198,8 +198,8 @@ export default function ExpectationTimeline({
 
                       {/* Optional Callout - highlighted text box */}
                       {step.callout && (
-                        <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-                          <p className="text-amber-800 font-semibold text-sm italic">{step.callout}</p>
+                        <div className="mt-3 p-3 bg-gradient-to-r from-accent-50 to-secondary-50 rounded-lg border border-accent-200">
+                          <p className="text-accent-800 font-semibold text-sm italic">{step.callout}</p>
                         </div>
                       )}
 
@@ -222,10 +222,10 @@ export default function ExpectationTimeline({
 
         {/* What to Expect Note */}
         {showDisclaimer && (
-          <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
+          <div className="mt-8 bg-gradient-to-r from-accent-50 to-secondary-50 border border-accent-200 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Heart className="w-5 h-5 text-amber-600" />
+              <div className="w-10 h-10 bg-accent-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Heart className="w-5 h-5 text-accent-600" />
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 mb-1">{disclaimerTitle}</h4>

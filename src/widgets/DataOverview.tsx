@@ -68,7 +68,7 @@ const colorMap: Record<string, { bg: string; light: string; text: string; border
   red: { bg: 'from-primary-500 to-primary-600', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
   blue: { bg: 'from-accent-500 to-accent-600', light: 'bg-primary-50', text: 'text-accent-600', border: 'border-primary-200' },
   green: { bg: 'from-primary-400 to-accent-500', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
-  amber: { bg: 'from-amber-500 to-amber-600', light: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200' },
+  amber: { bg: 'from-accent-500 to-accent-600', light: 'bg-accent-50', text: 'text-accent-600', border: 'border-accent-200' },
   purple: { bg: 'from-accent-500 to-accent-600', light: 'bg-primary-50', text: 'text-accent-600', border: 'border-primary-200' },
   pink: { bg: 'from-primary-500 to-primary-600', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' }
 };

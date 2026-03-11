@@ -125,7 +125,7 @@ export default function StackedQuotes({
         <div className="flex items-center justify-center gap-2 mt-4">
           <div className="flex">
             {[1,2,3,4,5].map((star) => (
-              <Star key={star} className={`w-5 h-5 ${star <= 4 ? 'fill-current text-amber-400' : 'fill-amber-400/70 text-amber-400/70'}`} />
+              <Star key={star} className={`w-5 h-5 ${star <= 4 ? 'fill-current text-accent-400' : 'fill-accent-400/70 text-accent-400/70'}`} />
             ))}
           </div>
           <span className="font-bold text-gray-900">4.7</span>
@@ -171,7 +171,7 @@ export default function StackedQuotes({
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-3 h-3 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-200'}`}
+                            className={`w-3 h-3 ${i < quote.rating! ? 'fill-current text-accent-400' : 'text-gray-200'}`}
                           />
                         ))}
                       </div>
@@ -240,7 +240,7 @@ export default function StackedQuotes({
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 ${i < quote.rating! ? 'fill-current text-amber-400' : 'text-gray-300'}`}
+                            className={`w-4 h-4 ${i < quote.rating! ? 'fill-current text-accent-400' : 'text-gray-300'}`}
                           />
                         ))}
                       </div>

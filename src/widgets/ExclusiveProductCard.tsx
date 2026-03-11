@@ -114,7 +114,7 @@ export default function ExclusiveProductCard({
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
-                <BadgeCheck className="w-4 h-4 text-amber-300 flex-shrink-0" />
+                <BadgeCheck className="w-4 h-4 text-accent-200 flex-shrink-0" />
                 <span className="font-bold text-sm truncate">{doctorName}'s #1 Pick</span>
               </div>
               <p className="text-primary-100 text-xs">Personally vetted & recommended</p>
@@ -122,7 +122,7 @@ export default function ExclusiveProductCard({
           </div>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-2 py-1 rounded-full">
-              <Clock className="w-3 h-3 text-amber-300" />
+              <Clock className="w-3 h-3 text-accent-200" />
               <span className="text-xs font-semibold">
                 {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
               </span>
@@ -130,7 +130,7 @@ export default function ExclusiveProductCard({
             {badges.slice(0, 1).map((badge, idx) => (
               <span
                 key={idx}
-                className="px-2 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900"
+                className="px-2 py-1 rounded-full text-xs font-bold bg-accent-300 text-accent-900"
               >
                 {badge}
               </span>
@@ -148,7 +148,7 @@ export default function ExclusiveProductCard({
             />
             <div>
               <div className="flex items-center gap-2">
-                <BadgeCheck className="w-5 h-5 text-amber-300" />
+                <BadgeCheck className="w-5 h-5 text-accent-200" />
                 <span className="font-bold">{doctorName}'s #1 Pick</span>
               </div>
               <p className="text-primary-100 text-sm">Personally vetted & recommended</p>
@@ -157,7 +157,7 @@ export default function ExclusiveProductCard({
           <div className="flex items-center gap-3">
             {/* Countdown Timer */}
             <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
-              <Clock className="w-3.5 h-3.5 text-amber-300" />
+              <Clock className="w-3.5 h-3.5 text-accent-200" />
               <span className="text-xs font-semibold">
                 {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
               </span>
@@ -166,7 +166,7 @@ export default function ExclusiveProductCard({
             {badges.slice(0, 1).map((badge, idx) => (
               <span
                 key={idx}
-                className="px-3 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900"
+                className="px-3 py-1 rounded-full text-xs font-bold bg-accent-300 text-accent-900"
               >
                 {badge}
               </span>
@@ -201,7 +201,7 @@ export default function ExclusiveProductCard({
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-5 h-5 ${star <= 4 ? 'fill-current text-amber-400' : 'fill-amber-400/70 text-amber-400/70'}`}
+                    className={`w-5 h-5 ${star <= 4 ? 'fill-current text-accent-400' : 'fill-accent-400/70 text-accent-400/70'}`}
                   />
                 ))}
               </div>
@@ -297,7 +297,7 @@ export default function ExclusiveProductCard({
                     <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                        <Star key={star} className="w-3 h-3 fill-current text-accent-400" />
                       ))}
                       <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
                     </div>
@@ -332,7 +332,7 @@ export default function ExclusiveProductCard({
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-5 h-5 ${star <= 4 ? 'fill-current text-amber-400' : 'fill-amber-400/70 text-amber-400/70'}`}
+                    className={`w-5 h-5 ${star <= 4 ? 'fill-current text-accent-400' : 'fill-accent-400/70 text-accent-400/70'}`}
                   />
                 ))}
               </div>
@@ -369,7 +369,7 @@ export default function ExclusiveProductCard({
                       <p className="font-semibold text-gray-900 text-sm">{testimonialName}</p>
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className="w-3 h-3 fill-current text-amber-400" />
+                          <Star key={star} className="w-3 h-3 fill-current text-accent-400" />
                         ))}
                         <span className="text-xs text-green-600 font-medium ml-1">Verified Buyer</span>
                       </div>

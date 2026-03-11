@@ -140,10 +140,10 @@ export default function CommunitySurveyResults({
 
             {/* Highlight callout */}
             {highlightText && (
-              <div className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
+              <div className="mt-6 bg-gradient-to-r from-accent-50 to-secondary-50 rounded-xl p-5 border border-accent-200">
                 <div className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-amber-800 font-medium">{highlightText}</p>
+                  <Sparkles className="w-5 h-5 text-accent-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-accent-800 font-medium">{highlightText}</p>
                 </div>
               </div>
             )}

@@ -95,7 +95,7 @@ export default function Checklist({
     const percentage = (checkedCount / alertThreshold) * 100;
     if (isCelebratory && percentage >= 100) return 'from-emerald-500 to-teal-500';
     if (percentage >= 100) return 'from-red-500 to-rose-500';
-    if (percentage >= 66) return 'from-orange-500 to-amber-500';
+    if (percentage >= 66) return 'from-accent-400 to-accent-500';
     return 'from-primary-500 to-accent-500';
   };
 

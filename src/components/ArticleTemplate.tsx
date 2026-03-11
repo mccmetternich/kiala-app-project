@@ -455,7 +455,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
                     </div>
                     {product.rating && (
                       <div className="flex items-center gap-1 mb-3">
-                        <div className="flex text-amber-400">{'★'.repeat(Math.floor(product.rating))}</div>
+                        <div className="flex text-accent-400">{'★'.repeat(Math.floor(product.rating))}</div>
                         <span className="text-sm text-gray-600">({product.reviews || 0})</span>
                       </div>
                     )}
@@ -685,7 +685,7 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
 
     case 'social-proof':
       return (
-        <div className="my-8 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+        <div className="my-8 bg-gradient-to-r from-accent-50 to-secondary-50 rounded-xl p-4 border border-accent-200">
           <div className="flex items-center justify-center gap-3">
             <div className="flex -space-x-2">
               {[1, 2, 3].map((i) => (

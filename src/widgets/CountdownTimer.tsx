@@ -110,7 +110,7 @@ export default function CountdownTimer({
             {/* Rating */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-1">
               {[1,2,3,4,5].map(i => (
-                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <Star key={i} className="w-4 h-4 fill-accent-400 text-accent-400" />
               ))}
               <span className="text-sm text-gray-600 ml-1">(2,847)</span>
             </div>
