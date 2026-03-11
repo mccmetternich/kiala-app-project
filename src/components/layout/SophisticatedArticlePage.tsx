@@ -168,16 +168,16 @@ export default function SophisticatedArticlePage({
       showPopups={false}
     >
       {/* Reading Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-secondary-200 z-50">
-        <div 
-          className="h-full bg-gradient-to-r from-accent-500 to-primary-500 transition-all duration-150 ease-out"
-          style={{ width: `${scrollProgress}%` }}
+      <div className="fixed top-0 left-0 right-0 h-1 z-50" style={{ backgroundColor: '#e8e4df' }}>
+        <div
+          className="h-full transition-all duration-150 ease-out"
+          style={{ width: `${scrollProgress}%`, background: 'linear-gradient(to right, #8b7355, #a3856e, #c4a882)' }}
         />
       </div>
       
       <article className="min-h-screen bg-secondary-50">
         {/* Hero Section with sophisticated styling */}
-        <header className="relative pt-16 lg:pt-24 pb-2 lg:pb-6 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
+        <header className="relative pt-6 lg:pt-10 pb-2 lg:pb-6 sophisticated-gradient overflow-hidden border-b border-secondary-300 shadow-sm">
           {/* Subtle pattern overlay */}
           <div 
             className="absolute inset-0 opacity-30" 

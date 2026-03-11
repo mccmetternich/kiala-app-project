@@ -79,7 +79,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
     <header className="bg-white shadow-md sticky top-0 z-50">
       {/* Desktop: Original Validation Banner - only if social proof enabled */}
       {showSocialProof && (
-        <div className="hidden md:block bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4">
+        <div className="hidden md:block text-white py-3 px-4" style={{ background: 'linear-gradient(to right, #5c6b5e, #6b7c6e, #7a8b7d)' }}>
           <div className="max-w-7xl mx-auto flex items-center justify-center text-sm">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -148,7 +148,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
       {/* Mobile: Elegant Compact Header */}
       <div className="md:hidden">
         {/* Single sticky header that transforms on scroll */}
-        <div className="sticky top-0 z-[60] bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 shadow-lg">
+        <div className="sticky top-0 z-[60] shadow-lg" style={{ background: 'linear-gradient(to right, #5c6b5e, #6b7c6e, #7a8b7d)' }}>
           {/* Smooth transition between expanded and collapsed */}
           <div className={`transition-all duration-300 ease-out overflow-hidden ${isScrolled ? 'max-h-14' : 'max-h-40'}`}>
             <div className="px-4 py-3">
@@ -251,7 +251,7 @@ export default function ArticleHeader({ site, audioTrackUrl, navConfig }: Articl
 
           {/* Social Validation Bumper - only in expanded view, if social proof enabled */}
           {showSocialProof && (
-            <div className={`bg-primary-700/90 text-white px-4 transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 py-0' : 'max-h-10 py-2'}`}>
+            <div className={`text-white px-4 transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0 py-0' : 'max-h-10 py-2'}`} style={{ backgroundColor: 'rgba(74, 85, 76, 0.9)' }}>
               <div className="flex items-center justify-center gap-2">
                 <div className="flex -space-x-1.5">
                   <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=28&h=28&fit=crop&crop=face" className="w-5 h-5 rounded-full border-2 border-primary-600" alt="" />
