@@ -242,13 +242,6 @@ export default function SophisticatedArticlePage({
 
                 {/* Author Attribution */}
                 <div className="flex items-center gap-4 pt-4 border-t border-secondary-300 mt-6">
-                  {brand.aboutImage && (
-                    <img
-                      src={brand.aboutImage}
-                      alt={brand.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-accent-300 shadow-sm"
-                    />
-                  )}
                   <div>
                     <p className="font-semibold text-gray-900">{brand.name || 'Wellness Authority'}</p>
                     <p className="text-sm text-gray-600">{brand.tagline || 'Evidence-Based Wellness'}</p>
