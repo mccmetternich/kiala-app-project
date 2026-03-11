@@ -24,7 +24,7 @@ export default function SiteSettings() {
   const [activeTab, setActiveTab] = useState<'content' | 'appearance' | 'advanced'>('content');
   const [isSaving, setIsSaving] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
-  const [mediaTarget, setMediaTarget] = useState<'logo' | 'author' | 'sidebar' | 'about' | 'leadMagnet' | 'audio' | 'aboutAudio' | 'leadMagnetPdf' | null>(null);
+  const [mediaTarget, setMediaTarget] = useState<'logo' | 'favicon' | 'author' | 'sidebar' | 'about' | 'leadMagnet' | 'audio' | 'aboutAudio' | 'leadMagnetPdf' | null>(null);
 
   useEffect(() => {
     async function loadSite() {
@@ -128,6 +128,8 @@ export default function SiteSettings() {
   const handleMediaSelect = (file: any) => {
     if (mediaTarget === 'logo') {
       updateBrandField('logoImage', file.url);
+    } else if (mediaTarget === 'favicon') {
+      updateSettingsField('faviconUrl', file.url);
     } else if (mediaTarget === 'author') {
       updateBrandField('authorImage', file.url);
     } else if (mediaTarget === 'sidebar') {
@@ -471,6 +473,36 @@ export default function SiteSettings() {
                         >
                           <Upload className="w-4 h-4" />
                           {brand.logoImage ? 'Change' : 'Upload'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Favicon */}
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Favicon</label>
+                      <p className="text-xs text-gray-500 mb-3">Browser tab icon (recommended: 32x32 or 64x64 PNG)</p>
+                      <div className="flex items-center gap-4">
+                        {settings.faviconUrl ? (
+                          <img
+                            src={settings.faviconUrl}
+                            alt="Favicon"
+                            className="w-10 h-10 rounded object-contain border-2 border-gray-600 bg-white p-1"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded bg-gray-600 flex items-center justify-center">
+                            <Eye className="w-5 h-5 text-gray-400" />
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMediaTarget('favicon');
+                            setShowMediaLibrary(true);
+                          }}
+                          className="btn-secondary flex items-center gap-2"
+                        >
+                          <Upload className="w-4 h-4" />
+                          {settings.faviconUrl ? 'Change' : 'Upload'}
                         </button>
                       </div>
                     </div>

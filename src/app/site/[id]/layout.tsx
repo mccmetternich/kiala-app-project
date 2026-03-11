@@ -109,6 +109,10 @@ export async function generateMetadata(
       images: [image],
       creator: siteSettings?.social?.twitter || undefined,
     },
+    icons: {
+      icon: siteSettings?.faviconUrl || brand?.faviconUrl || '/favicon.ico',
+      apple: siteSettings?.faviconUrl || brand?.faviconUrl || '/favicon.ico',
+    },
     robots: {
       index: true,
       follow: true,
