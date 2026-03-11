@@ -6,6 +6,7 @@ import SiteLayout from '@/components/layout/SiteLayout';
 import { Calendar, Clock, Eye, Share2, ArrowLeft, Sparkles, ArrowUp } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import TrackedLink from '@/components/TrackedLink';
+import PageWidgetRenderer from '@/components/PageWidgetRenderer';
 
 interface SophisticatedArticlePageProps {
   site: Site;
@@ -251,14 +252,28 @@ export default function SophisticatedArticlePage({
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               
-              {/* Article Body with sophisticated typography and enhanced widgets */}
-              <div className="prose prose-lg prose-stone max-w-none">
-                <div 
-                  className="sophisticated-content sophisticated-widgets space-y-8"
-                  dangerouslySetInnerHTML={{ 
-                    __html: articleContent?.content || articlePage.content || 'Article content loading...' 
-                  }} 
-                />
+              {/* Article Body - Widget-based rendering */}
+              <div className="sophisticated-content sophisticated-widgets">
+                {articleContent?.widgets ? (
+                  <PageWidgetRenderer
+                    widgets={articleContent.widgets}
+                    siteId={site.subdomain || site.id}
+                    siteData={site}
+                    pageContext={{
+                      pageType: 'article',
+                      subdomain: site.subdomain || site.id
+                    }}
+                  />
+                ) : (
+                  <div className="prose prose-lg prose-stone max-w-none">
+                    <div
+                      className="space-y-8"
+                      dangerouslySetInnerHTML={{
+                        __html: articleContent?.content || articlePage.content || 'Article content loading...'
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Article Footer */}

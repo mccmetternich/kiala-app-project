@@ -242,13 +242,19 @@ export default function ArticlePageClient() {
     publishedAt: new Date(article.published_at || article.created_at)
   };
 
-  // Create simplified page object for SophisticatedArticlePage (direct content)
+  // Create page object for SophisticatedArticlePage (widget-based layout)
   const sophisticatedArticlePage: Page = {
     id: article.id,
     slug: article.slug,
     title: article.title,
     type: 'article',
-    content: article.content, // Use raw article content directly
+    content: {
+      widgets: articleWidgets as any,
+      layout: {
+        type: 'full-width',
+        maxWidth: '1200px'
+      }
+    },
     seo: {
       title: `${article.title} | ${transformedSite.name}`,
       description: article.excerpt || 'Read this insightful health article.',

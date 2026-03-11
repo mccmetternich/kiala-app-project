@@ -8,6 +8,14 @@ import NewsletterSignup from '@/widgets/NewsletterSignup';
 import EmailCapture from '@/widgets/EmailCapture';
 import FAQAccordion from '@/widgets/FAQAccordion';
 import TestimonialCarousel from '@/widgets/TestimonialCarousel';
+import ComparisonTable from '@/widgets/ComparisonTable';
+import DataOverview from '@/widgets/DataOverview';
+import UsVsThemComparison from '@/widgets/UsVsThemComparison';
+import DoctorAssessment from '@/widgets/DoctorAssessment';
+import DoctorClosingWord from '@/widgets/DoctorClosingWord';
+import StackedQuotes from '@/widgets/StackedQuotes';
+import TestimonialHero from '@/widgets/TestimonialHero';
+import ExclusiveProductCard from '@/widgets/ExclusiveProductCard';
 import { Gift, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -225,6 +233,30 @@ function WidgetComponent({
           testimonials={config.testimonials || []}
         />
       );
+
+    case 'comparison-table':
+      return <ComparisonTable {...config as any} />;
+
+    case 'data-overview':
+      return <DataOverview {...config as any} />;
+
+    case 'us-vs-them-comparison':
+      return <UsVsThemComparison {...config as any} />;
+
+    case 'doctor-assessment':
+      return <DoctorAssessment {...config as any} />;
+
+    case 'doctor-closing-word':
+      return <DoctorClosingWord {...config as any} />;
+
+    case 'stacked-quotes':
+      return <StackedQuotes {...config as any} />;
+
+    case 'testimonial-hero':
+      return <TestimonialHero {...config as any} />;
+
+    case 'exclusive-product':
+      return <ExclusiveProductCard {...config as any} />;
 
     default:
       // Fallback for unknown widget types
