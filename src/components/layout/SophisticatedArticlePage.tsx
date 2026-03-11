@@ -188,20 +188,7 @@ export default function SophisticatedArticlePage({
 
           <div className="relative container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              {/* Breadcrumb Navigation */}
-              <nav className="mb-8">
-                <TrackedLink 
-                  href={`/site/${site.subdomain}/articles`}
-                  className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-accent-700 transition-colors"
-                  widgetType="breadcrumb"
-                  widgetName="back-to-articles"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Wellness Journal</span>
-                </TrackedLink>
-              </nav>
-
-              {/* Hero Image - positioned after breadcrumb, before content */}
+              {/* Hero Image */}
               {extractedHeroImage && (
                 <div className="mb-8">
                   <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden relative rounded-lg shadow-lg">
