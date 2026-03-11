@@ -165,6 +165,7 @@ export default function SophisticatedArticlePage({
       showSidebar={false}
       isArticle={true}
       fullWidth={true}
+      showPopups={false}
     >
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-secondary-200 z-50">
