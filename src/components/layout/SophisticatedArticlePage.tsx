@@ -240,13 +240,7 @@ export default function SophisticatedArticlePage({
                   </p>
                 )}
 
-                {/* Author Attribution */}
-                <div className="flex items-center gap-4 pt-4 border-t border-secondary-300 mt-6">
-                  <div>
-                    <p className="font-semibold text-gray-900">{brand.name || 'Wellness Authority'}</p>
-                    <p className="text-sm text-gray-600">{brand.tagline || 'Evidence-Based Wellness'}</p>
-                  </div>
-                </div>
+                {/* Author attribution removed */}
               </div>
             </div>
           </div>
