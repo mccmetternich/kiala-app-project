@@ -96,7 +96,7 @@ export default function Checklist({
     if (isCelebratory && percentage >= 100) return 'from-emerald-500 to-teal-500';
     if (percentage >= 100) return 'from-red-500 to-rose-500';
     if (percentage >= 66) return 'from-accent-400 to-accent-500';
-    return 'from-primary-500 to-accent-500';
+    return 'from-accent-800 to-accent-500';
   };
 
   return (
@@ -121,7 +121,7 @@ export default function Checklist({
       <div className={`px-6 py-5 ${
         isAssessment
           ? 'bg-gradient-to-r from-rose-500 via-accent-500 to-accent-500'
-          : 'bg-gradient-to-r from-primary-500 to-accent-500'
+          : 'bg-gradient-to-r from-accent-800 to-accent-500'
       }`}>
         <div className="flex items-start gap-3">
           <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
@@ -189,7 +189,7 @@ export default function Checklist({
                           ? 'bg-gradient-to-r from-rose-500 to-accent-500 border-rose-500 shadow-lg'
                           : isCelebratory
                             ? 'bg-gradient-to-r from-emerald-500 to-teal-500 border-emerald-500 shadow-lg'
-                            : 'bg-gradient-to-r from-primary-500 to-accent-500 border-primary-500 shadow-lg')
+                            : 'bg-gradient-to-r from-accent-800 to-accent-500 border-primary-500 shadow-lg')
                       : 'border-gray-300 bg-white'
                   }`}>
                     {isChecked && (

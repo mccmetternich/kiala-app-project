@@ -87,7 +87,7 @@ export default function HormoneGuideDownload({
 
         <div className="bg-white rounded-xl p-6 shadow-lg mb-8 max-w-md mx-auto">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-accent-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-16 h-16 bg-gradient-to-br from-accent-600 to-accent-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-2xl text-white">📖</span>
             </div>
             <div className="text-left">
@@ -128,7 +128,7 @@ export default function HormoneGuideDownload({
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="bg-gradient-to-r from-primary-500 to-accent-600 hover:from-primary-600 hover:to-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50"
+              className="bg-gradient-to-r from-accent-800 to-accent-600 hover:from-accent-900 hover:to-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50"
             >
               {status === 'loading' ? 'Sending...' : finalButtonText}
             </button>

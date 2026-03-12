@@ -31,7 +31,7 @@ export default function DoctorAssessment({
     <div className="my-8">
       <div className="bg-gradient-to-br from-primary-50 via-accent-50 to-white rounded-2xl border border-primary-200 shadow-lg overflow-hidden">
         {/* Header Badge */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 px-4 py-2 flex items-center gap-2">
+        <div className="bg-gradient-to-r from-accent-900 to-accent-600 px-4 py-2 flex items-center gap-2">
           <Award className="w-5 h-5 text-white" />
           <span className="text-white font-semibold text-sm">{badgeText}</span>
         </div>
@@ -99,7 +99,7 @@ export default function DoctorAssessment({
                   alt={doctorName}
                   className="w-28 h-28 rounded-2xl border-4 border-white shadow-xl object-cover"
                 />
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-primary-600 to-accent-600 rounded-full flex items-center justify-center border-3 border-white shadow-md">
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-accent-900 to-accent-600 rounded-full flex items-center justify-center border-3 border-white shadow-md">
                   <BadgeCheck className="w-5 h-5 text-white" />
                 </div>
               </div>

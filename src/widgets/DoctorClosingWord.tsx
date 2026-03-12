@@ -47,7 +47,7 @@ export default function DoctorClosingWord({
     <div className="my-8">
       <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-gray-800 to-gray-700 px-4 py-3 flex items-center gap-2">
+        <div className="bg-gradient-to-r from-accent-800 to-accent-700 px-4 py-3 flex items-center gap-2">
           <MessageCircle className="w-5 h-5 text-white" />
           <span className="text-white font-semibold text-sm">Personal Message</span>
         </div>

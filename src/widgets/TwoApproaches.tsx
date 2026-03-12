@@ -136,7 +136,7 @@ export default function TwoApproaches({
           <div className={`px-6 py-5 ${
             style === 'contrast'
               ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white'
-              : 'bg-gradient-to-r from-primary-500 to-accent-500 text-white'
+              : 'bg-gradient-to-r from-accent-800 to-accent-500 text-white'
           }`}>
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-full bg-white/20 backdrop-blur">

@@ -75,7 +75,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                 widgetType="testimonial-hero-no-cta"
                 widgetId={widgetId}
                 widgetName={title}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 {ctaText}
               </TrackedLink>
@@ -94,7 +94,7 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
                     className="w-14 h-14 rounded-full object-cover border-2 border-primary-200 shadow-md"
                   />
                 ) : (
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-accent-600 to-accent-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
                     {authorName ? authorName.charAt(0).toUpperCase() : 'C'}
                   </div>
                 )}

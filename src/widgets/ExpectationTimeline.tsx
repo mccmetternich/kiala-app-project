@@ -122,7 +122,7 @@ export default function ExpectationTimeline({
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden my-8 border border-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-5">
+      <div className="bg-gradient-to-r from-accent-800 to-accent-500 text-white p-5">
         <h2 className="text-2xl font-bold mb-1">{headline}</h2>
         <p className="text-primary-100">{subheading}</p>
       </div>
@@ -131,7 +131,7 @@ export default function ExpectationTimeline({
       <div className="p-5 md:p-6">
         <div className="relative">
           {/* Vertical Line - Desktop */}
-          <div className="absolute left-7 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-400 hidden md:block rounded-full"></div>
+          <div className="absolute left-7 top-0 bottom-0 w-1 bg-gradient-to-b from-accent-800 via-accent-500 to-accent-400 hidden md:block rounded-full"></div>
 
           {/* Timeline Steps */}
           <div className="space-y-5">
@@ -144,16 +144,16 @@ export default function ExpectationTimeline({
                 <div key={index} className="relative">
                   {/* Mobile: Vertical line on left side */}
                   {!isLast && (
-                    <div className="md:hidden absolute left-[6px] top-14 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-primary-300 rounded-full" style={{ height: 'calc(100% + 0.75rem)' }}></div>
+                    <div className="md:hidden absolute left-[6px] top-14 bottom-0 w-1 bg-gradient-to-b from-accent-800 to-accent-400 rounded-full" style={{ height: 'calc(100% + 0.75rem)' }}></div>
                   )}
 
                   <div className="flex flex-col md:flex-row gap-4">
                     {/* Icon Circle */}
                     <div className="flex-shrink-0 flex items-center gap-4 md:gap-0">
                       <div className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${
-                        index === 0 ? 'bg-gradient-to-br from-primary-500 to-primary-600' :
+                        index === 0 ? 'bg-gradient-to-br from-accent-800 to-accent-700' :
                         index === 1 ? 'bg-gradient-to-br from-accent-500 to-accent-600' :
-                        index === 2 ? 'bg-gradient-to-br from-primary-400 to-accent-500' :
+                        index === 2 ? 'bg-gradient-to-br from-accent-600 to-accent-500' :
                         'bg-gradient-to-br from-accent-400 to-primary-500'
                       } text-white`}>
                         <Icon className="w-6 h-6" />
@@ -260,7 +260,7 @@ export default function ExpectationTimeline({
             target={target}
             widgetType="expectation-timeline"
             widgetName={headline}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
           >
             {ctaText}
           </TrackedLink>

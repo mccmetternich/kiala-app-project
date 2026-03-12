@@ -220,7 +220,7 @@ export default function ShopNowWidget({
 
   // Dr Header Component (like ExclusiveProductCard) - with avatar and countdown only
   const DrHeader = () => (
-    <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-600 text-white rounded-t-2xl p-3 md:p-4">
+    <div className="bg-gradient-to-r from-accent-900 via-accent-700 to-accent-500 text-white rounded-t-2xl p-3 md:p-4">
       {/* Mobile Layout */}
       <div className="md:hidden">
         <div className="flex items-center justify-between">
@@ -431,7 +431,7 @@ export default function ShopNowWidget({
             {/* Mobile: Badges at top - both badge and savings on one line */}
             <div className="absolute -top-2.5 right-3 flex items-center gap-1.5 md:hidden">
               {optionBadgeText && (
-                <span className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+                <span className="bg-gradient-to-r from-accent-800 to-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
                   {optionBadgeText}
                 </span>
               )}
@@ -442,7 +442,7 @@ export default function ShopNowWidget({
             {/* Desktop: Only the badge ribbon at top */}
             {optionBadgeText && (
               <div className="absolute -top-2.5 right-3 hidden md:block">
-                <span className="bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                <span className="bg-gradient-to-r from-accent-800 to-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                   {optionBadgeText}
                 </span>
               </div>
@@ -510,7 +510,7 @@ export default function ShopNowWidget({
         widgetId={`shop-now-${selectedOption}`}
         widgetName={`${productName} - ${currentOption.label}`}
         value={currentOption.price}
-        className="block w-full bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        className="block w-full bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl text-lg text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
       >
         {ctaText} ${currentOption.price}
       </TrackedLink>

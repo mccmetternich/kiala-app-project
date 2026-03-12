@@ -85,10 +85,10 @@ export default function ProductReveal({
       {/* Main Reveal Card */}
       <div className="bg-white rounded-3xl shadow-2xl border border-primary-100/50 overflow-hidden">
         {/* Decorative top border */}
-        <div className="h-1.5 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500" />
+        <div className="h-1.5 bg-gradient-to-r from-accent-800 via-accent-500 to-accent-800" />
 
         {/* Doctor Endorsement Strip - At Top */}
-        <div className="bg-gradient-to-r from-primary-600 via-primary-700 to-accent-600 p-5 md:p-6">
+        <div className="bg-gradient-to-r from-accent-900 via-accent-800 to-accent-600 p-5 md:p-6">
           <div className="flex flex-col md:flex-row items-center gap-4 max-w-4xl mx-auto">
             <div className="flex items-center gap-4 flex-shrink-0">
               <div className="relative">
@@ -179,7 +179,7 @@ export default function ProductReveal({
             <div className="hidden md:grid grid-cols-3 gap-2 mt-4">
               {socialProofStats.map((stat, idx) => (
                 <div key={idx} className="text-center bg-gradient-to-b from-primary-50 to-white rounded-xl p-3 border border-primary-100/50">
-                  <div className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">{stat.value}</div>
+                  <div className="text-lg md:text-xl font-bold bg-gradient-to-r from-accent-900 to-accent-600 bg-clip-text text-transparent">{stat.value}</div>
                   <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
                 </div>
               ))}
@@ -209,7 +209,7 @@ export default function ProductReveal({
               target={target}
               widgetType="product-reveal"
               widgetName={productName}
-              className="block w-full bg-gradient-to-r from-primary-600 via-primary-600 to-accent-600 hover:from-primary-700 hover:via-primary-700 hover:to-accent-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+              className="block w-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-600 hover:from-accent-900 hover:via-accent-900 hover:to-accent-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 {ctaText}
@@ -229,7 +229,7 @@ export default function ProductReveal({
             <div className="grid md:hidden grid-cols-3 gap-2 mt-6">
               {socialProofStats.map((stat, idx) => (
                 <div key={idx} className="text-center bg-gradient-to-b from-primary-50 to-white rounded-xl p-3 border border-primary-100/50">
-                  <div className="text-lg font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">{stat.value}</div>
+                  <div className="text-lg font-bold bg-gradient-to-r from-accent-900 to-accent-600 bg-clip-text text-transparent">{stat.value}</div>
                   <div className="text-xs text-gray-500 leading-tight">{stat.label}</div>
                 </div>
               ))}

@@ -49,7 +49,7 @@ export default function MythBuster({
       <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 md:p-8 border border-gray-200 shadow-lg">
         {headline && (
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl">
+            <div className="p-2 bg-gradient-to-r from-accent-800 to-accent-500 rounded-xl">
               <Scale className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-xl font-bold text-gray-900">{headline}</h3>
@@ -88,7 +88,7 @@ export default function MythBuster({
               href={ctaUrl}
               widgetType="myth-buster"
               widgetName={headline || 'Myth vs. Reality'}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function MythBuster({
     return (
       <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
         {headline && (
-          <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-5">
+          <div className="bg-gradient-to-r from-accent-800 to-accent-500 px-6 py-5">
             <div className="flex items-center gap-3">
               <Scale className="w-6 h-6 text-white" />
               <div>
@@ -159,7 +159,7 @@ export default function MythBuster({
               href={ctaUrl}
               widgetType="myth-buster"
               widgetName={headline || 'Myth vs. Reality'}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
@@ -174,7 +174,7 @@ export default function MythBuster({
   return (
     <div className="my-8">
       {headline && (
-        <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-t-2xl px-6 py-5">
+        <div className="bg-gradient-to-r from-accent-800 to-accent-500 rounded-t-2xl px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
               <Scale className="w-6 h-6 text-white" />
@@ -262,7 +262,7 @@ export default function MythBuster({
               href={ctaUrl}
               widgetType="myth-buster"
               widgetName={headline || 'Myth vs. Reality'}
-              className="block w-full text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="block w-full text-center bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span className="flex items-center justify-center gap-2">
                 <Sparkles className="w-5 h-5" />

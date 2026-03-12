@@ -116,7 +116,7 @@ export default function Poll({
       <div className={`rounded-t-2xl px-6 py-5 ${
         isHighlighted
           ? 'bg-gradient-to-r from-accent-500 via-accent-600 to-primary-500'
-          : 'bg-gradient-to-r from-primary-500 to-accent-500'
+          : 'bg-gradient-to-r from-accent-800 to-accent-500'
       }`}>
         <div className="flex items-start gap-3">
           <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
@@ -275,7 +275,7 @@ export default function Poll({
               widgetType="poll"
               widgetId={pollId}
               widgetName={question}
-              className="mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-primary-500 via-accent-500 to-accent-600 hover:from-primary-600 hover:via-accent-600 hover:to-accent-700 text-white"
+              className="mt-6 w-full flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-accent-800 via-accent-600 to-accent-500 hover:from-accent-900 hover:via-accent-700 hover:to-accent-600 text-white"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />

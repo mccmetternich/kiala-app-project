@@ -111,7 +111,7 @@ export default function WarningBox({
     return (
       <div className="my-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-500 via-accent-500 to-accent-600 rounded-t-2xl px-6 py-5">
+        <div className="bg-gradient-to-r from-accent-800 via-accent-600 to-accent-500 rounded-t-2xl px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur animate-pulse">
@@ -223,7 +223,7 @@ export default function WarningBox({
                   href={ctaUrl}
                   widgetType="warning-box"
                   widgetName={headline}
-                  className="block w-full text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="block w-full text-center bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="flex items-center justify-center gap-2">
                     {ctaText}
@@ -248,7 +248,7 @@ export default function WarningBox({
   const headerStyles = {
     default: 'from-accent-500 to-accent-600',
     urgent: 'from-red-500 to-primary-500',
-    info: 'from-primary-500 to-accent-500',
+    info: 'from-accent-800 to-accent-500',
   };
 
   const iconBgStyles = {

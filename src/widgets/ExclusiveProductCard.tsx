@@ -103,7 +103,7 @@ export default function ExclusiveProductCard({
   return (
     <div className="my-8">
       {/* Dr. Recommendation Header */}
-      <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-600 text-white rounded-t-2xl p-3 md:p-4">
+      <div className="bg-gradient-to-r from-accent-900 via-accent-700 to-accent-500 text-white rounded-t-2xl p-3 md:p-4">
         {/* Mobile Layout */}
         <div className="md:hidden">
           <div className="flex items-center gap-2 mb-2">
@@ -250,7 +250,7 @@ export default function ExclusiveProductCard({
               widgetType="exclusive-product-card"
               widgetName={name}
               value={price}
-              className="block w-full bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-5 rounded-xl text-base transition-all shadow-lg hover:shadow-xl text-center"
+              className="block w-full bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-3 px-5 rounded-xl text-base transition-all shadow-lg hover:shadow-xl text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />
@@ -345,7 +345,7 @@ export default function ExclusiveProductCard({
               <div className="mt-6 bg-white rounded-xl p-5 shadow-md border border-gray-100 relative">
                 {/* Quote icon */}
                 <div className="absolute -top-3 left-4">
-                  <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-full p-2 shadow-lg">
+                  <div className="bg-gradient-to-r from-accent-800 to-accent-500 rounded-full p-2 shadow-lg">
                     <Quote className="w-4 h-4 text-white" />
                   </div>
                 </div>
@@ -420,7 +420,7 @@ export default function ExclusiveProductCard({
               widgetType="exclusive-product-card"
               widgetName={name}
               value={price}
-              className="block w-full bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+              className="block w-full bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
             >
               <span className="flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />

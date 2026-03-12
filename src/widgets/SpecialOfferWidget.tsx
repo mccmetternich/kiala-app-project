@@ -89,11 +89,11 @@ export default function SpecialOfferWidget({
   return (
     <div className="my-8 relative">
       {/* Animated border */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-accent-500 to-primary-600 rounded-2xl opacity-75 blur animate-pulse"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-accent-600 via-accent-500 to-accent-400 rounded-2xl opacity-75 blur animate-pulse"></div>
 
       <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-primary-400">
         {/* Top banner */}
-        <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-3 flex items-center justify-center gap-3">
+        <div className="bg-gradient-to-r from-accent-800 to-accent-500 text-white p-3 flex items-center justify-center gap-3">
           <Gift className="w-5 h-5 animate-bounce" />
           <span className="font-bold uppercase tracking-wide">{headline}</span>
           <Gift className="w-5 h-5 animate-bounce" />
@@ -124,7 +124,7 @@ export default function SpecialOfferWidget({
                     alt={subheading}
                     className="w-full h-auto object-cover"
                   />
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-accent-800 to-accent-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                     {savingsPercent}% OFF
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export default function SpecialOfferWidget({
           </div>
 
           {/* Countdown Timer */}
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl p-4 mb-6">
+          <div className="bg-gradient-to-r from-accent-800 to-accent-900 text-white rounded-xl p-4 mb-6">
             <div className="text-center mb-2 text-primary-300 font-medium text-sm">
               <Clock className="w-4 h-4 inline mr-1" />
               OFFER EXPIRES IN
@@ -189,7 +189,7 @@ export default function SpecialOfferWidget({
               widgetId={widgetId || `special-offer-${subheading?.substring(0, 20)}`}
               widgetName={subheading || 'Special Offer'}
               value={salePrice}
-              className="block w-full md:w-auto md:inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
+              className="block w-full md:w-auto md:inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-5 px-12 rounded-xl text-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
             >
               {ctaText}
               <ArrowRight className="w-6 h-6 hidden md:inline" />
@@ -214,7 +214,7 @@ export default function SpecialOfferWidget({
         </div>
 
         {/* Bottom urgency bar */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 text-white py-2 px-4 text-center text-sm font-medium">
+        <div className="bg-gradient-to-r from-accent-900 to-accent-600 text-white py-2 px-4 text-center text-sm font-medium">
           <span className="animate-pulse">⚡</span> {spotsRemaining} people are viewing this offer right now
         </div>
       </div>

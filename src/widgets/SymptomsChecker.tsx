@@ -78,7 +78,7 @@ export default function SymptomsChecker({
       {/* Main Card */}
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-5">
+        <div className="bg-gradient-to-r from-accent-800 to-accent-500 text-white p-5">
           <div className="flex items-center gap-2 mb-2">
             <AlertCircle className="w-6 h-6" />
             <h2 className="text-2xl font-bold">{headline}</h2>
@@ -148,7 +148,7 @@ export default function SymptomsChecker({
                     href={computedCtaUrl}
                     widgetType="symptoms-checker"
                     widgetName={headline}
-                    className="inline-block mt-4 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+                    className="inline-block mt-4 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
                   >
                     {ctaText}
                   </TrackedLink>

@@ -75,7 +75,7 @@ function EmailCaptureTile({ siteId }: { siteId?: string }) {
   };
 
   return (
-    <div className="md:col-span-2 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+    <div className="md:col-span-2 bg-gradient-to-br from-accent-800 via-accent-700 to-accent-600 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
       <div className="p-8 text-white">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">

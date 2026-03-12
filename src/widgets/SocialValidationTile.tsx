@@ -26,7 +26,7 @@ export default function SocialValidationTile() {
               style={{ zIndex: COMMUNITY_AVATARS.length - index }}
             />
           ))}
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-white text-xs font-bold">
+          <div className="w-10 h-10 bg-gradient-to-br from-accent-800 to-accent-700 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-white text-xs font-bold">
             47k+
           </div>
         </div>

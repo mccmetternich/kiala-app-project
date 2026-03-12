@@ -115,7 +115,7 @@ export default function ProductShowcase({
             widgetType="product-showcase"
             widgetId={widgetId || `product-showcase-${title?.substring(0, 20)}`}
             widgetName={title || 'Product Showcase'}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
           >
             {ctaText}
             <ArrowRight className="w-5 h-5" />

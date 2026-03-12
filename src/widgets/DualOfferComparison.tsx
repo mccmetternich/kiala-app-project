@@ -83,7 +83,7 @@ export default function DualOfferComparison({
     <div className="my-8">
       {/* Exclusive Banner */}
       {showExclusiveBanner && (
-        <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-t-2xl px-4 py-3 text-center">
+        <div className="bg-gradient-to-r from-accent-800 to-accent-500 text-white rounded-t-2xl px-4 py-3 text-center">
           <div className="flex items-center justify-center gap-2">
             <Clock className="w-4 h-4 animate-pulse" />
             <span className="font-bold text-sm uppercase tracking-wide">{exclusiveText}</span>
@@ -103,7 +103,7 @@ export default function DualOfferComparison({
         <div className="grid md:grid-cols-2 gap-6 relative">
           {/* VS Badge - Center */}
           <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-            <div className="w-16 h-16 bg-gradient-to-br from-gray-900 to-gray-700 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-xl border-4 border-white">
+            <div className="w-16 h-16 bg-gradient-to-br from-accent-800 to-accent-900 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-xl border-4 border-white">
               {vsText}
             </div>
           </div>
@@ -134,7 +134,7 @@ function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'ri
     <div className={`relative ${side === 'left' ? 'md:pr-4' : 'md:pl-4'}`}>
       {/* Highlighted glow effect */}
       {isHighlighted && (
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 to-accent-500 rounded-2xl opacity-30 blur-lg"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-accent-600 to-accent-500 rounded-2xl opacity-30 blur-lg"></div>
       )}
 
       <div className={`relative bg-white rounded-2xl overflow-hidden border-2 h-full flex flex-col ${
@@ -146,7 +146,7 @@ function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'ri
         {offer.badge && (
           <div className={`text-center py-2.5 font-bold text-sm uppercase tracking-wide ${
             isHighlighted
-              ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white'
+              ? 'bg-gradient-to-r from-accent-800 to-accent-500 text-white'
               : 'bg-gray-100 text-gray-700'
           }`}>
             {isHighlighted && <Crown className="w-4 h-4 inline mr-1" />}
@@ -165,7 +165,7 @@ function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'ri
                   className="w-36 h-36 rounded-2xl mx-auto shadow-lg object-cover border-2 border-gray-100"
                 />
                 {isHighlighted && (
-                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-accent-800 to-accent-500 rounded-full flex items-center justify-center shadow-lg">
                     <Star className="w-5 h-5 text-white fill-white" />
                   </div>
                 )}
@@ -220,7 +220,7 @@ function OfferCard({ offer, side, widgetId }: { offer: Offer; side: 'left' | 'ri
             value={offer.price}
             className={`flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-lg transition-all text-center ${
               isHighlighted
-                ? 'bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
+                ? 'bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
             }`}
           >

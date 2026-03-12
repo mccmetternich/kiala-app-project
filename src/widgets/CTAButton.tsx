@@ -123,7 +123,7 @@ export default function CTAButton({
               className={`inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-lg transition-colors shadow-xl ${
                 style === 'secondary'
                   ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                  : 'bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white'
+                  : 'bg-gradient-to-r from-accent-900 to-accent-600 hover:from-accent-900 hover:to-accent-700 text-white'
               }`}
             >
               {finalCtaText}

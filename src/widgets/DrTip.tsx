@@ -73,7 +73,7 @@ export default function DrTip({
 
         <div className="relative">
           {/* Badge */}
-          <div className={`inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-4 py-1.5 rounded-full text-sm font-bold mb-5 shadow-lg transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}>
+          <div className={`inline-flex items-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 text-white px-4 py-1.5 rounded-full text-sm font-bold mb-5 shadow-lg transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}>
             <Sparkles className="w-4 h-4" />
             <span>Expert Insight</span>
           </div>
@@ -112,7 +112,7 @@ export default function DrTip({
               target={target}
               widgetType="dr-tip"
               widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
-              className="inline-flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />
@@ -128,7 +128,7 @@ export default function DrTip({
     return (
       <div className="my-8">
         {/* Header bar */}
-        <div className="bg-gradient-to-r from-primary-500 via-primary-600 to-accent-500 rounded-t-2xl px-6 py-4">
+        <div className="bg-gradient-to-r from-accent-800 via-accent-700 to-accent-500 rounded-t-2xl px-6 py-4">
           <div className="flex items-center gap-2 text-white">
             <Sparkles className="w-5 h-5" />
             <span className="font-bold">Expert Insight</span>
@@ -151,7 +151,7 @@ export default function DrTip({
                       alt={name}
                       className="w-24 h-24 md:w-28 md:h-28 rounded-2xl object-cover border-4 border-primary-100 shadow-xl"
                     />
-                    <div className="absolute bottom-1 right-1 md:-bottom-2 md:-right-2 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full p-1.5 md:p-2 shadow-lg">
+                    <div className="absolute bottom-1 right-1 md:-bottom-2 md:-right-2 bg-gradient-to-r from-accent-800 to-accent-500 rounded-full p-1.5 md:p-2 shadow-lg">
                       <BadgeCheck className="w-4 h-4 md:w-5 md:h-5 text-white" />
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export default function DrTip({
                   target={target}
                   widgetType="dr-tip"
                   widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
-                  className="block w-full text-center bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="block w-full text-center bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="flex items-center justify-center gap-2">
                     {ctaText}
@@ -221,7 +221,7 @@ export default function DrTip({
                 alt={name}
                 className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
               />
-              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full p-1">
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-accent-800 to-accent-500 rounded-full p-1">
                 <Lightbulb className="w-3 h-3 text-white" />
               </div>
             </div>
@@ -254,7 +254,7 @@ export default function DrTip({
               target={target}
               widgetType="dr-tip"
               widgetName={`Dr. Tip: ${tip.substring(0, 30)}...`}
-              className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 mt-4 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               {ctaText}
               <ArrowRight className="w-4 h-4" />

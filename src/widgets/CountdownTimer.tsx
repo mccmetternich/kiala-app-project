@@ -87,7 +87,7 @@ export default function CountdownTimer({
   return (
     <div className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-300 rounded-2xl overflow-hidden my-6">
       {/* Urgency Header */}
-      <div className="bg-gradient-to-r from-primary-500 to-accent-500 text-white py-3 px-4 text-center">
+      <div className="bg-gradient-to-r from-accent-800 to-accent-500 text-white py-3 px-4 text-center">
         <p className="text-base font-bold uppercase tracking-wide">{message}</p>
       </div>
 
@@ -103,7 +103,7 @@ export default function CountdownTimer({
                 className="object-cover"
               />
               {/* Sale Badge */}
-              <div className="absolute top-3 right-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+              <div className="absolute top-3 right-3 bg-gradient-to-r from-accent-800 to-accent-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                 40% OFF
               </div>
             </div>
@@ -149,7 +149,7 @@ export default function CountdownTimer({
               widgetId={widgetId}
               widgetName={productName}
               value={parseFloat(salePrice.replace(/[^0-9.]/g, ''))}
-              className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl text-base mb-4"
+              className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl text-base mb-4"
             >
               {ctaText}
               <ArrowRight className="w-5 h-5" />

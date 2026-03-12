@@ -63,14 +63,14 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   chart: BarChart3
 };
 
-// Pink/Lavender color palette for brand consistency
+// Sage green & warm camel color palette
 const colorMap: Record<string, { bg: string; light: string; text: string; border: string }> = {
-  red: { bg: 'from-primary-500 to-primary-600', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
-  blue: { bg: 'from-accent-500 to-accent-600', light: 'bg-primary-50', text: 'text-accent-600', border: 'border-primary-200' },
-  green: { bg: 'from-primary-400 to-accent-500', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' },
+  red: { bg: 'from-accent-600 to-accent-700', light: 'bg-accent-50', text: 'text-accent-700', border: 'border-accent-200' },
+  blue: { bg: 'from-accent-500 to-accent-600', light: 'bg-accent-50', text: 'text-accent-600', border: 'border-accent-200' },
+  green: { bg: 'from-accent-800 to-accent-900', light: 'bg-accent-50', text: 'text-accent-800', border: 'border-accent-200' },
   amber: { bg: 'from-accent-500 to-accent-600', light: 'bg-accent-50', text: 'text-accent-600', border: 'border-accent-200' },
-  purple: { bg: 'from-accent-500 to-accent-600', light: 'bg-primary-50', text: 'text-accent-600', border: 'border-primary-200' },
-  pink: { bg: 'from-primary-500 to-primary-600', light: 'bg-primary-50', text: 'text-primary-600', border: 'border-primary-200' }
+  purple: { bg: 'from-accent-500 to-accent-600', light: 'bg-accent-50', text: 'text-accent-600', border: 'border-accent-200' },
+  pink: { bg: 'from-accent-600 to-accent-700', light: 'bg-accent-50', text: 'text-accent-700', border: 'border-accent-200' }
 };
 
 export default function DataOverview({
@@ -97,7 +97,7 @@ export default function DataOverview({
         widgetType="data-overview"
         widgetId={widgetId}
         widgetName={headline}
-        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         {ctaText}
       </TrackedLink>
@@ -106,7 +106,7 @@ export default function DataOverview({
 
   if (style === 'banner') {
     return (
-      <div className="my-8 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
+      <div className="my-8 bg-gradient-to-r from-accent-800 to-accent-900 rounded-2xl p-6 text-white">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold mb-1">{headline}</h2>
           <p className="text-gray-400">{displaySubheading}</p>
@@ -114,7 +114,7 @@ export default function DataOverview({
         <div className="flex flex-wrap justify-center gap-8">
           {stats.map((stat, idx) => (
             <div key={idx} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent-600 to-accent-400 bg-clip-text text-transparent">
                 {stat.value}
               </div>
               <div className="text-gray-300 mt-1">{stat.label}</div>

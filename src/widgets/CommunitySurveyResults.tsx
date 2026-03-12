@@ -54,7 +54,7 @@ export default function CommunitySurveyResults({
         target={target}
         widgetType="community-survey-results"
         widgetName={headline}
-        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         {ctaText}
         <ArrowRight className="w-5 h-5" />
@@ -96,7 +96,7 @@ export default function CommunitySurveyResults({
     return (
       <div className="my-12">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 rounded-t-2xl px-6 py-5">
+        <div className="bg-gradient-to-r from-accent-900 via-accent-600 to-accent-800 rounded-t-2xl px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
               <TrendingUp className="w-6 h-6 text-white" />

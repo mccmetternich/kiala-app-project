@@ -148,7 +148,7 @@ export default function ReviewGrid({
             widgetType="review-grid"
             widgetId={widgetId || `review-grid-${headline?.substring(0, 20)}`}
             widgetName={headline || ctaText || 'Review Grid'}
-            className="inline-block bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+            className="inline-block bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-12 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
           >
             {ctaText}
           </TrackedLink>

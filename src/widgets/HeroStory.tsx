@@ -138,7 +138,7 @@ export default function HeroStory({
           )}
 
           <span
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-primary-600 group-hover:from-primary-600 group-hover:to-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition-all transform group-hover:scale-105 shadow-md group-hover:shadow-lg w-fit text-center"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-700 group-hover:from-accent-900 group-hover:to-accent-800 text-white px-6 py-3 rounded-lg font-semibold transition-all transform group-hover:scale-105 shadow-md group-hover:shadow-lg w-fit text-center"
           >
             {displayCtaText}
           </span>
