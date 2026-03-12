@@ -93,11 +93,18 @@ export default function ThemeProvider({ children, site }: ThemeProviderProps) {
 
     const themeSettings = settings.theme || {};
 
+    const rawAccent = themeSettings.colors?.accent || settings.accentColor || themeSettings.accentColor || DEFAULT_COLORS.accent;
+    const rawTrust = themeSettings.colors?.trust || settings.trustColor || themeSettings.trustColor || DEFAULT_COLORS.trust;
+
+    // Migrate legacy gold (#c9a96e) to warm camel palette
+    const accent = rawAccent === '#c9a96e' ? '#a3856e' : rawAccent;
+    const trust = rawTrust === '#4a5568' ? '#5c6b5e' : rawTrust;
+
     return {
       primary: themeSettings.colors?.primary || settings.primaryColor || themeSettings.primaryColor || DEFAULT_COLORS.primary,
       secondary: themeSettings.colors?.secondary || settings.secondaryColor || themeSettings.secondaryColor || DEFAULT_COLORS.secondary,
-      accent: themeSettings.colors?.accent || settings.accentColor || themeSettings.accentColor || DEFAULT_COLORS.accent,
-      trust: themeSettings.colors?.trust || settings.trustColor || themeSettings.trustColor || DEFAULT_COLORS.trust,
+      accent,
+      trust,
     };
   }, [site.theme, site.settings]);
 
