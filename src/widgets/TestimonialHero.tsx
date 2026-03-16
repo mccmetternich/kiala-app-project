@@ -85,7 +85,8 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
               widgetType="testimonial-hero"
               widgetId={widgetId}
               widgetName={title}
-              className="block w-full md:w-auto md:inline-block text-center bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-6"
+              className="block w-full md:w-auto md:inline-block text-center text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg mb-6"
+              style={{ background: 'linear-gradient(135deg, #9caf88, #8b9467)' }}
             >
               {ctaText}
             </TrackedLink>

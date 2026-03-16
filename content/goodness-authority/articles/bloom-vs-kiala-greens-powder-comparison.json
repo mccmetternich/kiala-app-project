@@ -123,6 +123,12 @@
             "label": "reduction in inflammatory response",
             "icon": "heart",
             "color": "red"
+          },
+          {
+            "value": "95%",
+            "label": "increase in bioavailable nitric oxide",
+            "icon": "activity",
+            "color": "blue"
           }
         ],
         "source": "Nemzer et al., 2014, Journal of Food Science and Nutrition",
@@ -167,26 +173,6 @@
       }
     },
     {
-      "id": "doctor-assessment",
-      "type": "doctor-assessment",
-      "enabled": true,
-      "position": 8,
-      "config": {
-        "doctorName": "Sarah Chen, MS, RD",
-        "doctorImage": "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg",
-        "doctorCredentials": "MS Nutritional Science, Registered Dietitian, 12+ Years Experience",
-        "headline": "My Nutritional Assessment",
-        "paragraphs": [
-          "I don't usually compare brands publicly. But when women ask me to evaluate a product, I owe them honesty. Bloom built an impressive brand \u2014 but when I analyzed the formula, I found a product that relies more on marketing than on evidence.",
-          "Kiala built a formula first and a brand second. That's the approach I trust. The Spectra\u00ae research, the organic foundation, the absence of problematic ingredients \u2014 this is what evidence-based nutrition looks like.",
-          "In my practice, I've watched too many women cycle through trendy supplements that promise everything and deliver little. Kiala is different because the science is different."
-        ],
-        "signature": "\u2014 Sarah Chen, MS, RD",
-        "highlightText": "Kiala built a formula first and a brand second. That's the approach I trust.",
-        "badgeText": "Professional Nutritional Assessment"
-      }
-    },
-    {
       "id": "taste-compliance",
       "type": "text-block",
       "enabled": true,
@@ -206,25 +192,31 @@
         "quotes": [
           {
             "id": "1",
-            "name": "Diane, 52",
+            "name": "Diane R.",
+            "age": "52",
             "location": "San Diego, CA",
-            "content": "I've tried 6 different greens. Kiala is the first one I actually crave in the morning.",
+            "avatar": "https://images.unsplash.com/photo-1494790108755-2616b332c449?w=150&h=150&fit=crop&crop=face",
+            "content": "I've tried 6 different greens powders over the years - Athletic Greens, Bloom, Amazing Grass, you name it. Kiala is honestly the first one I actually look forward to drinking in the morning. The Miami Vice flavor tastes like vacation in a glass, and I've noticed my afternoon energy crashes are completely gone.",
             "rating": 5,
             "verified": true
           },
           {
             "id": "2",
-            "name": "Linda, 48",
+            "name": "Linda M.",
+            "age": "48",
             "location": "Austin, TX",
-            "content": "My daughter stole my Watermelon Slush and now she's subscribed too.",
+            "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+            "content": "My 16-year-old daughter literally stole my Watermelon Slush container and finished it in three days. Now she has her own subscription and asks me every morning if I've had my 'green smoothie' yet. If it passes the teenager taste test, that says everything.",
             "rating": 5,
             "verified": true
           },
           {
             "id": "3",
-            "name": "Rachel, 44",
-            "location": "Denver, CO",
-            "content": "I was a Bloom loyalist for a year. Switched to Kiala and within a week my bloating improved AND I actually enjoy drinking it.",
+            "name": "Rachel P.",
+            "age": "44",
+            "location": "Denver, CO", 
+            "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+            "content": "I was a Bloom loyalist for over a year because I thought 'healthy has to taste terrible.' Switched to Kiala on a friend's recommendation and within a week noticed two things: my persistent bloating finally started improving, AND I actually enjoy my morning routine now instead of dreading that chalky aftertaste.",
             "rating": 5,
             "verified": true
           }
@@ -251,7 +243,7 @@
         "title": "\"I Switched from Bloom and Got My Body Back\"",
         "body": "Margaret, 56 \u2014 Community Member, Verified\n\n\"I was on Bloom for 8 months and thought my bloating was just 'how I am now.' My daughter told me about Kiala and I switched on a whim. Within 5 days the bloating I'd accepted as permanent started to lift. It's been 3 months and I feel like I have my body back. I genuinely didn't think a greens powder could make this much difference \u2014 but the formula is just different. Sarah was right.\"",
         "showCta": true,
-        "ctaText": "Try What Margaret Tried \u2192",
+        "ctaText": "Get the Same Results Margaret Did",
         "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=wellnessvault&utm_medium=article&utm_campaign=bloom-vs-kiala",
         "target": "_blank",
         "benefits": [
@@ -259,41 +251,6 @@
           "Free shipping on all orders",
           "Join 1M+ satisfied customers"
         ]
-      }
-    },
-    {
-      "id": "product-recommendation",
-      "type": "exclusive-product",
-      "enabled": true,
-      "position": 13,
-      "config": {
-        "name": "Kiala Nutrition Super Greens",
-        "description": "Community's Top Choice. The foundation formula with Spectra\u00ae clinical research, organic superfoods, and community-proven results.",
-        "image": "https://kialanutrition.com/cdn/shop/files/1_89f1b0f3-3095-4bf4-a700-d7be3f09d2a5.png?v=1730842541",
-        "price": 34.97,
-        "originalPrice": 54.99,
-        "savingsText": "Community member exclusive pricing",
-        "rating": 4.8,
-        "reviewCount": "47,000+",
-        "benefits": [
-          "Spectra\u00ae with published clinical trials",
-          "Organic spirulina, chlorella, and superfood blend",
-          "No maltodextrin, soy, or gut irritants",
-          "45-day money-back guarantee",
-          "5 delicious flavors that actually taste good"
-        ],
-        "badges": [
-          "Community's #1 Choice",
-          "Clinically Studied"
-        ],
-        "doctorName": "Sarah Chen, MS, RD",
-        "doctorImage": "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg",
-        "ctaText": "Claim Your Exclusive Offer \u2192",
-        "ctaUrl": "https://kialanutrition.com/pages/greens?utm_source=wellnessvault&utm_medium=article&utm_campaign=bloom-vs-kiala",
-        "target": "_blank",
-        "shippingBadgeText": "Free Shipping",
-        "guaranteeBadgeText": "45-Day Guarantee",
-        "evaluatedBadgeText": "Clinically Evaluated"
       }
     },
     {
@@ -331,19 +288,6 @@
       "position": 15,
       "config": {
         "content": "<h2 class=\"text-2xl font-bold text-gray-900 mb-4\">My Final Word</h2><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">I didn't write this article to sell you something. I wrote it because women deserve honest information from someone who reads the labels, understands the science, and doesn't have an influencer deal clouding their judgment.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-4\">Bloom introduced millions of women to daily greens. That's worth acknowledging. But introducing someone to a category and being the best product in that category are two very different things.</p><p class=\"text-lg text-gray-700 leading-relaxed mb-6\">If you've been on Bloom and feel like something's missing \u2014 the bloating hasn't fully resolved, the energy boost never materialized, or you're just tired of the aftertaste \u2014 it might be time to try the greens powder that over a million women have already switched to. Your body will tell you the difference. Give it 7 days.</p>"
-      }
-    },
-    {
-      "id": "doctor-closing",
-      "type": "doctor-closing-word",
-      "enabled": true,
-      "position": 16,
-      "config": {
-        "message": "If you've been on Bloom and feel like something's missing\u2014the bloating hasn't fully resolved, the energy boost never materialized, or you're just tired of the aftertaste\u2014it might be time to try the greens powder that over a million women have already switched to. Your body will tell you the difference. Give it 7 days.",
-        "signoff": "Here's to feeling like yourself again,",
-        "name": "Sarah Chen, MS, RD",
-        "credentials": "Registered Dietitian, Nutritional Science",
-        "image": "/uploads/oYx9upllBN3uNyd6FMlGj/WXPCOJ8PPZxy1Mt8H4AYm.jpg"
       }
     },
     {

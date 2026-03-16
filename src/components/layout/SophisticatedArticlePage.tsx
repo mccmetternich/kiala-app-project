@@ -305,7 +305,8 @@ export default function SophisticatedArticlePage({
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-colors duration-300 group"
+          className="fixed bottom-8 right-8 z-40 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-colors duration-300 group"
+          style={{ background: 'linear-gradient(135deg, #9caf88, #8b9467)' }}
           aria-label="Back to top"
         >
           <ArrowUp className="w-5 h-5" />
