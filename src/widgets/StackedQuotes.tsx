@@ -124,9 +124,26 @@ export default function StackedQuotes({
         {/* Overall rating */}
         <div className="flex items-center justify-center gap-2 mt-4">
           <div className="flex">
-            {[1,2,3,4,5].map((star) => (
-              <Star key={star} className={`w-5 h-5 ${star <= 4 ? 'fill-current text-accent-400' : 'fill-accent-400/70 text-accent-400/70'}`} />
-            ))}
+            {[1,2,3,4,5].map((star) => {
+              const rating = 4.7;
+              if (star <= Math.floor(rating)) {
+                // Full star
+                return <Star key={star} className="w-5 h-5 fill-current text-accent-400" />;
+              } else if (star === Math.floor(rating) + 1 && rating % 1 !== 0) {
+                // Half star
+                return (
+                  <div key={star} className="relative w-5 h-5">
+                    <Star className="w-5 h-5 text-accent-400/30" />
+                    <div className="absolute inset-0 overflow-hidden" style={{ width: '70%' }}>
+                      <Star className="w-5 h-5 fill-current text-accent-400" />
+                    </div>
+                  </div>
+                );
+              } else {
+                // Empty star
+                return <Star key={star} className="w-5 h-5 text-accent-400/30" />;
+              }
+            })}
           </div>
           <span className="font-bold text-gray-900">4.7</span>
           <span className="text-gray-500">from {reviewCount} reviews</span>
