@@ -85,13 +85,18 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
               widgetType="testimonial-hero"
               widgetId={widgetId}
               widgetName={title}
-              className="block w-full md:w-auto md:inline-block text-center font-bold py-4 px-8 rounded-xl text-lg shadow-lg mb-6 no-underline whitespace-nowrap [&]:!text-white [&_*]:!text-white"
+              className="flex items-center justify-center w-full md:w-auto text-center font-bold py-4 px-8 rounded-xl text-lg shadow-lg mb-6 whitespace-nowrap"
               style={{ 
+                backgroundColor: '#8FAF8A !important',
                 background: '#8FAF8A !important', 
-                textDecoration: 'none !important', 
                 color: '#ffffff !important',
+                textDecoration: 'none !important',
                 border: 'none !important',
-                WebkitTextFillColor: '#ffffff !important'
+                WebkitTextFillColor: '#ffffff !important',
+                textAlign: 'center !important',
+                display: 'flex !important',
+                alignItems: 'center !important',
+                justifyContent: 'center !important'
               }}
             >
               {ctaText}

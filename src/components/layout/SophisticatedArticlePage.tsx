@@ -196,6 +196,32 @@ export default function SophisticatedArticlePage({
 
           <div className="relative container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
+              {/* Article Category & Meta - Above Hero Image */}
+              {extractedHeroImage && (
+                <div className="flex flex-wrap items-center gap-4 text-sm mb-4">
+                  {(article?.category || articleContent?.category) && (
+                    <span className="inline-flex items-center gap-2 bg-accent-100 text-accent-800 px-3 py-1.5 rounded-full font-medium tracking-wide">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      {article?.category || articleContent?.category}
+                    </span>
+                  )}
+                  <div className="flex items-center gap-4 text-gray-600">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4" />
+                      {readTime || 13} min read
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Eye className="w-4 h-4" />
+                      {views?.toLocaleString() || '9,730'} views
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4" />
+                      {formatDate(articlePage.publishedAt || new Date())}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Hero Image */}
               {extractedHeroImage && (
                 <div className="mb-6">
@@ -207,30 +233,6 @@ export default function SophisticatedArticlePage({
                     />
                     {/* Subtle overlay for better text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10"></div>
-                  </div>
-                  
-                  {/* Article Category & Meta - Under Hero Image */}
-                  <div className="flex flex-wrap items-center gap-4 text-sm mt-4">
-                    {(article?.category || articleContent?.category) && (
-                      <span className="inline-flex items-center gap-2 bg-accent-100 text-accent-800 px-3 py-1.5 rounded-full font-medium tracking-wide">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        {article?.category || articleContent?.category}
-                      </span>
-                    )}
-                    <div className="flex items-center gap-4 text-gray-600">
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-4 h-4" />
-                        {readTime || 13} min read
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Eye className="w-4 h-4" />
-                        {views?.toLocaleString() || '9,730'} views
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4" />
-                        {formatDate(articlePage.publishedAt || new Date())}
-                      </span>
-                    </div>
                   </div>
                 </div>
               )}

@@ -176,21 +176,9 @@ export default function StackedQuotes({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <h4 className="font-semibold text-gray-900 text-sm">{quote.name}</h4>
-                    {quote.location && (
-                      <span className="text-xs text-gray-400">• {quote.location}</span>
-                    )}
-                    {quote.verified && showVerifiedBadge && (
-                      <span className="inline-flex items-center gap-1 text-[10px] text-accent-600">
-                        <CheckCircle className="w-3 h-3" />
-                        Verified
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex items-center gap-1.5 flex-nowrap overflow-hidden">
                     {quote.rating && (
-                      <div className="flex gap-0.5">
+                      <div className="flex gap-0.5 flex-shrink-0">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
@@ -199,8 +187,18 @@ export default function StackedQuotes({
                         ))}
                       </div>
                     )}
+                    <h4 className="font-semibold text-gray-900 text-sm flex-shrink-0">{quote.name}</h4>
+                    {quote.location && (
+                      <span className="text-xs text-gray-400 flex-shrink-0">• {quote.location}</span>
+                    )}
+                    {quote.verified && showVerifiedBadge && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-accent-600 flex-shrink-0">
+                        <CheckCircle className="w-3 h-3" />
+                        Verified
+                      </span>
+                    )}
                     {quote.result && (
-                      <span className="bg-accent-100 text-accent-700 text-[10px] px-1.5 py-0.5 rounded font-medium">
+                      <span className="bg-accent-100 text-accent-700 text-[10px] px-1.5 py-0.5 rounded font-medium flex-shrink-0">
                         {quote.result}
                       </span>
                     )}
@@ -232,36 +230,34 @@ export default function StackedQuotes({
                   </div>
 
                   <div className="flex-1">
-                    {/* Name & Location */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-bold text-gray-900">{quote.name}</h4>
+                    {/* Stars, Name, Location, Verified - All on one line */}
+                    <div className="flex items-center gap-2 flex-nowrap overflow-hidden">
+                      {quote.rating && (
+                        <div className="flex gap-0.5 flex-shrink-0">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < quote.rating! ? 'fill-current text-accent-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      <h4 className="font-bold text-gray-900 flex-shrink-0">{quote.name}</h4>
                       {quote.location && (
-                        <span className="text-sm text-gray-500">• {quote.location}</span>
+                        <span className="text-sm text-gray-500 flex-shrink-0">• {quote.location}</span>
                       )}
                       {quote.verified && showVerifiedBadge && (
-                        <span className="inline-flex items-center gap-1 text-xs text-accent-600">
+                        <span className="inline-flex items-center gap-1 text-xs text-accent-600 flex-shrink-0">
                           <CheckCircle className="w-3 h-3" />
                           Verified
                         </span>
                       )}
                       {quote.result && (
-                        <span className="bg-accent-100 text-accent-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                        <span className="bg-accent-100 text-accent-700 text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0">
                           {quote.result}
                         </span>
                       )}
                     </div>
-
-                    {/* Rating */}
-                    {quote.rating && (
-                      <div className="flex gap-0.5 mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${i < quote.rating! ? 'fill-current text-accent-400' : 'text-gray-300'}`}
-                          />
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
 
