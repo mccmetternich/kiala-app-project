@@ -85,8 +85,13 @@ If you're on the fence, just try it. The 90-day guarantee means you have nothing
               widgetType="testimonial-hero"
               widgetId={widgetId}
               widgetName={title}
-              className="block w-full md:w-auto md:inline-block text-center text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg mb-6 no-underline"
-              style={{ background: '#8FAF8A', textDecoration: 'none' }}
+              className="block w-full md:w-auto md:inline-block text-center font-bold py-4 px-8 rounded-xl text-lg shadow-lg mb-6 no-underline whitespace-nowrap"
+              style={{ 
+                background: '#8FAF8A', 
+                textDecoration: 'none', 
+                color: '#ffffff !important',
+                border: 'none'
+              }}
             >
               {ctaText}
             </TrackedLink>

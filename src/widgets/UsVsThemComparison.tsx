@@ -168,8 +168,13 @@ export default function UsVsThemComparison({
             widgetType="us-vs-them"
             widgetId={`us-vs-them-${column1Title?.substring(0, 15)}`}
             widgetName={`${column1Title} vs ${column2Title}`}
-            className="inline-flex items-center justify-center gap-2 text-white font-bold text-lg py-4 px-10 rounded-xl shadow-lg text-center no-underline"
-            style={{ background: '#8FAF8A', textDecoration: 'none' }}
+            className="inline-flex items-center justify-center gap-2 font-bold text-lg py-4 px-10 rounded-xl shadow-lg text-center no-underline whitespace-nowrap"
+            style={{ 
+              background: '#8FAF8A', 
+              textDecoration: 'none', 
+              color: '#ffffff !important',
+              border: 'none'
+            }}
           >
             {finalCtaText}
           </TrackedLink>

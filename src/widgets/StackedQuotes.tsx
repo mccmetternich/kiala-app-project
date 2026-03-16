@@ -288,8 +288,13 @@ export default function StackedQuotes({
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="text-white font-bold py-3 px-6 rounded-lg shadow-lg disabled:opacity-50 text-center no-underline"
-                  style={{ background: '#8FAF8A', textDecoration: 'none' }}
+                  className="font-bold py-3 px-6 rounded-lg shadow-lg disabled:opacity-50 text-center no-underline whitespace-nowrap"
+                  style={{ 
+                    background: '#8FAF8A', 
+                    textDecoration: 'none', 
+                    color: '#ffffff !important',
+                    border: 'none'
+                  }}
                 >
                   {status === 'loading' ? 'Joining...' : 'Join Now'}
                 </button>
@@ -311,8 +316,13 @@ export default function StackedQuotes({
               widgetType="stacked-quotes"
               widgetId={`stacked-quotes-${headline?.substring(0, 20)}`}
               widgetName={headline || ctaText || 'Stacked Quotes'}
-              className="inline-flex items-center justify-center gap-2 text-white font-bold py-4 px-8 rounded-xl shadow-lg mt-4 text-center no-underline"
-              style={{ background: '#8FAF8A', textDecoration: 'none' }}
+              className="inline-flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl shadow-lg mt-4 text-center no-underline whitespace-nowrap"
+              style={{ 
+                background: '#8FAF8A', 
+                textDecoration: 'none', 
+                color: '#ffffff !important',
+                border: 'none'
+              }}
             >
               {ctaText}
             </TrackedLink>
