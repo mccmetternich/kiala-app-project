@@ -306,7 +306,7 @@ export default function SophisticatedArticlePage({
         <button
           onClick={scrollToTop}
           className="fixed bottom-8 right-8 z-40 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-colors duration-300 group"
-          style={{ background: 'linear-gradient(135deg, #9caf88, #8b9467)' }}
+          style={{ background: '#8FAF8A' }}
           aria-label="Back to top"
         >
           <ArrowUp className="w-5 h-5" />

@@ -111,7 +111,7 @@ export default function UsVsThemComparison({
                 key={index}
                 className="flex items-start gap-3 bg-white/70 rounded-lg p-3 shadow-sm"
               >
-                <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center shadow-md" style={{ background: 'linear-gradient(135deg, #9caf88, #8b9467)' }}>
+                <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center shadow-md" style={{ background: '#8FAF8A' }}>
                   <Check className="w-4 h-4 text-white stroke-[3]" />
                 </div>
                 <span className="text-gray-800 font-medium leading-tight pt-0.5">
@@ -168,7 +168,8 @@ export default function UsVsThemComparison({
             widgetType="us-vs-them"
             widgetId={`us-vs-them-${column1Title?.substring(0, 15)}`}
             widgetName={`${column1Title} vs ${column2Title}`}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-bold text-lg py-4 px-10 rounded-xl shadow-lg text-center"
+            className="inline-flex items-center justify-center gap-2 text-white font-bold text-lg py-4 px-10 rounded-xl shadow-lg text-center no-underline"
+            style={{ background: '#8FAF8A', textDecoration: 'none' }}
           >
             {finalCtaText}
           </TrackedLink>
