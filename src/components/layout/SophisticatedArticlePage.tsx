@@ -307,8 +307,12 @@ export default function SophisticatedArticlePage({
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-colors duration-300 group"
-          style={{ background: '#8FAF8A' }}
+          className="fixed bottom-8 right-8 z-40 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-colors duration-300 group [&]:!text-white [&_*]:!text-white"
+          style={{ 
+            background: '#8FAF8A !important',
+            color: '#ffffff !important',
+            WebkitTextFillColor: '#ffffff !important'
+          }}
           aria-label="Back to top"
         >
           <ArrowUp className="w-5 h-5" />

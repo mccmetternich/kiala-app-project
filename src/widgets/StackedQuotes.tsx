@@ -305,12 +305,13 @@ export default function StackedQuotes({
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="font-bold py-3 px-6 rounded-lg shadow-lg disabled:opacity-50 text-center no-underline whitespace-nowrap"
+                  className="font-bold py-3 px-6 rounded-lg shadow-lg disabled:opacity-50 text-center no-underline whitespace-nowrap [&]:!text-white [&_*]:!text-white"
                   style={{ 
-                    background: '#8FAF8A', 
-                    textDecoration: 'none', 
+                    background: '#8FAF8A !important', 
+                    textDecoration: 'none !important', 
                     color: '#ffffff !important',
-                    border: 'none'
+                    border: 'none !important',
+                    WebkitTextFillColor: '#ffffff !important'
                   }}
                 >
                   {status === 'loading' ? 'Joining...' : 'Join Now'}
@@ -333,12 +334,13 @@ export default function StackedQuotes({
               widgetType="stacked-quotes"
               widgetId={`stacked-quotes-${headline?.substring(0, 20)}`}
               widgetName={headline || ctaText || 'Stacked Quotes'}
-              className="inline-flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl shadow-lg mt-4 text-center no-underline whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl shadow-lg mt-4 text-center no-underline whitespace-nowrap [&]:!text-white [&_*]:!text-white"
               style={{ 
-                background: '#8FAF8A', 
-                textDecoration: 'none', 
+                background: '#8FAF8A !important', 
+                textDecoration: 'none !important', 
                 color: '#ffffff !important',
-                border: 'none'
+                border: 'none !important',
+                WebkitTextFillColor: '#ffffff !important'
               }}
             >
               {ctaText}
