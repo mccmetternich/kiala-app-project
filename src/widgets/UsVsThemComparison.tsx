@@ -111,7 +111,7 @@ export default function UsVsThemComparison({
                 key={index}
                 className="flex items-start gap-3 bg-white/70 rounded-lg p-3 shadow-sm"
               >
-                <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center shadow-md" style={{ background: '#8FAF8A !important' }}>
+                <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center shadow-md !bg-[#8FAF8A]" style={{ backgroundColor: '#8FAF8A' }}>
                   <Check className="w-4 h-4 text-white stroke-[3]" />
                 </div>
                 <span className="text-gray-800 font-medium leading-tight pt-0.5">
