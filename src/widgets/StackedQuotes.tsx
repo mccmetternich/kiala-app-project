@@ -162,7 +162,13 @@ export default function StackedQuotes({
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <h4 className="font-semibold text-gray-900 text-sm">{quote.name}</h4>
                     {quote.location && (
-                      <span className="text-xs text-gray-400">{quote.location}</span>
+                      <span className="text-xs text-gray-400">• {quote.location}</span>
+                    )}
+                    {quote.verified && showVerifiedBadge && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-accent-600">
+                        <CheckCircle className="w-3 h-3" />
+                        Verified
+                      </span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
@@ -188,15 +194,6 @@ export default function StackedQuotes({
               <p className="text-gray-700 text-base leading-snug mt-2">
                 "{quote.content}"
               </p>
-              {/* Verified badge - inline */}
-              {quote.verified && showVerifiedBadge && (
-                <div className="mt-1.5">
-                  <span className="inline-flex items-center gap-1 text-[10px] text-gray-500">
-                    <CheckCircle className="w-3 h-3 text-accent-500" />
-                    Verified Member
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* Desktop Layout */}
@@ -222,9 +219,12 @@ export default function StackedQuotes({
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="font-bold text-gray-900">{quote.name}</h4>
                       {quote.location && (
-                        <span className="flex items-center gap-1 text-sm text-gray-500">
-                          <MapPin className="w-3 h-3" />
-                          {quote.location}
+                        <span className="text-sm text-gray-500">• {quote.location}</span>
+                      )}
+                      {quote.verified && showVerifiedBadge && (
+                        <span className="inline-flex items-center gap-1 text-xs text-accent-600">
+                          <CheckCircle className="w-3 h-3" />
+                          Verified
                         </span>
                       )}
                       {quote.result && (
@@ -256,16 +256,6 @@ export default function StackedQuotes({
               <blockquote className="mt-4 text-gray-700 leading-relaxed pl-20 text-lg">
                 "{quote.content}"
               </blockquote>
-
-              {/* Verified badge */}
-              {quote.verified && showVerifiedBadge && (
-                <div className="mt-4 pl-20">
-                  <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
-                    <CheckCircle className="w-3 h-3 text-accent-500" />
-                    Verified Member
-                  </span>
-                </div>
-              )}
             </div>
           </div>
         ))}
