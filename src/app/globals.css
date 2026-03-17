@@ -632,4 +632,25 @@
     transform: scale(1.05);
     transition: transform 0.2s ease-in-out;
   }
+
+  /* Force sage green styling for comparison table CTA buttons */
+  a[href*="kialanutrition.com"] {
+    background: #8FAF8A !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: none !important;
+  }
+
+  a[href*="kialanutrition.com"]:hover {
+    background: #7A9F7A !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  a[href*="kialanutrition.com"] * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
 }
