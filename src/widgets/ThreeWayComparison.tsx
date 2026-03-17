@@ -131,14 +131,14 @@ export default function ThreeWayComparison({
             <thead>
               <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
                 <th className="px-6 py-5 text-left font-semibold text-gray-900 w-2/5">Feature</th>
-                <th className="px-6 py-5 text-center font-semibold text-[#8FAF8A] bg-[#8FAF8A]/10 w-1/5">{kialaHeader}</th>
+                <th className="px-6 py-5 text-center font-semibold text-gray-900 bg-[#8FAF8A]/10 w-1/5">{kialaHeader}</th>
                 <th className="px-6 py-5 text-center font-semibold text-gray-600 w-1/5">{seedHeader}</th>
                 <th className="px-6 py-5 text-center font-semibold text-gray-600 w-1/5">{ritualHeader}</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row, index) => (
-                <tr key={index} className={`border-t border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                <tr key={index} className="border-t border-gray-100 bg-white">
                   <td className="px-6 py-4 font-medium text-gray-900">{row.feature}</td>
                   <td className="px-6 py-4 text-center bg-[#8FAF8A]/5">
                     {renderCell(row.kiala, true)}
