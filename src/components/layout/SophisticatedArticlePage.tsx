@@ -212,7 +212,7 @@ export default function SophisticatedArticlePage({
                     </span>
                     <span className="flex items-center gap-1.5">
                       <Eye className="w-4 h-4" />
-                      {views?.toLocaleString() || '9,730'} views
+                      {views && views >= 1000000 ? `${(views / 1000000).toFixed(2)}M` : views?.toLocaleString() || '9,730'} views
                     </span>
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
