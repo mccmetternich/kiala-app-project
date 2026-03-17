@@ -662,10 +662,14 @@
   }
 
   /* Remove any external text highlighting/marking */
-  *:not(mark):not(::selection) {
-    background-color: inherit !important;
-    text-decoration: inherit !important;
-    border: inherit !important;
+  * {
+    background-image: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Prevent text selection highlighting issues */
+  ::selection {
+    background: rgba(59, 130, 246, 0.3) !important;
   }
 
   /* Ensure dollar signs display properly in comparison tables */
