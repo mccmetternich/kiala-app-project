@@ -656,20 +656,19 @@
 
   /* Prevent external highlighting of text content */
   body {
-    -webkit-user-select: inherit !important;
-    -moz-user-select: inherit !important;
-    user-select: inherit !important;
+    -webkit-user-select: inherit;
+    -moz-user-select: inherit;
+    user-select: inherit;
   }
 
-  /* Remove any external text highlighting/marking */
-  * {
-    background-image: none !important;
-    text-shadow: none !important;
-  }
-  
   /* Prevent text selection highlighting issues */
   ::selection {
     background: rgba(59, 130, 246, 0.3) !important;
+  }
+  
+  /* Only target potential external highlighting on text content */
+  p, span, div {
+    text-shadow: inherit !important;
   }
 
   /* Ensure dollar signs display properly in comparison tables */
