@@ -628,7 +628,7 @@
   }
 
   /* Floating action elements */
-  .sophisticated-content .bg-gradient-to-r:hover {
+  .sophisticated-content .bg-gradient-to-r:hover:not(tr):not(thead *) {
     transform: scale(1.05);
     transition: transform 0.2s ease-in-out;
   }
