@@ -26,7 +26,7 @@ async function addKialaLinks() {
     // Get the article from the database
     const result = await client.execute({
       sql: `SELECT id, slug, title, widget_config FROM articles 
-            WHERE slug = 'bloom-vs-kiala-greens-powder-comparison' 
+            WHERE slug = 'kiala-gummies-vs-seed-ritual-probiotics-comparison' 
             AND site_id = (SELECT id FROM sites WHERE subdomain = 'goodness-authority')`,
       args: []
     });
@@ -40,7 +40,7 @@ async function addKialaLinks() {
     console.log('Found article:', article.title);
 
     let widgetConfig = JSON.parse(article.widget_config);
-    const kialaUrl = 'https://kialanutrition.com/products/super-greens-gummies-bundle';
+    const kialaUrl = 'https://kialanutrition.com/products/super-greens-gummies';
 
     // Function to add links to Kiala mentions in text content
     function addLinksToKiala(text) {

@@ -41,6 +41,7 @@ import Checklist from '@/widgets/Checklist';
 import ProductReveal from '@/widgets/ProductReveal';
 import CommunitySurveyResults from '@/widgets/CommunitySurveyResults';
 import TwoApproaches from '@/widgets/TwoApproaches';
+import ThreeWayComparison from '@/widgets/ThreeWayComparison';
 
 interface ArticleTemplateProps {
   page: Page;
@@ -1024,6 +1025,26 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             leftColumn={widget.config.leftColumn}
             rightColumn={widget.config.rightColumn}
             style={widget.config.style as any}
+          />
+        </div>
+      );
+
+    case 'three-way-comparison':
+      return (
+        <div className="my-8">
+          <ThreeWayComparison
+            title={widget.config.title}
+            subtitle={widget.config.subtitle}
+            rows={widget.config.rows}
+            kialaHeader={widget.config.kialaHeader}
+            seedHeader={widget.config.seedHeader}
+            ritualHeader={widget.config.ritualHeader}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaType === 'anchor' ? `#widget-${widget.config.anchorWidgetId}` : widget.config.ctaUrl}
+            ctaSubtext={widget.config.ctaSubtext}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
           />
         </div>
       );
