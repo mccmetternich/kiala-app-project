@@ -653,4 +653,27 @@
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
   }
+
+  /* Prevent external highlighting of text content */
+  body {
+    -webkit-user-select: inherit !important;
+    -moz-user-select: inherit !important;
+    user-select: inherit !important;
+  }
+
+  /* Remove any external text highlighting/marking */
+  *:not(mark):not(::selection) {
+    background-color: inherit !important;
+    text-decoration: inherit !important;
+    border: inherit !important;
+  }
+
+  /* Ensure dollar signs display properly in comparison tables */
+  .comparison-table td,
+  .comparison-table th,
+  td[class*="text-"],
+  span[class*="text-"] {
+    font-feature-settings: "tnum" 1 !important;
+    font-variant-numeric: tabular-nums !important;
+  }
 }

@@ -48,7 +48,7 @@ export default function ComparisonTable({
       </div>
 
       {/* Comparison Table */}
-      <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+      <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 comparison-table">
         <table className="w-full">
           <thead>
             <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
