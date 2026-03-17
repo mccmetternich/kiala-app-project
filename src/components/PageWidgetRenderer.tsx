@@ -9,6 +9,7 @@ import EmailCapture from '@/widgets/EmailCapture';
 import FAQAccordion from '@/widgets/FAQAccordion';
 import TestimonialCarousel from '@/widgets/TestimonialCarousel';
 import ComparisonTable from '@/widgets/ComparisonTable';
+import ThreeWayComparison from '@/widgets/ThreeWayComparison';
 import DataOverview from '@/widgets/DataOverview';
 import UsVsThemComparison from '@/widgets/UsVsThemComparison';
 import DoctorAssessment from '@/widgets/DoctorAssessment';
@@ -236,6 +237,26 @@ function WidgetComponent({
 
     case 'comparison-table':
       return <ComparisonTable {...config as any} />;
+
+    case 'three-way-comparison':
+      return (
+        <div className="my-8">
+          <ThreeWayComparison
+            title={config.title}
+            subtitle={config.subtitle}
+            rows={config.rows}
+            kialaHeader={config.kialaHeader}
+            seedHeader={config.seedHeader}
+            ritualHeader={config.ritualHeader}
+            showCta={config.showCta}
+            ctaText={config.ctaText}
+            ctaUrl={config.ctaUrl}
+            ctaSubtext={config.ctaSubtext}
+            ctaType={config.ctaType}
+            target={config.target}
+          />
+        </div>
+      );
 
     case 'data-overview':
       return <DataOverview {...config as any} />;
