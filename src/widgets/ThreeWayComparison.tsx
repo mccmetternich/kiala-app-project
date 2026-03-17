@@ -73,7 +73,7 @@ export default function ThreeWayComparison({
   };
 
   return (
-    <div className="my-12">
+    <div className="my-12 three-way-comparison">
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
