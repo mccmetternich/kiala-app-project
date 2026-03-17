@@ -113,7 +113,14 @@ export default function ComparisonTable({
             target={target}
             widgetType="comparison-table"
             widgetName={title}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-accent-800 to-accent-500 hover:from-accent-900 hover:to-accent-600 text-white font-bold text-lg py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-2 font-bold text-lg py-4 px-10 rounded-xl shadow-lg text-center no-underline whitespace-nowrap [&]:!text-white [&_*]:!text-white transition-all hover:shadow-xl transform hover:-translate-y-0.5"
+            style={{ 
+              background: '#8FAF8A !important', 
+              textDecoration: 'none !important', 
+              color: '#ffffff !important',
+              border: 'none !important',
+              WebkitTextFillColor: '#ffffff !important'
+            }}
           >
             {ctaText}
             <ArrowRight className="w-5 h-5" />
