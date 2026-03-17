@@ -127,13 +127,16 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
           <ThreeWayComparison
             title={widget.config.title}
             subtitle={widget.config.subtitle}
-            products={widget.config.products}
-            features={widget.config.features}
+            rows={widget.config.rows}
+            kialaHeader={widget.config.kialaHeader}
+            seedHeader={widget.config.seedHeader}
+            ritualHeader={widget.config.ritualHeader}
             showCta={widget.config.showCta}
             ctaText={widget.config.ctaText}
             ctaUrl={widget.config.ctaUrl}
             ctaSubtext={widget.config.ctaSubtext}
-            winnerIndex={widget.config.winnerIndex}
+            ctaType={widget.config.ctaType}
+            target={widget.config.target}
           />
         </div>
       );
