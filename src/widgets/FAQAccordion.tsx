@@ -57,8 +57,8 @@ export default function FAQAccordion({
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 border-l-4 border-primary-500 pl-3">{headline}</h2>
           <HelpCircle className="w-6 h-6 text-primary-600" />
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{headline}</h2>
         </div>
         <p className="text-gray-600">{subheading}</p>
       </div>
