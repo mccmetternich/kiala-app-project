@@ -101,6 +101,7 @@ export type WidgetType =
   | 'testimonial'
   | 'trust-badges'
   | 'comparison-table'
+  | 'three-way-comparison'
   | 'countdown-timer'
   | 'social-proof'
   | 'top-recommendations'

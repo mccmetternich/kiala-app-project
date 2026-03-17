@@ -76,6 +76,7 @@ export const WIDGET_TYPES: WidgetTypeDefinition[] = [
   { type: 'two-approaches', name: 'Two Approaches', icon: Columns, category: 'Content', description: 'Side-by-side comparison of two approaches/paths' },
   { type: 'us-vs-them-comparison', name: 'Us vs Them', icon: Columns, category: 'Content', description: 'Side by side comparison of us vs the other guys with CTA' },
   { type: 'comparison-table', name: 'Simple Comparison Table', icon: BarChart3, category: 'Content', description: 'Feature comparison table with checkmarks and CTA' },
+  { type: 'three-way-comparison', name: '3-Way Product Comparison', icon: BarChart3, category: 'Content', description: '3-column product comparison with winner highlighting' },
 
   // ============================================
   // SOCIAL PROOF WIDGETS

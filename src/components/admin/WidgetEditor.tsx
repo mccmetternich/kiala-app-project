@@ -5406,6 +5406,14 @@ function getDefaultConfig(type: WidgetType): WidgetConfig {
       ctaUrl: '#',
       target: '_self'
     },
+    'three-way-comparison': {
+      title: '3-Way Product Comparison',
+      subtitle: 'See which option delivers the best value',
+      showCta: true,
+      ctaText: 'Choose the Winner →',
+      ctaUrl: '#',
+      winnerIndex: 2
+    },
     'rating-stars': {
       headline: 'Customer Reviews'
     },
