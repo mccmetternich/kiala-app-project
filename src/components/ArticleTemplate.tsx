@@ -8,6 +8,7 @@ import TrackedLink from '@/components/TrackedLink';
 // Widget Components
 import ProductShowcase from '@/widgets/ProductShowcase';
 import ComparisonTable from '@/widgets/ComparisonTable';
+import ThreeWayComparison from '@/widgets/ThreeWayComparison';
 import CountdownTimer from '@/widgets/CountdownTimer';
 import TestimonialCarousel from '@/widgets/TestimonialCarousel';
 import BeforeAfterComparison from '@/widgets/BeforeAfterComparison';
@@ -116,6 +117,23 @@ function WidgetRenderer({ widget, siteId, site, allWidgets }: { widget: Widget; 
             ctaSubtext={widget.config.ctaSubtext}
             ctaType={widget.config.ctaType}
             target={widget.config.target}
+          />
+        </div>
+      );
+      
+    case 'three-way-comparison':
+      return (
+        <div className="my-8">
+          <ThreeWayComparison
+            title={widget.config.title}
+            subtitle={widget.config.subtitle}
+            products={widget.config.products}
+            features={widget.config.features}
+            showCta={widget.config.showCta}
+            ctaText={widget.config.ctaText}
+            ctaUrl={widget.config.ctaUrl}
+            ctaSubtext={widget.config.ctaSubtext}
+            winnerIndex={widget.config.winnerIndex}
           />
         </div>
       );
