@@ -633,8 +633,9 @@
     transition: transform 0.2s ease-in-out;
   }
 
-  /* Force sage green styling for comparison table CTA buttons */
-  a[href*="kialanutrition.com"] {
+  /* Force sage green styling ONLY for specific CTA buttons in comparison widgets */
+  .three-way-comparison a[href*="kialanutrition.com"][class*="inline-flex"],
+  .three-way-comparison a[href*="kialanutrition.com"][class*="justify-center"] {
     background: #8FAF8A !important;
     color: #ffffff !important;
     text-decoration: none !important;
@@ -642,14 +643,16 @@
     border: none !important;
   }
 
-  a[href*="kialanutrition.com"]:hover {
+  .three-way-comparison a[href*="kialanutrition.com"][class*="inline-flex"]:hover,
+  .three-way-comparison a[href*="kialanutrition.com"][class*="justify-center"]:hover {
     background: #7A9F7A !important;
     color: #ffffff !important;
     text-decoration: none !important;
     -webkit-text-fill-color: #ffffff !important;
   }
 
-  a[href*="kialanutrition.com"] * {
+  .three-way-comparison a[href*="kialanutrition.com"][class*="inline-flex"] *,
+  .three-way-comparison a[href*="kialanutrition.com"][class*="justify-center"] * {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
   }

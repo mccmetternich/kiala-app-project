@@ -65,7 +65,7 @@ export default function ThreeWayComparison({
     
     return (
       <span className={`text-sm font-medium ${
-        isKiala ? 'text-[#8FAF8A] font-semibold' : 'text-gray-600'
+        isKiala ? 'text-gray-900 font-semibold' : 'text-gray-600'
       }`}>
         {value}
       </span>
